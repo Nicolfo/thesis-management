@@ -1,0 +1,36 @@
+package it.polito.se2.g04.thesismanagement.proposal;
+
+import it.polito.se2.g04.thesismanagement.group.Group;
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor
+public class Proposal {
+    @Id
+    private Long id;
+    private String title;
+    @ManyToOne
+    private Teacher supervisor;
+    @ManyToMany
+    private List<Teacher> coSupervisors;
+
+    private String keywords;
+    private String type;
+    @ManyToMany
+    private List<Group> groups;
+    private String description;
+    private String requiredKnowledge;
+    private String notes;
+    private Timestamp expiration;
+    private String level;//to check
+    private String CdS;//to check
+
+
+}
