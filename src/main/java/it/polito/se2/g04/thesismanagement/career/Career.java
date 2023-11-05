@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -19,6 +20,6 @@ public class Career {
     private Long codCourse;
     private String titleCourse;
     private int CFU;
-    private String grade;
-    private Timestamp date;
+    private Integer grade;
+    private Date date;
 }

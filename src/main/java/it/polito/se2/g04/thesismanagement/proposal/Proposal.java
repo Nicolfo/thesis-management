@@ -2,11 +2,14 @@ package it.polito.se2.g04.thesismanagement.proposal;
 
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -28,7 +31,7 @@ public class Proposal {
     private String description;
     private String requiredKnowledge;
     private String notes;
-    private Timestamp expiration;
+    private Date expiration;
     private String level;//to check
     private String CdS;//to check
 

@@ -5,7 +5,7 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -17,7 +17,7 @@ public class Application {
     private Student student;
     @OneToOne
     private Attachment attachment;
-    private Timestamp applyDate;
+    private Date applyDate;
 
     //Add more if u wish
 }
