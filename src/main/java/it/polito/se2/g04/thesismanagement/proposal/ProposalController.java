@@ -21,4 +21,10 @@ public class ProposalController {
         return;
     }
 
+    @PostMapping("API/proposal/insert/")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void createProposalWithNoPathVariable(){
+        //throw exception
+    }
+
 }
