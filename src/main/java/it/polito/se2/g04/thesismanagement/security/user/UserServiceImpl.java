@@ -40,6 +40,18 @@ public class UserServiceImpl implements UserService{
         }
 }
 
+    public String addUser(RegisterDTO userInfo) {
+        if(userRepository.findUserByUsername(userInfo.getUsername()).isPresent()){
+            return "user not added";
+        }
+        else{
+            User toAdd = new User(userInfo.getUsername(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRoles());
+            userRepository.save(toAdd);
+            return "user added";
+        }
+    }
+
+
 
 
     private static String generateJWT(String subject, String issuer, long expirationTimeInSeconds, String secretKey) throws JOSEException {

@@ -8,5 +8,5 @@ import lombok.Getter;
 public class RegisterDTO {
     private String username;
     private String password;
-    private String role;
+    private String roles;
 }

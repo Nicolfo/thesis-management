@@ -1,33 +1,38 @@
 package it.polito.se2.g04.thesismanagement.security.user;
 
+import it.polito.se2.g04.thesismanagement.security.jwt.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private JwtService jwtService;
+    private AuthenticationManager authenticationManager;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+
+    @PostMapping("/API/register")
+    public String addNewUser(@RequestBody RegisterDTO userInfo) {
+        return userService.addUser(userInfo);
     }
 
     @PostMapping("/API/login")
-    public String login(@RequestBody LoginDTO loginDTO){
-        try {
-            return userService.login(loginDTO.getUsername(),loginDTO.getPassword());
-        } catch (Exception e) {
-            throw new RuntimeException(e); //change exc type
+    public String authenticateAndGetToken(@RequestBody LoginDTO authRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(authRequest.getUsername());
+        } else {
+            throw new UsernameNotFoundException("invalid user request !");
         }
-    }
-
-    @PostMapping("/API/register")
-    public String register(@RequestBody RegisterDTO registerDTO){
-         if(userService.register(registerDTO.getUsername(),registerDTO.getPassword(),registerDTO.getRole())!=null){
-             return "User registered correctly";
-         }
-         return "Error in register";
     }
 }

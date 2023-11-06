@@ -17,11 +17,11 @@ public class User {
     private Long id;
     private String username;
     private String password;
-    private String role;
+    private String roles;
 
-    public User(String username, String password, String role) {
+    public User(String username, String password, String roles) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.roles = roles;
     }
 }
