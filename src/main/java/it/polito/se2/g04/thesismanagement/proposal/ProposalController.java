@@ -16,8 +16,9 @@ public class ProposalController {
 
     @PostMapping("API/proposal/insert/{json}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProposal(@PathVariable String JsonProposal){
-        createProposal(JsonProposal);
+    public void createProposal(@PathVariable String json){
+        createProposal(json);
+        return;
     }
 
 }
