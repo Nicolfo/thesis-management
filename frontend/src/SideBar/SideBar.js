@@ -9,8 +9,8 @@ function SideBar(props){
             <aside>
                 <ul className="nav nav-pills flex-column mb-auto nav-fill ">
                     <li className="nav-item">
-                        <button className={path==='/path-one' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/path-one')}} >
-                            Path One (Edit SideBar.js)
+                        <button className={path==='/search-for-proposal' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/search-for-proposal'); props.searchForProposalClicked()}} >
+                            Search for proposal
                         </button>
                     </li>
 
