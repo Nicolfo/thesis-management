@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import thesisicon from './thesisicon.png';
 import API from '../API/API';
 
-
 function LoginForm(props) {
 
     const [username, setUsername] = useState('');
@@ -18,6 +17,8 @@ function LoginForm(props) {
     const handleLogin = async (credentials) => {
         try {
             const user = await API.login(credentials);
+            console.log(user);
+            console.log(LoginForm);
             props.setUser(user);
         } catch (err) {
             throw err;
@@ -98,12 +99,12 @@ function LoginButton(props) {
     )
 }
 
-function LoginLayout() {
+function LoginLayout(props) {
     return (
         <>
             <Row className="vh-100 login-padding-top">
                 <Col md={6} mp={0} className="below-nav">
-                    <LoginForm/>
+                    <LoginForm setUser={props.setUser}/>
                 </Col>
                 <Col md={6} className="ps-5 pt-4">
                     <img src={thesisicon} alt="My Image" style={{width:"350px",height:"350px"}} className="rounded"/>

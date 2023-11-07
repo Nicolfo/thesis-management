@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.security.user;
 
+import it.polito.se2.g04.thesismanagement.security.jwt.JwtDTO;
 import it.polito.se2.g04.thesismanagement.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,13 @@ public class UserController {
     }
 
     @PostMapping("/API/login")
-    public String authenticateAndGetToken(@RequestBody LoginDTO authRequest) {
+    public JwtDTO authenticateAndGetToken(@RequestBody LoginDTO authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
+
+            return new JwtDTO(jwtService.generateToken(authRequest.getUsername()),authRequest.getUsername());
         } else {
+            System.out.println("User not found");
             throw new UsernameNotFoundException("invalid user request !");
         }
     }

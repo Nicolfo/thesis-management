@@ -60,7 +60,7 @@ function App() {
   useEffect(() => {
     setRealDate(dayjs());
     setApplicationDate(realDate.add(offsetDate, "day"));
-  });
+  },[]);
 
   return (
       <div className="container-fluid" style={{height: '90vh', padding:'0rem'}}>
