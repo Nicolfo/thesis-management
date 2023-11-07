@@ -36,6 +36,4 @@ public class Proposal {
     private Date expiration;
     private String level;//to check
     private String CdS;//to check
-
-
 }
