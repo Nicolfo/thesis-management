@@ -6,46 +6,51 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
+import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
+import it.polito.se2.g04.thesismanagement.group.GroupRepository;
+import it.polito.se2.g04.thesismanagement.student.Student;
+import it.polito.se2.g04.thesismanagement.student.StudentRepository;
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
+    private final DegreeRepository degreeRepository;
+    private final DepartmentRepository departmentRepository;
+    private final GroupRepository groupRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
-    @Override
-    public String login(String username, String password) throws Exception{
-        User user = userRepository.findUserByUsername(username).orElseThrow();
-        if(passwordEncoder.matches(password,user.getPassword()))
-            return generateJWT(username,"thesis-app",1000,"Kfu98xHShL@#Gd0AeWc^T2p$m5Xp1YzQrL8nJt1rBfAeDv8gNtWk7zEjM");
-        else throw new Exception();
-    }
 
-    @Override
-    public User register(String username, String password, String role) {
-        if(userRepository.findUserByUsername(username).isPresent()){
-            return null;
-        }
-        else{
-            User toAdd = new User(username,passwordEncoder.encode(password),role);
-            userRepository.save(toAdd);
-            return toAdd;
-        }
-}
+
+
+
 
     public String addUser(RegisterDTO userInfo) {
-        if(userRepository.findUserByUsername(userInfo.getUsername()).isPresent()){
+        if(userRepository.findUserByUsername(userInfo.getEmail()).isPresent()){
             return "user not added";
         }
         else{
-            User toAdd = new User(userInfo.getUsername(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRoles());
+            if(userInfo.getRole().compareTo("STUDENT")==0){
+                Student toAdd= new Student(userInfo.getSurname(),userInfo.getName(),userInfo.getGender(),userInfo.getNationality(),userInfo.getEmail(),degreeRepository.getReferenceById(userInfo.getCodDegree()),userInfo.getEnrollmentYear());
+                studentRepository.save(toAdd);
+            }
+            if(userInfo.getRole().compareTo("TEACHER")==0){
+                Teacher toAdd = new Teacher(userInfo.getSurname(),userInfo.getName(),userInfo.getEmail(),groupRepository.getReferenceById(userInfo.getCodGroup()),departmentRepository.getReferenceById(userInfo.getCodDepartment()));
+                teacherRepository.save(toAdd);
+            }
+            User toAdd = new User(userInfo.getEmail(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRole());
             userRepository.save(toAdd);
             return "user added";
         }

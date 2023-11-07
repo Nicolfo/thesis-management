@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 @RestController
@@ -17,8 +15,8 @@ import org.springframework.security.core.Authentication;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private JwtService jwtService;
-    private AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
 
     @PostMapping("/API/register")
@@ -34,5 +32,12 @@ public class UserController {
         } else {
             throw new UsernameNotFoundException("invalid user request !");
         }
+    }
+
+    @GetMapping("/API/tryauth")
+    public String tryAuth(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(""+auth.getAuthorities());
+        return "You are logged in as student : "+auth.getName()+" and role "+auth.getAuthorities();
     }
 }

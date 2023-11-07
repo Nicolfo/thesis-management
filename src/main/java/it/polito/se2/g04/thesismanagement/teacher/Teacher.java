@@ -10,6 +10,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Teacher {
+    public Teacher(String surname, String name, String email, Group group, Department department) {
+        this.surname = surname;
+        this.name = name;
+        this.email = email;
+        this.group = group;
+        this.department = department;
+    }
+
     @Id
     @GeneratedValue
     private Long id;
