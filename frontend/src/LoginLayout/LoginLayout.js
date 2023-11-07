@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Form, Button, Alert, Col, Row, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import thesisicon from './thesisicon.jpg';
+import thesisicon from './thesisicon.png';
+import API from '../API/API';
+
 
 function LoginForm(props) {
 
@@ -15,8 +17,8 @@ function LoginForm(props) {
 
     const handleLogin = async (credentials) => {
         try {
-            //const user = await API.logIn(credentials);
-            //props.setUser(user);
+            const user = await API.login(credentials);
+            props.setUser(user);
         } catch (err) {
             throw err;
         }
@@ -103,12 +105,8 @@ function LoginLayout() {
                 <Col md={6} mp={0} className="below-nav">
                     <LoginForm/>
                 </Col>
-                <Col md={6}>
-                    <div className="blue-area">
-                        {/*<Image src="http://localhost:3000/public/logo192.png" rounded />*/}
-                        {/*<Image src="logo192.png" rounded />*/}
-                        <img src={thesisicon} alt="My Image" style={{width:"5rem",height:"5rem"}} />
-                    </div>
+                <Col md={6} className="ps-5 pt-4">
+                    <img src={thesisicon} alt="My Image" style={{width:"350px",height:"350px"}} className="rounded"/>
                 </Col>
             </Row>
         </>
