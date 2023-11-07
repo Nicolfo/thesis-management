@@ -3,7 +3,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Form, Nav } from 'react-bootstrap';
 import { useState } from 'react';
-import dayjs from 'dayjs';
 import {useNavigate} from "react-router-dom";
 
 function NavBar(props) {

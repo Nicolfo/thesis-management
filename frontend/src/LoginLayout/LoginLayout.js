@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Form, Button, Alert, Col, Row, Image } from 'react-bootstrap';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm(props) {
 
@@ -69,7 +69,7 @@ function LoginForm(props) {
             </Col>
         </Row>
     )
-};
+}
 
 function LogoutButton(props) {
     const navigate = useNavigate();

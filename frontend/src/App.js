@@ -25,8 +25,6 @@ function Content(props) {
     case "/login":
       return <LoginLayout user={user} setUser={setUser}/>
 
-      return <></>
-
     default:
       return <h1>Path not found</h1>
   }
