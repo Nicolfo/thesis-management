@@ -19,8 +19,8 @@ public class RegisterDTO {
     private String role;
     private String password;
     //professor info
-    private Long codGroup;
-    private Long codDepartment;
+    private String codGroup;
+    private String codDepartment;
     //student info
     private String gender;
     private String nationality;
