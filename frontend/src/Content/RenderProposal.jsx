@@ -1,6 +1,7 @@
 import {map} from "react-bootstrap/ElementChildren";
-import {Button} from "react-bootstrap";
+import {Form, Button, Col, FormGroup, FormLabel, Row} from "react-bootstrap";
 import {useNavigate} from 'react-router-dom';
+import {useState} from "react";
 
 
 function RenderProposal(props){
@@ -38,5 +39,8 @@ function RenderProposal(props){
     );
 
 }
+
+
+
 
 export default RenderProposal

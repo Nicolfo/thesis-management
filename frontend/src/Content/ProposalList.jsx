@@ -1,6 +1,7 @@
 import Table from 'react-bootstrap/Table';
-import {Button} from "react-bootstrap";
+import {Button, Col, Form, FormGroup, FormLabel, Row} from "react-bootstrap";
 import {useNavigate} from 'react-router-dom';
+import {useState} from "react";
 
 function ProposalList(props){
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ function ProposalList(props){
 
         <div>
             <h2>List of Active Proposal</h2>
+            <SearchBar filterProposals={props.filterProposals}></SearchBar>
 
 
             {shortProposal.map((proposal, index)=>{
@@ -70,4 +72,60 @@ function ProposalList(props){
     );
 }
 
+
+
+function SearchBar(props){
+    let professorsList = ["Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
+    let typeList = ["Bachelor", "Master"]
+    const [professor, setProfessor] = useState("All");
+    const [type, setType] = useState("All")
+
+    return(
+        <FormGroup>
+            <Row>
+                <Col>
+                    <FormLabel>Professor:</FormLabel>
+                    <Form.Select name="type" value={professor} onChange={(e) => setProfessor(e.target.value)}>
+                        <option>All</option>
+
+                        {professorsList.map((e,i) => {
+
+                            return(
+                                <option> {e}</option>
+                            )
+                        })}
+
+
+                    </Form.Select>
+
+                </Col>
+
+                <Col>
+                    <FormLabel>Type:</FormLabel>
+                    <Form.Select name="type" value={type} onChange={(e) => setType(e.target.value)}>
+                        <option>All</option>
+                        {typeList.map((e,i) => {
+
+                            return(
+                                <option> {e}</option>
+                            )
+                        })}
+
+
+                    </Form.Select>
+
+                </Col>
+
+                <Col><Button onClick={()=> {let arr = [professor, type]; props.filterProposals(arr);}}>Filter</Button></Col>
+
+
+            </Row>
+
+
+        </FormGroup>
+
+    );
+
+
+}
 export default ProposalList;
