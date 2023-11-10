@@ -49,7 +49,7 @@ function filterProposals(filters){
 
   // this function doesn't work
   setFilteredProposals(listOfProposal)
-
+  let xfilteredProposals = [...listOfProposal]
 
   let noFilterSelected = true;
 
@@ -60,7 +60,7 @@ function filterProposals(filters){
     }else {
 
       noFilterSelected = false
-      let xfilteredProposals = filteredProposals.filter((proposal , i) => {
+       xfilteredProposals = xfilteredProposals.filter((proposal , i) => {
         if (Array.isArray(proposal[correspondingFields[index]])){
 
           return (proposal[correspondingFields[index]].includes(filterx))
@@ -68,11 +68,11 @@ function filterProposals(filters){
         }else{
           return(proposal[correspondingFields[index]] === filterx)}
       })
-      setFilteredProposals([...xfilteredProposals])
+
     }
     index++
     }
-
+  setFilteredProposals([...xfilteredProposals])
     if(noFilterSelected){
       setFilteredProposals(listOfProposal)
     }
