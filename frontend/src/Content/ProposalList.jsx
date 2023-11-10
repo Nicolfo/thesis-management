@@ -116,7 +116,7 @@ function SearchBar(props){
 
                 </Col>
 
-                <Col><Button onClick={()=> {let arr = [professor, type]; props.filterProposals(arr);}}>Filter</Button></Col>
+                <Col><Button onClick={()=> {let arr = [professor, type]; props.filterProposals(arr);}}>Search</Button></Col>
 
 
             </Row>

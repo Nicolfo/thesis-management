@@ -7,6 +7,7 @@ import {useState} from "react";
 function RenderProposal(props){
     let proposal = props.listOfProposal[props.proposalSelected];
     const navigate = useNavigate();
+    const [cv, setCv] = useState();
 
     const proposalPart = ["Id", "Title", "Supervisor", "CoSupervisors", "Keywords", "Type", "Groups", "Description", "RequiredKnowledge", "Notes", "Expiration"]
 
@@ -29,6 +30,13 @@ function RenderProposal(props){
 
                 })
             }
+            <FormGroup>
+                <FormLabel>Insert your cv to apply</FormLabel>
+                <div></div>
+                <input type="file" accept=".pdf" onChange={(event) => setCv({ selectedFile: event.target.files[0] })} />
+
+            </FormGroup>
+            <p> </p>
             <Button onClick={()=> navigate('/search-for-proposal')}>Apply</Button>
             <Button onClick={()=> navigate('/search-for-proposal')}>Go Back</Button>
         </div>

@@ -40,6 +40,7 @@ function App() {
   const listOfFilters = ["Professor", "Type"];
   const correspondingFields = [2,5]
   const [listOfProposal, setListOfProposal] = useState(proposalList)
+
   const [listOfSupervisors, setListOfSupervisors] = useState(professorsList)
   const [filteredProposals, setFilteredProposals] = useState(listOfProposal)
 
@@ -49,7 +50,9 @@ function filterProposals(filters){
   // this function doesn't work
   setFilteredProposals(listOfProposal)
 
+
   let noFilterSelected = true;
+
 
   for(const filterx  of filters){
 
@@ -63,9 +66,9 @@ function filterProposals(filters){
           return (proposal[correspondingFields[index]].includes(filterx))
 
         }else{
-          return(proposal[correspondingFields[index]] == filterx)}
+          return(proposal[correspondingFields[index]] === filterx)}
       })
-      setFilteredProposals(xfilteredProposals)
+      setFilteredProposals([...xfilteredProposals])
     }
     index++
     }
@@ -87,9 +90,9 @@ function filterProposals(filters){
   useEffect( ()=>{
     // call the api to retrieve the list of active proposal
     // api called every time the user click on the button to search for proposal.
-    // retrieve all the proposals. for the filters, they are applicated on the fontend (we wanna evitate to do a lot of queries so a lot of api calls)
-    // cause we already have all the acrtive proposals (more time to do api than local computation)
-    // we can do that because we can assume that the insert of a new proposal is a lot less of the number of serch for a proposal
+    // retrieve all the proposals. for the filters, they are applicated on the font-end (we wanna evitate to do a lot of queries so a lot of api calls)
+    // cause we already have all the active proposals (more time to do api than local computation)
+    // we can do that because we can assume that the insert of a new proposal is a lot less of the number of search for a proposal
 
     /*
     getAllProposal()
