@@ -9,6 +9,8 @@ import SideBar from "./SideBar/SideBar";
 import NavBar from "./NavBar/NavBar";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import InsertProposal from "./Content/InsertProposal";
+
 
 function Content(props) {
 
@@ -24,6 +26,9 @@ function Content(props) {
     case "/path-one":
 
       return <></>
+
+    case "/insertProposal":
+      return <InsertProposal/>
 
     default:
       return <h1>Path not found</h1>

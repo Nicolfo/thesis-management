@@ -13,7 +13,11 @@ function SideBar(props){
                             Path One (Edit SideBar.js)
                         </button>
                     </li>
-
+                    <li className="nav-item">
+                        <button className={path==='/insertProposal' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/insertProposal')}} >
+                            Insert Proposal
+                        </button>
+                    </li>
 
 
                 </ul>
