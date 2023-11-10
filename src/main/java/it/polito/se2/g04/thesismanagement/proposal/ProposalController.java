@@ -27,4 +27,5 @@ public class ProposalController {
     public void createProposalWithNoPathVariable(){
         throw new createProposalWithNoPathVariable("Can't create a proposal without filling the form");
     }
+
 }

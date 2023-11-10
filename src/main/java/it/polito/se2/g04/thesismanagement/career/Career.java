@@ -17,7 +17,7 @@ public class Career {
     @GeneratedValue
     private Long id;
     //maybe we should add a course table
-    private String codCourse;
+    private Long codCourse;
     private String titleCourse;
     private int CFU;
     private Integer grade;

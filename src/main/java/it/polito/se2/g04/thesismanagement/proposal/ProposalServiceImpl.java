@@ -26,11 +26,4 @@ public class ProposalServiceImpl implements ProposalService{
             throw new JsonStringCantDeserialize(e.getMessage());
         }
     }
-/*
-    @Override
-    public Proposal updateProposal(String jsonProposal){
-        //placeholder
-
-        return ;
-    }*/
 }
