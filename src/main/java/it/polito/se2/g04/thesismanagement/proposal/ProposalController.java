@@ -3,6 +3,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import it.polito.se2.g04.thesismanagement.security.user.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,8 @@ public class ProposalController {
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getProposalsByProf() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return proposalService.getProposalsByProf(auth.getName());
+        User user = (User) auth.getPrincipal();
+        String username = user.getUsername();
+        return proposalService.getProposalsByProf(username);
     }
 }
