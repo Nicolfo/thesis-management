@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +23,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/API/application/getByProf")
+    @PreAuthorize("isAuthenticated() && hasAuthority('PROFESSOR')")
     public List<Application> getAllByProf(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return applicationService.getApplicationsByProf(auth.getName());
