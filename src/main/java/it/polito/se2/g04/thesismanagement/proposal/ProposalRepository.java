@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProposalRepository extends JpaRepository<Proposal,Long> {
-    List<Proposal> findAllBySupervisor(Teacher supervisor);
-    List<Proposal> findAllByCoSupervisorsContains(Teacher coSupervisor);
+    List<Proposal> findAllBySupervisorAndArchived(Teacher supervisor, boolean archived);
+    List<Proposal> findAllByCoSupervisorsContainsAndArchived(Teacher coSupervisor, boolean archived);
+    List<Proposal> findAllByArchived(boolean archived);
 }

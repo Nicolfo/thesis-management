@@ -1,6 +1,8 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,15 +17,24 @@ public class ProposalController {
         this.proposalService = proposalService;
     }
 
+    /**
+     * @return List<Proposal> List of all not archived proposals
+     */
     @GetMapping("/API/proposal/getAll")
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getAllProposals() {
-        return proposalService.getAllProposals();
+        return proposalService.getAllNotArchivedProposals();
     }
 
+    /**
+     * @return List<Proposal> list of all not archived proposals, that have the currently logged in teacher as
+     * supervisor or co-supervisor. If there are no proposals for that teacher or the logged-in user is not a teacher,
+     * an empty List is returned
+     */
     @GetMapping("/API/proposal/getByProf")
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getProposalsByProf() {
-        return proposalService.getProposalsByProf(1);//TODO change ID
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return proposalService.getProposalsByProf(auth.getName());
     }
 }

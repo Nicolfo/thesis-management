@@ -24,14 +24,19 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public List<Proposal> getProposalsByProf(long teacherId){
-        Teacher teacher = teacherRepository.findById(teacherId).orElse(null);
+    public List<Proposal> getProposalsByProf(String UserName){
+        Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
-            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisor(teacher);
-            List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContains(teacher);
+            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchived(teacher, false);
+            List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchived(teacher, false);
             supervisorProposals.addAll(coSupervisorProposals);
             return supervisorProposals;
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<Proposal> getAllNotArchivedProposals(){
+        return proposalRepository.findAllByArchived(false);
     }
 }
