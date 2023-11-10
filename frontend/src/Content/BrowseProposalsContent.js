@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import API from "../API/API";
+import { Table } from "react-bootstrap";
 
-function BrowseProposalsContent() {
+export default function BrowseProposalsContent() {
 
     const [proposalList, setProposalList] = useState([]);
 
-    const getProposalList = async () => {
-        const list = await API.getAllProposals();
-        setProposalList(list);
-    }
+    
 
-    useEffect(() => getProposalList(), []);
+    useEffect(() => {
+        const getProposalList = async () => {
+            const list = await API.getAllProposals();
+            setProposalList(list);
+        }
+        getProposalList();
+    }, []);
 
     return (
         <>
-            <h4>Thesis Proposals</h4>
+            <h4>Your thesis proposals</h4>
             <Table striped hover>
                 <thead>
                     <tr>
@@ -26,23 +30,7 @@ function BrowseProposalsContent() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    </tr>
-                    <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    </tr>
-                    <tr>
-                    <td>3</td>
-                    <td colSpan={2}>Larry the Bird</td>
-                    <td>@twitter</td>
-                    </tr>
+                    { proposalList.map(proposal => <ProposalRow proposal={proposal} />) }
                 </tbody>
                 </Table>
         </>
@@ -50,10 +38,14 @@ function BrowseProposalsContent() {
 
 }
 
-function ProposalsTable({ proposalList }) {
-
-}
 
 function ProposalRow({ proposal }) {
-
+    return (
+        <tr>
+            <td>{ proposal.supervisor.surname + " " + proposal.supervisor.name }</td>
+            <td>{ proposal.title }</td>
+            <td>{ proposal.level }</td>
+            <td>{ proposal.cdS }</td>
+        </tr>
+    )
 }
