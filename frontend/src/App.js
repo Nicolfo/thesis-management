@@ -5,8 +5,8 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, useLocation} from "react-router-dom";
-import SideBar from "./SideBar/SideBar";
-import NavBar from "./NavBar/NavBar";
+import Navigation from "./Navigation/Navigation";
+import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import InsertProposal from "./Content/InsertProposal";
@@ -18,14 +18,14 @@ function Content(props) {
 
 
 
-
+  const [user, setUser] = useState(null);
 
   const path = useLocation().pathname.toString();
   switch (path) {                                //add to this switch-case your content (defined in the Content folder)
     case "/":
-    case "/path-one":
-
-      return <></>
+      return <Navigation user={user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
+    case "/login":
+      return <LoginLayout user={user} setUser={setUser}/>
 
     case "/insertProposal":
       return <InsertProposal/>
@@ -65,18 +65,14 @@ function App() {
   useEffect(() => {
     setRealDate(dayjs());
     setApplicationDate(realDate.add(offsetDate, "day"));
-  });
+  },[]);
 
   return (
-      <div className="container-fluid" style={{height: '90vh'}}>
+      <div className="container-fluid" style={{height: '90vh', padding:'0rem'}}>
         <div className="row align-items-start">
           <Router>
-            <NavBar realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}>
-            </NavBar>
-            <SideBar>
-            </SideBar>
-            <div className="col-9">
-              <Content>
+            <div>
+              <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}>
               </Content>
             </div>
           </Router>

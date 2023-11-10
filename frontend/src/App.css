@@ -36,3 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+.btn-primary {
+  background-color: #0B67A5 !important;
+  border-color: aliceblue !important;
+}
+
+.bg-color {
+  background-color: #0B67A5;
+}
+
+.dateForm {
+  background-color: aliceblue  !important;
+  color: #0B67A5 !important;
+}
+
+.login-padding-top {
+  padding-top: 25vh;
+}
+
+div {
+  margin-right:0 !important;
+  padding-right:0 !important;
+}
