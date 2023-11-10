@@ -1,7 +1,7 @@
 import Table from 'react-bootstrap/Table';
 import {Button, Col, Form, FormGroup, FormLabel, Row} from "react-bootstrap";
 import {useNavigate} from 'react-router-dom';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 function ProposalList(props){
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ function ProposalList(props){
 
         <div>
             <h2>List of Active Proposal</h2>
-            <SearchBar filterProposals={props.filterProposals}></SearchBar>
+            <SearchBar clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals}></SearchBar>
 
 
             {shortProposal.map((proposal, index)=>{
@@ -79,6 +79,11 @@ function SearchBar(props){
     let typeList = ["Bachelor", "Master"]
     const [professor, setProfessor] = useState("All");
     const [type, setType] = useState("All")
+
+    useEffect(() => {
+        setProfessor("All")
+        setType("All")
+    }, [props.clickOnProposal]);
 
     return(
         <FormGroup>

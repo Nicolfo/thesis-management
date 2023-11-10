@@ -17,7 +17,7 @@ function Content(props) {
     case "/":
       return <b>Home page</b>
     case "/search-for-proposal":
-      return <ProposalList filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
+      return <ProposalList clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
     case "/see-proposal":
       return <RenderProposal listOfProposal={props.listOfProposal} proposalSelected={props.proposalSelected}></RenderProposal>
 
@@ -118,7 +118,7 @@ function filterProposals(filters){
             <SideBar searchForProposalClicked={searchForProposalClicked}>
             </SideBar>
             <div className="col-9">
-              <Content filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected}>
+              <Content clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected}>
               </Content>
             </div>
           </Router>
