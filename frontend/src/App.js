@@ -21,7 +21,7 @@ function Content(props) {
     case "/login":
       return <LoginLayout user={props.user} setUser={props.setUser} />
     case "/teacher/proposal/browse":
-      return <BrowseProposalsContent />
+      return <BrowseProposalsContent user={props.user}/>
 
     default:
       return <h1>Path not found</h1>

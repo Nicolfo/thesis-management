@@ -49,7 +49,14 @@ const login = async (credentials) => {
 // Get all proposals
 // TODO: this is a placeholder until the back-end endpoint is available
 // For now I always return the same hard-coded values
-const getAllProposals = async () => {
+const getAllProposals = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"proposal/getAll",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
     return [
         {
             "id": 2,
