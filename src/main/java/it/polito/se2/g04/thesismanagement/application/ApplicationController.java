@@ -20,7 +20,20 @@ public class ApplicationController {
     @PostMapping("/API/application/insert")
     @ResponseStatus(HttpStatus.CREATED)
     public void insertApplication(@RequestBody ApplicationDTO applicationDTO){
+        //TODO:check if the current user is a STUDENT
         applicationService.applyForProposal(applicationDTO);
+    }
+
+    @PostMapping("/API/application/{applicationId}/accept")
+    public void acceptApplication(@PathVariable Long applicationId){
+        //TODO:check if the current user is a TEACHER
+        applicationService.acceptApplication(applicationId);
+    }
+
+    @PostMapping("/API/application/{applicationId}/decline")
+    public void declineApplication(@PathVariable Long applicationId){
+        //TODO:check if the current user is a TEACHER
+        applicationService.declineApplication(applicationId);
     }
 
 

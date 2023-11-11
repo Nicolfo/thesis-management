@@ -21,6 +21,7 @@ public class ApplicationServiceImpl implements ApplicationService{
 
     @Override
     public void applyForProposal( ApplicationDTO applicationDTO) {
+        //TODO: add parsing of logged user
         try {
             Student loggedUser=studentRepository.getReferenceById(1L);
             Application toSave = new Application(loggedUser, attachmentRepository.getReferenceById(applicationDTO.getAttachmentID()), applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalID()));
@@ -30,6 +31,31 @@ public class ApplicationServiceImpl implements ApplicationService{
         }
 
     }
+
+    @Override
+    public void acceptApplication(Long applicationID) {
+        //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
+        try {
+            Application toAccept =applicationRepository.getReferenceById(applicationID);
+            toAccept.setStatus("ACCEPTED");
+            applicationRepository.save(toAccept);
+        }catch (Exception ex){
+            throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
+        }
+    }
+
+    @Override
+    public void declineApplication(Long applicationID) {
+        //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
+        try {
+            Application toAccept =applicationRepository.getReferenceById(applicationID);
+            toAccept.setStatus("DECLINED");
+            applicationRepository.save(toAccept);
+        }catch (Exception ex){
+            throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
+        }
+    }
+
 
     //implement method here
 }
