@@ -4,5 +4,7 @@ import java.util.List;
 
 public interface ApplicationService {
     public List<Application> getApplicationsByProf(String profEmail);
+
+    public List<Application> getApplicationsByProposal(Long proposalId);
     //add method here
 }

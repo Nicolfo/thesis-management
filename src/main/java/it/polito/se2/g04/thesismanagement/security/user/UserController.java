@@ -41,7 +41,7 @@ public class UserController {
     @GetMapping("/API/testAuth")
     @ResponseStatus(HttpStatus.OK)
     public String tryAuth(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return "You are logged in as student : "+auth.getName()+" and role "+auth.getAuthorities();
+        UserInfoUserDetails auth =(UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return "You are logged in as student : "+auth.getUsername()+" and role "+auth.getAuthorities();
     }
 }

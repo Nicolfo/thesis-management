@@ -17,7 +17,7 @@ public class AttachmentController {
         this.attachmentService = attachmentService;
     }
 
-    @PostMapping
+    @PostMapping("/API/uploadFile")
     @ResponseStatus(HttpStatus.CREATED)
     public AttachmentDTO addAttachment(@RequestPart("file")MultipartFile file){
         return attachmentService.addAttachment(file);

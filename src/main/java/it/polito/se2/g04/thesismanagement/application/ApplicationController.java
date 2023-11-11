@@ -1,6 +1,8 @@
 package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
+import it.polito.se2.g04.thesismanagement.security.user.User;
+import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,10 +25,17 @@ public class ApplicationController {
     }
 
     @GetMapping("/API/application/getByProf")
-    @PreAuthorize("isAuthenticated() && hasAuthority('PROFESSOR')")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public List<Application> getAllByProf(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return applicationService.getApplicationsByProf(auth.getName());
+        UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return applicationService.getApplicationsByProf(auth.getUsername());
 
     }
+
+    @GetMapping("/API/applicatio/getApplicationsByProposal")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  List<Application> getApplicationByProposal(Long proposalId){
+        return applicationService.getApplicationsByProposal(proposalId);
+    }
+
 }
