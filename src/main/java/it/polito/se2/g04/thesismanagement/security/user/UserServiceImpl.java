@@ -54,6 +54,9 @@ public class UserServiceImpl implements UserService{
                     throw new DegreeNotFoundException("Can't find a degree with the specified ID");
                 Student toAdd= new Student(userInfo.getSurname(),userInfo.getName(),userInfo.getGender(),userInfo.getNationality(),userInfo.getEmail(),degreeRepository.getReferenceById(userInfo.getCodDegree()),userInfo.getEnrollmentYear());
                 studentRepository.save(toAdd);
+                User userToAdd = new User(userInfo.getEmail(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRole());
+                userRepository.save(userToAdd);
+                return "user added";
             }
             if(userInfo.getRole().compareTo("TEACHER")==0){
                 //maybe add a check to every field
@@ -67,10 +70,11 @@ public class UserServiceImpl implements UserService{
                     throw new DepartmentNotFoundException("Can't find a department with the specified ID");
                 Teacher toAdd = new Teacher(userInfo.getSurname(),userInfo.getName(),userInfo.getEmail(),groupRepository.getReferenceById(userInfo.getCodGroup()),departmentRepository.getReferenceById(userInfo.getCodDepartment()));
                 teacherRepository.save(toAdd);
+                User userToAdd = new User(userInfo.getEmail(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRole());
+                userRepository.save(userToAdd);
+                return "user added";
             }
-            User toAdd = new User(userInfo.getEmail(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRole());
-            userRepository.save(toAdd);
-            return "user added";
+            return "user not added";
         }
     }
 
