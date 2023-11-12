@@ -4,6 +4,7 @@ import it.polito.se2.g04.thesismanagement.security.jwt.JwtDTO;
 import it.polito.se2.g04.thesismanagement.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,10 +38,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/API/tryauth")
+    @GetMapping("/API/testAuth")
+    @ResponseStatus(HttpStatus.OK)
     public String tryAuth(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(""+auth.getAuthorities());
         return "You are logged in as student : "+auth.getName()+" and role "+auth.getAuthorities();
     }
 }
