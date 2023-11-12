@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.teacher;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class TeacherController {
     }
 
     @GetMapping("API/teacher/getByEmail/")
-    public void getByEmail(){
+    public void getByEmailWithNoEmail(){
         //errorhandler placeholder
     }
 
