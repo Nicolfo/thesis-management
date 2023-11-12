@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @CrossOrigin
 public class AttachmentController {
@@ -17,15 +19,23 @@ public class AttachmentController {
         this.attachmentService = attachmentService;
     }
 
-    @PostMapping
+    @PostMapping("/API/uploadFile")
     @ResponseStatus(HttpStatus.CREATED)
-    public AttachmentDTO addAttachment(@RequestPart("file")MultipartFile file){
-        return attachmentService.addAttachment(file);
+    public AttachmentDTO addAttachment(@RequestPart("file")MultipartFile file) throws IOException {
+        try{
+            return attachmentService.addAttachment(file);
+        }catch (IOException ioException){
+            //handle errors in a better way
+            throw ioException;
+        }
+
     }
 
     @GetMapping("/getFile/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ByteArrayResource> getFile(@PathVariable Long id) {
+        //add errors if user is not authorized to get file (he was not the one who uploaded it)
+
         Attachment elem = attachmentService.getFileById(id);
 
         if (elem != null && elem.getAttachment() != null) {
