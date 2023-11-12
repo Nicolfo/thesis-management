@@ -9,7 +9,7 @@ import {BrowserRouter as Router, useLocation} from "react-router-dom";
 import SideBar from "./SideBar/SideBar";
 import NavBar from "./NavBar/NavBar";
 import {useEffect, useState} from "react";
-import {getAllProposal, getAllSupervisors} from "./API/Api";
+//import {getAllProposal, getAllSupervisors} from "./API/Api";
 import ProposalList from "./Content/ProposalList";
 import RenderProposal from "./Content/RenderProposal";
 import Navigation from "./Navigation/Navigation";
