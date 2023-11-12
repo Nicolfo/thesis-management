@@ -1,7 +1,5 @@
 package it.polito.se2.g04.thesismanagement.group;
 
-import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalSearchRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
