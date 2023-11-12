@@ -65,7 +65,7 @@ function LoginForm(props) {
                             type="password"
                             value={password} placeholder="Write here your password"
                             onChange={(ev) => setPassword(ev.target.value)}
-                            required={true} minLength={6}
+                            required={true} minLength={5}
                         />
                     </Form.Group>
                     <Button className="mt-3 items-color" type="submit">Login</Button>

@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -38,7 +39,7 @@ public class ProposalController {
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getProposalsByProf() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) auth.getPrincipal();
+        UserInfoUserDetails user = (UserInfoUserDetails) auth.getPrincipal();
         String username = user.getUsername();
         return proposalService.getProposalsByProf(username);
     }
