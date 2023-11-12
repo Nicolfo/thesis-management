@@ -9,22 +9,19 @@ import Navigation from "./Navigation/Navigation";
 import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 
 function Content(props) {
-
-
-
-
-
   const [user, setUser] = useState(null);
-
   const path = useLocation().pathname.toString();
-  switch (path) {                                //add to this switch-case your content (defined in the Content folder)
+
+  switch (path) {
     case "/":
       return <Navigation user={user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
     case "/login":
       return <LoginLayout user={user} setUser={setUser}/>
-
+    case "/application/view":
+      return <ApplicationViewLayout user={user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
     default:
       return <h1>Path not found</h1>
   }
