@@ -33,6 +33,23 @@ public class Proposal {
         this.archived = archived;
     }
 
+    //sets archived automatically to false, when object is created using this constructor
+    public Proposal(String title, Teacher supervisor, List<Teacher> coSupervisors, String keywords, String type, List<Group> groups, String description, String requiredKnowledge, String notes, Date expiration, String level, String cdS) {
+        this.title = title;
+        this.supervisor = supervisor;
+        this.coSupervisors = coSupervisors;
+        this.keywords = keywords;
+        this.type = type;
+        this.groups = groups;
+        this.description = description;
+        this.requiredKnowledge = requiredKnowledge;
+        this.notes = notes;
+        this.expiration = expiration;
+        this.level = level;
+        CdS = cdS;
+        this.archived = false;
+    }
+
     @Id
     @GeneratedValue
     private Long id;
