@@ -51,13 +51,13 @@ public class SecurityConfig {
                 .cors(it->it.configurationSource(request -> {
                     CorsConfiguration corsConfig = new CorsConfiguration();
                     corsConfig.addAllowedOrigin("http://localhost:3000");
-                    corsConfig.addAllowedOrigin("http://127.0.0.1:3000");
+                    corsConfig.addAllowedOrigin("*");
                     corsConfig.addAllowedMethod("*");
                     corsConfig.addAllowedHeader("*"); // Allow all headers
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth->{
-                    auth.requestMatchers("/API/login","/API/register").permitAll()
+                    auth.requestMatchers("/API/login","/API/register","/API/getFile/**").permitAll()
                             .anyRequest().authenticated();
 
                 })

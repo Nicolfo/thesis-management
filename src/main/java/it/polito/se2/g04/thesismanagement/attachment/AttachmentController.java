@@ -31,7 +31,7 @@ public class AttachmentController {
 
     }
 
-    @GetMapping("/getFile/{id}")
+    @GetMapping("/API/getFile/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ByteArrayResource> getFile(@PathVariable Long id) {
         //add errors if user is not authorized to get file (he was not the one who uploaded it)
