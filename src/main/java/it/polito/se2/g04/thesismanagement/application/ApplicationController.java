@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
@@ -35,15 +36,15 @@ public class ApplicationController {
         return applicationService.getApplicationsByProposal(proposalId);
     }
 
-    @GetMapping("/API/application/getApplicationById")
+    @GetMapping("/API/application/getApplicationById/{applicationId}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  Application getApplicationById(Long applicationId){
+    public  Application getApplicationById(@PathVariable Long applicationId){
         return applicationService.getApplicationById(applicationId);
     }
 
-    @GetMapping("/API/application/acceptApplicationById")
+    @GetMapping("/API/application/acceptApplicationById/{applicationId}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  boolean acceptApplicationById(Long applicationId){
+    public  boolean acceptApplicationById(@PathVariable Long applicationId){
         return applicationService.acceptApplicationById(applicationId);
     }
 
