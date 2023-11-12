@@ -6,5 +6,6 @@ public interface ApplicationService {
     public List<Application> getApplicationsByProf(String profEmail);
 
     public List<Application> getApplicationsByProposal(Long proposalId);
-    //add method here
+    public Application getApplicationById(Long applicationId);
+    public boolean acceptApplicationById(Long applicationId);
 }

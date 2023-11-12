@@ -5,12 +5,25 @@ import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
 @Getter
+@Setter
+@NoArgsConstructor
 public class Application {
+    //Sets accepted automatically to false on entity creation
+    public Application(Student student, Attachment attachment, Date applyDate, Proposal proposal) {
+        this.student = student;
+        this.attachment = attachment;
+        this.applyDate = applyDate;
+        this.proposal = proposal;
+        this.accepted = false;
+    }
+
     @Id
     @GeneratedValue
     private Long id;
@@ -21,6 +34,6 @@ public class Application {
     private Date applyDate;
     @ManyToOne
     private Proposal proposal;
+    private boolean accepted;
 
-    //Add more if u wish
 }

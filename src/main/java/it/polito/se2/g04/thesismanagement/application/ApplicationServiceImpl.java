@@ -34,6 +34,20 @@ public class ApplicationServiceImpl implements ApplicationService{
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
     }
 
+    @Override
+    public Application getApplicationById(Long applicationId){
+        return applicationRepository.getApplicationById(applicationId);
+    }
 
-    //implement method here
+    @Override
+    public boolean acceptApplicationById(Long applicationId) {
+        try {
+            Application application = getApplicationById(applicationId);
+            application.setAccepted(true);
+            applicationRepository.save(application);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

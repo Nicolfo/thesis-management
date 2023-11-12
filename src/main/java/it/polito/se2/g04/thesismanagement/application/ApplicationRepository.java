@@ -7,5 +7,6 @@ import java.util.List;
 public interface ApplicationRepository extends JpaRepository<Application,Long> {
     public List<Application> getApplicationByProposal_Supervisor_Email(String email);
     public List<Application> getApplicationByProposal_Id(Long proposalId);
+    public Application getApplicationById(Long id);
 
 }
