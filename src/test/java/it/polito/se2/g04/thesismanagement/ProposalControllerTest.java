@@ -50,6 +50,7 @@ public class ProposalControllerTest {
     private Teacher teacher;
 
 
+
     @BeforeAll
     public void setup() {
         teacher = new Teacher("Gerald", "Juarez","test@example.com",null,null);
@@ -60,6 +61,7 @@ public class ProposalControllerTest {
         Authentication auth = new TestingAuthenticationToken(user, "password");
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
+
     @AfterAll
     public void CleanUp(){
         teacherRepository.deleteAll();
@@ -215,3 +217,4 @@ public class ProposalControllerTest {
         assertEquals(0, proposals.length, "getAll should return 0 values");
     }
 }
+
