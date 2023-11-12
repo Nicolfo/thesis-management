@@ -1,12 +1,9 @@
 package it.polito.se2.g04.thesismanagement.teacher;
 
-import it.polito.se2.g04.thesismanagement.group.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
@@ -17,22 +14,18 @@ public class TeacherServiceImpl implements TeacherService {
     public TeacherServiceImpl(TeacherRepository teacherRepository){
         this.teacherRepository=teacherRepository;
     }
-    
+
     @Override
-    public HashMap<String, Group> getAllTeacherGroup(){
-        HashMap<String, Group> teachersGroup=new HashMap<>();
-        List<Teacher> teachers=teacherRepository.findAll();
-        for (Teacher t: teachers)
-            teachersGroup.put(t.getSurname() + " " + t.getName(),t.getGroup());
-        return teachersGroup;
+    public List<TeacherDTO> getAll(){
+        return teacherRepository.findAll().stream().map(it-> new TeacherDTO(it.getId(),it.getName(), it.getSurname())).toList();
+    }
+    @Override
+    public Teacher getById(Long id){
+        return teacherRepository.findById(id).orElseThrow(()-> new RuntimeException());//placeholder for a real exception handler
     }
 
     @Override
-    public List<Teacher> getAll(){
-        return  teacherRepository.findAll();
-    }
-    @Override
-    public Optional<Teacher> getById(Long id){
-        return teacherRepository.findById(id);
+    public Teacher getByEmail(String email){
+        return teacherRepository.findAll().stream().filter(it-> email.equals(it.getEmail())).findAny().orElseThrow();
     }
 }

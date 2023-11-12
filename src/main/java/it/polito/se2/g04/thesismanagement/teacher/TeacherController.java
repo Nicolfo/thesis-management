@@ -1,13 +1,11 @@
 package it.polito.se2.g04.thesismanagement.teacher;
 
-import it.polito.se2.g04.thesismanagement.group.Group;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -19,22 +17,27 @@ public class TeacherController {
         this.teacherService=teacherService;
     }
 
-    @GetMapping("API/prof/getAllTeachersGroup/")
-    public HashMap<String, Group> getAllTeachersGroup(){
-        return teacherService.getAllTeacherGroup();
-    }
-
-    @GetMapping("API/prof/getAll/")
-    public List<Teacher> getAll(){
+    @GetMapping("API/teacher/getAll/")
+    public List<TeacherDTO> getAll(){
         return teacherService.getAll();
     }
 
-    @GetMapping("API/prof/getById/{id}")
-    public Optional<Teacher> getById(Long id){
+    @GetMapping("API/teacher/getById/{id}")
+    public Teacher getById(Long id){
         return teacherService.getById(id);
     }
 
-    @GetMapping("API/prof/getById/")
+    @GetMapping("API/teacher/getByEmail/{email}")
+    public Teacher getByEmail(String email){
+        return teacherService.getByEmail(email);
+    }
+
+    @GetMapping("API/teacher/getByEmail/")
+    public void getByEmailWithNoEmail(){
+        //errorhandler placeholder
+    }
+
+    @GetMapping("API/teacher/getById/")
     public void getByIdWithNoId(){
         //errorhandler placeholder
     }
