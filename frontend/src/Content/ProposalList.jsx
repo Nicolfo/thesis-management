@@ -7,13 +7,14 @@ function ProposalList(props){
     const navigate = useNavigate();
 
 
-    const shortProposalSchema = ["Id", "Title", "Supervisor","Keywords", "Type", "Groups","Expiration"]
+    const shortProposalSchema = ["Id", "Title", "Supervisor","Keywords", "Level", "Groups","Expiration"]
 
 
     let indexForShortProposal = [0,1,2,4,5,6,10]
 
     let shortProposal = props.listOfProposal.map((e,i) => {
-        return e.filter((item, index) => indexForShortProposal.includes(index))
+        return {id: e.id, title: e.title, supervisor: e.supervisor.name, keywords: e.keywords, level: e.level, groups:  e.groups,expiration: e.expiration};
+        //return e.filter((item, index) => indexForShortProposal.includes(index))
 
 
     })
@@ -43,7 +44,7 @@ function ProposalList(props){
                         </thead>
                         <tbody>
                             <tr>
-                        {proposal.map((e,i) => {
+                        {Array.from(Object.values(proposal)).map((e,i) => {
 
                             if (Array.isArray(e)){
                                 return (<td key={i}>{e.map((el,ind) => {
@@ -75,7 +76,7 @@ function ProposalList(props){
 
 
 function SearchBar(props){
-    let professorsList = ["Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
+    let professorsList = ["Andrea", "Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
     let typeList = ["Bachelor", "Master"]
     const [professor, setProfessor] = useState("All");
     const [type, setType] = useState("All")

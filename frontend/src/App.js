@@ -9,7 +9,7 @@ import {BrowserRouter as Router, useLocation} from "react-router-dom";
 import SideBar from "./SideBar/SideBar";
 import NavBar from "./NavBar/NavBar";
 import {useEffect, useState} from "react";
-//import {getAllProposal, getAllSupervisors} from "./API/Api";
+import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
 import ProposalList from "./Content/ProposalList";
 import RenderProposal from "./Content/RenderProposal";
 import Navigation from "./Navigation/Navigation";
@@ -49,7 +49,7 @@ function App() {
   let pro2 = [2, "L'inter la storia", "Simone Inzaghi", ["Adriano", "Milito"], ["Inter", "Milano"], "Bachelor", "F1", "La storia dell'inter nel 2010", "scienze motorie 1", "No notes", "25/9/2023"]
   let pro3 = [3, "Explainable ai", "Lia Morra", ["Antonio"], "Ai", "Master", ["C1", "C2"], "The challenge of the new era", "ai2", "No notes", "25/9/2024"]
   let proposalList = [pro1, pro2, pro3];
-  let professorsList = ["Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
+  let professorsList = ["Andrea", "Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
   const listOfFilters = ["Professor", "Type"];
   const correspondingFields = [2,5]
   const [listOfProposal, setListOfProposal] = useState(proposalList)
@@ -88,10 +88,35 @@ function App() {
     setApplicationDate(realDate.add(offsetDate, "day"));
   }, []);
 
+function selectFilter(el1, el2, filterType){
+
+  switch(filterType) {
+    // by professor
+    case 0:
+      console.log(el1.supervisor.name)
+      console.log(el1.supervisor.name == el2)
+
+      return (el1.supervisor.name == el2)
+      break;
+    case 1:
+
+      return (el1.level == el2)
+
+      // code block
+      break;
+    default:
+      // code block
+  }
+
+
+}
+
+
 function filterProposals(filters){
+  let listOfFilters = ["supervisor", "level"];
   let index = 0;
 
-  // this function doesn't work
+
   setFilteredProposals(listOfProposal)
   let xfilteredProposals = [...listOfProposal]
 
@@ -110,7 +135,7 @@ function filterProposals(filters){
           return (proposal[correspondingFields[index]].includes(filterx))
 
         }else{
-          return(proposal[correspondingFields[index]] === filterx)}
+          return(selectFilter(proposal, filterx, index))}
       })
 
     }
@@ -138,14 +163,14 @@ function filterProposals(filters){
     // cause we already have all the active proposals (more time to do api than local computation)
     // we can do that because we can assume that the insert of a new proposal is a lot less of the number of search for a proposal
 
-    /*
-    getAllProposal()
-          .then((list)=> { setListOfProposal(list); filteredProposals = listOfProposal})
 
+    getAllProposal()
+          .then((list)=> { setListOfProposal(Array.from(Object.values(list))); setFilteredProposals(Array.from(Object.values(list)))})
+ /*
     getAllSupervisors
           .then((list) => {setListOfSupervisors(list);})
           */
-    setFilteredProposals(listOfProposal)
+    //
     console.log("api called")
     console.log(clickOnProposal)
 

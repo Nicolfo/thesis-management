@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Form, Button, Alert, Col, Row, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import thesisicon from './thesisicon.png';
-import API from '../API/API';
+import API from '../API/Api';
 
 function LoginForm(props) {
 
