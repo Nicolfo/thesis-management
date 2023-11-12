@@ -26,6 +26,16 @@ public class TeacherController {
         return teacherService.getById(id);
     }
 
+    @GetMapping("API/teacher/getByEmail/{email}")
+    public Teacher getByEmail(String email){
+        return teacherService.getByEmail(email);
+    }
+
+    @GetMapping("API/teacher/getByEmail/")
+    public void getByEmail(){
+        //errorhandler placeholder
+    }
+
     @GetMapping("API/teacher/getById/")
     public void getByIdWithNoId(){
         //errorhandler placeholder

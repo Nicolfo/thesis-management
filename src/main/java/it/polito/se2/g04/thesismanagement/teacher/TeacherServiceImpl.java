@@ -3,9 +3,7 @@ package it.polito.se2.g04.thesismanagement.teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
@@ -24,5 +22,10 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Teacher getById(Long id){
         return teacherRepository.findById(id).orElseThrow(()-> new RuntimeException());//placeholder for a real exception handler
+    }
+
+    @Override
+    public Teacher getByEmail(String email){
+        return teacherRepository.findAll().stream().filter(it-> email.equals(it.getEmail())).findAny().orElseThrow();
     }
 }
