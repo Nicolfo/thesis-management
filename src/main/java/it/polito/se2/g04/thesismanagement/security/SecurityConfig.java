@@ -20,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -45,10 +46,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(it->it.configurationSource(request -> {
+                    CorsConfiguration corsConfig = new CorsConfiguration();
+                    corsConfig.addAllowedOrigin("http://localhost:3000");
+                    corsConfig.addAllowedOrigin("http://127.0.0.1:3000");
+                    corsConfig.addAllowedMethod("*");
+                    corsConfig.addAllowedHeader("*"); // Allow all headers
+                    return corsConfig;
+                }))
                 .authorizeHttpRequests(auth->{
                     auth.requestMatchers("/API/login","/API/register").permitAll()
-                            .requestMatchers("/API/*", "/API/**", "/API/**/**", "/API/**/**/**").authenticated();
+                            .anyRequest().authenticated();
+
                 })
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

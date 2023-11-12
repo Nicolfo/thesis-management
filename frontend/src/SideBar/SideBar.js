@@ -4,20 +4,22 @@ function SideBar(props){
     const navigate = useNavigate();
 
     return (
-        <div className="d-flex flex-column flex-shrink-0 bg-light col-3 p-2">
+        <div className="d-flex flex-column bg-light p-2 col-2">
 
-            <aside>
                 <ul className="nav nav-pills flex-column mb-auto nav-fill ">
                     <li className="nav-item">
                         <button className={path==='/path-one' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/path-one')}} >
                             Path One (Edit SideBar.js)
                         </button>
                     </li>
-
+                    <li className="nav-item">
+                        <button className={path==='/teacher/proposal/browse' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/teacher/proposal/browse')}} >
+                            My thesis proposals
+                        </button>
+                    </li>
 
 
                 </ul>
-            </aside>
 
         </div>
 

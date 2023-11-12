@@ -46,5 +46,25 @@ const login = async (credentials) => {
     )
 };
 
-const API = { login };
+const getAllProposals = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"proposal/getAll",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const getProposalsByProf = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"proposal/getByProf",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const API = { login, getAllProposals, getProposalsByProf };
 export default API;
