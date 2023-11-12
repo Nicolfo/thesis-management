@@ -1,9 +1,6 @@
 package it.polito.se2.g04.thesismanagement.attachment;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +14,7 @@ public class Attachment{
         this.fileName = fileName;
     }
 
-    @Lob
+    @Lob @Basic(fetch = FetchType.LAZY)
     private byte[] attachment;
     private String contentType;
     private String fileName;

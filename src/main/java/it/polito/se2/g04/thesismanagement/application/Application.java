@@ -4,12 +4,16 @@ import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Application {
     @Id
     @GeneratedValue
@@ -21,6 +25,14 @@ public class Application {
     private Date applyDate;
     @ManyToOne
     private Proposal proposal;
+    @Setter
+    private String status= "PENDING"; //status of the application (PENDING/ACCEPTED/REJECTED)
 
-    //Add more if u wish
+
+    public Application(Student student, Attachment attachment, Date applyDate, Proposal proposal) {
+        this.attachment = attachment;
+        this.applyDate = applyDate;
+        this.proposal = proposal;
+    }
+//Add more if u wish
 }
