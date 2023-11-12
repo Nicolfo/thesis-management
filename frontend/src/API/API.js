@@ -27,9 +27,9 @@ function getJson(httpResponsePromise) {
                 }
             })
             .catch(err => {
-                reject({ error: "Cannot communicate" });
-                console.log(httpResponsePromise);
-            }
+                    reject({ error: "Cannot communicate" });
+                    console.log(httpResponsePromise);
+                }
             ) // connection error
     });
 }
