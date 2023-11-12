@@ -1,6 +1,7 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import it.polito.se2.g04.thesismanagement.security.user.User;
@@ -22,6 +23,7 @@ public class ProposalController {
      * @return List<Proposal> List of all not archived proposals
      */
     @GetMapping("/API/proposal/getAll")
+    @PreAuthorize("hasAuthority('STUDENT')")
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getAllProposals() {
         return proposalService.getAllNotArchivedProposals();

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import API from "../API/API";
 import { Table } from "react-bootstrap";
 
-export default function BrowseProposalsContent() {
+export default function BrowseProposalsContent(props) {
 
     const [proposalList, setProposalList] = useState([]);
 
@@ -11,7 +11,7 @@ export default function BrowseProposalsContent() {
 
     useEffect(() => {
         const getProposalList = async () => {
-            const list = await API.getAllProposals();
+            const list = await API.getAllProposals(props.user.token);
             setProposalList(list);
         }
         getProposalList();

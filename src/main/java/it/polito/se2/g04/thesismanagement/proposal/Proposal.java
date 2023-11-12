@@ -29,7 +29,7 @@ public class Proposal {
         this.notes = notes;
         this.expiration = expiration;
         this.level = level;
-        CdS = cdS;
+        this.CdS = cdS;
         this.archived = archived;
     }
 
@@ -51,7 +51,6 @@ public class Proposal {
     }
 
     @Id
-    @GeneratedValue
     private Long id;
     private String title;
     @ManyToOne
