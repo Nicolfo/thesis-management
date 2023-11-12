@@ -1,13 +1,10 @@
 package it.polito.se2.g04.thesismanagement.teacher;
 
-import it.polito.se2.g04.thesismanagement.group.Group;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -18,9 +15,6 @@ public class TeacherController {
     public TeacherController(TeacherService teacherService){
         this.teacherService=teacherService;
     }
-
-    @GetMapping("API/teacher/getAllTeachersGroup")
-    public HashMap<TeacherDTO,String> getAllTeachersGrouyp(){return  teacherService.getAllTeachersGroup();}
 
     @GetMapping("API/teacher/getAll/")
     public List<TeacherDTO> getAll(){

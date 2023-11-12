@@ -7,5 +7,4 @@ import java.util.Optional;
 public interface TeacherService {
     List<TeacherDTO> getAll();
     Teacher getById(Long id);
-    HashMap<TeacherDTO, String> getAllTeachersGroup();
 }
