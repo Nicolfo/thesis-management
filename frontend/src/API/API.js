@@ -1,5 +1,7 @@
 "use strict";
 
+import {thin} from "@fortawesome/fontawesome-svg-core/import.macro";
+
 const SERVER_URL = "http://localhost:8080/API/";
 
 /**
@@ -43,21 +45,33 @@ const login = async (credentials) => {
             },
             body: JSON.stringify(credentials),
         })
-    )
+    );
 };
 
+const getProposalsByProf = async () => {
+    return getJson(fetch(SERVER_URL + 'proposal/getByProf'));
+}
 
-const getAllTeacherGroups = async () => {
-    return getJson(fetch(SERVER_URL + ''))
+const getAllTeachersGroups = async () => {
+    const response = await fetch(SERVER_URL + 'prof/getAll/');
+    const teachers = await response.json();
+    if (response.ok)
+        return teachers.map((t) => ({id: t.id, surname: t.surname, name: t.name, email: t.email, group: JSON.parse(t.group), department: JSON.parse(t.department)}));
+    else
+        throw teachers;
+}
+
+const getAllCds = async () => {
+    return getJson(fetch(SERVER_URL + 'Degree/getAllNames'));
 }
 
 const insertProposal = async (proposal) => {
-    return getJson(fetch(SERVER_URL + '', {
+    return getJson(fetch(SERVER_URL + `proposal/insert/{proposal}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(Object.assign({}, proposal))
+        body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
     }))
 };
 
@@ -257,5 +271,5 @@ const getAllProposals = async () => {
     ];
 }
 
-const API = { login, getAllProposals, getAllTeacherGroups, insertProposal };
+const API = { login, getAllProposals, getAllTeachersGroups, getAllCds, getProposalsByProf, insertProposal };
 export default API;

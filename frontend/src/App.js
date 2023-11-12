@@ -9,7 +9,8 @@ import Navigation from "./Navigation/Navigation";
 import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import InsertProposal from "./Content/InsertProposal";
+import InsertUpdateProposal from "./Content/InsertUpdateProposal";
+import API from "./API/API";
 
 
 function Content(props) {
@@ -28,7 +29,10 @@ function Content(props) {
       return <LoginLayout user={user} setUser={setUser}/>
 
     case "/insertProposal":
-      return <InsertProposal/>
+      return <InsertUpdateProposal user={user} />
+
+    case "/updateProposal/:proposalID":
+      return <InsertUpdateProposal user={user} proposals={props.proposals} />
 
     default:
       return <h1>Path not found</h1>
@@ -51,6 +55,7 @@ function App() {
   const [realDate, setRealDate] = useState(dayjs());
   const [offsetDate, setOffsetDate] = useState(0);
   const [applicationDate, setApplicationDate] = useState(dayjs());
+  const [proposals, setProposals] = useState([]);
 
   const updateApplicationDate = dateStr => {
     let date = dayjs(dateStr);
@@ -63,8 +68,15 @@ function App() {
   };
 
   useEffect(() => {
-    setRealDate(dayjs());
-    setApplicationDate(realDate.add(offsetDate, "day"));
+    const setDateAndProposals = async () => {
+      setRealDate(dayjs());
+      setApplicationDate(realDate.add(offsetDate, "day"));
+
+      const proposals = await API.getAllProposals();
+      setProposals(proposals);
+    }
+
+    setDateAndProposals;
   },[]);
 
   return (
@@ -72,7 +84,7 @@ function App() {
         <div className="row align-items-start">
           <Router>
             <div>
-              <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}>
+              <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} proposals={proposals} >
               </Content>
             </div>
           </Router>

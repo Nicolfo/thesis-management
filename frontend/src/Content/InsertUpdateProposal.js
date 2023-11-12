@@ -1,33 +1,58 @@
 import {Alert, Button, Card, Col, Form, Row} from "react-bootstrap";
 import { MultiSelect } from "react-multi-select-component";
 import {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 import dayjs from "dayjs";
 import API from "../API/API";
 
 
-function InsertProposal() {
+function InsertUpdateProposal(props) {
+    const { proposalID } = useParams();
 
-    const [title, setTitle] =  useState("");
-    const [level, setLevel] =  useState("");
-    const [notes, setNotes] =  useState("");
-    const [knowledge, setKnowledge] = useState("");
-    const [description, setDescription] = useState("");
-    const [date, setDate] = useState("");
+    // If edit then update
+    const edit = proposalID && props.proposals.find( (p) => p.id === parseInt(proposalID));
+    //
+    const [supervisor, setSupervisor] = useState("");
+    const [title, setTitle] =  useState(edit ? edit.title : "");
+    const [level, setLevel] =  useState(edit ? edit.level : "");
+    const [notes, setNotes] =  useState(edit ? edit.notes : "");
+    const [knowledge, setKnowledge] = useState(edit ? edit.requiredKnowledge : "");
+    const [description, setDescription] = useState(edit ? edit.description : "");
+    const [date, setDate] = useState(edit ? edit.expiration.format("YYYY-MM-DD") : "");
     const [typeList, setTypeList] = useState([""]);
     const [keywordsList, setKeywordsList] = useState([""]);
+    const [teacherList, setTeacherList] = useState([]);
+    const [cdsList, setCdsList] = useState([""]);
+    const [cds, setCds] = useState(edit ? edit.CdS : "");
     const [optionsSupervisors, setOptionsSupervisors] = useState([]);
     const [selectedSupervisors, setSelectedSupervisors] = useState([]);
     const [alert, setAlert] = useState(false);
+    const [isValidTitle, setIsValidTitle] = useState(true);
+    const [isValidDescription, setIsValidDescription] = useState(true);
     const [validated, setValidated] = useState(false);
 
 
     useEffect(() => {
-        const getAllTeacherGroups = async () => {
-            try{
-                const
+        const getAllTeachersGroupsCds = async () => {
+            try {
+                const teachers = await API.getAllTeachersGroups();
+                setTeacherList(teachers);
+
+                let supervisors = {};
+                (teachers).map( (t) => { supervisors['label'] = `${t.surname} ${t.name}`; supervisors['value'] = t.id } );
+                setOptionsSupervisors(supervisors);
+
+                const cds = await API.getAllCds();
+                setCdsList(cds);
+
+            } catch (err) {
+                console.log(err);
             }
-        }
+        };
+
+        getAllTeachersGroupsCds();
     }, [])
+
 
     const addType = () => {
         setTypeList([...typeList, ""] );
@@ -77,13 +102,16 @@ function InsertProposal() {
         else {
             const proposal = {
                 title: title,
+                coSupervisors: teacherList.filter( (t) => selectedSupervisors.some( (s) => s.value === t.id)),
+                // groups: inserire il gruppo del teacher loggato oltre a quelli dei co-supervisors
                 keywords: keywordsList.join(", "),
                 type: typeList.join(", "),
                 description: description,
                 requiredKnowledge: knowledge,
                 notes: notes,
                 level: level,
-                expiration: dayjs(date).format("YYYY-MM-DD")
+                expiration: dayjs(date).format("YYYY-MM-DD"),
+                CdS: cds
             }
 
             insertProposal(proposal);
@@ -108,9 +136,21 @@ function InsertProposal() {
                                 type="text"
                                 placeholder="Title"
                                 value={title}
-                                onChange={ev => setTitle(ev.target.value)}
+                                isInvalid={!isValidTitle}
+                                onChange={ (ev) => {
+                                        if ((ev.target.value.trim()).length > 0 ) {
+                                            setTitle(ev.target.value);
+                                            setIsValidTitle(true);
+                                        } else {
+                                            setTitle(ev.target.value);
+                                            setIsValidTitle(false);
+                                        }
+                                    }
+                                }
                             />
-                            <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
+                            { !isValidTitle &&
+                                <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
+                            }
                         </Form.Group>
                     </Row>
                     {/* SUPERVISOR & CO-SUPERVISORS */}
@@ -214,15 +254,13 @@ function InsertProposal() {
                     <Row style={{"marginTop": "1rem"}} >
                         <Form.Floating>
                             <Form.Control
-                                required
                                 as="textarea"
                                 type="text"
                                 placeholder="Required knowledge"
                                 value={knowledge}
-                                onChange={ev=> setKnowledge(ev.target.value)}
+                                onChange={ev => setKnowledge(ev.target.value)}
                             />
                             <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Required knowledge </label>
-                            <Form.Control.Feedback type="invalid"> Please provide the required knowledge for the thesis </Form.Control.Feedback>
                         </Form.Floating>
                     </Row>
                     <Row style={{"marginTop": "1rem"}} >
@@ -233,10 +271,22 @@ function InsertProposal() {
                                 type="text"
                                 placeholder="Description"
                                 value={description}
-                                onChange={ev=> setDescription(ev.target.value)}
+                                isInvalid={!isValidDescription}
+                                onChange={ (ev) => {
+                                        if ((ev.target.value.trim()).length > 0 ) {
+                                            setDescription(ev.target.value);
+                                            setIsValidDescription(true);
+                                        } else {
+                                            setDescription(ev.target.value);
+                                            setIsValidDescription(false);
+                                        }
+                                    }
+                                }
                             />
                             <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Description </label>
-                            <Form.Control.Feedback type="invalid"> Please provide a description for the thesis </Form.Control.Feedback>
+                            { !isValidDescription &&
+                                <Form.Control.Feedback type="invalid"> Please provide a description for the thesis </Form.Control.Feedback>
+                            }
                         </Form.Floating>
                     </Row>
                     {/* EXPIRATION DATE & CDS */}
@@ -256,8 +306,12 @@ function InsertProposal() {
                         </Form.Group>
                         <Form.Group as={Col} >
                             <Form.Label> CDS </Form.Label>
-                            <Form.Select>
-
+                            <Form.Select value={cds} onChange={ev => setCds(ev.target.value)} >
+                                {
+                                    cdsList.map( (cds) => {
+                                        return (<option value={cds}> {cds} </option>)
+                                    })
+                                }
                             </Form.Select>
                         </Form.Group>
                     </Row>
@@ -274,4 +328,4 @@ function InsertProposal() {
     );
 }
 
-export default InsertProposal;
+export default InsertUpdateProposal;
