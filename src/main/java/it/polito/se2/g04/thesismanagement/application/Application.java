@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
 import java.util.Date;
 
@@ -20,7 +21,7 @@ public class Application {
     private Long id;
     @ManyToOne
     private Student student;
-    @OneToOne
+    @OneToOne(fetch=FetchType.LAZY)
     private Attachment attachment;
     private Date applyDate;
     @ManyToOne

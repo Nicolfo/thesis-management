@@ -8,15 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +24,9 @@ public class ApplicationServiceImpl implements ApplicationService{
     private final ProposalRepository proposalRepository;
 
     @Override
-    public List<Application> getApplicationsByProf(String profEmail) {
-        return applicationRepository.getApplicationByProposal_Supervisor_Email(profEmail);
+    public List<ApplicationDTO2> getApplicationsByProf(String profEmail) {
+        List<Application> toReturn=applicationRepository.getApplicationByProposal_Supervisor_Email(profEmail);
+        return toReturn.stream().map(it->new ApplicationDTO2(it.getId(),it.getStudent().getId(),it.getAttachment().getAttachmentId(),it.getApplyDate(),it.getProposal().getId(),it.getStatus())).collect(Collectors.toList());
     }
 
     @Override
