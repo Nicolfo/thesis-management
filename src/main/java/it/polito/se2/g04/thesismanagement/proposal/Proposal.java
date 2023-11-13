@@ -10,14 +10,39 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
 public class Proposal {
+
+    public boolean Update(Proposal proposal){
+        Class<?> clazz=this.getClass();
+        boolean result=false;
+
+        Field[] fields=clazz.getDeclaredFields();
+        for (Field field: fields){
+            field.setAccessible(true);
+            try{
+                Object thisVariable=field.get(this);
+                Object otherVariable=field.get(proposal);
+                if(!Objects.equals(thisVariable,otherVariable)){
+                    field.set(this,otherVariable);
+                    result=true;
+                }
+            }catch(IllegalAccessException e){
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+
     @Id
     private Long id;
     private String title;

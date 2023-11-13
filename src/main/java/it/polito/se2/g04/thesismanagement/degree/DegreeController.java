@@ -1,6 +1,7 @@
 package it.polito.se2.g04.thesismanagement.degree;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ public class DegreeController {
     }
 
     @GetMapping("/API/Degree/getAllNames")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public List<String> getAllNames(){
         return degreeService.getAllName();
     }

@@ -12,8 +12,8 @@ public class ProposalExceptions {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
 
-    @ExceptionHandler(createProposalWithNoPathVariable.class)
-    public ProblemDetail handleServiceNotFound(createProposalWithNoPathVariable e){
+    @ExceptionHandler(createUpdateProposalWithNoPathVariable.class)
+    public ProblemDetail handleServiceNotFound(createUpdateProposalWithNoPathVariable e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
 }
@@ -22,8 +22,8 @@ class JsonStringCantDeserialize extends RuntimeException{
     public JsonStringCantDeserialize(String msg) {super(msg);}
 }
 
-class createProposalWithNoPathVariable extends RuntimeException {
-    public createProposalWithNoPathVariable(String message) {
+class createUpdateProposalWithNoPathVariable extends RuntimeException {
+    public createUpdateProposalWithNoPathVariable(String message) {
         super(message);
     }
 }
