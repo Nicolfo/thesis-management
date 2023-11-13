@@ -36,8 +36,7 @@ public class Student {
     @JoinColumn(name = "COD_DEGREE")
     private Degree degree;
 
-    @OneToMany(mappedBy = "student")
-    private List<Career> grades;
+
 
     private int enrollmentYear;
 
