@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import API from "../API/API";
+import API from "../API/Api";
 import {Button, Table} from "react-bootstrap";
 import dayjs from 'dayjs';
 
@@ -31,6 +31,7 @@ function BrowseApplicationsContent(props) {
                     <th>Title</th>
                     <th>Apply date</th>
                     <th>Student</th>
+                    <th>Average grades</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -79,6 +80,7 @@ function ApplicationRow(props) {
             <td>{ title }</td>
             <td>{ dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss') }</td>
             <td>{ userInfo }</td>
+            <td>MEDIA VOTI</td>
             <td>
                 <Button variant="success" onClick={() => handleAccept(props.application.id)}>Accept</Button>{' '}
                 <Button variant="danger" onClick={() => handleReject(props.application.id)}>Reject</Button>{' '}
