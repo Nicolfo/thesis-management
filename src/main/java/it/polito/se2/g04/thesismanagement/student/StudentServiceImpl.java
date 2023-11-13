@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.student;
 
+import it.polito.se2.g04.thesismanagement.career.CareerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
     private final StudentRepository studentRepository;
+    private final CareerRepository careerRepository;
 
     @Override
     public String getStudentFullName(Long studentId) {
@@ -20,7 +22,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public double getAverageMarks(Long studentId) {
-        return studentRepository.getReferenceById(studentId).getGrades().stream().mapToInt(it->it.getGrade()).average().orElse(0);
+        return careerRepository.getCareersByStudent_Id(studentId).stream().mapToInt(it->it.getGrade()).average().orElse(0);
     }
 
     public StudentDTO getStudentInfo(Long id){
