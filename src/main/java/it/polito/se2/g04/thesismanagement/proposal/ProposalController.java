@@ -44,9 +44,9 @@ public class ProposalController {
         return proposalService.getProposalsByProf(username);
     }
 
-    @GetMapping("API/proposal/getTitleByProposalId")
+    @GetMapping("/API/proposal/getTitleByProposalId/{proposalId}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  String getTitleByProposalId(Long proposalId){
+    public String getTitleByProposalId(@PathVariable Long proposalId) {
         return proposalService.getTitleByProposalId(proposalId);
     }
 }
