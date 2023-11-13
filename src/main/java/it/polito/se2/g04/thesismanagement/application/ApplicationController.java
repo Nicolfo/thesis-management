@@ -38,7 +38,7 @@ public class ApplicationController {
 
     }
 
-    @GetMapping("/API/applicatio/getApplicationsByProposal")
+    @GetMapping("/API/application/getApplicationsByProposal")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public  List<Application> getApplicationByProposal(Long proposalId){
         return applicationService.getApplicationsByProposal(proposalId);
@@ -65,4 +65,9 @@ public class ApplicationController {
     }
 
 
+    @GetMapping("API/application/getTitleByApplicationId")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  String getTitleByApplicationId(Long applicationId){
+        return applicationService.getTitleByApplicationId(applicationId);
+    }
 }

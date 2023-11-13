@@ -1,8 +1,6 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.proposal.ProposalNotFoundException;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalOwnershipException;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
+import it.polito.se2.g04.thesismanagement.proposal.*;
 import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +40,18 @@ public class ApplicationServiceImpl implements ApplicationService{
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
     }
 
+    public String getTitleByApplicationId(Long applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found with id: " + applicationId));
 
+        Proposal proposal = application.getProposal();
+
+        if (proposal == null || proposal.getTitle() == null) {
+            return null;
+        }
+
+        return proposal.getTitle();
+    }
 
 
     @Override
@@ -80,9 +89,5 @@ public class ApplicationServiceImpl implements ApplicationService{
         }catch (Exception ex){
             throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
         }
-
     }
-
-
-    //implement method here
 }
