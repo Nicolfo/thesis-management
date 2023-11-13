@@ -17,6 +17,6 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Query
     public List<GroupDTO> getAllGroups() {
-        return groupRepository.getAll().stream().map(g -> new GroupDTO(g.getCodGroup(), g.getName())).toList();
+        return groupRepository.findAll().stream().map(g -> new GroupDTO(g.getCodGroup(), g.getName())).toList();
     }
 }

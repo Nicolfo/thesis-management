@@ -14,6 +14,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     public List<TeacherDTO> getAllTeachers() {
-        return teacherRepository.getAll().stream().map(t -> new TeacherDTO(t.getId(), t.getSurname(), t.getName(), t.getEmail(), t.getGroup(), t.getDepartment())).toList();
+        return teacherRepository.findAll().stream().map(t -> new TeacherDTO(t.getId(), t.getSurname(), t.getName(), t.getEmail(), t.getGroup(), t.getDepartment())).toList();
     }
 }

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class GroupDTO {
 
-    private String codGroup;
+    private Long codGroup;
 
     private String name;
 
