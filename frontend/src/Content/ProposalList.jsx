@@ -7,13 +7,13 @@ function ProposalList(props){
     const navigate = useNavigate();
 
 
-    const shortProposalSchema = ["Id", "Title", "Supervisor","Keywords", "Level", "Groups","Expiration"]
+    const shortProposalSchema = ["Id", "Title", "Supervisor","Keywords", "Level", "cdS","Expiration"]
 
 
     let indexForShortProposal = [0,1,2,4,5,6,10]
 
     let shortProposal = props.listOfProposal.map((e,i) => {
-        return {id: e.id, title: e.title, supervisor: e.supervisor.name, keywords: e.keywords, level: e.level, groups:  e.groups,expiration: e.expiration};
+        return {id: e.id, title: e.title, supervisor: e.supervisor.name, keywords: e.keywords, level: e.level, cdS:e.cdS ,expiration: e.expiration};
         //return e.filter((item, index) => indexForShortProposal.includes(index))
 
 
@@ -55,7 +55,12 @@ function ProposalList(props){
                                     );
                                 })}</td>)
 
-                            }else{
+                            }
+                            else if(i ==6){
+                                return(<td key={i}>{e.slice(0,10)}</td>)
+
+                            }
+                            else{
                             return( <td key={i}>{e}</td>
 
                             );

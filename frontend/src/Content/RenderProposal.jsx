@@ -8,27 +8,63 @@ function RenderProposal(props){
     let proposal = props.listOfProposal[props.proposalSelected];
     const navigate = useNavigate();
     const [cv, setCv] = useState();
+    let proposalKeys = Object.keys(proposal)
+    let proposalValues = Object.values(proposal)
+    console.log(proposalKeys)
+    console.log(proposalValues)
 
-    const proposalPart = ["Id", "Title", "Supervisor", "CoSupervisors", "Keywords", "Type", "Groups", "Description", "RequiredKnowledge", "Notes", "Expiration"]
+
+    const proposalPart = ["id", "title", "supervisor", "coSupervisors", "keywords", "type", "groups", "description", "requiredKnowledge", "notes", "expiration"]
+
+
+
+
 
     return( <div>
-            <h2>Selected proposal: {proposal[1]}</h2>
-            {proposal.map((el, indx) =>{
+
+            <h2>Selected proposal: {proposal.id}</h2>
+            {proposalValues.map((el, indx) =>{
+
+                if(indx == 2){ //supervisor
+                    return(
+                        <div>
+                            <h5>{proposalKeys[indx]} : </h5>
+                            <p>{el.id}- {el.name} {el.surname}</p>
+                        </div>)
+
+                }else if(indx==3 || indx == 6){ //co supervisor
+                    return(
+                        <div>
+                            <h5>{proposalKeys[indx]} : </h5>
+                            {el.map(e => {return(<p>e</p>)})}
+
+                        </div>)
+
+                } else if(indx == 12){
+
+                } else if(indx == 10){
+                    return(
+                    <div>
+                        <h5>{proposalKeys[indx]} : </h5>
+
+                        <p>{el.slice(0,10)}</p>
+
+                    </div>)
+
+                }
+
+                else{
                 return(
                     <div>
-                        <h5>{proposalPart[indx]} : </h5>
+                        <h5>{proposalKeys[indx]} : </h5>
 
-                        {!Array.isArray(el) ? <p>{el}</p>: <p>{el.map((e,ind) => {
-                            return(
-                            e + " "
-                            );
-                        }) }</p>}
+                         <p>{el}</p>
 
                     </div>
                 );
 
 
-                })
+                }})
             }
             <FormGroup>
                 <FormLabel>Insert your cv to apply</FormLabel>
