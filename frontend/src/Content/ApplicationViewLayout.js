@@ -9,6 +9,7 @@ const SERVER_URL = "http://localhost:8080";
 function ApplicationViewLayout(props) {
     const applicationId = new URLSearchParams(useLocation().search).get("applicationId");
     const [applicationData, setApplicationData] = useState(null);
+    const [studentGradesData, setStudentGradesData] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
 
@@ -17,10 +18,21 @@ function ApplicationViewLayout(props) {
     }, []);
 
     const fetchApplicationData = () => {
-        fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId)
+        return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId)
             .then(response => response.json())
             .then(data => {
                 setApplicationData(data);
+                console.log(data);
+                fetchStudentGradesData(data.student.id);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    const fetchStudentGradesData = (studentId) => {
+        fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId)
+            .then(response => response.json())
+            .then(data => {
+                setStudentGradesData(data);
                 console.log(data);
             })
             .catch(error => console.error('Error:', error));
@@ -43,7 +55,7 @@ function ApplicationViewLayout(props) {
             });
     }
 
-    if (!applicationData) {
+    if (!applicationData || !studentGradesData) {
         return <div>Loading...</div>;
     }
 
@@ -81,11 +93,14 @@ function ApplicationViewLayout(props) {
                                 <Card.Body>
                                     <Card.Text>
                                         Title: {applicationData.proposal.title} <br/>
-                                        Supervisor: {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname} <br/>
-                                        Co-Supervisors: {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')} <br/>
+                                        Supervisor: {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}
+                                        <br/>
+                                        Co-Supervisors: {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}
+                                        <br/>
                                         Keywords: {applicationData.proposal.keywords} <br/>
                                         Type: {applicationData.proposal.type} <br/>
-                                        Groups: {applicationData.proposal.groups.map(group => group.name).join(', ')} <br/>
+                                        Groups: {applicationData.proposal.groups.map(group => group.name).join(', ')}
+                                        <br/>
                                         Description: {applicationData.proposal.description} <br/>
                                         Required Knowledge: {applicationData.proposal.requiredKnowledge} <br/>
                                         Notes: {applicationData.proposal.notes} <br/>
@@ -108,7 +123,16 @@ function ApplicationViewLayout(props) {
                                         Email: {applicationData.student.email} <br/>
                                         Degree: {applicationData.student.degree.codDegree} <br/>
                                         Enrollment Year: {applicationData.student.enrollmentYear} <br/>
-                                        Grades: {applicationData.student.grades.join(', ')}
+                                        Grades: <br/>
+                                        {studentGradesData.length > 0 ? (
+                                            <ul>
+                                                {studentGradesData.map((grade, index) => (
+                                                    <li key={index}>{grade.titleCourse}: {grade.grade}</li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            "No grades available."
+                                        )}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
