@@ -68,7 +68,7 @@ function App() {
         <Router>
           <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
           <div className="row g-0">
-            <SideBar></SideBar>
+            <SideBar user={user} />
             <div className="col-10 p-2">
             <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
             </Content>

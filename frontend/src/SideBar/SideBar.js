@@ -1,7 +1,11 @@
 import {useNavigate,useLocation} from 'react-router-dom';
-function SideBar(props){
+function SideBar({ user }){
     const path = useLocation().pathname;
     const navigate = useNavigate();
+
+    const userIsTeacher = () => {
+        return user && user.role === "TEACHER";
+    }
 
     return (
         <div className="d-flex flex-column bg-light p-2 col-2">
@@ -12,13 +16,14 @@ function SideBar(props){
                             Path One (Edit SideBar.js)
                         </button>
                     </li>
-                    <li className="nav-item">
+                    {
+                        
+                        <li className="nav-item">
                         <button className={path==='/teacher/proposal/browse' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/teacher/proposal/browse')}} >
                             My thesis proposals
                         </button>
-                    </li>
-
-
+                        </li>
+                    }
                 </ul>
 
         </div>
