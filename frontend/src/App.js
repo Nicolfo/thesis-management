@@ -45,17 +45,12 @@ function App() {
 
 
 //MOCK DATA
-  let pro1 = [1, "Ai nel tempo", "Lia Morra", ["Antonio", "Gianni"], ["Ai", "Time"], "Master", ["C1", "C2"], "Nel tempo bla bla", "ai2", "No notes", "25/9/2024"]
-  let pro2 = [2, "L'inter la storia", "Simone Inzaghi", ["Adriano", "Milito"], ["Inter", "Milano"], "Bachelor", "F1", "La storia dell'inter nel 2010", "scienze motorie 1", "No notes", "25/9/2023"]
-  let pro3 = [3, "Explainable ai", "Lia Morra", ["Antonio"], "Ai", "Master", ["C1", "C2"], "The challenge of the new era", "ai2", "No notes", "25/9/2024"]
-  let proposalList = [pro1, pro2, pro3];
-  let professorsList = ["Andrea", "Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
   const listOfFilters = ["Professor", "Type"];
   const correspondingFields = [2,5]
-  const [listOfProposal, setListOfProposal] = useState(proposalList)
+  const [listOfProposal, setListOfProposal] = useState([])
 
-  const [listOfSupervisors, setListOfSupervisors] = useState(professorsList)
-  const [filteredProposals, setFilteredProposals] = useState(listOfProposal)
+  const [listOfSupervisors, setListOfSupervisors] = useState([])
+  const [filteredProposals, setFilteredProposals] = useState([])
     /*
   We use 3 states to manage the current date and the virtual clock:
     - realDate: this represents the real current date, according to the system. It is refreshed at every render
@@ -93,8 +88,7 @@ function selectFilter(el1, el2, filterType){
   switch(filterType) {
     // by professor
     case 0:
-      console.log(el1.supervisor.name)
-      console.log(el1.supervisor.name == el2)
+
 
       return (el1.supervisor.name == el2)
       break;
@@ -169,12 +163,6 @@ function filterProposals(filters){
 
     getAllSupervisors()
           .then((list) => {setListOfSupervisors(list);})
-
-    //
-    console.log("api called")
-    console.log(clickOnProposal)
-
-
 
   }, [clickOnProposal]);
 

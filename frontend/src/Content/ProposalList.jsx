@@ -14,8 +14,6 @@ function ProposalList(props){
 
     let shortProposal = props.listOfProposal.map((e,i) => {
         return {id: e.id, title: e.title, supervisor: e.supervisor.surname, keywords: e.keywords, level: e.level, cdS:e.cdS ,expiration: e.expiration};
-        //return e.filter((item, index) => indexForShortProposal.includes(index))
-
 
     })
 
@@ -82,7 +80,7 @@ function ProposalList(props){
 
 function SearchBar(props){
     //let professorsList = ["Andrea", "Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
-    let professorsList = props.listOfSupervisors.map((prof,i) => {return (prof.name)})
+    let professorsList = props.listOfSupervisors.map((prof,i) => {return (prof.surname)})
 
     let typeList = ["Bachelor", "Master"]
     const [professor, setProfessor] = useState("All");

@@ -11,8 +11,7 @@ function RenderProposal(props){
     const [cv, setCv] = useState();
     let proposalKeys = Object.keys(proposal)
     let proposalValues = Object.values(proposal)
-    console.log(proposalKeys)
-    console.log(proposalValues)
+
 
 
     const proposalPart = ["id", "title", "supervisor", "coSupervisors", "keywords", "type", "groups", "description", "requiredKnowledge", "notes", "expiration"]
@@ -76,7 +75,6 @@ function RenderProposal(props){
             <p> </p>
             <Button onClick={()=> {
                 uploadFile(cv).then((id) => {
-                    console.log("iddd" + id)
                     insertApplication(id, proposal.id)
                 })
                 navigate('/search-for-proposal')
