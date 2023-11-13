@@ -78,7 +78,7 @@ const getAllApplications = async (jwt) => {
 }
 
 const getTitleByProposalId = async (jwt, proposalId) => {
-    return getJson(fetch(SERVER_URL+`/proposal/getTitleByProposalId/${proposalId}`,{
+    return getJson(fetch(SERVER_URL+`proposal/getTitleByProposalId/${proposalId}`,{
         method: 'GET',
         headers:{
             'Content-Type': 'application/json',

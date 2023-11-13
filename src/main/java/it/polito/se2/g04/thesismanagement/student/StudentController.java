@@ -16,7 +16,7 @@ public class StudentController {
         return studentService.getAverageMarks(studentId);
     }
 
-    @GetMapping("/API/application/getNameById")
+    @GetMapping("/API/application/getNameById/{studentId}")
     public String getStudentFullName(Long studentId) {
         return studentService.getStudentFullName(studentId);
     }
