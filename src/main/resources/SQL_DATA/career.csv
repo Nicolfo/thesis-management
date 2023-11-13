@@ -1,0 +1,13 @@
+﻿id,codCourse,titleCourse,CFU,grade,date,student_id
+1,01PDWOV,Information systems,6,25,2020-06-15 09:32:15.123456,300010
+2,01PFPOV,Mobile application development,6,28,2021-04-20 15:45:30.987654,300009
+3,01SQNOV,Software Engineering II,6,30,2022-03-10 12:18:45.234567,300001
+4,01TYMOV,Information systems security,6,18,2020-05-02 08:54:20.345678,300003
+5,01NYHOV,System and device programming,10,27,2021-07-12 14:36:40.876543,300003
+6,02JEUOV,Formal languages and compilers,6,29,2022-08-05 11:27:55.432109,30008
+7,02JSKOV,Human Computer Interaction,6,32,2020-09-14 10:09:10.987654,300005
+8,02LSEOV,Computer architectures,10,28,2021-10-25 16:42:35.543210,300001
+9,01SQJOV,Data Science and Database Technology,8,25,2022-11-08 13:24:50.098765,300010
+10,01OTWOV,Computer network technologies and services,6,24,2020-12-01 11:15:05.654321,300002
+11,04GSPOV,Software engineering,8,26,2021-12-31 17:57:25.210987,300004
+12,01TXYOV,Web Applications I,6,27,2022-01-15 12:03:40.765432,300006
