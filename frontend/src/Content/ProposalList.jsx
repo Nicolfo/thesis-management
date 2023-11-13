@@ -23,7 +23,7 @@ function ProposalList(props){
 
         <div>
             <h2>List of Active Proposal</h2>
-            <SearchBar clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals}></SearchBar>
+            <SearchBar listOfSupervisors={props.listOfSupervisors} clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals}></SearchBar>
 
 
             {shortProposal.map((proposal, index)=>{
@@ -76,7 +76,9 @@ function ProposalList(props){
 
 
 function SearchBar(props){
-    let professorsList = ["Andrea", "Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
+    //let professorsList = ["Andrea", "Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
+    let professorsList = props.listOfSupervisors.map((prof,i) => {return (prof.name)})
+
     let typeList = ["Bachelor", "Master"]
     const [professor, setProfessor] = useState("All");
     const [type, setType] = useState("All")

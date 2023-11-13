@@ -25,7 +25,7 @@ function Content(props) {
     case "/":
       return <b>Home page</b>
     case "/search-for-proposal":
-      return <ProposalList clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
+      return <ProposalList listOfSupervisors={props.listOfSupervisors} clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
     case "/see-proposal":
       return <RenderProposal listOfProposal={props.listOfProposal} proposalSelected={props.proposalSelected}></RenderProposal>
     case "/login":
@@ -166,10 +166,10 @@ function filterProposals(filters){
 
     getAllProposal()
           .then((list)=> { setListOfProposal(Array.from(Object.values(list))); setFilteredProposals(Array.from(Object.values(list)))})
- /*
-    getAllSupervisors
+
+    getAllSupervisors()
           .then((list) => {setListOfSupervisors(list);})
-          */
+
     //
     console.log("api called")
     console.log(clickOnProposal)
@@ -187,7 +187,7 @@ function filterProposals(filters){
             <SideBar searchForProposalClicked={searchForProposalClicked}>
             </SideBar>
              <div className="col-10 p-2">
-              <Content clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}/>
+              <Content listOfSupervisors={listOfSupervisors} clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}/>
             </div>
           </div>
         </Router>

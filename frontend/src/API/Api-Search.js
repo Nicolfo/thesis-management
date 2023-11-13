@@ -35,6 +35,6 @@ export async function getAllProposal() {
 };
 
 export async function getAllSupervisors() {
-    return getJson( fetch(URL + '/API/prof/getAll'));
+    return getJson( fetch(URL + '/API/teacher/getAll'));
 };
 
