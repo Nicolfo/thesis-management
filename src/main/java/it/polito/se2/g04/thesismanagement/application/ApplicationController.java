@@ -32,7 +32,7 @@ public class ApplicationController {
 
     @GetMapping("/API/application/getByProf")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public List<Application> getAllByProf(){
+    public List<ApplicationDTO2> getAllByProf(){
         UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return applicationService.getApplicationsByProf(auth.getUsername());
 

@@ -1,12 +1,14 @@
 package it.polito.se2.g04.thesismanagement.student;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/API/student")
+@CrossOrigin
 public class StudentController {
 
     @Autowired
@@ -14,6 +16,11 @@ public class StudentController {
 
     @Autowired
     private StudentRepository studentRepository;
+  
+    @GetMapping("/API/student/getAverageMarks/{studentId}")
+    public double getAverage(@PathVariable Long studentId){
+        return studentService.getAverageMarks(studentId);
+    }
 
     @GetMapping("/API/application/getNameById")
     public StudentDTO getStudentInfo(Long studentId) {
@@ -23,4 +30,6 @@ public class StudentController {
 
         return new StudentDTO(student.getName() + " " + student.getSurname());
     }
-}
+
+
+
