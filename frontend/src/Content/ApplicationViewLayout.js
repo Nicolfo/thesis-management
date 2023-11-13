@@ -65,7 +65,10 @@ function ApplicationViewLayout(props) {
                             <Card.Header as="h5">Application Information</Card.Header>
                             <Card.Body>
                                 <Card.Text>
-                                    Attachment: {applicationData.attachment} <br/>
+                                    Attachment: {applicationData.attachment ?
+                                    <a href={`${SERVER_URL}/API/getFile/${applicationData.attachment.attachmentId}`}
+                                       download>Download</a>
+                                    : 'No attachment'} <br/>
                                     Apply Date: {new Date(applicationData.applyDate).toLocaleString('it-IT')} <br/>
                                     Accepted: {applicationData.accepted ? 'Yes' : 'No'}
                                 </Card.Text>
@@ -78,11 +81,11 @@ function ApplicationViewLayout(props) {
                                 <Card.Body>
                                     <Card.Text>
                                         Title: {applicationData.proposal.title} <br/>
-                                        Supervisor: {applicationData.proposal.supervisor.name} <br/>
-                                        Co-Supervisors: {applicationData.proposal.coSupervisors.join(', ')} <br/>
+                                        Supervisor: {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname} <br/>
+                                        Co-Supervisors: {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')} <br/>
                                         Keywords: {applicationData.proposal.keywords} <br/>
                                         Type: {applicationData.proposal.type} <br/>
-                                        Groups: {applicationData.proposal.groups.join(', ')} <br/>
+                                        Groups: {applicationData.proposal.groups.map(group => group.name).join(', ')} <br/>
                                         Description: {applicationData.proposal.description} <br/>
                                         Required Knowledge: {applicationData.proposal.requiredKnowledge} <br/>
                                         Notes: {applicationData.proposal.notes} <br/>
