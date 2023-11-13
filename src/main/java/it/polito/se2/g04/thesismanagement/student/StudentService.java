@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-public interface class StudentService {
+public interface StudentService {
 
     public String getStudentFullName(Long studentId);
 
     public double getAverageMarks(Long studentId);
+    public StudentDTO getStudentInfo(Long id);
 
 }
