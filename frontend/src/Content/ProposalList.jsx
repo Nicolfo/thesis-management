@@ -13,7 +13,7 @@ function ProposalList(props){
     let indexForShortProposal = [0,1,2,4,5,6,10]
 
     let shortProposal = props.listOfProposal.map((e,i) => {
-        return {id: e.id, title: e.title, supervisor: e.supervisor.name, keywords: e.keywords, level: e.level, cdS:e.cdS ,expiration: e.expiration};
+        return {id: e.id, title: e.title, supervisor: e.supervisor.surname, keywords: e.keywords, level: e.level, cdS:e.cdS ,expiration: e.expiration};
         //return e.filter((item, index) => indexForShortProposal.includes(index))
 
 

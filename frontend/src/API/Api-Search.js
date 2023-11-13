@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 const URL = 'http://localhost:8080';
 
 
@@ -38,3 +39,29 @@ export async function getAllSupervisors() {
     return getJson( fetch(URL + '/API/teacher/getAll'));
 };
 
+export async function uploadFile(file){
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+    let respJson;
+    let response;
+    try { response = await fetch(URL +'/API/uploadFile', {
+        method: "POST",body: formData,
+    });  respJson = await response.json();
+    } catch (e) { console.log(e); throw {status: 404, detail: "Cannot communicate with server"}
+    }        return respJson
+}
+
+export async function insertApplication(cvId, proposalId) {
+    fetch(URL + '/API/application/insert', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            attachmentID: cvId.id,
+            applyDate:dayjs(),
+            proposalID: proposalId,
+
+        }),
+    }
+)};
