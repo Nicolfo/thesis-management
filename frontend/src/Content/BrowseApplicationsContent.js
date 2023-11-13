@@ -12,6 +12,7 @@ function BrowseApplicationsContent(props) {
     useEffect(() => {
         const getApplications = async () => {
             try {
+                console.log("TOKEN", props.user.token);
                 const applications = await API.getAllApplications(props.user.token);
                 setApplications(applications);
             } catch (error) {
@@ -47,23 +48,32 @@ function BrowseApplicationsContent(props) {
 function ApplicationRow(props) {
 
     const [title, setTitle] = useState('');
-    const [userInfo, setUserInfo] = useState('');
+    const [studentFullName, setStudentFullName] = useState('');
+    const [averageMarks, setAverageMarks] = useState(0);
 
 
     useEffect(() => {
-        const getTitleByApplicationId = async () => {
-            const title = await API.getTitleByApplicationId(props.user.token, props.application.id);
+        const getTitleByProposalId = async () => {
+            const title = await API.getTitleByProposalId(props.user.token, props.application.proposalId);
             setTitle(title);
         }
-        getTitleByApplicationId();
+        getTitleByProposalId();
     }, []);
 
     useEffect(() => {
-        const getStudentInfo = async () => {
-            const userInfo = await API.getStudentInfo(props.user.token, props.application.student_id);
-            setUserInfo(userInfo);
+        const getStudentFullName = async () => {
+            const userInfo = await API.getStudentFullName(props.user.token, props.application.studentId);
+            setStudentFullName(userInfo);
         }
-        getStudentInfo();
+        getStudentFullName();
+    }, []);
+
+    useEffect(() => {
+        const getAverageMarks = async () => {
+            const averageMarks = await API.getAverageMarks(props.user.token, props.application.studentId);
+            setAverageMarks(averageMarks);
+        }
+        getAverageMarks();
     }, []);
 
     const handleAccept = (id) => {
@@ -79,8 +89,8 @@ function ApplicationRow(props) {
         <tr>
             <td>{ title }</td>
             <td>{ dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss') }</td>
-            <td>{ userInfo }</td>
-            <td>MEDIA VOTI</td>
+            <td>{ studentFullName }</td>
+            <td>{ averageMarks }</td>
             <td>
                 <Button variant="success" onClick={() => handleAccept(props.application.id)}>Accept</Button>{' '}
                 <Button variant="danger" onClick={() => handleReject(props.application.id)}>Reject</Button>{' '}

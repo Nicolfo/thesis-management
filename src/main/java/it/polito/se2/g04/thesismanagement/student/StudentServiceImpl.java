@@ -22,10 +22,4 @@ public class StudentServiceImpl implements StudentService{
     public double getAverageMarks(Long studentId) {
         return studentRepository.getReferenceById(studentId).getGrades().stream().mapToInt(it->it.getGrade()).average().orElse(0);
     }
-
-    public StudentDTO getStudentInfo(Long id){
-       Student student= studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
-        return new StudentDTO(student.getName() + " " + student.getSurname());
-    }
 }

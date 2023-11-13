@@ -77,8 +77,8 @@ const getAllApplications = async (jwt) => {
     }));
 }
 
-const getTitleByApplicationId = async (jwt, applicationId) => {
-    return getJson(fetch(SERVER_URL+`/application/getTitleByApplicationId/${applicationId}`,{
+const getTitleByProposalId = async (jwt, proposalId) => {
+    return getJson(fetch(SERVER_URL+`/proposal/getTitleByProposalId/${proposalId}`,{
         method: 'GET',
         headers:{
             'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const getTitleByApplicationId = async (jwt, applicationId) => {
     }));
 }
 
-const getStudentInfo = async (jwt, id) => {
+const getStudentFullName = async (jwt, id) => {
     return getJson(fetch(SERVER_URL+`application/getNameById/${id}`,{
         method: 'GET',
         headers:{
@@ -97,7 +97,17 @@ const getStudentInfo = async (jwt, id) => {
     }));
 }
 
+const getAverageMarks = async (jwt, id) => {
+    return getJson(fetch(SERVER_URL+`student/getAverageMarks/${id}`,{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
 
 
-const API = { login, getAllApplications, getTitleByApplicationId, getStudentInfo, getAllProposals, getProposalsByProf };
+
+const API = { login, getAllApplications, getTitleByProposalId, getStudentFullName, getAllProposals, getProposalsByProf, getAverageMarks };
 export default API;

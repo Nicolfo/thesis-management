@@ -9,6 +9,5 @@ public interface StudentService {
     public String getStudentFullName(Long studentId);
 
     public double getAverageMarks(Long studentId);
-    public StudentDTO getStudentInfo(Long id);
 
 }

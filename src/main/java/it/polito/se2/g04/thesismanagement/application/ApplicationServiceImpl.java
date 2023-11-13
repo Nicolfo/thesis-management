@@ -40,19 +40,6 @@ public class ApplicationServiceImpl implements ApplicationService{
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
     }
 
-    public String getTitleByApplicationId(Long applicationId) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found with id: " + applicationId));
-
-        Proposal proposal = application.getProposal();
-
-        if (proposal == null || proposal.getTitle() == null) {
-            return null;
-        }
-
-        return proposal.getTitle();
-    }
-
 
     @Override
     public void applyForProposal( ApplicationDTO applicationDTO) {

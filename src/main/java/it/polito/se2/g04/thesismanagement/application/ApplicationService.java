@@ -14,6 +14,4 @@ public interface ApplicationService {
     public void declineApplication(Long applicationId);
 
     //add method here
-
-    public String getTitleByApplicationId(Long applicationId);
 }

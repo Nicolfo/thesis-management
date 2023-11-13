@@ -35,7 +35,6 @@ public class ApplicationController {
     public List<ApplicationDTO2> getAllByProf(){
         UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return applicationService.getApplicationsByProf(auth.getUsername());
-
     }
 
     @GetMapping("/API/application/getApplicationsByProposal")
@@ -62,12 +61,5 @@ public class ApplicationController {
     public void declineApplication(@PathVariable Long applicationId){
         //TODO:check if the current user is a TEACHER
         applicationService.declineApplication(applicationId);
-    }
-
-
-    @GetMapping("API/application/getTitleByApplicationId")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  String getTitleByApplicationId(Long applicationId){
-        return applicationService.getTitleByApplicationId(applicationId);
     }
 }
