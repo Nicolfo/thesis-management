@@ -17,7 +17,7 @@ function SideBar({ user }){
                         </button>
                     </li>
                     {
-                        
+                        userIsTeacher() &&
                         <li className="nav-item">
                         <button className={path==='/teacher/proposal/browse' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/teacher/proposal/browse')}} >
                             My thesis proposals

@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class UserController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
 
-            return new JwtDTO(jwtService.generateToken(authRequest.getUsername()),authRequest.getUsername());
+            return new JwtDTO(jwtService.generateToken(authRequest.getUsername()),authRequest.getUsername(), authentication.getAuthorities().stream().findFirst().get().toString());
         } else {
             System.out.println("User not found");
             throw new UsernameNotFoundException("invalid user request !");
