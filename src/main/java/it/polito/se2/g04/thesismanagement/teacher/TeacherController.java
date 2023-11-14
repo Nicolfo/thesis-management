@@ -1,10 +1,7 @@
 package it.polito.se2.g04.thesismanagement.teacher;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,13 +23,13 @@ public class TeacherController {
 
     @GetMapping("API/teacher/getById/{id}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public Teacher getById(Long id){
+    public Teacher getById(@PathVariable Long id){
         return teacherService.getById(id);
     }
 
     @GetMapping("API/teacher/getByEmail/{email}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public Teacher getByEmail(String email){
+    public Teacher getByEmail(@PathVariable String email){
         return teacherService.getByEmail(email);
     }
 
