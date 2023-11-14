@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,10 +17,27 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Proposal {
+
+    public Proposal(String title, Teacher supervisor, List<Teacher> coSupervisors, String keywords, String type, List<Group> groups, String description, String requiredKnowledge, String notes, Date expiration, String level, String cdS) {
+        this.title = title;
+        this.supervisor = supervisor;
+        this.coSupervisors = coSupervisors;
+        this.keywords = keywords;
+        this.type = type;
+        this.groups = groups;
+        this.description = description;
+        this.requiredKnowledge = requiredKnowledge;
+        this.notes = notes;
+        this.expiration = expiration;
+        this.level = level;
+        this.CdS = cdS;
+    }
+
 
     public boolean Update(Proposal proposal){
         Class<?> clazz=this.getClass();
