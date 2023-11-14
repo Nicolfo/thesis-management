@@ -24,21 +24,24 @@ function BrowseApplicationsContent(props) {
 
     return (
         <>
+        <div className="bordered-box mt-5 pe-3 ms-5 me-5">
             <h1>Applications</h1>
-            <Table striped hover>
-                <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Apply date</th>
-                    <th>Student</th>
-                    <th>Average grades</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                { applications.map(application => <ApplicationRow application={application} user={props.user}/>) }
-                </tbody>
-            </Table>
+            <hr className="separator" />
+                <Table striped hover className="mb-4">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Apply date</th>
+                        <th>Student</th>
+                        <th>Average grades</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    { applications.map(application => <ApplicationRow application={application} user={props.user}/>) }
+                    </tbody>
+                </Table>
+        </div>
         </>
     );
 }
@@ -46,25 +49,17 @@ function BrowseApplicationsContent(props) {
 
 function ApplicationRow(props) {
 
-    const handleAccept = (id) => {
-    };
-
-    const handleReject = (id) => {
-    };
-
-    const handleViewPDF = (pdfUrl) => {
+    const handleViewInfo = (id) => {
     };
 
     return (
         <tr>
-            <td>{ props.application.title }</td>
+            <td>{ props.application.proposalTitle }</td>
             <td>{ dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss') }</td>
             <td>{ props.application.studentName} {props.application.studentSurname}</td>
             <td>{ props.application.studentAverageGrades }</td>
             <td>
-                <Button variant="success" onClick={() => handleAccept(props.application.id)}>Accept</Button>{' '}
-                <Button variant="danger" onClick={() => handleReject(props.application.id)}>Reject</Button>{' '}
-                <Button onClick={() => handleViewPDF(props.application.pdfUrl)}>View CV</Button>
+                <Button onClick={() => handleViewInfo(props.application.id)}>View info</Button>
             </td>
         </tr>
     )
