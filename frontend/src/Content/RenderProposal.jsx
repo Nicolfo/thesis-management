@@ -1,6 +1,6 @@
 import {insertApplication, uploadFile} from "../API/Api-Search";
 import {map} from "react-bootstrap/ElementChildren";
-import {Form, Button, Col, FormGroup, FormLabel, Row} from "react-bootstrap";
+import {Form, Button, Col, FormGroup, FormLabel, Row, Alert} from "react-bootstrap";
 import {useNavigate} from 'react-router-dom';
 import {useState} from "react";
 
@@ -9,6 +9,8 @@ function RenderProposal(props){
     let proposal = props.listOfProposal[props.proposalSelected];
     const navigate = useNavigate();
     const [cv, setCv] = useState();
+    const [cvSelected, setCvSelected] = useState(true);
+
     let proposalKeys = Object.keys(proposal)
     let proposalValues = Object.values(proposal)
 
@@ -73,11 +75,20 @@ function RenderProposal(props){
 
             </FormGroup>
             <p> </p>
+            {cvSelected ? <p></p> : <Alert  variant={"danger"}>
+                Select your cv file before proceede
+            </Alert>}
+            <p> </p>
             <Button onClick={()=> {
+                if(cv != undefined){
+                    setCvSelected(true);
                 uploadFile(cv).then((id) => {
                     insertApplication(id, proposal.id)
                 })
-                navigate('/search-for-proposal')
+                navigate('/search-for-proposal')}
+                else{
+                    setCvSelected(false)
+                }
             }}>Apply</Button>
             <Button onClick={()=> navigate('/search-for-proposal')}>Go Back</Button>
         </div>
