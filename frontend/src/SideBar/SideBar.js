@@ -22,6 +22,11 @@ function SideBar(props){
                             My application proposals
                         </button>
                     </li>
+                    <li className="nav-item">
+                        <button className={path==='/browseDecisions' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/browseDecisions')}} >
+                            My applications decisions
+                        </button>
+                    </li>
 
 
                 </ul>

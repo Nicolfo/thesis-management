@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
 import SideBar from "./SideBar/SideBar";
+import BrowseDecisions from "./Content/BrowseDecisions";
 
 function Content(props) {
 
@@ -29,6 +30,8 @@ function Content(props) {
       return <BrowseApplicationsContent user={props.user}/>
     case "/login":
       return <LoginLayout user={props.user} setUser={props.setUser} />
+    case "/browseDecisions":
+      return <BrowseDecisions user={props.user} />
 
     default:
       return <h1>Path not found</h1>
