@@ -230,7 +230,7 @@ function InsertUpdateProposal(props) {
                                 options={optionsSupervisors}
                                 value={selectedSupervisors}
                                 onChange={setSelectedSupervisors}
-                                labelledBy="Select"
+                                labelledBy="Select Co-Supervisors"
                             />
                         </Form.Group>
                     </Row>
@@ -365,12 +365,12 @@ function InsertUpdateProposal(props) {
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group as={Col} >
-                            <Form.Label> CDS </Form.Label>
+                            <Form.Label> CdS </Form.Label>
                             <MultiSelect
                                 options={optionsCds}
                                 value={selectedCds}
                                 onChange={setSelectedCds}
-                                labelledBy="Select"
+                                labelledBy="Select CdS"
                             />
                             { !isValidCds &&
                                 <Form.Label style={{"color": "red"}}> Please select at least one CdS ! </Form.Label>
