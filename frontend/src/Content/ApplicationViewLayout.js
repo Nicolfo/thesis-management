@@ -54,6 +54,22 @@ function ApplicationViewLayout(props) {
                 setShowError(true);
             });
     }
+    const rejectApplication = () => {
+        fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    setShowSuccess(true);
+                    fetchApplicationData();
+                } else {
+                    setShowError(true);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setShowError(true);
+            });
+    }
 
     if (!applicationData || !studentGradesData) {
         return <div>Loading...</div>;
@@ -70,8 +86,8 @@ function ApplicationViewLayout(props) {
                     <div style={{width: '70rem', marginBottom: '2rem'}}>
                         <h1>Information about Application</h1>
 
-                        {showSuccess && <Alert variant="success">The application was successfully accepted!</Alert>}
-                        {showError && <Alert variant="danger">There was an error accepting the application.</Alert>}
+                        {showSuccess && <Alert variant="success">The application was successfully updated!</Alert>}
+                        {showError && <Alert variant="danger">There was an error updating the application.</Alert>}
 
                         <Card style={{marginBottom: '2rem'}}>
                             <Card.Header as="h5">Application Information</Card.Header>
@@ -82,7 +98,7 @@ function ApplicationViewLayout(props) {
                                        download>Download</a>
                                     : 'No attachment'} <br/>
                                     Apply Date: {new Date(applicationData.applyDate).toLocaleString('it-IT')} <br/>
-                                    Accepted: {applicationData.accepted ? 'Yes' : 'No'}
+                                    Accepted: {applicationData.status}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -139,7 +155,14 @@ function ApplicationViewLayout(props) {
                         </div>
 
 
-                        <Button variant="success" onClick={acceptApplication}>Accept</Button>
+                        {applicationData.status==="PENDING" ? (
+                            <>
+                                <Button variant="success" onClick={() => acceptApplication()}>Accept</Button>
+                                <Button variant="inline" color={"error"} onClick={() => rejectApplication()}>Reject</Button>
+                            </>
+                        ) : (
+                            ""
+                        )}
                     </div>
                 </div>
             </div>

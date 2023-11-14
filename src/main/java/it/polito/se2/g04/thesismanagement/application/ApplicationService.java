@@ -11,4 +11,6 @@ public interface ApplicationService {
     public List<Application> getApplicationsByProposal(Long proposalId);
     public Application getApplicationById(Long applicationId);
     public boolean acceptApplicationById(Long applicationId);
+
+    public boolean rejectApplicationById(Long applicationId);
 }

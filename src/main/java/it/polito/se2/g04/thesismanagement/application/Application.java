@@ -21,7 +21,6 @@ public class Application {
         this.attachment = attachment;
         this.applyDate = applyDate;
         this.proposal = proposal;
-        this.accepted = false;
     }
 
     @Id
@@ -34,6 +33,5 @@ public class Application {
     private Date applyDate;
     @ManyToOne
     private Proposal proposal;
-    private boolean accepted;
-
+    private String status= "PENDING"; //status of the application (PENDING/ACCEPTED/REJECTED)
 }

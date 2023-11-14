@@ -48,4 +48,10 @@ public class ApplicationController {
         return applicationService.acceptApplicationById(applicationId);
     }
 
+    @GetMapping("/API/application/rejectApplicationById/{applicationId}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  boolean rejectApplicationById(@PathVariable Long applicationId){
+        return applicationService.rejectApplicationById(applicationId);
+    }
+
 }

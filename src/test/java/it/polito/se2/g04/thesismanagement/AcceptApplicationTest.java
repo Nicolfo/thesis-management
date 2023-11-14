@@ -122,8 +122,8 @@ public class AcceptApplicationTest {
     @Test
     @Rollback
     public void acceptApplication() throws Exception {
-        application1.setAccepted(false);
-        application2.setAccepted(true);
+        application1.setStatus("PENDING");
+        application2.setStatus("REJECTED");
         application1 = applicationRepository.save(application1);
         application2 = applicationRepository.save(application2);
 
@@ -135,7 +135,7 @@ public class AcceptApplicationTest {
         String json = res.getResponse().getContentAsString();
 
         assertEquals(json, "true");
-        assertTrue(applicationRepository.getApplicationById(1L).isAccepted());
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo("ACCEPTED"));
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/2")
@@ -144,8 +144,8 @@ public class AcceptApplicationTest {
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
-        assertEquals(json, "true");
-        assertTrue(applicationRepository.getApplicationById(2L).isAccepted());
+        assertEquals(json, "false");
+        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo("REJECTED"));
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/3")

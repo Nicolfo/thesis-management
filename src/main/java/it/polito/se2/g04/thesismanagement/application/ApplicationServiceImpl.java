@@ -43,7 +43,23 @@ public class ApplicationServiceImpl implements ApplicationService{
     public boolean acceptApplicationById(Long applicationId) {
         try {
             Application application = getApplicationById(applicationId);
-            application.setAccepted(true);
+            if (!(application.getStatus().compareTo("PENDING")==0))
+                return false;
+            application.setStatus("ACCEPTED");
+            applicationRepository.save(application);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean rejectApplicationById(Long applicationId) {
+        try {
+            Application application = getApplicationById(applicationId);
+            if (!(application.getStatus().compareTo("PENDING")==0))
+                return false;
+            application.setStatus("REJECTED");
             applicationRepository.save(application);
             return true;
         } catch (Exception e) {
