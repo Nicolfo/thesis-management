@@ -10,20 +10,20 @@ function InsertUpdateProposal(props) {
     const { proposalID } = useParams();
 
     // If edit then update
-    const edit = proposalID && props.proposals.find( (p) => p.id === parseInt(proposalID));
+    let edit;
     //
-    const [supervisor, setSupervisor] = useState("");
-    const [title, setTitle] =  useState(edit ? edit.title : "");
-    const [level, setLevel] =  useState(edit ? edit.level : "");
-    const [notes, setNotes] =  useState(edit ? edit.notes : "");
-    const [knowledge, setKnowledge] = useState(edit ? edit.requiredKnowledge : "");
-    const [description, setDescription] = useState(edit ? edit.description : "");
-    const [date, setDate] = useState(edit ? edit.expiration.format("YYYY-MM-DD") : "");
+    const [supervisor, setSupervisor] = useState({});
+    const [title, setTitle] =  useState("");
+    const [level, setLevel] =  useState("");
+    const [notes, setNotes] =  useState("");
+    const [knowledge, setKnowledge] = useState("");
+    const [description, setDescription] = useState("");
+    const [date, setDate] = useState("");
     const [typeList, setTypeList] = useState([""]);
     const [keywordsList, setKeywordsList] = useState([""]);
     const [teacherList, setTeacherList] = useState([]);
     const [cdsList, setCdsList] = useState([""]);
-    const [cds, setCds] = useState(edit ? edit.CdS : "");
+    const [cds, setCds] = useState("");
     const [optionsSupervisors, setOptionsSupervisors] = useState([]);
     const [selectedSupervisors, setSelectedSupervisors] = useState([]);
     const [alert, setAlert] = useState(false);
@@ -35,15 +35,42 @@ function InsertUpdateProposal(props) {
     useEffect(() => {
         const getAllTeachersGroupsCds = async () => {
             try {
-                const teachers = await API.getAllTeachersGroups();
+                const teachers = await API.getAllTeachers();
                 setTeacherList(teachers);
 
                 let supervisors = {};
-                (teachers).map( (t) => { supervisors['label'] = `${t.surname} ${t.name}`; supervisors['value'] = t.id } );
+                (teachers).map( (t) => {
+                    supervisors['label'] = `${t.surname} ${t.name}`;
+                    supervisors['value'] = t.id
+                } );
                 setOptionsSupervisors(supervisors);
 
                 const cds = await API.getAllCds();
                 setCdsList(cds);
+
+                const supervisor = await API.getByEmail(props.user.email);
+                setSupervisor(supervisor);
+
+                const proposals = await API.getProposalsByProf(props.user.token);
+                // If edit then update
+                edit = proposalID && proposals.find( (p) => p.id === parseInt(proposalID));
+                if (edit) {
+                    setTitle(edit.title);
+                    setLevel(edit.level);
+                    setNotes(edit.notes);
+                    setKnowledge(edit.requiredKnowledge);
+                    setDescription(edit.description);
+                    setDate(edit.expiration.format("YYYY-MM-DD"));
+                    setCds(edit.CdS);
+                    setTypeList(edit.type.split(", "));
+                    setKeywordsList(edit.keywords.split(", "));
+                    setSelectedSupervisors(edit.coSupervisors.map(cosupervisor => (
+                        {
+                            label: `${cosupervisor.surname} ${cosupervisor.name}`,
+                            value: cosupervisor.id
+                        }
+                    )));
+                }
 
             } catch (err) {
                 console.log(err);
@@ -94,16 +121,22 @@ function InsertUpdateProposal(props) {
             .catch((err) => console.log(err))
     }
 
+    const updateProposal = (proposal) => {
+        API.updateProposal(proposal)
+            .then(() => setAlert(true))
+            .catch((err) => console.log(err))
+    }
+
     const handleSubmit = (ev) => {
         ev.preventDefault();
 
         if (ev.currentTarget.checkValidity() === false)
             ev.stopPropagation();
         else {
-            const proposal = {
+            let proposal = {
                 title: title,
-                coSupervisors: teacherList.filter( (t) => selectedSupervisors.some( (s) => s.value === t.id)),
-                // groups: inserire il gruppo del teacher loggato oltre a quelli dei co-supervisors
+                supervisor: { id: supervisor.id },
+                coSupervisors: teacherList.filter( (t) => selectedSupervisors.some( (s) => s.value === t.id) ).map( (t) => ({ id: t.id })),
                 keywords: keywordsList.join(", "),
                 type: typeList.join(", "),
                 description: description,
@@ -113,8 +146,11 @@ function InsertUpdateProposal(props) {
                 expiration: dayjs(date).format("YYYY-MM-DD"),
                 CdS: cds
             }
-
-            insertProposal(proposal);
+            if (edit) {
+                proposal.id = edit.id;
+                updateProposal(proposal);
+            } else
+                insertProposal(proposal);
         }
 
         setValidated(true);
@@ -124,7 +160,13 @@ function InsertUpdateProposal(props) {
     return (
         <Card style={{"marginTop": "1rem", "marginBottom": "2rem"}}>
             <Form validated={validated} onSubmit={handleSubmit} noValidate>
-                <Card.Header as="h3" style={{"textAlign": "center"}}> Insert proposal fields </Card.Header>
+                <Card.Header as="h3" style={{"textAlign": "center"}}>
+                    { edit ?
+                        "Update proposal fields"
+                        :
+                        "Insert proposal fields"
+                    }
+                </Card.Header>
 
                 <Card.Body>
                     {/* TITLE */}
@@ -159,7 +201,7 @@ function InsertUpdateProposal(props) {
                             <Form.Label> Supervisor </Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Inserire info del teacher loggato"
+                                placeholder={`${supervisor.surname} ${supervisor.name}`}
                                 disabled
                                 readOnly
                             />
@@ -318,7 +360,13 @@ function InsertUpdateProposal(props) {
                 </Card.Body>
 
                 <Card.Footer style={{"textAlign": "center"}}>
-                    <Button variant="primary" type="submit"> Publish thesis proposal </Button>
+                    <Button variant="primary" type="submit">
+                        { edit ?
+                            "Update thesis proposal"
+                            :
+                            "Publish thesis proposal"
+                        }
+                    </Button>
                     {alert &&
                         <Alert variant="success" onClose={() => setAlert(false)} dismissible > Insert api successful </Alert>
                     }

@@ -48,26 +48,41 @@ const login = async (credentials) => {
     );
 };
 
-const getProposalsByProf = async () => {
-    return getJson(fetch(SERVER_URL + 'proposal/getByProf'));
+const getProposalsByProf = async (jwt) => {
+    return getJson(fetch(SERVER_URL + 'proposal/getByProf',{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
 }
 
-const getAllTeachersGroups = async () => {
-    const response = await fetch(SERVER_URL + 'prof/getAll/');
-    const teachers = await response.json();
-    if (response.ok)
-        return teachers.map((t) => ({id: t.id, surname: t.surname, name: t.name, email: t.email, group: JSON.parse(t.group), department: JSON.parse(t.department)}));
-    else
-        throw teachers;
+const getAllTeachers = async () => {
+    return getJson(fetch(SERVER_URL + 'teacher/getAll'));
 }
 
 const getAllCds = async () => {
     return getJson(fetch(SERVER_URL + 'Degree/getAllNames'));
 }
 
+const getByEmail = async (email) => {
+    return getJson(fetch(`${SERVER_URL}teacher/getByEmail/${email}`));
+}
+
 const insertProposal = async (proposal) => {
-    return getJson(fetch(SERVER_URL + `proposal/insert/{proposal}`, {
+    return getJson(fetch(`${SERVER_URL}proposal/insert/${proposal}`, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
+    }))
+};
+
+const updateProposal = async (proposal) => {
+    return getJson(fetch(`${SERVER_URL}proposal/update/${proposal.id}`, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -271,5 +286,5 @@ const getAllProposals = async () => {
     ];
 }
 
-const API = { login, getAllProposals, getAllTeachersGroups, getAllCds, getProposalsByProf, insertProposal };
+const API = { login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal };
 export default API;
