@@ -47,6 +47,8 @@ public class ApplicationServiceImpl implements ApplicationService{
         return toReturn.stream().map(it->new ApplicationDTO3(it.getId(),
                 it.getProposal().getId(),
                 it.getProposal().getTitle(),
+                it.getProposal().getSupervisor().getName(),
+                it.getProposal().getSupervisor().getSurname(),
                 it.getStatus()
         )).collect(Collectors.toList());
     }

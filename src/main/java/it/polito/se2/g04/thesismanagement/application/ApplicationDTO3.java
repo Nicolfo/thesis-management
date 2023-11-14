@@ -20,5 +20,8 @@ public class ApplicationDTO3 {
     private Long proposalId;
     private String proposalTitle;
 
+    private String supervisorName;
+    private String supervisorSurname;
+
     private String status;
 }
