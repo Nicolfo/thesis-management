@@ -54,6 +54,8 @@ function ApplicationRow(props) {
 
     useEffect(() => {
         const getTitleByProposalId = async () => {
+            //console.log("proposalId", props.application.proposalId);
+            //console.log("token", props.user.token);
             const title = await API.getTitleByProposalId(props.user.token, props.application.proposalId);
             setTitle(title);
         }
@@ -62,6 +64,8 @@ function ApplicationRow(props) {
 
     useEffect(() => {
         const getStudentFullName = async () => {
+            //console.log("studentId", props.application.studentId);
+            //console.log("token", props.user.token);
             const userInfo = await API.getStudentFullName(props.user.token, props.application.studentId);
             setStudentFullName(userInfo);
         }

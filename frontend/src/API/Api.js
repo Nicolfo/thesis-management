@@ -78,6 +78,8 @@ const getAllApplications = async (jwt) => {
 }
 
 const getTitleByProposalId = async (jwt, proposalId) => {
+    //console.log("proposalId", proposalId);
+    //console.log("jwt", jwt);
     return getJson(fetch(SERVER_URL+`proposal/getTitleByProposalId/${proposalId}`,{
         method: 'GET',
         headers:{
@@ -87,8 +89,10 @@ const getTitleByProposalId = async (jwt, proposalId) => {
     }));
 }
 
-const getStudentFullName = async (jwt, id) => {
-    return getJson(fetch(SERVER_URL+`application/getNameById/${id}`,{
+const getStudentFullName = async (jwt, studentId) => {
+    //console.log("studentId", studentId);
+    //console.log("jwt", jwt);
+    return getJson(fetch(SERVER_URL+`student/getNameById/${studentId}`,{
         method: 'GET',
         headers:{
             'Content-Type': 'application/json',
