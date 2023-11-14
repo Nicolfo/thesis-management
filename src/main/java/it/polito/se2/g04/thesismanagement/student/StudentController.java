@@ -19,7 +19,7 @@ public class StudentController {
     }
 
     @GetMapping("/API/student/getNameById/{studentId}")
-    public String getStudentFullName(Long studentId) {
+    public String getStudentFullName(@PathVariable Long studentId) {
         return studentService.getStudentFullName(studentId);
     }
 }

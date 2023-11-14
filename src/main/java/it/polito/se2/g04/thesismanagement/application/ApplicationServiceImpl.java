@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.proposal.*;
 import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
+import it.polito.se2.g04.thesismanagement.student.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -10,6 +11,7 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,11 +22,23 @@ public class ApplicationServiceImpl implements ApplicationService{
     private final StudentRepository studentRepository;
     private final AttachmentRepository attachmentRepository;
     private final ProposalRepository proposalRepository;
+    private final StudentService studentService;
 
     @Override
     public List<ApplicationDTO2> getApplicationsByProf(String profEmail) {
         List<Application> toReturn=applicationRepository.getApplicationByProposal_Supervisor_Email(profEmail);
-        return toReturn.stream().map(it->new ApplicationDTO2(it.getId(),it.getStudent().getId(),it.getAttachment().getAttachmentId(),it.getApplyDate(),it.getProposal().getId(),it.getStatus())).collect(Collectors.toList());
+
+        return toReturn.stream().map(it->new ApplicationDTO2(it.getId(),
+                it.getStudent().getId(),
+                it.getStudent().getName(),
+                it.getStudent().getSurname(),
+                studentService.getAverageMarks(it.getStudent().getId()),
+                it.getAttachment().getAttachmentId(),
+                it.getApplyDate(),
+                it.getProposal().getId(),
+                it.getProposal().getType(),
+                it.getStatus()
+        )).collect(Collectors.toList());
     }
 
     @Override

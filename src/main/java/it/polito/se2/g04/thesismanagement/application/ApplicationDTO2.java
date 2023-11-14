@@ -18,10 +18,14 @@ public class ApplicationDTO2 {
     private Long id;
 
     private Long studentId;
+    private String studentName;
+    private String studentSurname;
+    private double studentAverageGrades;
 
     private Long attachmentId;
     private Date applyDate;
     private Long proposalId;
+    private String proposalTitle;
 
     private String status;
 
