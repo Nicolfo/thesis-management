@@ -11,7 +11,6 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +34,17 @@ public class ApplicationServiceImpl implements ApplicationService{
                 studentService.getAverageMarks(it.getStudent().getId()),
                 it.getAttachment().getAttachmentId(),
                 it.getApplyDate(),
+                it.getProposal().getId(),
+                it.getProposal().getTitle(),
+                it.getStatus()
+        )).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ApplicationDTO3> getApplicationsByStudent(String studentEmail) {
+        List<Application> toReturn=applicationRepository.getApplicationByStudentEmail(studentEmail);
+
+        return toReturn.stream().map(it->new ApplicationDTO3(it.getId(),
                 it.getProposal().getId(),
                 it.getProposal().getTitle(),
                 it.getStatus()
