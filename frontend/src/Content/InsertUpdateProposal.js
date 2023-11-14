@@ -19,16 +19,18 @@ function InsertUpdateProposal(props) {
     const [knowledge, setKnowledge] = useState("");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
-    const [typeList, setTypeList] = useState([""]);
-    const [keywordsList, setKeywordsList] = useState([""]);
+    const [typeList, setTypeList] = useState([]);
+    const [keywordsList, setKeywordsList] = useState([]);
     const [teacherList, setTeacherList] = useState([]);
-    const [cdsList, setCdsList] = useState([""]);
-    const [cds, setCds] = useState("");
+    const [cdsList, setCdsList] = useState([]);
+    const [optionsCds, setOptionsCds] = useState([]);
+    const [selectedCds, setSelectedCds] = useState([]);
     const [optionsSupervisors, setOptionsSupervisors] = useState([]);
     const [selectedSupervisors, setSelectedSupervisors] = useState([]);
     const [alert, setAlert] = useState(false);
     const [isValidTitle, setIsValidTitle] = useState(true);
     const [isValidDescription, setIsValidDescription] = useState(true);
+    const [isValidCds, setIsValidCds] = useState(true);
     const [validated, setValidated] = useState(false);
 
 
@@ -48,6 +50,13 @@ function InsertUpdateProposal(props) {
                 const cds = await API.getAllCds();
                 setCdsList(cds);
 
+                let CDS = {};
+                (cds).map( (c) => {
+                    CDS['label'] = c;
+                    CDS['value'] = c
+                } );
+                setOptionsCds(CDS);
+
                 const supervisor = await API.getByEmail(props.user.email);
                 setSupervisor(supervisor);
 
@@ -61,7 +70,7 @@ function InsertUpdateProposal(props) {
                     setKnowledge(edit.requiredKnowledge);
                     setDescription(edit.description);
                     setDate(edit.expiration.format("YYYY-MM-DD"));
-                    setCds(edit.CdS);
+                    setSelectedCds(edit.CdS.map(cds => ({ label: cds, value: cds })));
                     setTypeList(edit.type.split(", "));
                     setKeywordsList(edit.keywords.split(", "));
                     setSelectedSupervisors(edit.coSupervisors.map(cosupervisor => (
@@ -73,7 +82,7 @@ function InsertUpdateProposal(props) {
                 }
 
             } catch (err) {
-                console.log(err);
+                console.error("UseEffect error", err);
             }
         };
 
@@ -127,11 +136,20 @@ function InsertUpdateProposal(props) {
             .catch((err) => console.log(err))
     }
 
+
     const handleSubmit = (ev) => {
         ev.preventDefault();
 
-        if (ev.currentTarget.checkValidity() === false)
+        if (ev.currentTarget.checkValidity() === false) {
+            if (selectedCds.length === 0)
+                setIsValidCds(false);
+
             ev.stopPropagation();
+        }
+        else if (selectedCds.length === 0) {
+            setIsValidCds(false);
+            ev.stopPropagation();
+        }
         else {
             let proposal = {
                 title: title,
@@ -144,7 +162,7 @@ function InsertUpdateProposal(props) {
                 notes: notes,
                 level: level,
                 expiration: dayjs(date).format("YYYY-MM-DD"),
-                CdS: cds
+                CdS: cdsList.filter( (c) => selectedCds.some( (s) => s.value === c) )
             }
             if (edit) {
                 proposal.id = edit.id;
@@ -348,13 +366,15 @@ function InsertUpdateProposal(props) {
                         </Form.Group>
                         <Form.Group as={Col} >
                             <Form.Label> CDS </Form.Label>
-                            <Form.Select value={cds} onChange={ev => setCds(ev.target.value)} >
-                                {
-                                    cdsList.map( (cds) => {
-                                        return (<option value={cds}> {cds} </option>)
-                                    })
-                                }
-                            </Form.Select>
+                            <MultiSelect
+                                options={optionsCds}
+                                value={selectedCds}
+                                onChange={setSelectedCds}
+                                labelledBy="Select"
+                            />
+                            { !isValidCds &&
+                                <Form.Label style={{"color": "red"}}> Please select at least one CdS ! </Form.Label>
+                            }
                         </Form.Group>
                     </Row>
                 </Card.Body>
@@ -368,7 +388,7 @@ function InsertUpdateProposal(props) {
                         }
                     </Button>
                     {alert &&
-                        <Alert variant="success" onClose={() => setAlert(false)} dismissible > Insert api successful </Alert>
+                        <Alert variant="success" onClose={() => setAlert(false)} dismissible > Api successful </Alert>
                     }
                 </Card.Footer>
             </Form>
