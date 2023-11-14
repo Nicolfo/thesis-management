@@ -36,7 +36,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 it.getAttachment().getAttachmentId(),
                 it.getApplyDate(),
                 it.getProposal().getId(),
-                it.getProposal().getType(),
+                it.getProposal().getTitle(),
                 it.getStatus()
         )).collect(Collectors.toList());
     }

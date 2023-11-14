@@ -10,17 +10,16 @@ function BrowseApplicationsContent(props) {
     const [applications, setApplications] = useState([]);
 
     useEffect(() => {
-        const getApplications = async () => {
+        const getApplicationsByProf = async () => {
             try {
-                console.log("TOKEN", props.user.token);
-                const applications = await API.getAllApplications(props.user.token);
+                const applications = await API.getApplicationsByProf(props.user.token);
                 setApplications(applications);
             } catch (error) {
                 console.error("Error fetching applications:", error);
             }
         };
 
-        getApplications();
+        getApplicationsByProf();
     }, [props.user.token]);
 
     return (
@@ -47,39 +46,6 @@ function BrowseApplicationsContent(props) {
 
 function ApplicationRow(props) {
 
-    const [title, setTitle] = useState('');
-    const [studentFullName, setStudentFullName] = useState('');
-    const [averageMarks, setAverageMarks] = useState(0);
-
-
-    useEffect(() => {
-        const getTitleByProposalId = async () => {
-            //console.log("proposalId", props.application.proposalId);
-            //console.log("token", props.user.token);
-            const title = await API.getTitleByProposalId(props.user.token, props.application.proposalId);
-            setTitle(title);
-        }
-        getTitleByProposalId();
-    }, []);
-
-    useEffect(() => {
-        const getStudentFullName = async () => {
-            //console.log("studentId", props.application.studentId);
-            //console.log("token", props.user.token);
-            const userInfo = await API.getStudentFullName(props.user.token, props.application.studentId);
-            setStudentFullName(userInfo);
-        }
-        getStudentFullName();
-    }, []);
-
-    useEffect(() => {
-        const getAverageMarks = async () => {
-            const averageMarks = await API.getAverageMarks(props.user.token, props.application.studentId);
-            setAverageMarks(averageMarks);
-        }
-        getAverageMarks();
-    }, []);
-
     const handleAccept = (id) => {
     };
 
@@ -91,10 +57,10 @@ function ApplicationRow(props) {
 
     return (
         <tr>
-            <td>{ title }</td>
+            <td>{ props.application.title }</td>
             <td>{ dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss') }</td>
-            <td>{ studentFullName }</td>
-            <td>{ averageMarks }</td>
+            <td>{ props.application.studentName} {props.application.studentSurname}</td>
+            <td>{ props.application.studentAverageGrades }</td>
             <td>
                 <Button variant="success" onClick={() => handleAccept(props.application.id)}>Accept</Button>{' '}
                 <Button variant="danger" onClick={() => handleReject(props.application.id)}>Reject</Button>{' '}
