@@ -21,11 +21,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
     @Override
     public Teacher getById(Long id){
-        return teacherRepository.findById(id).orElseThrow(()-> new RuntimeException());//placeholder for a real exception handler
+        return teacherRepository.findById(id).orElseThrow(()-> new RuntimeException("id not found"));
     }
 
     @Override
     public Teacher getByEmail(String email){
-        return teacherRepository.findAll().stream().filter(it-> email.equals(it.getEmail())).findAny().orElseThrow();
+        return teacherRepository.findAll().stream().filter(it-> email.equals(it.getEmail())).findAny().orElseThrow(()-> new RuntimeException("email not found"));
     }
 }
