@@ -39,10 +39,4 @@ public class Application {
 
     private String status= "PENDING"; //status of the application (PENDING/ACCEPTED/REJECTED)
 
-
-    public Application(Student student, Attachment attachment, Date applyDate, Proposal proposal) {
-        this.attachment = attachment;
-        this.applyDate = applyDate;
-        this.proposal = proposal;
-    }
 }
