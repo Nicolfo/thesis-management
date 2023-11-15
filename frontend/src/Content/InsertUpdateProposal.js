@@ -3,7 +3,7 @@ import { MultiSelect } from "react-multi-select-component";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import dayjs from "dayjs";
-import API from "../API/API";
+import API from "../API/API2";
 
 
 function InsertUpdateProposal(props) {
@@ -37,27 +37,28 @@ function InsertUpdateProposal(props) {
     useEffect(() => {
         const getAllTeachersGroupsCds = async () => {
             try {
-                const teachers = await API.getAllTeachers();
+                const teachers = await API.getAllTeachers(props.user.token);
                 setTeacherList(teachers);
-
-                let supervisors = {};
-                (teachers).map( (t) => {
-                    supervisors['label'] = `${t.surname} ${t.name}`;
-                    supervisors['value'] = t.id
+                console.log(teachers);
+                let supervisors = [];
+                teachers.forEach( (t) => {
+                    let elem={label:`${t.surname} ${t.name}`,value:t.id};
+                    supervisors.push(elem);
                 } );
                 setOptionsSupervisors(supervisors);
 
-                const cds = await API.getAllCds();
+                const cds = await API.getAllCds(props.user.token);
                 setCdsList(cds);
 
-                let CDS = {};
-                (cds).map( (c) => {
-                    CDS['label'] = c;
-                    CDS['value'] = c
+                let CDS = [];
+                cds.forEach( (c) => {
+                    let elem={label:c,value:c};
+                    CDS.push(elem);
+
                 } );
                 setOptionsCds(CDS);
 
-                const supervisor = await API.getByEmail(props.user.email);
+                const supervisor = await API.getByEmail(props.user.email,props.user.token);
                 setSupervisor(supervisor);
 
                 const proposals = await API.getProposalsByProf(props.user.token);
@@ -125,13 +126,13 @@ function InsertUpdateProposal(props) {
 
 
     const insertProposal = (proposal) => {
-        API.insertProposal(proposal)
+        API.insertProposal(proposal,props.user.token)
             .then(() => setAlert(true))
             .catch((err) => console.log(err))
     }
 
     const updateProposal = (proposal) => {
-        API.updateProposal(proposal)
+        API.updateProposal(proposal,props.user.token)
             .then(() => setAlert(true))
             .catch((err) => console.log(err))
     }

@@ -17,8 +17,6 @@ function LoginForm(props) {
     const handleLogin = async (credentials) => {
         try {
             const user = await API.login(credentials);
-            console.log("USER:", user);
-            console.log(LoginForm);
             props.setUser(user);
         } catch (err) {
             throw err;

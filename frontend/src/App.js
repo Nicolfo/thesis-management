@@ -1,4 +1,4 @@
-import { library } from '@fortawesome/fontawesome-svg-core';
+  import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -165,20 +165,27 @@ function filterProposals(filters){
     setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
   }
 
-  useEffect( ()=>{
+  useEffect( ()=> {
     // call the api to retrieve the list of active proposal
     // api called every time the user click on the button to search for proposal.
     // retrieve all the proposals. for the filters, they are applicated on the font-end (we wanna evitate to do a lot of queries so a lot of api calls)
     // cause we already have all the active proposals (more time to do api than local computation)
     // we can do that because we can assume that the insert of a new proposal is a lot less of the number of search for a proposal
-
-
+  if(user!==null){
     getAllProposal()
-          .then((list)=> { setListOfProposal(Array.from(Object.values(list))); setFilteredProposals(Array.from(Object.values(list)))})
+        .then((list) => {
+          setListOfProposal(Array.from(Object.values(list)));
+          setFilteredProposals(Array.from(Object.values(list)))
+        })
 
     getAllSupervisors()
-          .then((list) => {setListOfSupervisors(list);})
+        .then((list) => {
+          setListOfSupervisors(list);
+        })
+  }
 
+
+  },[user]);
 
 
   return (
@@ -200,8 +207,8 @@ function filterProposals(filters){
         </div>
       </div>
   );
-}
 
+}
 export default App;
 
 library.add(fab, fas, far);

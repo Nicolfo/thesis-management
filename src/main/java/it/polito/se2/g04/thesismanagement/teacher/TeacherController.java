@@ -22,9 +22,8 @@ public class TeacherController {
 
 
 
-    @GetMapping("API/teacher/getAll/")
+    @GetMapping("API/teacher/getAll")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public List<TeacherDTO> getAll(){
         return teacherService.getAllTeachers();
     }

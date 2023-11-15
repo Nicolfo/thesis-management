@@ -1,10 +1,10 @@
 import {useNavigate,useLocation} from 'react-router-dom';
-function SideBar({ user }){
+function SideBar(props){
     const path = useLocation().pathname;
     const navigate = useNavigate();
 
     const userIsTeacher = () => {
-        return user && user.role === "TEACHER";
+        return props.user && props.user.role === "TEACHER";
     }
 
     return (
@@ -42,8 +42,6 @@ function SideBar({ user }){
                         </button>
                     </li>
                 </ul>
-            </aside>
-
         </div>
 
     )

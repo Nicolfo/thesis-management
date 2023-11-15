@@ -1,6 +1,5 @@
-"use strict";
 
-import {thin} from "@fortawesome/fontawesome-svg-core/import.macro";
+
 
 const SERVER_URL = "http://localhost:8080/API/";
 
