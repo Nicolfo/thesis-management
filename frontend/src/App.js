@@ -40,7 +40,7 @@ function Content(props) {
       return <LoginLayout user={props.user} setUser={props.setUser} />
     case "/browseDecisions":
       return <BrowseDecisions user={props.user} />
-    case "/application/view":
+    case "/teacher/application/view":
       return <ApplicationViewLayout user={props.user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
     case "/insertProposal":
       return <InsertUpdateProposal user={props.user} />
@@ -169,18 +169,18 @@ function filterProposals(filters){
   }
   useEffect(()=>{
     if(user!==null){
-      localStorage.setItem("username", user.username);
+      localStorage.setItem("email", user.email);
       localStorage.setItem("token", user.token);
       localStorage.setItem("role", user.role);
     }
     else {
       console.log("loading user info")
-      const username=localStorage.getItem("username");
+      const email=localStorage.getItem("email");
       const token=localStorage.getItem("token");
       const role=localStorage.getItem("role");
 
-      if(username!==null && token !==null &&role!== null){
-        setUser({username:username,token:token,role:role});
+      if(email!==null && token !==null &&role!== null){
+        setUser({email:email,token:token,role:role});
       }
 
     }
@@ -241,7 +241,7 @@ function filterProposals(filters){
             element={ <LoginLayout user={user} setUser={setUser} /> } />
           <Route path="/browseDecisions"
             element={ <BrowseDecisions user={user} /> } />
-          <Route path="/application/view"
+          <Route path="/teacher/application/view"
             element={ <ApplicationViewLayout user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}/> } />
           <Route path="/insertProposal"
             element={ <InsertUpdateProposal user={user} /> } />

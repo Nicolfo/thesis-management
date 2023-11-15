@@ -53,7 +53,7 @@ function BrowseApplicationsContent(props) {
 function ApplicationRow(props) {
     const navigate=useNavigate()
     const handleViewInfo = (id) => {
-        navigate("/application/view?applicationId="+props.application.id);
+        navigate("/teacher/application/view?applicationId="+props.application.id);
     };
 
     return (

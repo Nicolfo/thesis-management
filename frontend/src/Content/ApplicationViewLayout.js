@@ -14,8 +14,9 @@ function ApplicationViewLayout(props) {
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
+        console.log(props.user)
         fetchApplicationData();
-    }, []);
+    }, [props.user]);
 
     const fetchApplicationData = () => {
         if(props.user && props.user.token)
