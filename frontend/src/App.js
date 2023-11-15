@@ -198,7 +198,7 @@ function filterProposals(filters){
           <>
             <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
             <div className="row align-items-start">
-            <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
+            <Navigation user={user} setUser={setUser} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
             <div className="row g-0">
             <SideBar user={user} searchForProposalClicked={searchForProposalClicked}/>
             <div className="col-10 p-2">
