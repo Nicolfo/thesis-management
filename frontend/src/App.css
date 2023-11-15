@@ -59,3 +59,24 @@ div {
   margin-right:0 !important;
   padding-right:0 !important;
 }
+
+.bordered-box {
+  border: 1px solid #ccc; /* Add your preferred border style */
+  padding: 15px; /* Add padding to the content inside the box */
+  border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+h1 {
+  font-size: 1.8rem !important;
+}
+
+.separator {
+  margin-top: 15px; /* Adjust the margin to control the spacing above the separator */
+  margin-bottom: 30px; /* Adjust the margin to control the spacing below the separator */
+  margin-right: 20px;
+}
+
+.nav-link.active {
+  background-color: #0B67A5 !important;
+  color: aliceblue;
+}

@@ -17,6 +17,16 @@ function SideBar(props){
                             My thesis proposals
                         </button>
                     </li>
+                    <li className="nav-item">
+                        <button className={path==='/teacher/application/browse' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/teacher/application/browse')}} >
+                            My application proposals
+                        </button>
+                    </li>
+                    <li className="nav-item">
+                        <button className={path==='/browseDecisions' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/browseDecisions')}} >
+                            My applications decisions
+                        </button>
+                    </li>
 
 
                 </ul>

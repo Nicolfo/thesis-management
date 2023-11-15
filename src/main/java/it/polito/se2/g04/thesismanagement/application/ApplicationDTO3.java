@@ -13,23 +13,15 @@ import java.util.Date;
 
 @AllArgsConstructor
 @Getter
-public class ApplicationDTO2 {
+public class ApplicationDTO3 {
 
     private Long id;
 
-    private Long studentId;
-    private String studentName;
-    private String studentSurname;
-    private double studentAverageGrades;
-
-    private Long attachmentId;
-    private Date applyDate;
     private Long proposalId;
     private String proposalTitle;
 
+    private String supervisorName;
+    private String supervisorSurname;
+
     private String status;
-
-
-
-//Add more if u wish
 }

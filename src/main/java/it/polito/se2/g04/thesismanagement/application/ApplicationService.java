@@ -6,6 +6,9 @@ public interface ApplicationService {
 
     public List<ApplicationDTO2> getApplicationsByProf(String profEmail);
 
+    public List<ApplicationDTO3> getApplicationsByStudent(String studentEmail);
+
+
     public List<Application> getApplicationsByProposal(Long proposalId);
 
     public void applyForProposal(ApplicationDTO applicationDTO);
@@ -14,6 +17,4 @@ public interface ApplicationService {
     public void declineApplication(Long applicationId);
 
     //add method here
-
-    public String getTitleByApplicationId(Long applicationId);
 }

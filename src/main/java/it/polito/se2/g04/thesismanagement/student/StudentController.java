@@ -12,14 +12,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 public class StudentController {
     private final StudentService studentService;
+
     @GetMapping("/API/student/getAverageMarks/{studentId}")
-    public double getAverage(@PathVariable Long studentId) {
+    public double getAverageMarks(@PathVariable Long studentId) {
         return studentService.getAverageMarks(studentId);
     }
 
-    @GetMapping("/API/application/getNameById")
-    public StudentDTO getStudentInfo(Long studentId) {
-        return studentService.getStudentInfo(studentId);
+    @GetMapping("/API/student/getNameById/{studentId}")
+    public String getStudentFullName(@PathVariable Long studentId) {
+        return studentService.getStudentFullName(studentId);
     }
 }
 

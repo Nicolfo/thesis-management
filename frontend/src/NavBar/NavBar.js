@@ -12,7 +12,7 @@ function NavBar(props) {
     const navigate = useNavigate();
 
     return (
-        <Navbar className='bg-color' data-bs-theme="dark">
+        <Navbar className='bg-color ps-3' data-bs-theme="dark">
         <Container fluid>
           <Navbar.Brand><FontAwesomeIcon icon="fa-book"/>{" "}Thesis Manager</Navbar.Brand>
           <Nav className="justify-content-end">

@@ -24,18 +24,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApplicationController {
     private final ApplicationService applicationService;
-    @GetMapping("/API/application/getByStudent")
-    public List<Application> getAll(){
-        return Collections.emptyList();
-    }
-
 
     @GetMapping("/API/application/getByProf")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public List<ApplicationDTO2> getAllByProf(){
         UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return applicationService.getApplicationsByProf(auth.getUsername());
+    }
 
+    @GetMapping("/API/application/getByStudent")
+    @PreAuthorize("isAuthenticated() && hasAuthority('STUDENT')")
+    public List<ApplicationDTO3> getAllByStudent(){
+        UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return applicationService.getApplicationsByStudent(auth.getUsername());
     }
 
     @GetMapping("/API/application/getApplicationsByProposal")
@@ -62,12 +63,5 @@ public class ApplicationController {
     public void declineApplication(@PathVariable Long applicationId){
         //TODO:check if the current user is a TEACHER
         applicationService.declineApplication(applicationId);
-    }
-
-
-    @GetMapping("API/application/getTitleByApplicationId")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  String getTitleByApplicationId(Long applicationId){
-        return applicationService.getTitleByApplicationId(applicationId);
     }
 }

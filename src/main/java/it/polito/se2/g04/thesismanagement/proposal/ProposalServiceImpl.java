@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,17 @@ public class ProposalServiceImpl implements ProposalService {
             return supervisorProposals;
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public String getTitleByProposalId(Long proposalId) {
+        Proposal proposal = proposalRepository.findById(proposalId)
+                .orElseThrow(() -> new RuntimeException("Proposal not found with id: " + proposalId));
+
+        if (proposal == null || proposal.getTitle() == null) {
+            return null;
+        }
+        return proposal.getTitle();
     }
 
     @Override

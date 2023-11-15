@@ -23,5 +23,7 @@ public interface ProposalService {
      * List is returned
      */
     List<Proposal> getProposalsByProf(String UserName);
+
+    String getTitleByProposalId(Long proposalId);
 }
 

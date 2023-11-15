@@ -66,8 +66,7 @@ const getProposalsByProf = async (jwt) => {
     }));
 }
 
-// Get all applications
-const getAllApplications = async (jwt) => {
+const getApplicationsByProf = async (jwt) => {
     return getJson(fetch(SERVER_URL+"application/getByProf",{
         method: 'GET',
         headers:{
@@ -77,18 +76,8 @@ const getAllApplications = async (jwt) => {
     }));
 }
 
-const getTitleByApplicationId = async (jwt, applicationId) => {
-    return getJson(fetch(SERVER_URL+`/application/getTitleByApplicationId/${applicationId}`,{
-        method: 'GET',
-        headers:{
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`,
-        }
-    }));
-}
-
-const getStudentInfo = async (jwt, id) => {
-    return getJson(fetch(SERVER_URL+`application/getNameById/${id}`,{
+const getApplicationsByStudent = async(jwt) => {
+    return getJson(fetch(SERVER_URL + 'application/getByStudent',{
         method: 'GET',
         headers:{
             'Content-Type': 'application/json',
@@ -99,5 +88,5 @@ const getStudentInfo = async (jwt, id) => {
 
 
 
-const API = { login, getAllApplications, getTitleByApplicationId, getStudentInfo, getAllProposals, getProposalsByProf };
+const API = { login, getApplicationsByProf, getAllProposals, getProposalsByProf, getApplicationsByStudent };
 export default API;
