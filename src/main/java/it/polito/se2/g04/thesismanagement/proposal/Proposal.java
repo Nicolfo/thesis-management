@@ -42,6 +42,7 @@ public class Proposal {
     }
 
     @Id
+    @GeneratedValue
     private Long id;
     private String title;
     @ManyToOne

@@ -42,7 +42,7 @@ function InsertUpdateProposal(props) {
                 console.log(teachers);
                 let supervisors = [];
                 teachers.forEach( (t) => {
-                    let elem={label:`${t.surname} ${t.name}`,value:t.id};
+                    let elem= {label: `${t.surname} ${t.name}`, value: t.id};
                     supervisors.push(elem);
                 } );
                 setOptionsSupervisors(supervisors);
@@ -52,7 +52,7 @@ function InsertUpdateProposal(props) {
 
                 let CDS = [];
                 cds.forEach( (c) => {
-                    let elem={label:c,value:c};
+                    let elem= {label: c, value: c};
                     CDS.push(elem);
 
                 } );
@@ -71,15 +71,22 @@ function InsertUpdateProposal(props) {
                     setKnowledge(edit.requiredKnowledge);
                     setDescription(edit.description);
                     setDate(edit.expiration.format("YYYY-MM-DD"));
-                    setSelectedCds(edit.CdS.map(cds => ({ label: cds, value: cds })));
                     setTypeList(edit.type.split(", "));
                     setKeywordsList(edit.keywords.split(", "));
-                    setSelectedSupervisors(edit.coSupervisors.map(cosupervisor => (
-                        {
-                            label: `${cosupervisor.surname} ${cosupervisor.name}`,
-                            value: cosupervisor.id
-                        }
-                    )));
+
+                    let CDS = [];
+                    edit.cds.forEach( (c) => {
+                        let elem= {label: c, value: c};
+                        CDS.push(elem);
+                    } );
+                    setSelectedCds(CDS);
+
+                    let supervisors = [];
+                    edit.coSupervisors.forEach( (t) => {
+                        let elem= {label: `${t.surname} ${t.name}`, value: t.id};
+                        supervisors.push(elem);
+                    } );
+                    setSelectedSupervisors(supervisors);
                 }
 
             } catch (err) {
@@ -154,8 +161,8 @@ function InsertUpdateProposal(props) {
         else {
             let proposal = {
                 title: title,
-                supervisor: { id: supervisor.id },
-                coSupervisors: teacherList.filter( (t) => selectedSupervisors.some( (s) => s.value === t.id) ).map( (t) => ({ id: t.id })),
+                supervisorId: supervisor.id,
+                coSupervisors: teacherList.filter( (t) => selectedSupervisors.some( (s) => s.value === t.id) ).map( (t) => t.id),
                 keywords: keywordsList.join(", "),
                 type: typeList.join(", "),
                 description: description,
@@ -163,13 +170,15 @@ function InsertUpdateProposal(props) {
                 notes: notes,
                 level: level,
                 expiration: dayjs(date).format("YYYY-MM-DD"),
-                CdS: cdsList.filter( (c) => selectedCds.some( (s) => s.value === c) )
+                cds: (selectedCds.map( (c) => c.value)).join(", ")
             }
             if (edit) {
                 proposal.id = edit.id;
                 updateProposal(proposal);
-            } else
+            } else {
+                console.log(proposal);
                 insertProposal(proposal);
+            }
         }
 
         setValidated(true);
@@ -209,9 +218,7 @@ function InsertUpdateProposal(props) {
                                     }
                                 }
                             />
-                            { !isValidTitle &&
-                                <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
-                            }
+                            <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
                         </Form.Group>
                     </Row>
                     {/* SUPERVISOR & CO-SUPERVISORS */}
@@ -239,6 +246,13 @@ function InsertUpdateProposal(props) {
                     <Row style={{"marginTop": "1rem"}} >
                         <Form.Group as={Col} >
                             <Form.Label> Thesis type </Form.Label>
+                            { typeList.length === 0 &&
+                                <>
+                                    <Row style={{"marginBottom": "0.5rem", "marginLeft": "0.2rem", "width": "4.65rem"}}>
+                                        <Button variant="success" size="sm" onClick={addType}> Add type </Button>
+                                    </Row>
+                                </>
+                            }
                             {typeList.map( (singleType, index) => (
                                 <>
                                     <Row style={{"marginBottom": "0.5rem"}}>
@@ -267,6 +281,13 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         <Form.Group as={Col} >
                             <Form.Label> Keywords </Form.Label>
+                            { keywordsList.length === 0 &&
+                                <>
+                                    <Row style={{"marginBottom": "0.5rem", "marginLeft": "0.2rem", "width": "6.3rem"}}>
+                                        <Button variant="success" size="sm" onClick={addKeyword}> Add keyword </Button>
+                                    </Row>
+                                </>
+                            }
                             {keywordsList.map( (singleKeyword, index) => (
                                 <>
                                     <Row style={{"marginBottom": "0.5rem"}}>
@@ -347,9 +368,7 @@ function InsertUpdateProposal(props) {
                                 }
                             />
                             <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Description </label>
-                            { !isValidDescription &&
-                                <Form.Control.Feedback type="invalid"> Please provide a description for the thesis </Form.Control.Feedback>
-                            }
+                            <Form.Control.Feedback type="invalid"> Please provide a description for the thesis </Form.Control.Feedback>
                         </Form.Floating>
                     </Row>
                     {/* EXPIRATION DATE & CDS */}
@@ -372,7 +391,7 @@ function InsertUpdateProposal(props) {
                             <MultiSelect
                                 options={optionsCds}
                                 value={selectedCds}
-                                onChange={(ev) => { console.log(ev); setSelectedCds(ev[0].value); setIsValidCds(true) } }
+                                onChange={setSelectedCds}
                                 labelledBy="Select CdS"
                             />
                             { !isValidCds &&

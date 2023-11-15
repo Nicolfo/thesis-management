@@ -54,11 +54,11 @@ public class ProposalController {
 
 
 
-    @PostMapping("API/proposal/insert/{json}")
+    @PostMapping("API/proposal/insert")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Proposal createProposal(@RequestBody ProposalDTO proposal){
-        return proposalService.createProposal(proposal);
+    public void createProposal(@RequestBody ProposalDTO proposal){
+        proposalService.createProposal(proposal);
     }
 
 

@@ -62,9 +62,10 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public Proposal createProposal(ProposalDTO proposalDTO) {
+        Teacher teacher=teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
         Proposal toAdd=new Proposal(
                 proposalDTO.getTitle(),
-                teacherRepository.getReferenceById(proposalDTO.getSupervisorId()),
+                teacher,
                 proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it)).toList(),
                 proposalDTO.getKeywords(),
                 proposalDTO.getType(),
@@ -74,8 +75,9 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getNotes(),
                 proposalDTO.getExpiration(),
                 proposalDTO.getLevel(),
-                proposalDTO.getCdS()
+                proposalDTO.getCds()
         );
+        System.out.println( toAdd);
         return proposalRepository.save(toAdd) ;
     }
 
@@ -92,7 +94,7 @@ public class ProposalServiceImpl implements ProposalService {
                 old.setNotes(proposalDTO.getNotes());
                 old.setExpiration(proposalDTO.getExpiration());
                 old.setLevel(proposalDTO.getLevel());
-                old.setCdS(proposalDTO.getCdS());
+                old.setCdS(proposalDTO.getCds());
                 old.setKeywords(proposalDTO.getKeywords());
 
         return proposalRepository.save(old);
