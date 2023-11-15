@@ -51,9 +51,10 @@ public class TeacherControllerTest {
     @BeforeAll
     public void setup() {
         //mock logged in user
+        /*
         User user = new User("test@example.com", "password", "TEACHER");
         Authentication auth = new TestingAuthenticationToken(user, "password");
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContextHolder.getContext().setAuthentication(auth);*/
     }
 
     @AfterAll
@@ -66,7 +67,7 @@ public class TeacherControllerTest {
     public void getAll() throws Exception {
         Teacher teacher1 = new Teacher("Gerald", "Juarez","test@example.com",null,null);
         teacherRepository.save(teacher1);
-        Teacher teacher2 = new Teacher("Massimo", "Potenza","test@example.com",null,null);
+        Teacher teacher2 = new Teacher("Massimo", "Potenza","test2@example.com",null,null);
         teacherRepository.save(teacher2);
 
         MvcResult res= mockMvc.perform(MockMvcRequestBuilders.get("API/teacher/getAll/").contentType(MediaType.APPLICATION_JSON))
@@ -94,7 +95,7 @@ public class TeacherControllerTest {
         res= mockMvc.perform(MockMvcRequestBuilders.get("API/teacher/getAll/").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
-        mapper.registerModule(new JavaTimeModule());
+        json= res.getResponse().getContentAsString();
         Teacher[] teachers2 = mapper.readValue(json, Teacher[].class);
 
         assertEquals(4,teachers2.length,"getAll() should return 4");
@@ -111,7 +112,7 @@ public class TeacherControllerTest {
         res= mockMvc.perform(MockMvcRequestBuilders.get("API/teacher/getAll/").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
-        mapper.registerModule(new JavaTimeModule());
+        json= res.getResponse().getContentAsString();
         Teacher[] teachersEmpty = mapper.readValue(json, Teacher[].class);
 
         assertEquals(0,teachers2.length,"getAll() should return 0");
@@ -163,11 +164,11 @@ public class TeacherControllerTest {
 
         assertEquals(1,teachers.length,"getByEmail() should return 1");
 
-        List<String> teacherEmail = Arrays.stream(teachers)
+        List<String> teacherEmails = Arrays.stream(teachers)
                 .map(Teacher::getEmail)
                 .toList();
         String expectedEmail = teacher1.getEmail();
-        assertTrue(teacherEmail.contains(expectedEmail), "getByEmail() does not return the correct values");
+        assertTrue(teacherEmails.contains(expectedEmail), "getByEmail() does not return the correct values");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/teacher/getByEmail/").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
