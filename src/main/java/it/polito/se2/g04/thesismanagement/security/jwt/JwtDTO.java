@@ -8,4 +8,5 @@ import lombok.Getter;
 public class JwtDTO {
     private String token;
     private String email;
+    private String role;
 }

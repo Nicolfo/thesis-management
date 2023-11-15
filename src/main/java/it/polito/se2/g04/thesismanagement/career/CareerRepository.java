@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CareerRepository extends JpaRepository<Career,Long> {
     public List<Career> getAllByStudentId(Long studentId);
+    public List<Career> getCareersByStudent_Id(Long id);
 }

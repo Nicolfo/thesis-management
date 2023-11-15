@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Form, Button, Alert, Col, Row, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import thesisicon from './thesisicon.png';
-import API from '../API/API';
+import API from '../API/Api';
 
 function LoginForm(props) {
 
@@ -17,7 +17,7 @@ function LoginForm(props) {
     const handleLogin = async (credentials) => {
         try {
             const user = await API.login(credentials);
-            console.log(user);
+            console.log("USER:", user);
             console.log(LoginForm);
             props.setUser(user);
         } catch (err) {
@@ -65,7 +65,7 @@ function LoginForm(props) {
                             type="password"
                             value={password} placeholder="Write here your password"
                             onChange={(ev) => setPassword(ev.target.value)}
-                            required={true} minLength={6}
+                            required={true} minLength={5}
                         />
                     </Form.Group>
                     <Button className="mt-3 items-color" type="submit">Login</Button>

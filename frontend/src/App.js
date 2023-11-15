@@ -10,24 +10,42 @@ import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import ApplicationViewLayout from "./Content/ApplicationViewLayout";
+import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
+import SideBar from "./SideBar/SideBar";
+import BrowseDecisions from "./Content/BrowseDecisions";
+
+
 
 function Content(props) {
-  const [user, setUser] = useState(null);
+
   const path = useLocation().pathname.toString();
 
   switch (path) {
     case "/":
-      return <Navigation user={user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
+      return <b>Home page</b>
+    /*case "/search-for-proposal":
+      return <ProposalList clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
+    case "/see-proposal":
+      return <RenderProposal listOfProposal={props.listOfProposal} proposalSelected={props.proposalSelected}></RenderProposal>
+
+    case "/teacher/proposal/browse":
+      return <BrowseProposalsContent user={props.user}/>*/
+    case "/teacher/application/browse":
+      return <BrowseApplicationsContent user={props.user}/>
     case "/login":
-      return <LoginLayout user={user} setUser={setUser}/>
+      return <LoginLayout user={props.user} setUser={props.setUser} />
+    case "/browseDecisions":
+      return <BrowseDecisions user={props.user} />
     case "/application/view":
-      return <ApplicationViewLayout user={user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
+      return <ApplicationViewLayout user={props.user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
     default:
       return <h1>Path not found</h1>
   }
 }
 
 function App() {
+
+  const [user, setUser] = useState(null);
 
   /*
   We use 3 states to manage the current date and the virtual clock:
@@ -60,13 +78,19 @@ function App() {
   },[]);
 
   return (
-      <div className="container-fluid" style={{height: '90vh', padding:'0rem'}}>
-        <div className="row align-items-start">
-          <Router>
-            <div>
-              <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}>
-              </Content>
+
+    <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
+      <div className="row align-items-start">
+        <Router>
+          <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
+          <div className="row g-0">
+            <SideBar user={user} />
+            <div className="col-10 p-2">
+            <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
+            </Content>
+
             </div>
+        </div>
           </Router>
         </div>
       </div>

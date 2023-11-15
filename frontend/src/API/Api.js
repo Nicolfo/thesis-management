@@ -27,9 +27,9 @@ function getJson(httpResponsePromise) {
                 }
             })
             .catch(err => {
-                reject({ error: "Cannot communicate" });
-                console.log(httpResponsePromise);
-            }
+                    reject({ error: "Cannot communicate" });
+                    console.log(httpResponsePromise);
+                }
             ) // connection error
     });
 }
@@ -46,5 +46,47 @@ const login = async (credentials) => {
     )
 };
 
-const API = { login };
+const getAllProposals = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"proposal/getAll",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const getProposalsByProf = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"proposal/getByProf",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const getApplicationsByProf = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"application/getByProf",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const getApplicationsByStudent = async(jwt) => {
+    return getJson(fetch(SERVER_URL + 'application/getByStudent',{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+
+
+const API = { login, getApplicationsByProf, getAllProposals, getProposalsByProf, getApplicationsByStudent };
 export default API;
