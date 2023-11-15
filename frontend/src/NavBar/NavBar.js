@@ -18,6 +18,9 @@ function NavBar(props) {
         else{
 
             props.setUser(null);
+            localStorage.removeItem("username");
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
             navigate("/login");
         }
     }

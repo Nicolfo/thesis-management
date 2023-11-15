@@ -12,6 +12,7 @@ function BrowseApplicationsContent(props) {
 
     useEffect(() => {
         const getApplicationsByProf = async () => {
+            if(props.user && props.user.token)
             try {
                 const applications = await API.getApplicationsByProf(props.user.token);
                 setApplications(applications);
@@ -21,7 +22,7 @@ function BrowseApplicationsContent(props) {
         };
 
         getApplicationsByProf();
-    }, [props.user.token]);
+    }, [props.user]);
 
     return (
         <>

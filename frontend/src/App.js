@@ -167,6 +167,29 @@ function filterProposals(filters){
   const searchForProposalClicked = () => {
     setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
   }
+  useEffect(()=>{
+    if(user!==null){
+      localStorage.setItem("username", user.username);
+      localStorage.setItem("token", user.token);
+      localStorage.setItem("role", user.role);
+    }
+    else {
+      console.log("loading user info")
+      const username=localStorage.getItem("username");
+      const token=localStorage.getItem("token");
+      const role=localStorage.getItem("role");
+
+      if(username!==null && token !==null &&role!== null){
+        setUser({username:username,token:token,role:role});
+      }
+
+    }
+
+
+  }
+
+
+,[user]);
 
   useEffect( ()=> {
     // call the api to retrieve the list of active proposal
