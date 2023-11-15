@@ -27,6 +27,12 @@ public interface ProposalService {
     String getTitleByProposalId(Long proposalId);
     Proposal createProposal(ProposalDTO proposalDTO);
     Proposal updateProposal(Long id, ProposalDTO proposal);
+    /**
+     * A search method that allows to filter proposals by title and supervisor id.
+     * @param proposalSearchRequest request object containing all filters
+     * @return A list of ProposalDTO objects representing the search's results.
+     */
+    List<Proposal> searchProposals(ProposalSearchRequest proposalSearchRequest);
 
 }
 

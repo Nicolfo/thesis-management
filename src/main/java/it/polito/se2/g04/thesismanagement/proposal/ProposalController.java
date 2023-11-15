@@ -77,4 +77,11 @@ public class ProposalController {
         throw new createUpdateProposalWithNoPathVariable("Can't update a proposal without filling the form");
     }
 
+    @PostMapping("/API/proposal/search")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Proposal> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+        return proposalService.searchProposals(proposalSearchRequest);
+    }
+
 }

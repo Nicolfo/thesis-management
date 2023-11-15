@@ -4,7 +4,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, useLocation} from "react-router-dom";
+import {BrowserRouter, Outlet, Route, BrowserRouter as Router, Routes, useLocation} from "react-router-dom";
 import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
 import ProposalList from "./Content/ProposalList";
 import RenderProposal from "./Content/RenderProposal";
@@ -17,6 +17,7 @@ import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
 import SideBar from "./SideBar/SideBar";
 import BrowseDecisions from "./Content/BrowseDecisions";
+import BrowseProposalsContent from './Content/BrowseProposalsContent';
 
 
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";
@@ -45,6 +46,8 @@ function Content(props) {
       return <InsertUpdateProposal user={props.user} />
     case "/updateProposal/:proposalID":
       return <InsertUpdateProposal user={props.user} />
+    case "/teacher/proposals":
+      return <BrowseProposalsContent user={props.user} />
 
     default:
       return <h1>Path not found</h1>
@@ -189,23 +192,43 @@ function filterProposals(filters){
 
 
   return (
-
-
-    <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
-      <div className="row align-items-start">
-        <Router>
-          <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
-          <div className="row g-0">
+    <BrowserRouter>
+      <Routes>
+        <Route element={
+          <>
+            <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
+            <div className="row align-items-start">
+            <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
+            <div className="row g-0">
             <SideBar user={user} searchForProposalClicked={searchForProposalClicked}/>
             <div className="col-10 p-2">
-            <Content listOfSupervisors={listOfSupervisors} clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
-            </Content>
-
+            <Outlet />
             </div>
-        </div>
-          </Router>
-        </div>
-      </div>
+            </div>
+            </div>
+            </div>
+          </>
+        }>
+          <Route index element={<h1>Path not found</h1>} />
+          <Route path="/search-for-proposal"
+            element={ <ProposalList listOfSupervisors={listOfSupervisors} clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={listOfProposal} setProposalSelected={setProposalSelected}></ProposalList> } />
+          <Route path="/teacher/application/browse"
+            element={ <BrowseApplicationsContent user={user}/> } />
+          <Route path="/login"
+            element={ <LoginLayout user={user} setUser={setUser} /> } />
+          <Route path="/browseDecisions"
+            element={ <BrowseDecisions user={user} /> } />
+          <Route path="/application/view"
+            element={ <ApplicationViewLayout user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}/> } />
+          <Route path="/insertProposal"
+            element={ <InsertUpdateProposal user={user} /> } />
+          <Route path="/updateProposal/:proposalID"
+            element={ <InsertUpdateProposal user={user} /> } />
+          <Route path="/teacher/proposals"
+            element={ <BrowseProposalsContent user={user} /> } />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 
 }

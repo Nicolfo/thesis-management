@@ -180,7 +180,7 @@ function InsertUpdateProposal(props) {
         <Card style={{"marginTop": "1rem", "marginBottom": "2rem"}}>
             <Form validated={validated} onSubmit={handleSubmit} noValidate>
                 <Card.Header as="h3" style={{"textAlign": "center"}}>
-                    { edit ?
+                    { proposalID ?
                         "Update proposal fields"
                         :
                         "Insert proposal fields"
@@ -372,7 +372,7 @@ function InsertUpdateProposal(props) {
                             <MultiSelect
                                 options={optionsCds}
                                 value={selectedCds}
-                                onChange={(ev) => { setSelectedCds(ev.target.value); setIsValidCds(true) } }
+                                onChange={(ev) => { console.log(ev); setSelectedCds(ev[0].value); setIsValidCds(true) } }
                                 labelledBy="Select CdS"
                             />
                             { !isValidCds &&

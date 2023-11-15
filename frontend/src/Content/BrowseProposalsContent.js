@@ -3,6 +3,7 @@ import { useEffect, useContext } from "react";
 import API from "../API/Api";
 import { Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNavigate } from "react-router-dom";
 
 export default function BrowseProposalsContent(props) {
 
@@ -47,6 +48,8 @@ function CustomToggle({ children, eventKey, callback }) {
   }
 
 function ProposalAccordion({ proposal }) {
+    const navigate = useNavigate();
+
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
@@ -54,7 +57,7 @@ function ProposalAccordion({ proposal }) {
                     <Col><b>{proposal.title}</b></Col>
                     <Col className="d-flex justify-content-end">
                         <Button><FontAwesomeIcon icon="fa-file" /></Button>
-                        <Button><FontAwesomeIcon icon="fa-pencil" /></Button>
+                        <Button onClick={() => navigate(`/updateProposal/${proposal.id}`)}><FontAwesomeIcon icon="fa-pencil" /></Button>
                         <CustomToggle eventKey={proposal.id} />
                     </Col>
                 </Row>
