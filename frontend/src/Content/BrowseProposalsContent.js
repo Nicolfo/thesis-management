@@ -53,6 +53,7 @@ function ProposalAccordion({ proposal }) {
                 <Row className="p-2 align-items-center">
                     <Col><b>{proposal.title}</b></Col>
                     <Col className="d-flex justify-content-end">
+                        <Button><FontAwesomeIcon icon="fa-file" /></Button>
                         <Button><FontAwesomeIcon icon="fa-pencil" /></Button>
                         <CustomToggle eventKey={proposal.id} />
                     </Col>

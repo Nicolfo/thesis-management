@@ -3,42 +3,52 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import './App.css';
-
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, useLocation} from "react-router-dom";
-import SideBar from "./SideBar/SideBar";
-import NavBar from "./NavBar/NavBar";
-import {useEffect, useState} from "react";
 import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
 import ProposalList from "./Content/ProposalList";
 import RenderProposal from "./Content/RenderProposal";
+import NavBar from "./NavBar/NavBar";
 import Navigation from "./Navigation/Navigation";
-import { LoginLayout } from "./LoginLayout/LoginLayout";
+import {LoginLayout} from "./LoginLayout/LoginLayout";
+import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import BrowseProposalsContent from "./Content/BrowseProposalsContent";
+import ApplicationViewLayout from "./Content/ApplicationViewLayout";
+import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
+import SideBar from "./SideBar/SideBar";
+import BrowseDecisions from "./Content/BrowseDecisions";
+
+
 
 function Content(props) {
 
-
   const path = useLocation().pathname.toString();
-  switch (path) {                                //add to this switch-case your content (defined in the Content folder)
+
+  switch (path) {
     case "/":
       return <b>Home page</b>
+
     case "/search-for-proposal":
       return <ProposalList listOfSupervisors={props.listOfSupervisors} clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
-    case "/see-proposal":
-      return <RenderProposal listOfProposal={props.listOfProposal} proposalSelected={props.proposalSelected}></RenderProposal>
+
+    
+ 
+    case "/teacher/application/browse":
+      return <BrowseApplicationsContent user={props.user}/>
     case "/login":
       return <LoginLayout user={props.user} setUser={props.setUser} />
-    case "/teacher/proposal/browse":
-      return <BrowseProposalsContent user={props.user}/>
-
+    case "/browseDecisions":
+      return <BrowseDecisions user={props.user} />
+    case "/application/view":
+      return <ApplicationViewLayout user={props.user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
     default:
       return <h1>Path not found</h1>
   }
 }
 
 function App() {
+
+  const [user, setUser] = useState(null);
 
 
   const [clickOnProposal, setClickOnProposal] = useState(0);
@@ -51,8 +61,8 @@ function App() {
 
   const [listOfSupervisors, setListOfSupervisors] = useState([])
   const [filteredProposals, setFilteredProposals] = useState([])
-    /*
-  We use 3 states to manage the current date and the virtual clock:
+
+  /*We use 3 states to manage the current date and the virtual clock:
     - realDate: this represents the real current date, according to the system. It is refreshed at every render
     - offsetDate: this represents the offset that has been set by the user, in terms of additional days starting from realDate.
     - applicationDate: this represents the date that is considered by the application.
@@ -65,8 +75,6 @@ function App() {
   const [realDate, setRealDate] = useState(dayjs());
   const [offsetDate, setOffsetDate] = useState(0);
   const [applicationDate, setApplicationDate] = useState(dayjs());
-
-  const [user, setUser] = useState(null);
 
   const updateApplicationDate = dateStr => {
     let date = dayjs(dateStr);
@@ -81,7 +89,9 @@ function App() {
   useEffect(() => {
     setRealDate(dayjs());
     setApplicationDate(realDate.add(offsetDate, "day"));
-  }, []);
+   },[]);
+
+ 
 
 function selectFilter(el1, el2, filterType){
 
@@ -164,23 +174,26 @@ function filterProposals(filters){
     getAllSupervisors()
           .then((list) => {setListOfSupervisors(list);})
 
-  }, [clickOnProposal]);
+
 
   return (
-      <div className="container-fluid" style={{height: '90vh', padding: '0rem'}}>
-        <div className="row align-items-start">
-          <Router>
-            <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
-            <div className="row g-0">
-            <SideBar searchForProposalClicked={searchForProposalClicked}>
-            </SideBar>
-             <div className="col-10 p-2">
-              <Content listOfSupervisors={listOfSupervisors} clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}/>
+
+
+    <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
+      <div className="row align-items-start">
+        <Router>
+          <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
+          <div className="row g-0">
+            <SideBar user={user} searchForProposalClicked={searchForProposalClicked}/>
+            <div className="col-10 p-2">
+            <Content listOfSupervisors={listOfSupervisors} clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
+            </Content>
+
             </div>
-          </div>
-        </Router>
+        </div>
+          </Router>
+        </div>
       </div>
-    </div>
   );
 }
 

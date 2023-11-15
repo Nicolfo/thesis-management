@@ -6,8 +6,12 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import it.polito.se2.g04.thesismanagement.degree.DegreeException;
+import it.polito.se2.g04.thesismanagement.degree.DegreeNotFoundException;
 import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
+import it.polito.se2.g04.thesismanagement.department.DepartmentNotFoundException;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
+import it.polito.se2.g04.thesismanagement.group.GroupNotFoundException;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
@@ -43,16 +47,34 @@ public class UserServiceImpl implements UserService{
         }
         else{
             if(userInfo.getRole().compareTo("STUDENT")==0){
+                //maybe add a check to every field
+                if(userInfo.getCodDegree()==null)
+                    throw new DegreeNotFoundException("Degree field is null");
+                if(!degreeRepository.existsById(userInfo.getCodDegree()))
+                    throw new DegreeNotFoundException("Can't find a degree with the specified ID");
                 Student toAdd= new Student(userInfo.getSurname(),userInfo.getName(),userInfo.getGender(),userInfo.getNationality(),userInfo.getEmail(),degreeRepository.getReferenceById(userInfo.getCodDegree()),userInfo.getEnrollmentYear());
                 studentRepository.save(toAdd);
+                User userToAdd = new User(userInfo.getEmail(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRole());
+                userRepository.save(userToAdd);
+                return "user added";
             }
             if(userInfo.getRole().compareTo("TEACHER")==0){
+                //maybe add a check to every field
+                if(userInfo.getCodGroup()==null)
+                    throw new GroupNotFoundException("Group field is null");
+                if(!groupRepository.existsById(userInfo.getCodGroup()))
+                    throw new GroupNotFoundException("Can't find a group with the specified ID");
+                if(userInfo.getCodDepartment()==null)
+                    throw new DepartmentNotFoundException("Department field is null");
+                if(!departmentRepository.existsById(userInfo.getCodDepartment()))
+                    throw new DepartmentNotFoundException("Can't find a department with the specified ID");
                 Teacher toAdd = new Teacher(userInfo.getSurname(),userInfo.getName(),userInfo.getEmail(),groupRepository.getReferenceById(userInfo.getCodGroup()),departmentRepository.getReferenceById(userInfo.getCodDepartment()));
                 teacherRepository.save(toAdd);
+                User userToAdd = new User(userInfo.getEmail(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRole());
+                userRepository.save(userToAdd);
+                return "user added";
             }
-            User toAdd = new User(userInfo.getEmail(),passwordEncoder.encode(userInfo.getPassword()),userInfo.getRole());
-            userRepository.save(toAdd);
-            return "user added";
+            return "user not added";
         }
     }
 

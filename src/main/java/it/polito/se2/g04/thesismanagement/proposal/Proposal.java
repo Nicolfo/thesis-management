@@ -2,6 +2,10 @@ package it.polito.se2.g04.thesismanagement.proposal;
 
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
