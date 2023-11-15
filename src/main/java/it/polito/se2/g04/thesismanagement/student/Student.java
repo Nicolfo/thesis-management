@@ -35,6 +35,7 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "COD_DEGREE")
     private Degree degree;
+
     private int enrollmentYear;
 
 
