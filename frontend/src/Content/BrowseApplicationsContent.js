@@ -35,6 +35,7 @@ function BrowseApplicationsContent(props) {
                         <th>Apply date</th>
                         <th>Student</th>
                         <th>Average grades</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -60,6 +61,7 @@ function ApplicationRow(props) {
             <td>{ dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss') }</td>
             <td>{ props.application.studentName} {props.application.studentSurname}</td>
             <td>{ props.application.studentAverageGrades }</td>
+            <td>{ props.application.status}</td>
             <td>
                 <Button onClick={() => handleViewInfo(props.application.id)}>View info</Button>
             </td>

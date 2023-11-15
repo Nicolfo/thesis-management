@@ -36,7 +36,13 @@ function ApplicationViewLayout(props) {
     }
 
     const fetchStudentGradesData = (studentId) => {
-        fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId)
+        fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId,{
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${props.user.token}`,
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 setStudentGradesData(data);
@@ -46,7 +52,13 @@ function ApplicationViewLayout(props) {
     }
 
     const acceptApplication = () => {
-        fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId)
+        fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId,{
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${props.user.token}`,
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 if (data) {
@@ -62,7 +74,13 @@ function ApplicationViewLayout(props) {
             });
     }
     const rejectApplication = () => {
-        fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId)
+        fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${props.user.token}`,
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 if (data) {
@@ -85,9 +103,6 @@ function ApplicationViewLayout(props) {
     return (
         <>
             <div style={{display: 'flex', flexDirection: 'column'}}>
-                <NavBar user={props.user} realDate={props.realDate} applicationDate={props.applicationDate}
-                        updateApplicationDate={props.updateApplicationDate}>
-                </NavBar>
 
                 <div style={{display: 'flex', justifyContent: 'center'}}>
                     <div style={{width: '70rem', marginBottom: '2rem'}}>
@@ -100,8 +115,8 @@ function ApplicationViewLayout(props) {
                             <Card.Header as="h5">Application Information</Card.Header>
                             <Card.Body>
                                 <Card.Text>
-                                    Attachment: {applicationData.attachment ?
-                                    <a href={`${SERVER_URL}/API/getFile/${applicationData.attachment.attachmentId}`}
+                                    Attachment: {applicationData.attachmentId ?
+                                    <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
                                        download>Download</a>
                                     : 'No attachment'} <br/>
                                     Apply Date: {new Date(applicationData.applyDate).toLocaleString('it-IT')} <br/>
@@ -148,6 +163,7 @@ function ApplicationViewLayout(props) {
                                         Enrollment Year: {applicationData.student.enrollmentYear} <br/>
                                         Grades: <br/>
                                         {studentGradesData.length > 0 ? (
+
                                             <ul>
                                                 {studentGradesData.map((grade, index) => (
                                                     <li key={index}>{grade.titleCourse}: {grade.grade}</li>

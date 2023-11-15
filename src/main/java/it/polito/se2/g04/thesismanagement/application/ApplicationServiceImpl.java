@@ -54,14 +54,17 @@ public class ApplicationServiceImpl implements ApplicationService{
     }
 
     @Override
-    public List<Application> getApplicationsByProposal(Long proposalId) {
+    public List<ApplicationDTO4> getApplicationsByProposal(Long proposalId) {
         if(!proposalRepository.existsById(proposalId) ){
             throw new ProposalNotFoundException("Specified proposal id not found");
         }
         UserInfoUserDetails auth =(UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String profEmail= auth.getUsername();
         if(proposalRepository.getReferenceById(proposalId).getSupervisor().getEmail().compareTo(profEmail)==0){
-            return applicationRepository.getApplicationByProposal_Id(proposalId);
+
+            List<Application> toReturn= applicationRepository.getApplicationByProposal_Id(proposalId);
+            return toReturn.stream().map(it->new ApplicationDTO4(it.getId(),it.getStudent(),it.getAttachment().getAttachmentId(),it.getApplyDate(),it.getProposal(),it.getStatus())).toList();
+
         }
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
     }

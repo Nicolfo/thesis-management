@@ -39,7 +39,7 @@ public class ApplicationController {
 
     @GetMapping("/API/application/getApplicationsByProposal")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  List<Application> getApplicationByProposal(Long proposalId){
+    public  List<ApplicationDTO4> getApplicationByProposal(Long proposalId){
         return applicationService.getApplicationsByProposal(proposalId);
     }
   
