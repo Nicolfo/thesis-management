@@ -18,7 +18,7 @@ function ApplicationViewLayout(props) {
     }, []);
 
     const fetchApplicationData = () => {
-        console.log(applicationId)
+        if(props.user && props.user.token)
         return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId,{
             method: 'GET',
             headers:{
@@ -36,6 +36,7 @@ function ApplicationViewLayout(props) {
     }
 
     const fetchStudentGradesData = (studentId) => {
+        if(props.user && props.user.token)
         fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId,{
             method: 'GET',
             headers:{
@@ -52,6 +53,7 @@ function ApplicationViewLayout(props) {
     }
 
     const acceptApplication = () => {
+        if(props.user && props.user.token)
         fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId,{
             method: 'GET',
             headers:{
@@ -74,6 +76,7 @@ function ApplicationViewLayout(props) {
             });
     }
     const rejectApplication = () => {
+        if(props.user && props.user.token)
         fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
             method: 'GET',
             headers:{
