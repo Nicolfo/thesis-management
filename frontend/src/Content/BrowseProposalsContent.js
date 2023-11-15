@@ -21,7 +21,7 @@ export default function BrowseProposalsContent(props) {
         <>
             <h4>Your thesis proposals</h4>
             <Accordion defaultActiveKey="0">
-                { proposalList.map(proposal => <ProposalAccordion proposal={proposal} />) }
+                { proposalList.map(proposal => <ProposalAccordion key={proposal.id} proposal={proposal} />) }
             </Accordion>
         </>
     );

@@ -117,7 +117,28 @@ const getAllProposals = async (jwt) => {
     }));
 }
 
+const getAllGroups = async (jwt) => {
+    return getJson(fetch(SERVER_URL + "group/getAll" , {
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const searchProposals = async(jwt, body) => {
+    return getJson(fetch(SERVER_URL + "proposal/search" , {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
 
 
-const API = { login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal };
+
+const API = { login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getAllGroups, searchProposals };
 export default API;

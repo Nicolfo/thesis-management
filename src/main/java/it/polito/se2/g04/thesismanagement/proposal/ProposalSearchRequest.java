@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 public class ProposalSearchRequest {
     private String title;
-    private Long supervisorId;
+    private List<Long> supervisorIdList;
     private List<Long> coSupervisorIdList;
     private String keywords;
     private String type;

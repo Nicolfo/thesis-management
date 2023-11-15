@@ -13,7 +13,9 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -115,9 +117,6 @@ public class ProposalServiceImpl implements ProposalService {
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
         }
-        if (proposalSearchRequest.getSupervisorId() != null) {
-            predicates.add(cb.equal(proposal.join("supervisor").get("id"), proposalSearchRequest.getSupervisorId()));
-        }
         if (proposalSearchRequest.getKeywords() != null) {
             List<String> keywordList = List.of(proposalSearchRequest.getKeywords().split("[\\s,]+"));
             for (String keyword : keywordList) {
@@ -140,10 +139,10 @@ public class ProposalServiceImpl implements ProposalService {
             predicates.add(cb.like(cb.upper(proposal.get("notes")), "%" + proposalSearchRequest.getNotes().toUpperCase() + "%"));
         }
         if (proposalSearchRequest.getMinExpiration() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(proposal.get("expiration"), proposalSearchRequest.getMinExpiration()));
+            predicates.add(cb.greaterThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMinExpiration()));
         }
         if (proposalSearchRequest.getMaxExpiration() != null) {
-            predicates.add(cb.lessThanOrEqualTo(proposal.get("expiration"), proposalSearchRequest.getMaxExpiration()));
+            predicates.add(cb.lessThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMaxExpiration()));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
@@ -157,6 +156,12 @@ public class ProposalServiceImpl implements ProposalService {
         for (Proposal prop : proposalList) {
             boolean include = true;
             // Check if it has all the supervisors
+            if (proposalSearchRequest.getSupervisorIdList() != null) {
+                if (!proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId())) {
+                    include = false;
+                }
+            }
+            // Check if it has all the co-supervisors
             if (proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
                 for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {

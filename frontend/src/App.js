@@ -22,6 +22,7 @@ import BrowseProposalsContent from './Content/BrowseProposalsContent';
 
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";
 import API from "./API/API2";
+import ProposalsListContent from './Content/ProposalsListContent';
 
 
 function Content(props) {
@@ -234,7 +235,7 @@ function filterProposals(filters){
         }>
           <Route index element={<h1>Path not found</h1>} />
           <Route path="/search-for-proposal"
-            element={ <ProposalList listOfSupervisors={listOfSupervisors} clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={listOfProposal} setProposalSelected={setProposalSelected}></ProposalList> } />
+            element={ <ProposalsListContent user={user} /> } />
           <Route path="/teacher/application/browse"
             element={ <BrowseApplicationsContent user={user}/> } />
           <Route path="/login"
