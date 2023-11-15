@@ -61,7 +61,6 @@ export async function insertApplication(cvId, proposalId) {
             attachmentID: cvId.id,
             applyDate:dayjs(),
             proposalID: proposalId,
-
         }),
     }
 )};

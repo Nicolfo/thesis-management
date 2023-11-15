@@ -250,6 +250,8 @@ function filterProposals(filters){
             element={ <InsertUpdateProposal user={user} /> } />
           <Route path="/teacher/proposals"
             element={ <BrowseProposalsContent user={user} /> } />
+          <Route path="/proposal/apply/:proposalId"
+            element={ <RenderProposal user={user} /> } />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -187,13 +187,15 @@ function CustomToggle({ children, eventKey, callback }) {
   }
 
 function ProposalEntry({ proposal, user }) {
+    const navigate = useNavigate();
+
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
                     <Col><b>{proposal.title}</b></Col>
                     <Col className="d-flex justify-content-end">
-                        <Button><FontAwesomeIcon icon="fa-file" /></Button>
+                        <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}><FontAwesomeIcon icon="fa-file" /></Button>
                         <CustomToggle eventKey={proposal.id} />
                     </Col>
                 </Row>
