@@ -9,6 +9,8 @@ import it.polito.se2.g04.thesismanagement.security.user.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @RestController
 @CrossOrigin
@@ -49,4 +51,30 @@ public class ProposalController {
     public String getTitleByProposalId(@PathVariable Long proposalId) {
         return proposalService.getTitleByProposalId(proposalId);
     }
+
+
+
+    @PostMapping("API/proposal/insert/{json}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Proposal createProposal(@RequestBody ProposalDTO proposal){
+        return proposalService.createProposal(proposal);
+    }
+
+
+
+    @PutMapping("API/proposal/update/{id}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Proposal UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
+        return proposalService.updateProposal(id, proposal);
+    }
+
+    @PostMapping("API/proposal/update/")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void UpdateProposalWithNoPathVariable(){
+        throw new createUpdateProposalWithNoPathVariable("Can't update a proposal without filling the form");
+    }
+
 }

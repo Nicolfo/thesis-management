@@ -48,6 +48,16 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
+    public Proposal createProposal(ProposalDTO proposalDTO) {
+        return null;
+    }
+
+    @Override
+    public Proposal updateProposal(Long id, ProposalDTO proposal) {
+        return null;
+    }
+
+    @Override
     public List<Proposal> getAllNotArchivedProposals(){
         return proposalRepository.findAllByArchived(false);
     }

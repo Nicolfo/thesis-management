@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -22,21 +23,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Proposal {
-    public Proposal(String title, Teacher supervisor, List<Teacher> coSupervisors, String keywords, String type, List<Group> groups, String description, String requiredKnowledge, String notes, Date expiration, String level, String cdS, Boolean archived) {
-        this.title = title;
-        this.supervisor = supervisor;
-        this.coSupervisors = coSupervisors;
-        this.keywords = keywords;
-        this.type = type;
-        this.groups = groups;
-        this.description = description;
-        this.requiredKnowledge = requiredKnowledge;
-        this.notes = notes;
-        this.expiration = expiration;
-        this.level = level;
-        this.CdS = cdS;
-        this.archived = archived;
-    }
+
 
     //sets archived automatically to false, when object is created using this constructor
     public Proposal(String title, Teacher supervisor, List<Teacher> coSupervisors, String keywords, String type, List<Group> groups, String description, String requiredKnowledge, String notes, Date expiration, String level, String cdS) {
@@ -52,7 +39,6 @@ public class Proposal {
         this.expiration = expiration;
         this.level = level;
         CdS = cdS;
-        this.archived = false;
     }
 
     @Id
@@ -73,7 +59,7 @@ public class Proposal {
     private Date expiration;
     private String level;//to check
     private String CdS;//to check
-    private Boolean archived;
+    private Boolean archived = false;
 
 
     @Override

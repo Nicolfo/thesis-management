@@ -32,5 +32,4 @@ public class Teacher {
     @ManyToOne
     @JoinColumn(name = "COD_DEPARTMENT")
     private Department department;
-
 }

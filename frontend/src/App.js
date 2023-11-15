@@ -19,6 +19,9 @@ import SideBar from "./SideBar/SideBar";
 import BrowseDecisions from "./Content/BrowseDecisions";
 
 
+import InsertUpdateProposal from "./Content/InsertUpdateProposal";
+import API from "./API/API2";
+
 
 function Content(props) {
 
@@ -27,12 +30,9 @@ function Content(props) {
   switch (path) {
     case "/":
       return <b>Home page</b>
-
+      /*return <Navigation user={user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>*/
     case "/search-for-proposal":
       return <ProposalList listOfSupervisors={props.listOfSupervisors} clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
-
-    
- 
     case "/teacher/application/browse":
       return <BrowseApplicationsContent user={props.user}/>
     case "/login":
@@ -41,6 +41,11 @@ function Content(props) {
       return <BrowseDecisions user={props.user} />
     case "/application/view":
       return <ApplicationViewLayout user={props.user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
+    case "/insertProposal":
+      return <InsertUpdateProposal user={props.user} />
+    case "/updateProposal/:proposalID":
+      return <InsertUpdateProposal user={props.user} />
+
     default:
       return <h1>Path not found</h1>
   }
@@ -91,7 +96,7 @@ function App() {
     setApplicationDate(realDate.add(offsetDate, "day"));
    },[]);
 
- 
+
 
 function selectFilter(el1, el2, filterType){
 

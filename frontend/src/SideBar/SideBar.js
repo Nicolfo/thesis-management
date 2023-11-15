@@ -23,8 +23,14 @@ function SideBar({ user }){
                             My thesis proposals
                         </button>
 
+
                         </li>
                     }
+                    <li className="nav-item">
+                        <button className={path==='/insertProposal' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/insertProposal')}} >
+                            Insert Proposal
+                        </button>
+                    </li>
                     <li className="nav-item">
                         <button className={path==='/teacher/application/browse' ? "nav-link active link-light text-start":"nav-link link-dark text-start"} onClick={()=>{navigate('/teacher/application/browse')}} >
                             My application proposals
@@ -36,6 +42,7 @@ function SideBar({ user }){
                         </button>
                     </li>
                 </ul>
+            </aside>
 
         </div>
 

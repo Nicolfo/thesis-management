@@ -25,5 +25,8 @@ public interface ProposalService {
     List<Proposal> getProposalsByProf(String UserName);
 
     String getTitleByProposalId(Long proposalId);
+    Proposal createProposal(ProposalDTO proposalDTO);
+    Proposal updateProposal(Long id, ProposalDTO proposal);
+
 }
 

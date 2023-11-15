@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,9 +20,40 @@ public class TeacherController {
         this.teacherService = teacherService;
     }
 
-    @GetMapping("/API/teacher/getAll")
+
+
+    @GetMapping("API/teacher/getAll/")
     @ResponseStatus(HttpStatus.OK)
-    public List<TeacherDTO> getAll() {
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public List<TeacherDTO> getAll(){
         return teacherService.getAllTeachers();
+    }
+
+    @GetMapping("API/teacher/getById/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public Teacher getById(@PathVariable Long id){
+        return teacherService.getById(id);
+    }
+
+    @GetMapping("API/teacher/getByEmail/{email}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public Teacher getByEmail(@PathVariable String email){
+        return teacherService.getByEmail(email);
+    }
+
+    @GetMapping("API/teacher/getByEmail/")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public void getByEmailWithNoEmail(){
+        //errorhandler placeholder
+    }
+
+    @GetMapping("API/teacher/getById/")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public void getByIdWithNoId(){
+        //errorhandler placeholder
     }
 }

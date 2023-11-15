@@ -6,4 +6,7 @@ import java.util.List;
 
 public interface TeacherService {
     List<TeacherDTO> getAllTeachers();
+    List<TeacherDTO> getAll();
+    Teacher getById(Long id);
+    Teacher getByEmail(String email);
 }
