@@ -73,19 +73,19 @@ function App() {
   },[]);
 
   return (
-      <div className="container-fluid" style={{height: '90vh', padding: '0rem'}}>
-        <div className="row align-items-start">
-          <Router>
-            <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
-            <div className="row g-0">
-              {/*<SideBar searchForProposalClicked={searchForProposalClicked}>*/}
-                <SideBar>
-              </SideBar>
-              <div className="col-10 p-2">
-                {/*<Content clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}/>*/}
-                <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}/>
-              </div>
+
+    <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
+      <div className="row align-items-start">
+        <Router>
+          <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
+          <div className="row g-0">
+            <SideBar user={user} />
+            <div className="col-10 p-2">
+            <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
+            </Content>
+
             </div>
+        </div>
           </Router>
         </div>
       </div>
