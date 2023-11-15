@@ -36,8 +36,6 @@ public class Student {
     @JoinColumn(name = "COD_DEGREE")
     private Degree degree;
 
-
-
     private int enrollmentYear;
 
 

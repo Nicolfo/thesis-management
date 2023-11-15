@@ -4,24 +4,34 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import {BrowserRouter as Router, useLocation} from "react-router-dom";
 import Navigation from "./Navigation/Navigation";
-import { LoginLayout } from "./LoginLayout/LoginLayout";
+import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import BrowseProposalsContent from "./Content/BrowseProposalsContent";
-import SideBar from './SideBar/SideBar';
+import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
+import SideBar from "./SideBar/SideBar";
+import BrowseDecisions from "./Content/BrowseDecisions";
 
 function Content(props) {
 
   const path = useLocation().pathname.toString();
   switch (path) {                                //add to this switch-case your content (defined in the Content folder)
     case "/":
-      return <>Welcome!</>
+      return <b>Home page</b>
+    /*case "/search-for-proposal":
+      return <ProposalList clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
+    case "/see-proposal":
+      return <RenderProposal listOfProposal={props.listOfProposal} proposalSelected={props.proposalSelected}></RenderProposal>
+
+    case "/teacher/proposal/browse":
+      return <BrowseProposalsContent user={props.user}/>*/
+    case "/teacher/application/browse":
+      return <BrowseApplicationsContent user={props.user}/>
     case "/login":
       return <LoginLayout user={props.user} setUser={props.setUser} />
-    case "/teacher/proposal/browse":
-      return <BrowseProposalsContent user={props.user}/>
+    case "/browseDecisions":
+      return <BrowseDecisions user={props.user} />
 
     default:
       return <h1>Path not found</h1>
@@ -29,6 +39,8 @@ function Content(props) {
 }
 
 function App() {
+
+  const [user, setUser] = useState(null);
 
   /*
   We use 3 states to manage the current date and the virtual clock:
@@ -45,8 +57,6 @@ function App() {
   const [offsetDate, setOffsetDate] = useState(0);
   const [applicationDate, setApplicationDate] = useState(dayjs());
 
-  const [user, setUser] = useState(null);
-
   const updateApplicationDate = dateStr => {
     let date = dayjs(dateStr);
     // If the user didn't provide a valid date, default to the current one
@@ -60,9 +70,10 @@ function App() {
   useEffect(() => {
     setRealDate(dayjs());
     setApplicationDate(realDate.add(offsetDate, "day"));
-  }, []);
+  },[]);
 
   return (
+
     <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
       <div className="row align-items-start">
         <Router>
@@ -72,11 +83,12 @@ function App() {
             <div className="col-10 p-2">
             <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
             </Content>
+
             </div>
-          </div>
-        </Router>
+        </div>
+          </Router>
+        </div>
       </div>
-    </div>
   );
 }
 
