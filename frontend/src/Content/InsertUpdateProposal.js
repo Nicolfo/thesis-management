@@ -247,6 +247,7 @@ function InsertUpdateProposal(props) {
                                                 type="text"
                                                 placeholder="Type"
                                                 value={singleType}
+                                                onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
                                                 onChange={ (ev) => changeType(ev, index) }
                                             />
                                             <Form.Control.Feedback type="invalid"> Please write the type </Form.Control.Feedback>
@@ -274,6 +275,7 @@ function InsertUpdateProposal(props) {
                                                 type="text"
                                                 placeholder="Keyword"
                                                 value={singleKeyword}
+                                                onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
                                                 onChange={ (ev) => changeKeyword(ev, index) }
                                             />
                                             <Form.Control.Feedback type="invalid"> Please write the keyword </Form.Control.Feedback>
@@ -369,7 +371,7 @@ function InsertUpdateProposal(props) {
                             <MultiSelect
                                 options={optionsCds}
                                 value={selectedCds}
-                                onChange={setSelectedCds}
+                                onChange={(ev) => { setSelectedCds(ev.target.value); setIsValidCds(true) } }
                                 labelledBy="Select CdS"
                             />
                             { !isValidCds &&
