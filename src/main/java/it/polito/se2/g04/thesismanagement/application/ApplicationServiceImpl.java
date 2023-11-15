@@ -66,9 +66,26 @@ public class ApplicationServiceImpl implements ApplicationService{
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
     }
 
+    @Override
+    public Application getApplicationById(Long applicationId){
+        return applicationRepository.getApplicationById(applicationId);
+    }
 
     @Override
-    public void applyForProposal( ApplicationDTO applicationDTO) {
+  public boolean acceptApplicationById(Long applicationId) {
+        try {
+            Application application = getApplicationById(applicationId);
+            if (!(application.getStatus().compareTo("PENDING")==0))
+                return false;
+            application.setStatus("ACCEPTED");
+            applicationRepository.save(application);
+            return true;
+        } catch (Exception e) {
+            return false;
+             }
+    }
+  @Override
+  public void applyForProposal( ApplicationDTO applicationDTO) {
         //TODO: add parsing of logged user
         try {
             Student loggedUser=studentRepository.getReferenceById(1L);
@@ -80,7 +97,8 @@ public class ApplicationServiceImpl implements ApplicationService{
 
     }
 
-    @Override
+  /*
+   @Override
     public void acceptApplication(Long applicationID) {
         //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
         try {
@@ -89,10 +107,24 @@ public class ApplicationServiceImpl implements ApplicationService{
             applicationRepository.save(toAccept);
         }catch (Exception ex){
             throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
-        }
+          }
     }
-
-    @Override
+  */
+      @Override
+    public boolean rejectApplicationById(Long applicationId) {
+        try {
+            Application application = getApplicationById(applicationId);
+            if (!(application.getStatus().compareTo("PENDING")==0))
+                return false;
+            application.setStatus("REJECTED");
+            applicationRepository.save(application);
+            return true;
+        } catch (Exception e) {
+            return false;
+          }
+    }
+  /*
+  @Override
     public void declineApplication(Long applicationID) {
         //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
         try {
@@ -101,6 +133,10 @@ public class ApplicationServiceImpl implements ApplicationService{
             applicationRepository.save(toAccept);
         }catch (Exception ex){
             throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
-        }
+          }
     }
+  
+  */
+ 
+
 }

@@ -9,14 +9,18 @@ import Navigation from "./Navigation/Navigation";
 import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
 import SideBar from "./SideBar/SideBar";
 import BrowseDecisions from "./Content/BrowseDecisions";
 
+
+
 function Content(props) {
 
   const path = useLocation().pathname.toString();
-  switch (path) {                                //add to this switch-case your content (defined in the Content folder)
+
+  switch (path) {
     case "/":
       return <b>Home page</b>
     /*case "/search-for-proposal":
@@ -32,7 +36,8 @@ function Content(props) {
       return <LoginLayout user={props.user} setUser={props.setUser} />
     case "/browseDecisions":
       return <BrowseDecisions user={props.user} />
-
+    case "/application/view":
+      return <ApplicationViewLayout user={props.user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
     default:
       return <h1>Path not found</h1>
   }

@@ -1,12 +1,9 @@
 package it.polito.se2.g04.thesismanagement.student;
 
-import it.polito.se2.g04.thesismanagement.career.Career;
 import it.polito.se2.g04.thesismanagement.degree.Degree;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 

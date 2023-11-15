@@ -1,14 +1,12 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
-import it.polito.se2.g04.thesismanagement.security.user.User;
 import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -44,16 +42,34 @@ public class ApplicationController {
     public  List<Application> getApplicationByProposal(Long proposalId){
         return applicationService.getApplicationsByProposal(proposalId);
     }
-
-
+  
     @PostMapping("/API/application/insert")
     @ResponseStatus(HttpStatus.CREATED)
     public void insertApplication(@RequestBody ApplicationDTO applicationDTO){
         //TODO:check if the current user is a STUDENT
         applicationService.applyForProposal(applicationDTO);
     }
+  
+    @GetMapping("/API/application/getApplicationById/{applicationId}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  Application getApplicationById(@PathVariable Long applicationId){
+        return applicationService.getApplicationById(applicationId);
+    }
 
-    @PostMapping("/API/application/{applicationId}/accept")
+    @GetMapping("/API/application/acceptApplicationById/{applicationId}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  boolean acceptApplicationById(@PathVariable Long applicationId){
+        return applicationService.acceptApplicationById(applicationId);
+    }
+
+    @GetMapping("/API/application/rejectApplicationById/{applicationId}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  boolean rejectApplicationById(@PathVariable Long applicationId){
+        return applicationService.rejectApplicationById(applicationId);
+    }
+
+
+  /*@PostMapping("/API/application/{applicationId}/accept")
     public void acceptApplication(@PathVariable Long applicationId){
         //TODO:check if the current user is a TEACHER
         applicationService.acceptApplication(applicationId);
@@ -63,5 +79,5 @@ public class ApplicationController {
     public void declineApplication(@PathVariable Long applicationId){
         //TODO:check if the current user is a TEACHER
         applicationService.declineApplication(applicationId);
-    }
+    }*/
 }
