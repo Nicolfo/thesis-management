@@ -14,6 +14,7 @@ import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -75,4 +76,16 @@ public class Proposal {
     private Boolean archived;
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Proposal proposal = (Proposal) o;
+        return Objects.equals(id, proposal.id) && Objects.equals(title, proposal.title) && Objects.equals(supervisor, proposal.supervisor) && Objects.equals(coSupervisors, proposal.coSupervisors) && Objects.equals(keywords, proposal.keywords) && Objects.equals(type, proposal.type) && Objects.equals(groups, proposal.groups) && Objects.equals(description, proposal.description) && Objects.equals(requiredKnowledge, proposal.requiredKnowledge) && Objects.equals(notes, proposal.notes) && Objects.equals(expiration, proposal.expiration) && Objects.equals(level, proposal.level) && Objects.equals(CdS, proposal.CdS);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, supervisor, coSupervisors, keywords, type, groups, description, requiredKnowledge, notes, expiration, level, CdS);
+    }
 }

@@ -8,16 +8,10 @@
 
 ## API Server
 
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+- GET `/API/group/getAll`
+  - response body content: an array containing all the groups
+- GET `/API/teacher/getAll`
+  - response body content: an array containing all the teachers
 
 ## Database Tables
 

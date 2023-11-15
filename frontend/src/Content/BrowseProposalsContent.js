@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect, useContext } from "react";
-import API from "../API/API";
+import API from "../API/Api";
 import { Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

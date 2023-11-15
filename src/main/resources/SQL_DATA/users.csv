@@ -15,7 +15,3 @@ id,password,role,username
 300017,$2a$10$o4ruVdsP14HICkAMeOxRfuTPBw/gyDNk38FUUzodRfTULegyoPmsO,TEACHER,chang.wei@polito.it
 300018,$2a$10$nlYGMPSuJJ6oDPN.zse2IuJhGAEDh5agSAZe.nwwHMb/yJdJibfz6,TEACHER,luca.marini@polito.it
 300019,$2a$10$nKnfRKkYGbifH3zPWNlf/.WxQy8G7bEqjl1i7k44FWTN92Rqyzxqq,TEACHER,marco.bianco@polito.it
-300020,$2a$10$G1IGwc0PLgH0qlozo5KbtOFP1LZoeQiohwQU4ChsTPoKDpYM9clha,TEACHER,andrei.ivanov@polito.it
-300003,$2a$10$Gq3wsbhNFUcYOg9.6BgVdOlVPo3RAhoqoTItoTMCmuNhh/SWluu0a,STUDENT,luca.conti@polito.it
-300001,$2a$10$EimFE/ZhsefiZanMmyH91et6lvBrSVqZYz/rE3VhjP.T/jhnukuDW,STUDENT,alessia.ferrari@polito.it
-300002,$2a$10$bOk.Dy.WQcKWieOqkcvO2etlljrZrZvHbiPUG2VxpU7MOoooDECXC,STUDENT,lena.muller@polito.it

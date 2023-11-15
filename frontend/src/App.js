@@ -5,6 +5,10 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, useLocation} from "react-router-dom";
+import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
+import ProposalList from "./Content/ProposalList";
+import RenderProposal from "./Content/RenderProposal";
+import NavBar from "./NavBar/NavBar";
 import Navigation from "./Navigation/Navigation";
 import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
@@ -23,13 +27,12 @@ function Content(props) {
   switch (path) {
     case "/":
       return <b>Home page</b>
-    /*case "/search-for-proposal":
-      return <ProposalList clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
-    case "/see-proposal":
-      return <RenderProposal listOfProposal={props.listOfProposal} proposalSelected={props.proposalSelected}></RenderProposal>
 
-    case "/teacher/proposal/browse":
-      return <BrowseProposalsContent user={props.user}/>*/
+    case "/search-for-proposal":
+      return <ProposalList listOfSupervisors={props.listOfSupervisors} clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
+
+    
+ 
     case "/teacher/application/browse":
       return <BrowseApplicationsContent user={props.user}/>
     case "/login":
@@ -47,8 +50,19 @@ function App() {
 
   const [user, setUser] = useState(null);
 
-  /*
-  We use 3 states to manage the current date and the virtual clock:
+
+  const [clickOnProposal, setClickOnProposal] = useState(0);
+
+
+//MOCK DATA
+  const listOfFilters = ["Professor", "Type"];
+  const correspondingFields = [2,5]
+  const [listOfProposal, setListOfProposal] = useState([])
+
+  const [listOfSupervisors, setListOfSupervisors] = useState([])
+  const [filteredProposals, setFilteredProposals] = useState([])
+
+  /*We use 3 states to manage the current date and the virtual clock:
     - realDate: this represents the real current date, according to the system. It is refreshed at every render
     - offsetDate: this represents the offset that has been set by the user, in terms of additional days starting from realDate.
     - applicationDate: this represents the date that is considered by the application.
@@ -75,18 +89,104 @@ function App() {
   useEffect(() => {
     setRealDate(dayjs());
     setApplicationDate(realDate.add(offsetDate, "day"));
-  },[]);
+   },[]);
+
+ 
+
+function selectFilter(el1, el2, filterType){
+
+  switch(filterType) {
+    // by professor
+    case 0:
+
+
+      return (el1.supervisor.name == el2)
+      break;
+    case 1:
+
+      return (el1.level == el2)
+
+      // code block
+      break;
+    default:
+      // code block
+  }
+
+
+}
+
+
+function filterProposals(filters){
+  let listOfFilters = ["supervisor", "level"];
+  let index = 0;
+
+
+  setFilteredProposals(listOfProposal)
+  let xfilteredProposals = [...listOfProposal]
+
+  let noFilterSelected = true;
+
+
+  for(const filterx  of filters){
+
+    if(filterx === "All"){
+    }else {
+
+      noFilterSelected = false
+       xfilteredProposals = xfilteredProposals.filter((proposal , i) => {
+        if (Array.isArray(proposal[correspondingFields[index]])){
+
+          return (proposal[correspondingFields[index]].includes(filterx))
+
+        }else{
+          return(selectFilter(proposal, filterx, index))}
+      })
+
+    }
+    index++
+    }
+  setFilteredProposals([...xfilteredProposals])
+    if(noFilterSelected){
+      setFilteredProposals(listOfProposal)
+    }
+  }
+
+
+
+
+
+  const [proposalSelected, setProposalSelected] = useState(0);
+  const searchForProposalClicked = () => {
+    setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
+  }
+
+  useEffect( ()=>{
+    // call the api to retrieve the list of active proposal
+    // api called every time the user click on the button to search for proposal.
+    // retrieve all the proposals. for the filters, they are applicated on the font-end (we wanna evitate to do a lot of queries so a lot of api calls)
+    // cause we already have all the active proposals (more time to do api than local computation)
+    // we can do that because we can assume that the insert of a new proposal is a lot less of the number of search for a proposal
+
+
+    getAllProposal()
+          .then((list)=> { setListOfProposal(Array.from(Object.values(list))); setFilteredProposals(Array.from(Object.values(list)))})
+
+    getAllSupervisors()
+          .then((list) => {setListOfSupervisors(list);})
+
+
 
   return (
+
 
     <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
       <div className="row align-items-start">
         <Router>
           <Navigation user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
           <div className="row g-0">
-            <SideBar user={user} />
+            <SideBar user={user} searchForProposalClicked={searchForProposalClicked}/>
             <div className="col-10 p-2">
-            <Content realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
+            <Content listOfSupervisors={listOfSupervisors} clickOnProposal={clickOnProposal} filterProposals={filterProposals} listOfProposal={filteredProposals} setProposalSelected={setProposalSelected} proposalSelected={proposalSelected} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} user={user} setUser={setUser}>
             </Content>
 
             </div>

@@ -7,14 +7,13 @@ function ProposalList(props){
     const navigate = useNavigate();
 
 
-    const shortProposalSchema = ["Id", "Title", "Supervisor","Keywords", "Type", "Groups","Expiration"]
+    const shortProposalSchema = ["Id", "Title", "Supervisor","Keywords", "Level", "cdS","Expiration"]
 
 
     let indexForShortProposal = [0,1,2,4,5,6,10]
 
     let shortProposal = props.listOfProposal.map((e,i) => {
-        return e.filter((item, index) => indexForShortProposal.includes(index))
-
+        return {id: e.id, title: e.title, supervisor: e.supervisor.surname, keywords: e.keywords, level: e.level, cdS:e.cdS ,expiration: e.expiration};
 
     })
 
@@ -22,7 +21,7 @@ function ProposalList(props){
 
         <div>
             <h2>List of Active Proposal</h2>
-            <SearchBar clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals}></SearchBar>
+            <SearchBar listOfSupervisors={props.listOfSupervisors} clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals}></SearchBar>
 
 
             {shortProposal.map((proposal, index)=>{
@@ -43,7 +42,7 @@ function ProposalList(props){
                         </thead>
                         <tbody>
                             <tr>
-                        {proposal.map((e,i) => {
+                        {Array.from(Object.values(proposal)).map((e,i) => {
 
                             if (Array.isArray(e)){
                                 return (<td key={i}>{e.map((el,ind) => {
@@ -54,7 +53,12 @@ function ProposalList(props){
                                     );
                                 })}</td>)
 
-                            }else{
+                            }
+                            else if(i ==6){
+                                return(<td key={i}>{e.slice(0,10)}</td>)
+
+                            }
+                            else{
                             return( <td key={i}>{e}</td>
 
                             );
@@ -75,7 +79,9 @@ function ProposalList(props){
 
 
 function SearchBar(props){
-    let professorsList = ["Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
+    //let professorsList = ["Andrea", "Lia Morra", "Simone Inzaghi", "Marco", "Giardini", "Feroce"]
+    let professorsList = props.listOfSupervisors.map((prof,i) => {return (prof.surname)})
+
     let typeList = ["Bachelor", "Master"]
     const [professor, setProfessor] = useState("All");
     const [type, setType] = useState("All")
