@@ -86,9 +86,9 @@ public class TeacherControllerTest {
         assertTrue(teacherIds.containsAll(expectedIds), "getAll does not return the correct values");
 
 
-        Teacher teacher3 = new Teacher("Gerald", "Juarez","test@example.com",null,null);
+        Teacher teacher3 = new Teacher("Mario", "Rossi","test3@example.com",null,null);
         teacherRepository.save(teacher3);
-        Teacher teacher4 = new Teacher("Massimo", "Potenza","test@example.com",null,null);
+        Teacher teacher4 = new Teacher("Georgina", "Ferrell","test4@example.com",null,null);
         teacherRepository.save(teacher4);
 
         res= mockMvc.perform(MockMvcRequestBuilders.get("API/teacher/getAll/").contentType(MediaType.APPLICATION_JSON))
