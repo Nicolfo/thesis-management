@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import API from "../API/Api";
 import {Button, Table} from "react-bootstrap";
 import dayjs from 'dayjs';
+import {useNavigate} from "react-router-dom";
 
 
 function BrowseApplicationsContent(props) {
@@ -38,7 +39,7 @@ function BrowseApplicationsContent(props) {
                     </tr>
                     </thead>
                     <tbody>
-                    { applications.map(application => <ApplicationRow application={application} user={props.user}/>) }
+                    { applications.map(application => <ApplicationRow key={application.id} application={application} user={props.user}/>) }
                     </tbody>
                 </Table>
         </div>
@@ -48,8 +49,9 @@ function BrowseApplicationsContent(props) {
 
 
 function ApplicationRow(props) {
-
+    const navigate=useNavigate()
     const handleViewInfo = (id) => {
+        navigate("/application/view?applicationId="+props.application.id);
     };
 
     return (

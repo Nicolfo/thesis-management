@@ -88,6 +88,15 @@ const updateProposal = async (proposal) => {
         body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
     }))
 };
+const getApplicationsByProf = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"application/getByProf",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
 
 
 
@@ -285,5 +294,5 @@ const getAllProposals = async () => {
     ];
 }
 
-const API = { login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal };
+const API = { getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal };
 export default API;

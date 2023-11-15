@@ -52,7 +52,7 @@ public class ApplicationController {
   
     @GetMapping("/API/application/getApplicationById/{applicationId}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  Application getApplicationById(@PathVariable Long applicationId){
+    public  ApplicationDTO4 getApplicationById(@PathVariable Long applicationId){
         return applicationService.getApplicationById(applicationId);
     }
 

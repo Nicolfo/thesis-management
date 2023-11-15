@@ -67,14 +67,19 @@ public class ApplicationServiceImpl implements ApplicationService{
     }
 
     @Override
-    public Application getApplicationById(Long applicationId){
-        return applicationRepository.getApplicationById(applicationId);
+    public ApplicationDTO4 getApplicationById(Long applicationId){
+        Application toReturn= applicationRepository.getApplicationById(applicationId);
+        return new ApplicationDTO4(toReturn.getId(),toReturn.getStudent(),toReturn.getAttachment().getAttachmentId(),toReturn.getApplyDate(),toReturn.getProposal(),toReturn.getStatus());
+    }
+    public Application getApplicationByIdOriginal(Long applicationId){
+        Application toReturn= applicationRepository.getApplicationById(applicationId);
+        return toReturn;
     }
 
     @Override
   public boolean acceptApplicationById(Long applicationId) {
         try {
-            Application application = getApplicationById(applicationId);
+            Application application = getApplicationByIdOriginal(applicationId);
             if (!(application.getStatus().compareTo("PENDING")==0))
                 return false;
             application.setStatus("ACCEPTED");
@@ -113,7 +118,7 @@ public class ApplicationServiceImpl implements ApplicationService{
       @Override
     public boolean rejectApplicationById(Long applicationId) {
         try {
-            Application application = getApplicationById(applicationId);
+            Application application = getApplicationByIdOriginal(applicationId);
             if (!(application.getStatus().compareTo("PENDING")==0))
                 return false;
             application.setStatus("REJECTED");

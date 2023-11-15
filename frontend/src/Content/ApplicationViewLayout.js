@@ -18,7 +18,14 @@ function ApplicationViewLayout(props) {
     }, []);
 
     const fetchApplicationData = () => {
-        return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId)
+        console.log(applicationId)
+        return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId,{
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${props.user.token}`,
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 setApplicationData(data);

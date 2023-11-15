@@ -10,7 +10,7 @@ public interface ApplicationService {
     public List<ApplicationDTO2> getApplicationsByProf(String profEmail);
     public List<ApplicationDTO3> getApplicationsByStudent(String studentEmail);
     public List<Application> getApplicationsByProposal(Long proposalId);
-    public Application getApplicationById(Long applicationId);
+    public ApplicationDTO4 getApplicationById(Long applicationId);
     public boolean acceptApplicationById(Long applicationId);
     public boolean rejectApplicationById(Long applicationId);
     public void applyForProposal(ApplicationDTO applicationDTO);
