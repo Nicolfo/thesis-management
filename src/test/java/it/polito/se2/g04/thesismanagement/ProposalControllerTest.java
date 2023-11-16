@@ -92,7 +92,7 @@ public class ProposalControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         }
 
-
+@Test
     public void getAllProposals() throws Exception {
         Proposal proposal1 = new Proposal( "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS");
         Proposal proposal2 = new Proposal( "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS");

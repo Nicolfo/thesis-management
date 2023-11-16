@@ -40,9 +40,8 @@ public class ProposalController {
     @GetMapping("/API/proposal/getByProf")
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getProposalsByProf() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserInfoUserDetails user = (UserInfoUserDetails) auth.getPrincipal();
-        String username = user.getUsername();
+        UserInfoUserDetails auth =(UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = auth.getUsername();
         return proposalService.getProposalsByProf(username);
     }
 

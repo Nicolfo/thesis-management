@@ -19,6 +19,7 @@ import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.security.user.LoginDTO;
 import it.polito.se2.g04.thesismanagement.security.user.RegisterDTO;
+import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import org.json.JSONObject;
@@ -53,7 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ApplyForApplicationTest {
+public class ApplyForProposalTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -67,6 +68,8 @@ public class ApplyForApplicationTest {
     private TeacherRepository teacherRepository;
     @Autowired
     private ProposalRepository proposalRepository;
+    @Autowired
+    private StudentRepository studentRepository;
 
     private RegisterDTO studentReg;
     private RegisterDTO teacherReg;
@@ -131,6 +134,18 @@ public class ApplyForApplicationTest {
         );
         proposal.getGroups().add(group);
         proposalRepository.save(proposal);
+    }
+
+    @AfterAll
+    public void cleanup(){
+        proposalRepository.deleteAll();
+        teacherRepository.deleteAll();
+        studentRepository.deleteAll();
+        groupRepository.deleteAll();
+        departmentRepository.deleteAll();
+        degreeRepository.deleteAll();
+
+
     }
     @Test
     @Rollback
