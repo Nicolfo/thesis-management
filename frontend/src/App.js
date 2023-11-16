@@ -90,7 +90,8 @@ function App() {
     // If the user didn't provide a valid date, default to the current one
     if (!date.isValid())
       date = dayjs();
-    const newOffset = date.diff(realDate, "day");
+    console.log(date.toString());
+    const newOffset = date.diff(realDate, "day") + 1;
     setOffsetDate(newOffset);
     setApplicationDate(realDate.add(newOffset, "day"));
   };
@@ -248,7 +249,7 @@ function filterProposals(filters){
           <Route path="/updateProposal/:proposalID"
             element={ <InsertUpdateProposal user={user} /> } />
           <Route path="/teacher/proposals"
-            element={ <BrowseProposalsContent user={user} /> } />
+            element={ <BrowseProposalsContent user={user} applicationDate={applicationDate} /> } />
           <Route path="/proposal/apply/:proposalId"
             element={ <RenderProposal user={user} /> } />
         </Route>

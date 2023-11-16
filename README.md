@@ -1,5 +1,44 @@
 # Thesis management
 
+## Covered stories
+
+### 1. Insert Proposal
+As a Professor
+I want to insert a thesis proposal *(see specifications)
+So that students can apply to it
+
+### 2. Search Proposals
+As a Student
+I want to search for thesis proposals *(see specifications)
+So that I can find one that matches my interest
+
+### 3. Apply for Proposal
+As a Student
+I want to apply for an existing thesis proposal
+So that the proposing professor can evaluate my application
+
+### 4. Browse Applications
+As a Professor
+I want to see the list of all applications
+So that I can accept or reject them
+
+### 5. Accept Application
+As a Professor
+I want to accept or reject an application for exisiting thesis proposals
+
+### 6. Browse Applications Decisions
+As a Student
+I want to see the list of decisions on my applications
+
+### 7. Browse Proposals
+As a Professor
+I want to view the list of active thesis proposals
+So that I can operate on them
+
+### 8. Update Proposal
+As a Professor
+I want to update a thesis proposal
+
 ## Application setup and start
 - Run **Docker Desktop**
 - Start the local Postgres instance with the command: `docker run -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres`
