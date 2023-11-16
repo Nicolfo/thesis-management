@@ -86,9 +86,12 @@ public class ProposalServiceImpl implements ProposalService {
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
                 old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
-                old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it)).toList());
+                if(proposalDTO.getCoSupervisors().size()>0) {
+                    old.getCoSupervisors().clear();
+                    proposalDTO.getCoSupervisors().stream().forEach(it -> old.getCoSupervisors().add(teacherRepository.getReferenceById(it)));
+                }
                 old.setType(proposalDTO.getType());
-                old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup())).toList());
+               // old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup())).toList());
                 old.setDescription(proposalDTO.getDescription());
                 old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
                 old.setNotes(proposalDTO.getNotes());

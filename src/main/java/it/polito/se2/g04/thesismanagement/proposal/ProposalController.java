@@ -66,8 +66,9 @@ public class ProposalController {
     @PutMapping("API/proposal/update/{id}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Proposal UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
-        return proposalService.updateProposal(id, proposal);
+    public void UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
+        proposalService.updateProposal(id, proposal);
+
     }
 
     @PostMapping("API/proposal/update/")
