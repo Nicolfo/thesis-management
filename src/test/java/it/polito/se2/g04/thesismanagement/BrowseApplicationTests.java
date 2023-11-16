@@ -109,6 +109,16 @@ public class BrowseApplicationTests {
         applicationRepository.save(application1);
         applicationRepository.save(application2);
     }
+    @AfterAll
+    void cleanup(){
+        applicationRepository.deleteAll();
+        proposalRepository.deleteAll();
+        teacherRepository.deleteAll();
+        studentRepository.deleteAll();
+        departmentRepository.deleteAll();
+        groupRepository.deleteAll();
+
+    }
 
 
     @Test
