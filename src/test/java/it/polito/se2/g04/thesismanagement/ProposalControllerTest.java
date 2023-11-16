@@ -81,7 +81,7 @@ public class ProposalControllerTest {
     @Test
     @Rollback
     public void createProposal() throws Exception {
-        Proposal proposal = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS");
+        Proposal proposal = new Proposal( "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS");
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/{json}",proposal).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
@@ -92,10 +92,10 @@ public class ProposalControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         }
 
-}
+
     public void getAllProposals() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", false);
+        Proposal proposal1 = new Proposal( "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS");
+        Proposal proposal2 = new Proposal( "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS");
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 

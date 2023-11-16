@@ -42,11 +42,10 @@ public class ApplicationController {
     public  List<ApplicationDTO4> getApplicationByProposal(Long proposalId){
         return applicationService.getApplicationsByProposal(proposalId);
     }
-  
-    @PostMapping("/API/application/insert")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void insertApplication(@RequestBody ApplicationDTO applicationDTO){
-        //TODO:check if the current user is a STUDENT
+
+    @PostMapping("/insert")
+    @PreAuthorize("hasAuthority('STUDENT')")
+    public void insertApplication(@RequestBody ApplicationDTO applicationDTO) {
         applicationService.applyForProposal(applicationDTO);
     }
   
