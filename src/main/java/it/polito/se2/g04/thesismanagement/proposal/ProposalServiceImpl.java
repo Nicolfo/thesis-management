@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -41,8 +39,8 @@ public class ProposalServiceImpl implements ProposalService {
     public List<Proposal> getProposalsByProf(String UserName){
         Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
-            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchived(teacher, false);
-            List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchived(teacher, false);
+            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchivedOrderById(teacher, false);
+            List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchivedOrderById(teacher, false);
             supervisorProposals.addAll(coSupervisorProposals);
             return supervisorProposals;
         }
@@ -91,7 +89,8 @@ public class ProposalServiceImpl implements ProposalService {
                     proposalDTO.getCoSupervisors().stream().forEach(it -> old.getCoSupervisors().add(teacherRepository.getReferenceById(it)));
                 }
                 old.setType(proposalDTO.getType());
-               // old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup())).toList());
+                old.getGroups().clear();
+                old.getGroups().addAll(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup())).toList());
                 old.setDescription(proposalDTO.getDescription());
                 old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
                 old.setNotes(proposalDTO.getNotes());

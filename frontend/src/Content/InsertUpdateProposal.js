@@ -9,8 +9,7 @@ import API from "../API/API2";
 function InsertUpdateProposal(props) {
     const { proposalID } = useParams();
 
-    // If edit then update
-    let edit;
+
     //
     const [supervisor, setSupervisor] = useState({});
     const [title, setTitle] =  useState("");
@@ -33,67 +32,65 @@ function InsertUpdateProposal(props) {
     const [isValidCds, setIsValidCds] = useState(true);
     const [validated, setValidated] = useState(false);
 
+    const getAllTeachersGroupsCds = async () => {
+        try {
+            const teachers = await API.getAllTeachers(props.user.token);
+            setTeacherList(teachers);
+            console.log(teachers);
+            let supervisors = [];
+            teachers.forEach( (t) => {
+                let elem= {label: `${t.surname} ${t.name}`, value: t.id};
+                supervisors.push(elem);
+            } );
+            setOptionsSupervisors(supervisors);
 
-    useEffect(() => {
-        const getAllTeachersGroupsCds = async () => {
-            try {
-                const teachers = await API.getAllTeachers(props.user.token);
-                setTeacherList(teachers);
-                console.log(teachers);
+            const cds = await API.getAllCds(props.user.token);
+            setCdsList(cds);
+
+            let CDS = [];
+            cds.forEach( (c) => {
+                let elem= {label: c, value: c};
+                CDS.push(elem);
+
+            } );
+            setOptionsCds(CDS);
+
+            const supervisor = await API.getByEmail(props.user.email,props.user.token);
+            setSupervisor(supervisor);
+
+            const proposals = await API.getProposalsByProf(props.user.token);
+            // If edit then update
+            let edit = proposalID && proposals.find( (p) => p.id === parseInt(proposalID));
+            if (edit) {
+                setTitle(edit.title);
+                setLevel(edit.level);
+                setNotes(edit.notes);
+                setKnowledge(edit.requiredKnowledge);
+                setDescription(edit.description);
+                setDate(edit.expiration.format("YYYY-MM-DD"));
+                setTypeList(edit.type.split(", "));
+                setKeywordsList(edit.keywords.split(", "));
+
+                let CDS = [];
+                edit.cds.forEach( (c) => {
+                    let elem= {label: c, value: c};
+                    CDS.push(elem);
+                } );
+                setSelectedCds(CDS);
+
                 let supervisors = [];
-                teachers.forEach( (t) => {
+                edit.coSupervisors.forEach( (t) => {
                     let elem= {label: `${t.surname} ${t.name}`, value: t.id};
                     supervisors.push(elem);
                 } );
-                setOptionsSupervisors(supervisors);
-
-                const cds = await API.getAllCds(props.user.token);
-                setCdsList(cds);
-
-                let CDS = [];
-                cds.forEach( (c) => {
-                    let elem= {label: c, value: c};
-                    CDS.push(elem);
-
-                } );
-                setOptionsCds(CDS);
-
-                const supervisor = await API.getByEmail(props.user.email,props.user.token);
-                setSupervisor(supervisor);
-
-                const proposals = await API.getProposalsByProf(props.user.token);
-                // If edit then update
-                edit = proposalID && proposals.find( (p) => p.id === parseInt(proposalID));
-                if (edit) {
-                    setTitle(edit.title);
-                    setLevel(edit.level);
-                    setNotes(edit.notes);
-                    setKnowledge(edit.requiredKnowledge);
-                    setDescription(edit.description);
-                    setDate(edit.expiration.format("YYYY-MM-DD"));
-                    setTypeList(edit.type.split(", "));
-                    setKeywordsList(edit.keywords.split(", "));
-
-                    let CDS = [];
-                    edit.cds.forEach( (c) => {
-                        let elem= {label: c, value: c};
-                        CDS.push(elem);
-                    } );
-                    setSelectedCds(CDS);
-
-                    let supervisors = [];
-                    edit.coSupervisors.forEach( (t) => {
-                        let elem= {label: `${t.surname} ${t.name}`, value: t.id};
-                        supervisors.push(elem);
-                    } );
-                    setSelectedSupervisors(supervisors);
-                }
-
-            } catch (err) {
-                console.error("UseEffect error", err);
+                setSelectedSupervisors(supervisors);
             }
-        };
 
+        } catch (err) {
+            console.error("UseEffect error", err);
+        }
+    };
+    useEffect(() => {
         getAllTeachersGroupsCds();
     }, [])
 
@@ -172,8 +169,8 @@ function InsertUpdateProposal(props) {
                 expiration: dayjs(date).format("YYYY-MM-DD"),
                 cds: (selectedCds.map( (c) => c.value)).join(", ")
             }
-            if (edit) {
-                proposal.id = edit.id;
+            if (proposalID) {
+                proposal.id = proposalID;
                 updateProposal(proposal);
             } else {
                 console.log(proposal);
@@ -403,7 +400,7 @@ function InsertUpdateProposal(props) {
 
                 <Card.Footer style={{"textAlign": "center"}}>
                     <Button variant="primary" type="submit">
-                        { edit ?
+                        { proposalID ?
                             "Update thesis proposal"
                             :
                             "Publish thesis proposal"
