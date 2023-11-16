@@ -12,7 +12,6 @@ function NavBar(props) {
     const navigate = useNavigate();
     const handleClick=(e)=>{
         e.preventDefault();
-        console.log(props.user)
         if(props.user===null)
             navigate("/login");
         else{

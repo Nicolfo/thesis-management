@@ -14,7 +14,7 @@ function ApplicationViewLayout(props) {
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
-        console.log(props.user)
+
         fetchApplicationData();
     }, [props.user]);
 
@@ -30,7 +30,7 @@ function ApplicationViewLayout(props) {
             .then(response => response.json())
             .then(data => {
                 setApplicationData(data);
-                console.log(data);
+
                 fetchStudentGradesData(data.student.id);
             })
             .catch(error => console.error('Error:', error));
@@ -48,7 +48,7 @@ function ApplicationViewLayout(props) {
             .then(response => response.json())
             .then(data => {
                 setStudentGradesData(data);
-                console.log(data);
+
             })
             .catch(error => console.error('Error:', error));
     }

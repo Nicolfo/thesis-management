@@ -87,25 +87,25 @@ const getByEmail = async (email,jwt) => {
 }
 
 const insertProposal = async (proposal,jwt) => {
-    return getJson(fetch(SERVER_URL + 'proposal/insert', {
+    return fetch(SERVER_URL + 'proposal/insert', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
-    }))
+    })
 };
 
 const updateProposal = async (proposal,jwt) => {
-    return getJson(fetch(`${SERVER_URL}proposal/update/${proposal.id}`, {
+    return fetch(`${SERVER_URL}proposal/update/${proposal.id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
-    }))
+    })
 };
 const getAllProposals = async (jwt) => {
     return getJson(fetch(SERVER_URL+"proposal/getAll",{

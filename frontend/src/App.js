@@ -175,7 +175,6 @@ function filterProposals(filters){
       localStorage.setItem("role", user.role);
     }
     else {
-      console.log("loading user info")
       const email=localStorage.getItem("email");
       const token=localStorage.getItem("token");
       const role=localStorage.getItem("role");

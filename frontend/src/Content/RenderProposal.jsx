@@ -25,7 +25,7 @@ function RenderProposal(props){
             </Alert>}
             <Button onClick={()=> {
                 if(cv != undefined){
-                    console.log(proposalId);
+
                     setCvSelected(true);
                 uploadFile(cv).then((id) => {
                     insertApplication(id, proposalId)

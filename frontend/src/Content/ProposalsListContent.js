@@ -66,7 +66,7 @@ function ProposalsListContent({ user }) {
             CdS: cds || null,
         };
 
-        console.log(requestBody);
+
         
         // Remove properties with null values
         Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);

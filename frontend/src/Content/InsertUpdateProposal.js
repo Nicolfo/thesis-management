@@ -1,14 +1,14 @@
 import {Alert, Button, Card, Col, Form, Row} from "react-bootstrap";
 import { MultiSelect } from "react-multi-select-component";
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import dayjs from "dayjs";
 import API from "../API/API2";
 
 
 function InsertUpdateProposal(props) {
     const { proposalID } = useParams();
-
+    const navigate=useNavigate();
 
     //
     const [supervisor, setSupervisor] = useState({});
@@ -36,7 +36,7 @@ function InsertUpdateProposal(props) {
         try {
             const teachers = await API.getAllTeachers(props.user.token);
             setTeacherList(teachers);
-            console.log(teachers);
+
             let supervisors = [];
             teachers.forEach( (t) => {
                 let elem= {label: `${t.surname} ${t.name}`, value: t.id};
@@ -61,18 +61,22 @@ function InsertUpdateProposal(props) {
             const proposals = await API.getProposalsByProf(props.user.token);
             // If edit then update
             let edit = proposalID && proposals.find( (p) => p.id === parseInt(proposalID));
+
             if (edit) {
                 setTitle(edit.title);
                 setLevel(edit.level);
                 setNotes(edit.notes);
                 setKnowledge(edit.requiredKnowledge);
                 setDescription(edit.description);
-                setDate(edit.expiration.format("YYYY-MM-DD"));
+                setDate(dayjs(edit.expiration).format("YYYY-MM-DD"));
+                if(edit.type!=="")
                 setTypeList(edit.type.split(", "));
+
+                if(edit.keywords!=="")
                 setKeywordsList(edit.keywords.split(", "));
 
                 let CDS = [];
-                edit.cds.forEach( (c) => {
+                edit.cdS.split(", ").forEach( (c) => {
                     let elem= {label: c, value: c};
                     CDS.push(elem);
                 } );
@@ -90,9 +94,23 @@ function InsertUpdateProposal(props) {
             console.error("UseEffect error", err);
         }
     };
+    const clearFields=()=>{
+        setTitle("");
+        setLevel("");
+        setNotes("");
+        setKnowledge("");
+        setDescription("");
+        setDate("");
+        setTypeList([]);
+        setKeywordsList([]);
+        setSelectedCds([]);
+        setSelectedSupervisors([]);
+    }
     useEffect(() => {
+        if(!proposalID)
+            clearFields();
         getAllTeachersGroupsCds();
-    }, [])
+    }, [proposalID])
 
 
     const addType = () => {
@@ -131,13 +149,15 @@ function InsertUpdateProposal(props) {
 
     const insertProposal = (proposal) => {
         API.insertProposal(proposal,props.user.token)
-            .then(() => setAlert(true))
+            .then(() =>
+                navigate("/teacher/proposals"))
             .catch((err) => console.log(err))
     }
 
     const updateProposal = (proposal) => {
         API.updateProposal(proposal,props.user.token)
-            .then(() => setAlert(true))
+            .then(() =>
+                navigate("/teacher/proposals"))
             .catch((err) => console.log(err))
     }
 
@@ -173,7 +193,7 @@ function InsertUpdateProposal(props) {
                 proposal.id = proposalID;
                 updateProposal(proposal);
             } else {
-                console.log(proposal);
+
                 insertProposal(proposal);
             }
         }
@@ -265,7 +285,7 @@ function InsertUpdateProposal(props) {
                                             <Form.Control.Feedback type="invalid"> Please write the type </Form.Control.Feedback>
                                         </Col>
                                         <Col>
-                                            {typeList.length !== 1 &&
+                                            {typeList.length !== 0 &&
                                                 <Button variant="danger" size="sm" onClick={() => removeType(index)}> X </Button>
                                             }
                                         </Col>
@@ -300,7 +320,7 @@ function InsertUpdateProposal(props) {
                                             <Form.Control.Feedback type="invalid"> Please write the keyword </Form.Control.Feedback>
                                         </Col>
                                         <Col>
-                                            {keywordsList.length > 1 &&
+                                            {keywordsList.length !== 0 &&
                                                 <Button variant="danger" size="sm" onClick={() => removeKeyword(index)}> X </Button>
                                             }
                                         </Col>

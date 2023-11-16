@@ -40,8 +40,8 @@ public class ProposalServiceImpl implements ProposalService {
         Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchivedOrderById(teacher, false);
-            List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchivedOrderById(teacher, false);
-            supervisorProposals.addAll(coSupervisorProposals);
+            /*List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchivedOrderById(teacher, false);
+            supervisorProposals.addAll(coSupervisorProposals);*/
             return supervisorProposals;
         }
         return new ArrayList<>();
