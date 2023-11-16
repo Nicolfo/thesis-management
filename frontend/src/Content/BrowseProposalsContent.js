@@ -4,6 +4,7 @@ import API from "../API/Api";
 import { Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 export default function BrowseProposalsContent(props) {
 
@@ -21,7 +22,7 @@ export default function BrowseProposalsContent(props) {
         <>
             <h4>Your thesis proposals</h4>
             <Accordion defaultActiveKey="0">
-                { proposalList.map(proposal => <ProposalAccordion key={proposal.id} proposal={proposal} />) }
+                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => <ProposalAccordion key={proposal.id} proposal={proposal} />) }
             </Accordion>
         </>
     );
@@ -73,7 +74,8 @@ function ProposalAccordion({ proposal }) {
                 </Row>
                 <Row className="pt-2">
                     <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
-                    <Col md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
+                    <Col md="6"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
+                    <Col md="3"><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
                 </Row>
                 <hr className="me-4"/>
                 <Row>
