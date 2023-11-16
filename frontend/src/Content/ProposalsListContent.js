@@ -15,7 +15,7 @@ function ProposalsListContent({ user }) {
     ];
 
     const navigate = useNavigate();
-
+    const [showSearchBar,setShowSearchBar]=useState(false);
     const [teachersList, setTeachersList] = useState([]);
     const [selectedSupervisorIds, setSelectedSupervisorIds] = useState([]);
     const [selectedCoSupervisorIds, setSelectedCoSupervisorIds] = useState([]);
@@ -77,6 +77,10 @@ function ProposalsListContent({ user }) {
 
     return (
         <>
+            <Button onClick={()=>setShowSearchBar(it=>!it)}>Show Search Form</Button>
+            { showSearchBar?
+
+
         <Card>
             <Card.Title>Search Proposal</Card.Title>
             <Card.Body>
@@ -154,6 +158,9 @@ function ProposalsListContent({ user }) {
                 <Button onClick={doSearch}>Search</Button>
             </Card.Body>
         </Card>
+                :
+                <></>
+            }
         <ProposalsList proposals={proposalsList} user={user} />
         </>
     );
