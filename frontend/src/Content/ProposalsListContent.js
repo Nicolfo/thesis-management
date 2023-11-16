@@ -5,8 +5,9 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { MultiSelect } from "react-multi-select-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import dayjs from "dayjs";
 
-function ProposalsListContent({ user }) {
+function ProposalsListContent({ user, applicationDate }) {
 
     const levelOptions = [
         "Any",
@@ -82,7 +83,7 @@ function ProposalsListContent({ user }) {
 
 
         <Card>
-            <Card.Title>Search Proposal</Card.Title>
+            <Card.Header>Search Proposal</Card.Header>
             <Card.Body>
                 <Form>
                 <Form.Group className="mb-3">
@@ -161,15 +162,18 @@ function ProposalsListContent({ user }) {
                 :
                 <></>
             }
-        <ProposalsList proposals={proposalsList} user={user} />
+        <Card className="mt-3">
+            <Card.Header><b>Results</b></Card.Header>
+            <Card.Body><ProposalsList proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
+        </Card>
         </>
     );
 }
 
-function ProposalsList({ proposals, user }) {
+function ProposalsList({ proposals, user, applicationDate }) {
     return (
         <Accordion defaultActiveKey="0">
-            { proposals.map(proposal => <ProposalEntry key={proposal.id} proposal={proposal} user={user} />) }
+            { proposals.filter(proposal => dayjs(proposal.expiration).isAfter(applicationDate)).map(proposal => <ProposalEntry key={proposal.id} proposal={proposal} user={user} />) }
         </Accordion>
     )
 }
@@ -219,7 +223,7 @@ function ProposalEntry({ proposal, user }) {
                 <Row>
                     <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
                     <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
-                    <Col><b>Expiration</b><br/>{proposal.expiration}</Col>
+                    <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
                 </Row>
                 <Row className="pt-2">
                     <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>

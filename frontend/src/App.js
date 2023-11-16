@@ -4,7 +4,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter, Outlet, Route, BrowserRouter as Router, Routes, useLocation} from "react-router-dom";
+import { Navigate, BrowserRouter, Outlet, Route, BrowserRouter as Router, Routes, useLocation} from "react-router-dom";
 import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
 import ProposalList from "./Content/ProposalList";
 import RenderProposal from "./Content/RenderProposal";
@@ -88,10 +88,13 @@ function App() {
   const updateApplicationDate = dateStr => {
     let date = dayjs(dateStr);
     // If the user didn't provide a valid date, default to the current one
-    if (!date.isValid())
+    let newOffset;
+    if (!date.isValid() || date.diff(dayjs(), "day") === 0) {
       date = dayjs();
-    console.log(date.toString());
-    const newOffset = date.diff(realDate, "day") + 1;
+      newOffset = 0;
+    } else {
+      newOffset = date.diff(realDate, "day") + 1;
+    }
     setOffsetDate(newOffset);
     setApplicationDate(realDate.add(newOffset, "day"));
   };
@@ -233,9 +236,9 @@ function filterProposals(filters){
             </div>
           </>
         }>
-          <Route index element={<h1>Path not found</h1>} />
+          <Route index element={ <h1>Welcome to Thesis Manager!</h1> } />
           <Route path="/search-for-proposal"
-            element={ <ProposalsListContent user={user} /> } />
+            element={ <ProposalsListContent user={user} applicationDate={applicationDate} /> } />
           <Route path="/teacher/application/browse"
             element={ <BrowseApplicationsContent user={user}/> } />
           <Route path="/login"
@@ -252,6 +255,8 @@ function filterProposals(filters){
             element={ <BrowseProposalsContent user={user} applicationDate={applicationDate} /> } />
           <Route path="/proposal/apply/:proposalId"
             element={ <RenderProposal user={user} /> } />
+          <Route path="*"
+            element={ <h1>Path not found</h1> } />
         </Route>
       </Routes>
     </BrowserRouter>
