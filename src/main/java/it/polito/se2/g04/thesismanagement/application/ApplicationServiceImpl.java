@@ -32,7 +32,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 it.getStudent().getName(),
                 it.getStudent().getSurname(),
                 studentService.getAverageMarks(it.getStudent().getId()),
-                it.getAttachment().getAttachmentId(),
+                it.getAttachment()!=null?it.getAttachment().getAttachmentId():null,
                 it.getApplyDate(),
                 it.getProposal().getId(),
                 it.getProposal().getTitle(),
@@ -72,7 +72,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     @Override
     public ApplicationDTO4 getApplicationById(Long applicationId){
         Application toReturn= applicationRepository.getApplicationById(applicationId);
-        return new ApplicationDTO4(toReturn.getId(),toReturn.getStudent(),toReturn.getAttachment().getAttachmentId(),toReturn.getApplyDate(),toReturn.getProposal(),toReturn.getStatus());
+        return new ApplicationDTO4(toReturn.getId(),toReturn.getStudent(),toReturn.getAttachment()!=null?toReturn.getAttachment().getAttachmentId():null,toReturn.getApplyDate(),toReturn.getProposal(),toReturn.getStatus());
     }
     public Application getApplicationByIdOriginal(Long applicationId){
         Application toReturn= applicationRepository.getApplicationById(applicationId);
