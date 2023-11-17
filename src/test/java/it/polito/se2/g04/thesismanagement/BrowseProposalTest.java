@@ -1,13 +1,21 @@
 package it.polito.se2.g04.thesismanagement;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nimbusds.jose.shaded.gson.JsonParser;
+import it.polito.se2.g04.thesismanagement.department.Department;
+import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
+import it.polito.se2.g04.thesismanagement.group.Group;
+import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
+import it.polito.se2.g04.thesismanagement.security.user.LoginDTO;
+import it.polito.se2.g04.thesismanagement.security.user.RegisterDTO;
 import it.polito.se2.g04.thesismanagement.security.user.User;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
-import org.junit.jupiter.api.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,16 +36,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @SpringBootTest
@@ -45,8 +48,8 @@ import java.util.List;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@AutoConfigureMockMvc(addFilters = false) //addFilters = false: no authetification needed to call methods
-public class ProposalControllerTest {
+@AutoConfigureMockMvc
+public class BrowseProposalTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -56,20 +59,52 @@ public class ProposalControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private GroupRepository groupRepository;
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
+    private RegisterDTO teacherReg;
+    private LoginDTO teacherLogin;
+    private String token2;
     private Teacher teacher;
 
 
 
     @BeforeAll
-    public void setup() {
+    public void setup() throws Exception {
         teacher = new Teacher("Gerald", "Juarez","test@example.com",null,null);
         teacherRepository.save(teacher);
 
-        //mock logged in user
+
+
+
+        ObjectMapper objectMapper=new ObjectMapper();
+
+        Group saved=groupRepository.save(new Group("Group 1"));
+        Department department=departmentRepository.save(new Department("Department 1"));
+
+        teacherReg = new RegisterDTO("surname_1", "name", "test@example.com", "TEACHER", "prova2", saved.getCodGroup(), department.getCodDepartment(), null, null, null, 0);
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(teacherReg)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        teacherLogin = new LoginDTO(teacherReg.getEmail(),teacherReg.getPassword());
+
+        MvcResult res2=mockMvc.perform(MockMvcRequestBuilders.post("/API/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(teacherLogin)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").exists())
+                .andReturn();
+        token2= JsonParser.parseString(res2.getResponse().getContentAsString()).getAsJsonObject().get("token").getAsString();
+
+        /*//mock logged in user
         User user = new User("test@example.com", "password", "TEACHER");
         Authentication auth = new TestingAuthenticationToken(user, "password");
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContextHolder.getContext().setAuthentication(auth);*/
     }
 
     @AfterAll
@@ -81,27 +116,61 @@ public class ProposalControllerTest {
     @Test
     @Rollback
     public void createProposal() throws Exception {
-        Proposal proposal = new Proposal( "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS");
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/{json}",proposal).contentType(MediaType.APPLICATION_JSON))
+        ProposalDTO proposal = new ProposalDTO("Proposal 1", teacher.getId(), new ArrayList<>(),"Description 1","req knowledge","notes",new Date(2024, Calendar.DECEMBER,10),"level","CdS", "keywords","type");
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonProposal = objectMapper.writeValueAsString(proposal);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonProposal)
+                        .header("Authorization", "Bearer " + token2))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+
+        //Proposal proposal = new Proposal( "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS");
+        /*mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/",proposal)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token2))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));*/
 
 
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/").contentType(MediaType.APPLICATION_JSON))
+
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/").contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token2))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         }
 
 @Test
     public void getAllProposals() throws Exception {
-        Proposal proposal1 = new Proposal( "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS");
-        Proposal proposal2 = new Proposal( "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS");
-        proposalRepository.save(proposal1);
-        proposalRepository.save(proposal2);
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    ProposalDTO proposal1 = new ProposalDTO("Proposal 1", teacher.getId(), new ArrayList<>(),"Description 1","req knowledge","notes",new Date(2023, Calendar.DECEMBER,10),"level","CdS", "keywords","type");
+
+    String jsonProposal = objectMapper.writeValueAsString(proposal1);
+    mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonProposal)
+                    .header("Authorization", "Bearer " + token2))
+            .andExpect(MockMvcResultMatchers.status().isCreated());
+
+    ProposalDTO proposal2 = new ProposalDTO("Proposal 2", teacher.getId(), new ArrayList<>(),"Description 2","req knowledge","notes",new Date(2024, Calendar.MARCH,4),"level","CdS", "keywords","type");
+    jsonProposal = objectMapper.writeValueAsString(proposal2);
+    mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonProposal)
+                    .header("Authorization", "Bearer " + token2))
+            .andExpect(MockMvcResultMatchers.status().isCreated());
+
 
         //get result
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getAll")
-                        .contentType(MediaType.APPLICATION_JSON))
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getAll/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token2))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         String json = res.getResponse().getContentAsString();

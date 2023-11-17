@@ -25,8 +25,8 @@ public class ProposalController {
     /**
      * @return List<Proposal> List of all not archived proposals
      */
-    @GetMapping("/API/proposal/getAll")
-    //@PreAuthorize("hasAuthority('STUDENT')")
+    @GetMapping("/API/proposal/getAll/")
+    @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getAllProposals() {
         return proposalService.getAllNotArchivedProposals();
@@ -53,7 +53,7 @@ public class ProposalController {
 
 
 
-    @PostMapping("API/proposal/insert")
+    @PostMapping("/API/proposal/insert/")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void createProposal(@RequestBody ProposalDTO proposal){
@@ -62,7 +62,7 @@ public class ProposalController {
 
 
 
-    @PutMapping("API/proposal/update/{id}")
+    @PutMapping("/API/proposal/update/{id}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
@@ -70,7 +70,7 @@ public class ProposalController {
 
     }
 
-    @PostMapping("API/proposal/update/")
+    @PostMapping("/API/proposal/update/")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void UpdateProposalWithNoPathVariable(){
