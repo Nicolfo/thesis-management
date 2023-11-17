@@ -9,12 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -65,6 +62,22 @@ public class ApplicationController {
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public  boolean rejectApplicationById(@PathVariable Long applicationId){
         return applicationService.rejectApplicationById(applicationId);
+    }
+
+    @GetMapping("/API/application/rejectApplicationById/")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  boolean rejectApplicationByIdWithoutId(){
+        throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
+    }
+    @GetMapping("/API/application/acceptApplicationById/")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  boolean acceptApplicationByIdWithoutId(){
+        throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
+    }
+    @GetMapping("/API/application/getApplicationById/")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  boolean getApplicationByIdWithoutId(){
+        throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
 
 
