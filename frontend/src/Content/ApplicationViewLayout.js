@@ -1,8 +1,6 @@
-import NavBar from "../NavBar/NavBar";
-
 import React, {useEffect, useState} from 'react';
 import {useLocation} from "react-router-dom";
-import {Alert, Button, Card} from "react-bootstrap";
+import {Alert, Button, Card, Container, Row, Col} from "react-bootstrap";
 
 const SERVER_URL = "http://localhost:8080";
 
@@ -105,17 +103,15 @@ function ApplicationViewLayout(props) {
     }
 
     return (
-        <>
-            <div style={{display: 'flex', flexDirection: 'column'}}>
+        <Container>
+            <Row className="justify-content-md-center">
+                <Col md="auto">
+                    <h1>Information about Application</h1>
 
-                <div style={{display: 'flex', justifyContent: 'center'}}>
-                    <div style={{width: '70rem', marginBottom: '2rem'}}>
-                        <h1>Information about Application</h1>
+                    {showSuccess && <Alert variant="success">The application was successfully updated!</Alert>}
+                    {showError && <Alert variant="danger">There was an error updating the application.</Alert>}
 
-                        {showSuccess && <Alert variant="success">The application was successfully updated!</Alert>}
-                        {showError && <Alert variant="danger">There was an error updating the application.</Alert>}
-
-                        <Card style={{marginBottom: '2rem'}}>
+                    <Card style={{marginBottom: '2rem'}}>
                             <Card.Header as="h5">Application Information</Card.Header>
                             <Card.Body>
                                 <Card.Text>
@@ -129,8 +125,9 @@ function ApplicationViewLayout(props) {
                             </Card.Body>
                         </Card>
 
-                        <div style={{display: 'flex', flexDirection: 'row'}}>
-                            <Card style={{width: '50%', marginRight: '1rem'}}>
+                    <Row>
+                        <Col md={6}>
+                            <Card style={{marginBottom: '2rem'}}>
                                 <Card.Header as="h5">Proposal Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
@@ -153,9 +150,10 @@ function ApplicationViewLayout(props) {
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
-
-                            <Card style={{width: '50%'}}>
-                                <Card.Header as="h5">Student Information</Card.Header>
+                        </Col>
+                        <Col md={6}>
+                            <Card style={{marginBottom: '2rem'}}>
+                            <Card.Header as="h5">Student Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
                                         Surname: {applicationData.student.surname} <br/>
@@ -179,7 +177,8 @@ function ApplicationViewLayout(props) {
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
-                        </div>
+                        </Col>
+                    </Row>
 
 
                         {applicationData.status==="PENDING" ? (
@@ -190,10 +189,9 @@ function ApplicationViewLayout(props) {
                         ) : (
                             ""
                         )}
-                    </div>
-                </div>
-            </div>
-        </>
+                    </Col>
+                </Row>
+        </Container>
     );
 }
 
