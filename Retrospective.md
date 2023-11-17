@@ -7,12 +7,12 @@ RETROSPECTIVE Sprint 1 (Team 4)
 
 - Number of stories committed vs. done: 8 committed, 8 done
 - Total points committed vs. done: 23 points committed, 23 points done
-- Nr of hours planned vs. spent (as a team): 
+- Nr of hours planned vs. spent (as a team): 122h 30m planned, 129h 30m spent
 
 **Remember** a story is done ONLY if it fits the Definition of Done:
  
 Our Definition Of Done:
-- Unit Tests passing
+- Most Unit Tests passing
 - Code review completed
 - Code present on VCS
 - End-to-End tests performed
@@ -21,40 +21,36 @@ Our Definition Of Done:
 
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
-| _#0_   |    15     |       |      38h 25m      |              |
-| Insert Proposal      |    5     |    3    |      10h 30m      |              |
-| Search Proposal      |     5    |    5    |      10h 30m      |              |
-| Browse Applications      |   5      |    3    |       10h 30m     |              |
-| Accept Application      |     5    |     2   |     8h 30m       |              |
-| Browse Applications Decisions      |     5    |    2    |      7h 30m      |              |
-| Browse Proposals     |    5     |    2    |      8h 30m      |              |
-| Update Proposal      |    5     |     3   |       8h 30m     |              |
-| Apply for Proposal      |    5     |  3   |      9h 30m         |              |
-   
-- Hours per task average, standard deviation (estimate and actual)
-- Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
+| _#0_   |    15     |       |      38h 25m      |      40h 24m        |
+| Insert Proposal      |    5     |    3    |      10h 30m      |       16h 30m       |
+| Search Proposal      |     5    |    5    |      10h 30m      |      12h 30m        |
+| Browse Applications      |   5      |    3    |       8h 30m     |       9h 30m       |
+| Accept Application      |     5    |     2   |     7h 30m       |      10h 30m        |
+| Browse Applications Decisions      |     5    |    2    |      8h 30m      |       5h 30m       |
+| Browse Proposals     |    5     |    2    |      8h 30m      |       12h 15m       |
+| Update Proposal      |    5     |     3   |       9h 30m     |       11h       |
+| Apply for Proposal      |    5     |  3   |      10h 30m         |       11h 15m       |
+
+- Estimated average hours per task: **1h 53m**
+- Actual average hours per task: **2h 25m**
+- Estimated average hours per task std. deviation: **1.15**
+- Actual average hours per task std. deviation: **1.98**
+- Total task estimation error ratio (sum of total hours estimation / sum of total hours spent - 1): **-0.22**
 
   
 ## QUALITY MEASURES 
 
-- We included the time dedicated to unit testing, E2E testing and code review in the time estimation for each task. To provide an amount of time spent on testing, we will use the following measures:
-  - 10% of the time of each task is dedicated to **unit testing**
-  - 5% of the time of each task is dedicated to **E2E testing**
-  - 5% of the time of each task is dedicated to **code review**
-  - An exception was made for 1 task, which was specifically dedicated to E2E testing
-
-
 - Unit Testing:
   - Total hours estimated: **12h**
-  - Total hours spent: **12h**
-  - Nr of automated unit test cases: **10**
+  - Total hours spent: **11h**
+  - Nr of automated unit test cases: **14**
   - Coverage (if available): **50% of all methods, 53% of lines of code**
 - E2E testing:
   - Total hours estimated: **8h**
-  - Total hours spent: **4.64h**
+  - Total hours spent: **11h**
 - Code review 
   - Total hours estimated: **16h**
-  - Total hours spent: **2.64h**
+  - Total hours spent: **20h 30m**
   
 
 ## ASSESSMENT
