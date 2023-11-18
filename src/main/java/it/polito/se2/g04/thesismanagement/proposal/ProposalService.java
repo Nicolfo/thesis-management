@@ -34,5 +34,7 @@ public interface ProposalService {
      */
     List<Proposal> searchProposals(ProposalSearchRequest proposalSearchRequest);
 
+    Proposal archiveProposal(Long id);
+
 }
 

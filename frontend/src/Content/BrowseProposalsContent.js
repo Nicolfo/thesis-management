@@ -1,15 +1,31 @@
 import { useState } from "react";
 import { useEffect, useContext } from "react";
 import API from "../API/Api";
-import { Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext } from "react-bootstrap";
+import {
+    Accordion,
+    Button,
+    useAccordionButton,
+    Card,
+    Row,
+    Col,
+    AccordionContext,
+    Modal,
+    ModalBody, ModalTitle
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
+import {deleteProposal} from "../API/Api-Search";
 import dayjs from "dayjs";
 
 export default function BrowseProposalsContent(props) {
 
     const [proposalList, setProposalList] = useState([]);
-    
+    const [deleting, setDeleting] = useState(false);
+    const [deletingID, setDeletingID] = useState();
+
+
+
+
     useEffect(() => {
         const getProposalList = async () => {
             const list = await API.getProposalsByProf(props.user.token);
@@ -20,10 +36,14 @@ export default function BrowseProposalsContent(props) {
 
     return (
         <>
+
+
+
             <h4>Your thesis proposals</h4>
+            {deleting? <Warning setDeleting={setDeleting} deletingID={deletingID}> </Warning>:
             <Accordion defaultActiveKey="0">
-                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => <ProposalAccordion key={proposal.id} proposal={proposal} />) }
-            </Accordion>
+                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => <ProposalAccordion key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID} />) }
+            </Accordion>}
         </>
     );
 
@@ -48,15 +68,30 @@ function CustomToggle({ children, eventKey, callback }) {
     );
   }
 
-function ProposalAccordion({ proposal }) {
+
+function View() {
+    return null;
+}
+
+function ProposalAccordion({ proposal, setDeleting, setDeletingID }) {
     const navigate = useNavigate();
+
+    function deleteProp(proposalId){
+
+        setDeleting(true);
+        setDeletingID(proposalId)
+    }
 
     return (
         <Card id={proposal.id} className="m-2">
+
+
             <Card.Header>
                 <Row className="p-2 align-items-center">
                     <Col><b>{proposal.title}</b></Col>
                     <Col className="d-flex justify-content-end">
+
+                        <Button onClick={() => deleteProp(proposal.id)}><FontAwesomeIcon icon="fa-trash" /></Button>
                         <Button onClick={() => navigate(`/updateProposal/${proposal.id}`)}><FontAwesomeIcon icon="fa-pencil" /></Button>
                         <CustomToggle eventKey={proposal.id} />
                     </Col>
@@ -86,4 +121,29 @@ function ProposalAccordion({ proposal }) {
             </Accordion.Collapse>
         </Card>
     )
+}
+
+
+function Warning(props) {
+    return (
+        <div
+            className="modal show"
+            style={{ display: 'block', position: 'initial' }}
+        >
+            <Modal.Dialog>
+                <Modal.Header >
+                    <Modal.Title> Warning!</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <p>Do you want to delete this proposal?</p>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="primary" onClick={()=>props.setDeleting(false)}>Undo</Button>
+                    <Button variant="danger" onClick={()=> { deleteProposal(props.deletingID); props.setDeleting(false); }}>Delete</Button>
+                </Modal.Footer>
+            </Modal.Dialog>
+        </div>
+    );
 }

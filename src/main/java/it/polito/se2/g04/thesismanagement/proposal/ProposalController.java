@@ -84,4 +84,12 @@ public class ProposalController {
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
+    @PostMapping("/API/proposal/archive/{id}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public void ArchiveProposal(@PathVariable Long id){
+        proposalService.archiveProposal(id);
+
+    }
+
 }

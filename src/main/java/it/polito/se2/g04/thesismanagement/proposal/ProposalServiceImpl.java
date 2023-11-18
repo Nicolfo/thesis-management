@@ -192,4 +192,19 @@ public class ProposalServiceImpl implements ProposalService {
 
         return filteredList;
     }
+
+
+
+    @Override
+    public Proposal archiveProposal(Long id) {
+        Proposal old= proposalRepository.getReferenceById(id);
+        if (old.getArchived()){
+            System.out.println("Already archived");
+        }else{
+            old.setArchived(true);
+        }
+
+        return proposalRepository.save(old);
+    }
+
 }
