@@ -22,14 +22,14 @@ Our Definition Of Done:
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
 | _#0_   |    15     |       |      38h 25m      |      40h 24m        |
-| Insert Proposal      |    5     |    3    |      10h 30m      |       16h 30m       |
+| Insert Proposal      |    5     |    3    |   10h 30m   |       16h 30m       |
 | Search Proposal      |     5    |    5    |      10h 30m      |      12h 30m        |
 | Browse Applications      |   5      |    3    |       8h 30m     |       9h 30m       |
 | Accept Application      |     5    |     2   |     7h 30m       |      10h 30m        |
-| Browse Applications Decisions      |     5    |    2    |      8h 30m      |       5h 30m       |
-| Browse Proposals     |    5     |    2    |      8h 30m      |       12h 15m       |
-| Update Proposal      |    5     |     3   |       9h 30m     |       11h       |
-| Apply for Proposal      |    5     |  3   |      10h 30m         |       11h 15m       |
+| Browse Applications Decisions      |     5    |    2    |      8h 30m      |    5h 30m    |
+| Browse Proposals     |    5     |    2    |      8h 30m      |    12h 15m    |
+| Update Proposal      |    5     |     3   |       9h 30m     |    11h    |
+| Apply for Proposal      |    5     |  3   |   10h 30m    |    11h 15m    |
 
 - Estimated average hours per task: **1h 53m**
 - Actual average hours per task: **2h 25m**
