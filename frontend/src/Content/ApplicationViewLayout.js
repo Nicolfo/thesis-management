@@ -74,6 +74,31 @@ function ApplicationViewLayout(props) {
                 setShowError(true);
             });
     }
+
+    const changeApplicationState = (newState) => {
+        if(props.user && props.user.token)
+            fetch(`${SERVER_URL}/API/application/changeApplicationStateById/` + applicationId + '/' + newState,{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.user.token}`,
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        setShowSuccess(true);
+                        fetchApplicationData();
+                    } else {
+                        setShowError(true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    setShowError(true);
+                });
+    }
+
     const rejectApplication = () => {
         if(props.user && props.user.token)
         fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
@@ -120,7 +145,7 @@ function ApplicationViewLayout(props) {
                                        download>Download</a>
                                     : 'No attachment'} <br/>
                                     Apply Date: {new Date(applicationData.applyDate).toLocaleString('it-IT')} <br/>
-                                    Accepted: {applicationData.status}
+                                    State: {applicationData.status}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -187,7 +212,11 @@ function ApplicationViewLayout(props) {
                                 <Button variant="inline" color={"error"} onClick={() => rejectApplication()}>Reject</Button>
                             </>
                         ) : (
-                            ""
+                            <>
+                                <button type="button" className="btn btn-outline-success" onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</button>
+                                <button type="button" className="btn btn-outline-info" onClick={() => changeApplicationState("PENDING")}>Update State to Pending</button>
+                                <button type="button" className="btn btn-outline-danger" onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</button>
+                            </>
                         )}
                     </Col>
                 </Row>

@@ -64,6 +64,12 @@ public class ApplicationController {
         return applicationService.rejectApplicationById(applicationId);
     }
 
+    @GetMapping("/API/application/changeApplicationStateById/{applicationId}/{newState}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    public  boolean changeApplicationStateById(@PathVariable Long applicationId, @PathVariable String newState){
+        return applicationService.changeApplicationStateById(applicationId,newState);
+    }
+
     @GetMapping("/API/application/rejectApplicationById/")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public  boolean rejectApplicationByIdWithoutId(){

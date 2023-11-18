@@ -105,19 +105,31 @@ public class ApplicationServiceImpl implements ApplicationService{
 
     }
 
-  /*
-   @Override
-    public void acceptApplication(Long applicationID) {
-        //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
+    @Override
+    public boolean changeApplicationStateById(Long applicationId, String newState) {
         try {
-            Application toAccept =applicationRepository.getReferenceById(applicationID);
-            toAccept.setStatus("ACCEPTED");
-            applicationRepository.save(toAccept);
-        }catch (Exception ex){
-            throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
-          }
+            Application application = getApplicationByIdOriginal(applicationId);
+            application.setStatus(newState);
+            applicationRepository.save(application);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
-  */
+
+    /*
+     @Override
+      public void acceptApplication(Long applicationID) {
+          //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
+          try {
+              Application toAccept =applicationRepository.getReferenceById(applicationID);
+              toAccept.setStatus("ACCEPTED");
+              applicationRepository.save(toAccept);
+          }catch (Exception ex){
+              throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
+            }
+      }
+    */
       @Override
     public boolean rejectApplicationById(Long applicationId) {
         try {
