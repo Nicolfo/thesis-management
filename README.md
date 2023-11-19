@@ -95,6 +95,8 @@ I want to update a thesis proposal
   - to accept the application with the given id, as a teacher
 - GET `/API/application/rejectApplicationById/<applicationId>`
   - to reject the application with the given id, as a teacher 
+- GET `/API/application/changeApplicationStateById/<applicationId>/<newState>`
+  - to change the state the application with the given id to accepted, pending or rejected, as a teacher 
 
 ### Groups
 - GET `/API/group/getAll`

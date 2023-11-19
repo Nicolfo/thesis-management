@@ -22,21 +22,21 @@ public class ApplicationController {
 
     @GetMapping("/API/application/getByProf")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public List<ApplicationDTO2> getAllByProf(){
+    public List<ApplicationDTO2> getAllByProf() {
         UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return applicationService.getApplicationsByProf(auth.getUsername());
     }
 
     @GetMapping("/API/application/getByStudent")
     @PreAuthorize("isAuthenticated() && hasAuthority('STUDENT')")
-    public List<ApplicationDTO3> getAllByStudent(){
+    public List<ApplicationDTO3> getAllByStudent() {
         UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return applicationService.getApplicationsByStudent(auth.getUsername());
     }
 
     @GetMapping("/API/application/getApplicationsByProposal")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  List<ApplicationDTO4> getApplicationByProposal(Long proposalId){
+    public List<ApplicationDTO4> getApplicationByProposal(Long proposalId) {
         return applicationService.getApplicationsByProposal(proposalId);
     }
 
@@ -45,44 +45,70 @@ public class ApplicationController {
     public void insertApplication(@RequestBody ApplicationDTO applicationDTO) {
         applicationService.applyForProposal(applicationDTO);
     }
-  
+
     @GetMapping("/API/application/getApplicationById/{applicationId}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  ApplicationDTO4 getApplicationById(@PathVariable Long applicationId){
+    public ApplicationDTO4 getApplicationById(@PathVariable Long applicationId) {
         return applicationService.getApplicationById(applicationId);
     }
 
+    /**
+     * This method changes the state of the Application with the passed id to "ACCEPTED". This is only fulfilled,when
+     * the current state is "PENDING". Otherwise, (or if an error occurs), the state is not changed and false is returned
+     *
+     * @param applicationId id of application to be accepted
+     * @return true if accepting was successful, false if accepting was not successful
+     */
     @GetMapping("/API/application/acceptApplicationById/{applicationId}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  boolean acceptApplicationById(@PathVariable Long applicationId){
+    public boolean acceptApplicationById(@PathVariable Long applicationId) {
         return applicationService.acceptApplicationById(applicationId);
     }
 
+    /**
+     * This method changes the state of the Application with the passed id to "REJECTED". This is only fulfilled,when
+     * the current state is "PENDING". Otherwise, (or if an error occurs), the state is not changed and false is returned
+     *
+     * @param applicationId id of application to be rejected
+     * @return true if rejection was successful, false if rejection was not successful
+     */
     @GetMapping("/API/application/rejectApplicationById/{applicationId}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  boolean rejectApplicationById(@PathVariable Long applicationId){
+    public boolean rejectApplicationById(@PathVariable Long applicationId) {
         return applicationService.rejectApplicationById(applicationId);
     }
 
+
+    /**
+     * This method changes the state of the Application with the passed id to the passed state. This is done regardless
+     * the current state of the application. If the change was succesfull, true ist returned. If an error occurs, false
+     * is returned.
+     *
+     * @param applicationId id of application of which the state should be changed
+     * @param newState String describing the state, to which the application should be changed to
+     * @return true if changing the state was successful, false if changing the state was not successful
+     */
     @GetMapping("/API/application/changeApplicationStateById/{applicationId}/{newState}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  boolean changeApplicationStateById(@PathVariable Long applicationId, @PathVariable String newState){
-        return applicationService.changeApplicationStateById(applicationId,newState);
+    public boolean changeApplicationStateById(@PathVariable Long applicationId, @PathVariable String newState) {
+        return applicationService.changeApplicationStateById(applicationId, newState);
     }
 
     @GetMapping("/API/application/rejectApplicationById/")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  boolean rejectApplicationByIdWithoutId(){
+    public boolean rejectApplicationByIdWithoutId() {
         throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
+
     @GetMapping("/API/application/acceptApplicationById/")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  boolean acceptApplicationByIdWithoutId(){
+    public boolean acceptApplicationByIdWithoutId() {
         throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
+
     @GetMapping("/API/application/getApplicationById/")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public  boolean getApplicationByIdWithoutId(){
+    public boolean getApplicationByIdWithoutId() {
         throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
 
