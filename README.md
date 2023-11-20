@@ -81,6 +81,9 @@ I want to update a thesis proposal
 - PUT `/API/proposal/search`
   - request body content: an object containing the filters to search proposals
   - response body content: an array containing the proposals filtered with the info in the request body
+- POST `/API/proposal/archive{id}`
+  - response body content: an object containing information about the proposal to archive
+
   
 ### Applications
 - GET `/API/application/getByProf`
