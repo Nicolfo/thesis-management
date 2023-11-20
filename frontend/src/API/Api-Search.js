@@ -74,3 +74,14 @@ export async function deleteProposal(proposalId) {
         body: JSON.stringify({"proposalId": proposalId})
     }))
 };
+
+
+export async function archiveProposal(proposalId,jwt) {
+
+    return getJson( fetch(URL + `/API/proposal/archive/${proposalId}`, {
+        method: 'POST',
+        headers : {'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,},
+        body: JSON.stringify({"proposalId": proposalId})
+    }))
+};

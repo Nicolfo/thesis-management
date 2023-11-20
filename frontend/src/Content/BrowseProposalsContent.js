@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
-import {deleteProposal} from "../API/Api-Search";
+import {archiveProposal, deleteProposal} from "../API/Api-Search";
 import dayjs from "dayjs";
 
 export default function BrowseProposalsContent(props) {
@@ -40,9 +40,9 @@ export default function BrowseProposalsContent(props) {
 
 
             <h4>Your thesis proposals</h4>
-            {deleting? <Warning setDeleting={setDeleting} deletingID={deletingID}> </Warning>:
+            {deleting? <Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID}> </Warning>:
             <Accordion defaultActiveKey="0">
-                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => <ProposalAccordion key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID} />) }
+                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => <ProposalAccordion user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID} />) }
             </Accordion>}
         </>
     );

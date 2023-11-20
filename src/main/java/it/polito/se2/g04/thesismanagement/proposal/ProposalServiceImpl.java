@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import ch.qos.logback.core.util.PropertySetterException;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -197,9 +198,12 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public Proposal archiveProposal(Long id) {
+        if(!proposalRepository.existsById(id)){
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+        }
         Proposal old= proposalRepository.getReferenceById(id);
         if (old.getArchived()){
-            System.out.println("Already archived");
+            throw(new ProposalNotFoundException("Proposal already archived"));
         }else{
             old.setArchived(true);
         }
