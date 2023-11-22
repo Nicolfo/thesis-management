@@ -1,6 +1,7 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import ch.qos.logback.core.util.PropertySetterException;
+import it.polito.se2.g04.thesismanagement.application.Application;
+import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -22,12 +23,14 @@ import java.util.stream.Stream;
 public class ProposalServiceImpl implements ProposalService {
     private final ProposalRepository proposalRepository;
     private final TeacherRepository teacherRepository;
+    private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository) {
+    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
+        this.applicationRepository= applicationRepository;
     }
 
 
@@ -209,6 +212,17 @@ public class ProposalServiceImpl implements ProposalService {
         }
 
         return proposalRepository.save(old);
+    }
+
+    @Override
+    public void deleteProposal(Long id){
+        if(!proposalRepository.existsById(id))
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+
+        proposalRepository.deleteById(id);
+        for (Application application: applicationRepository.getApplicationByProposal_Id(id)){
+            applicationRepository.deleteById(application.getId());
+        }
     }
 
 }
