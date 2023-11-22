@@ -25,7 +25,7 @@ public class ProposalController {
     /**
      * @return List<Proposal> List of all not archived proposals
      */
-    @GetMapping("/API/proposal/getAll/")
+    @GetMapping("/API/proposal/getAll")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public List<Proposal> getAllProposals() {

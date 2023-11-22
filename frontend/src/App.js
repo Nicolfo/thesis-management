@@ -202,7 +202,7 @@ function filterProposals(filters){
     // cause we already have all the active proposals (more time to do api than local computation)
     // we can do that because we can assume that the insert of a new proposal is a lot less of the number of search for a proposal
   if(user!==null){
-    getAllProposal()
+    API.getAllProposals(user.token)
         .then((list) => {
           setListOfProposal(Array.from(Object.values(list)));
           setFilteredProposals(Array.from(Object.values(list)))
