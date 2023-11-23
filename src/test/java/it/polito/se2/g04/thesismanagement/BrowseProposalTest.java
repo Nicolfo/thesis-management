@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nimbusds.jose.shaded.gson.JsonParser;
@@ -11,9 +10,9 @@ import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
-import it.polito.se2.g04.thesismanagement.security.user.LoginDTO;
-import it.polito.se2.g04.thesismanagement.security.user.RegisterDTO;
-import it.polito.se2.g04.thesismanagement.security.user.User;
+import it.polito.se2.g04.thesismanagement.security.old.user.LoginDTO;
+import it.polito.se2.g04.thesismanagement.security.old.user.RegisterDTO;
+import it.polito.se2.g04.thesismanagement.security.old.user.User;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import jakarta.transaction.Transactional;
@@ -36,7 +35,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

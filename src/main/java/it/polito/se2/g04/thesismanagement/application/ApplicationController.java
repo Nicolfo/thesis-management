@@ -1,6 +1,6 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
+import it.polito.se2.g04.thesismanagement.security.old.user.UserInfoUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;

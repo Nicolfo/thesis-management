@@ -1,8 +1,5 @@
 package it.polito.se2.g04.thesismanagement.security;
 
-
-import it.polito.se2.g04.thesismanagement.security.jwt.JwtAuthFilter;
-import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,10 +23,13 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Autowired
-    private JwtAuthFilter authFilter;
+    private final JwtAuthConverter jwtAuthConverter;
 
-    @Bean
+    public SecurityConfig(JwtAuthConverter jwtAuthConverter) {
+        this.jwtAuthConverter = jwtAuthConverter;
+    }
+
+    /*@Bean
     //authentication
     public UserDetailsService userDetailsService() {
 //        UserDetails admin = User.withUsername("Basant")
@@ -42,11 +42,12 @@ public class SecurityConfig {
 //                .build();
 //        return new InMemoryUserDetailsManager(admin, user);
         return new UserInfoUserDetailsService();
-    }
+    }*/
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(it->it.configurationSource(request -> {
                     CorsConfiguration corsConfig = new CorsConfiguration();
@@ -60,16 +61,19 @@ public class SecurityConfig {
                     auth.requestMatchers("/API/login","/API/register", "/API/proposal/getAll", "/API/group/getAll", "/API/teacher/getAll", "/API/application/insert","/API/uploadFile","/API/getFile/**").permitAll()
                             .anyRequest().authenticated();
 
+
                 })
+                .oauth2ResourceServer(conf->
+                        conf.jwt(jwtConfigurer->jwtConfigurer.jwtAuthenticationConverter(jwtAuthConverter)))
+
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                //.authenticationProvider(authenticationProvider())
                 .build();
     }
 
 
 
-    @Bean
+    /*@Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -84,6 +88,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
+    }*/
 
 }

@@ -2,7 +2,7 @@ package it.polito.se2.g04.thesismanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.polito.se2.g04.thesismanagement.security.user.User;
+import it.polito.se2.g04.thesismanagement.security.old.user.User;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import org.junit.jupiter.api.AfterAll;
