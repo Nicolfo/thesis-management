@@ -40,7 +40,7 @@ export default function BrowseProposalsContent(props) {
 
 
             <h4>Your thesis proposals</h4>
-            {deleting? <Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID}> </Warning>:
+            {deleting? <Row><Col></Col><Col><Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID}> </Warning></Col> <Col></Col></Row>:
             <Accordion defaultActiveKey="0">
                 { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => <ProposalAccordion user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID} />) }
             </Accordion>}
