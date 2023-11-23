@@ -5,7 +5,8 @@ import {far} from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter, Outlet, Route, Routes} from "react-router-dom";
-import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
+import {getAllSupervisors} from "./API/Api-Search";
+import API from "./API/API2";
 import RenderProposal from "./Content/RenderProposal";
 import {LoginLayout} from "./LoginLayout/LoginLayout";
 import {useEffect, useState} from 'react';
@@ -123,7 +124,7 @@ function App() {
         // cause we already have all the active proposals (more time to do api than local computation)
         // we can do that because we can assume that the insert of a new proposal is a lot less of the number of search for a proposal
         if (user !== null) {
-            getAllProposal()
+            API.getAllProposals(user.token)
                 .then((list) => {
                     setListOfProposal(Array.from(Object.values(list)));
                     setFilteredProposals(Array.from(Object.values(list)))
