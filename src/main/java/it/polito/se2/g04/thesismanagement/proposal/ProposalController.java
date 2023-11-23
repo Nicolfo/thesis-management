@@ -3,13 +3,10 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import it.polito.se2.g04.thesismanagement.security.user.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @RestController
@@ -87,9 +84,15 @@ public class ProposalController {
     @PostMapping("/API/proposal/archive/{id}")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
-    public void ArchiveProposal(@PathVariable Long id){
+    public void archiveProposal(@PathVariable Long id){
         proposalService.archiveProposal(id);
+    }
 
+    @DeleteMapping("/API/proposal/delete/{id}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProposal(@PathVariable Long id){
+        proposalService.deleteProposal(id);
     }
 
 }
