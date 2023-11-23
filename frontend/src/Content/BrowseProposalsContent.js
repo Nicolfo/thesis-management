@@ -20,7 +20,7 @@ export default function BrowseProposalsContent(props) {
 
     return (
         <>
-            <h4>Your thesis proposals</h4>
+            <h4>My thesis proposals</h4>
             <Accordion defaultActiveKey="0">
                 { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => <ProposalAccordion key={proposal.id} proposal={proposal} />) }
             </Accordion>
@@ -43,7 +43,7 @@ function CustomToggle({ children, eventKey, callback }) {
       <Button
         onClick={decoratedOnClick}
       >
-        <FontAwesomeIcon icon={isCurrentEventKey ? "fa-xmark" : "fa-plus"} />
+        <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
       </Button>
     );
   }
@@ -55,7 +55,7 @@ function ProposalAccordion({ proposal }) {
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
-                    <Col><b>{proposal.title}</b></Col>
+                    <Col><strong>{proposal.title}</strong></Col>
                     <Col className="d-flex justify-content-end">
                         <Button onClick={() => navigate(`/updateProposal/${proposal.id}`)}><FontAwesomeIcon icon="fa-pencil" /></Button>
                         <CustomToggle eventKey={proposal.id} />

@@ -47,8 +47,36 @@
 }
 
 .dateForm {
-  background-color: aliceblue  !important;
-  color: #0B67A5 !important;
+  background-color: #0B67A5  !important;
+  color: aliceblue !important;
+  border-color: aliceblue !important;
+}
+
+.btn-primary:hover {
+  background-color: #3b85b7 !important;
+}
+
+@media (max-width: 767px) {
+  .border-b {
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+    border-bottom: 2px solid aliceblue !important;
+    border-radius: 0 !important;
+  }
+  .no-border-sm {
+    border: none !important;
+  }
+}
+
+@media (min-width: 767px) {
+  .no-border-lg {
+    border: none !important;
+  }
+
+  .margin-end-lg {
+    margin-right: 1.5rem;
+  }
 }
 
 .login-padding-top {
@@ -71,8 +99,8 @@ h1 {
 }
 
 .separator {
-  margin-top: 15px; /* Adjust the margin to control the spacing above the separator */
-  margin-bottom: 30px; /* Adjust the margin to control the spacing below the separator */
+  margin-top: 15px;
+  margin-bottom: 30px;
   margin-right: 20px;
 }
 

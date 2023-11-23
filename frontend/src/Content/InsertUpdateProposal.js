@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import dayjs from "dayjs";
 import API from "../API/API2";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function InsertUpdateProposal(props) {
@@ -207,9 +208,9 @@ function InsertUpdateProposal(props) {
             <Form validated={validated} onSubmit={handleSubmit} noValidate>
                 <Card.Header as="h3" style={{"textAlign": "center"}}>
                     { proposalID ?
-                        "Update proposal fields"
+                        "Update proposal"
                         :
-                        "Insert proposal fields"
+                        "Insert proposal"
                     }
                 </Card.Header>
 
@@ -423,7 +424,7 @@ function InsertUpdateProposal(props) {
                         { proposalID ?
                             "Update thesis proposal"
                             :
-                            "Publish thesis proposal"
+                            <><FontAwesomeIcon icon={"upload"} /> Publish thesis proposal</>
                         }
                     </Button>
                     {alert &&

@@ -4,6 +4,7 @@ import API from "../API/Api";
 import {Button, Table} from "react-bootstrap";
 import dayjs from 'dayjs';
 import {useNavigate} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function BrowseApplicationsContent(props) {
@@ -26,48 +27,51 @@ function BrowseApplicationsContent(props) {
 
     return (
         <>
-        <div className="bordered-box mt-5 pe-3 ms-5 me-5">
-            <h1>Applications</h1>
-            <hr className="separator" />
+            <div className="bordered-box">
+                <h1>My application proposals</h1>
+                <hr className="separator" />
                 <Table striped hover className="mb-4">
                     <thead>
                     <tr>
                         <th>Title</th>
-                        <th>Apply date</th>
-                        <th>Student</th>
-                        <th>Average grades</th>
+                        <th className="d-none d-md-table-cell">Apply date</th>
+                        <th className="d-none d-md-table-cell">Student</th>
+                        <th className="d-none d-md-table-cell">Average grades</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                    { applications.map(application => <ApplicationRow key={application.id} application={application} user={props.user}/>) }
+                    {applications.map((application) => (
+                        <ApplicationRow key={application.id} application={application} user={props.user} />
+                    ))}
                     </tbody>
                 </Table>
-        </div>
+            </div>
         </>
     );
 }
 
-
 function ApplicationRow(props) {
-    const navigate=useNavigate()
+    const navigate = useNavigate();
     const handleViewInfo = (id) => {
-        navigate("/teacher/application/view?applicationId="+props.application.id);
+        navigate("/teacher/application/view?applicationId=" + props.application.id);
     };
 
     return (
         <tr>
-            <td>{ props.application.proposalTitle }</td>
-            <td>{ dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss') }</td>
-            <td>{ props.application.studentName} {props.application.studentSurname}</td>
-            <td>{ props.application.studentAverageGrades }</td>
-            <td>{ props.application.status}</td>
+            <td><strong>{props.application.proposalTitle}</strong></td>
+            <td className="d-none d-md-table-cell">{dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss')}</td>
+            <td className="d-none d-md-table-cell">{props.application.studentName} {props.application.studentSurname}</td>
+            <td className="d-none d-md-table-cell">{props.application.studentAverageGrades}</td>
+            <td>{props.application.status}</td>
             <td>
-                <Button onClick={() => handleViewInfo(props.application.id)}>View info</Button>
+                <Button onClick={() => handleViewInfo(props.application.id)}>
+                    View info <FontAwesomeIcon icon={"chevron-right"} />
+                </Button>
             </td>
         </tr>
-    )
+    );
 }
 
 export default BrowseApplicationsContent;

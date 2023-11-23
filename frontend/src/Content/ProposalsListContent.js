@@ -156,7 +156,7 @@ function ProposalsListContent({ user, applicationDate }) {
                     <Form.Control type="date" value={maxExpiration} onChange={event => setMaxExpiration(event.target.value)} />
                 </Form.Group>
                 </Form>
-                <Button onClick={doSearch}>Search</Button>
+                <Button onClick={doSearch}><FontAwesomeIcon icon={"magnifying-glass"} /> Search</Button>
             </Card.Body>
         </Card>
                 :
@@ -192,7 +192,7 @@ function CustomToggle({ children, eventKey, callback }) {
       <Button
         onClick={decoratedOnClick}
       >
-        <FontAwesomeIcon icon={isCurrentEventKey ? "fa-xmark" : "fa-plus"} />
+        <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
       </Button>
     );
   }
@@ -206,7 +206,7 @@ function ProposalEntry({ proposal, user }) {
                 <Row className="p-2 align-items-center">
                     <Col><b>{proposal.title}</b></Col>
                     <Col className="d-flex justify-content-end">
-                        <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}><FontAwesomeIcon icon="fa-file" /></Button>
+                        <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}><FontAwesomeIcon icon="fa-file" /> Apply</Button>
                         <CustomToggle eventKey={proposal.id} />
                     </Col>
                 </Row>

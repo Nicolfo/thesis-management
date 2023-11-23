@@ -1,8 +1,8 @@
 import {insertApplication, uploadFile} from "../API/Api-Search";
-import {map} from "react-bootstrap/ElementChildren";
-import {Form, Button, Col, FormGroup, FormLabel, Row, Alert} from "react-bootstrap";
+import {Button, FormGroup, FormLabel, Alert} from "react-bootstrap";
 import {useNavigate, useParams} from 'react-router-dom';
 import {useState} from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function RenderProposal(props){
@@ -21,8 +21,11 @@ function RenderProposal(props){
 
             </FormGroup>
             {cvSelected ? <p></p> : <Alert  variant={"danger"}>
-                Select your cv file before proceede
+                Select your cv file before proceed
             </Alert>}
+            <Button onClick={()=> navigate('/search-for-proposal')}>
+                <FontAwesomeIcon icon={"chevron-left"} /> Go Back
+            </Button>
             <Button onClick={()=> {
                 if(cv != undefined){
 
@@ -34,8 +37,8 @@ function RenderProposal(props){
                 else{
                     setCvSelected(false)
                 }
-            }}>Apply</Button>
-            <Button onClick={()=> navigate('/search-for-proposal')}>Go Back</Button>
+            }}><FontAwesomeIcon icon="fa-file" /> Apply</Button>
+
         </div>
 
 
