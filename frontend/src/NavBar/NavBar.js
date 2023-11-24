@@ -48,8 +48,8 @@ function NavBar(props) {
                             {userIsStudent() && (
                                 <>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/search-for-proposal' ? 'active' : ''}
+                                        variant={path === '/search-for-proposal' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/search-for-proposal' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/search-for-proposal');
                                             props.searchForProposalClicked();
@@ -58,8 +58,8 @@ function NavBar(props) {
                                         Search for proposal
                                     </Button>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/browseDecisions' ? 'active' : ''}
+                                        variant={path === '/browseDecisions' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/browseDecisions' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/browseDecisions');
                                         }}
@@ -71,8 +71,8 @@ function NavBar(props) {
                             {userIsTeacher() && (
                                 <>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/teacher/proposals' ? 'active' : ''}
+                                        variant={path === '/teacher/proposals' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/teacher/proposals' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/teacher/proposals');
                                         }}
@@ -80,8 +80,8 @@ function NavBar(props) {
                                         My thesis proposals
                                     </Button>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/insertProposal' ? 'active' : ''}
+                                        variant={path === '/insertProposal' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/insertProposal' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/insertProposal');
                                         }}
@@ -89,10 +89,8 @@ function NavBar(props) {
                                         Insert proposal
                                     </Button>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={
-                                            path === '/teacher/application/browse' || path === '/teacher/application/view' ? 'active' : ''
-                                        }
+                                        variant={path === '/teacher/application/browse' || path === '/teacher/application/view' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/teacher/application/browse' || path === '/teacher/application/view' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/teacher/application/browse');
                                         }}

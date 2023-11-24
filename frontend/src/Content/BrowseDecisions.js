@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Badge, Card, Table} from "react-bootstrap";
+import {Badge, Card, Col, Row, Table} from "react-bootstrap";
 import API from "../API/Api";
 
 
@@ -23,7 +23,7 @@ function BrowseDecisions(props) {
 
 
     return (
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem"}}>
+        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
             <Card.Header as="h3" style={{"textAlign": "center"}}>
                 Your applications
             </Card.Header>
@@ -53,15 +53,18 @@ function TableRow(props) {
     return (
         <tr>
             <td>
-                <div className="d-flex justify-content-between">
-                    <p className="text-start col-md-5 col-3">
+                <Row>
+                    <Col lg={5}>
                         <b> {application.proposalTitle} </b>
-                    </p>
-                    <p className="col-md-3 col-3">
-                        <em> {application.supervisorSurname} {application.supervisorName} </em>
-                    </p>
-                    <p className="text-end col-md-3 col-3" style={{"marginRight": "2rem"}}> {statusBadge()} </p>
-                </div>
+                    </Col>
+                    <Col lg={5}>
+                        Supervised by: <em> {application.supervisorSurname} {application.supervisorName} </em>
+                    </Col>
+                    <Col lg={1}>
+                        {statusBadge()}
+                    </Col>
+                    <Row style={{"visibility": "hidden"}}> - </Row>
+                </Row>
             </td>
         </tr>
     );

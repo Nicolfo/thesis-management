@@ -2,25 +2,24 @@ import {Alert, Button, Card, Col, Form, Row} from "react-bootstrap";
 import { MultiSelect } from "react-multi-select-component";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import API from "../API/API2";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function InsertUpdateProposal(props) {
     const { proposalID } = useParams();
-    const navigate=useNavigate();
+    const navigate= useNavigate();
 
-    //
     const [supervisor, setSupervisor] = useState({});
     const [title, setTitle] =  useState("");
-    const [level, setLevel] =  useState("");
+    const [level, setLevel] =  useState("Bachelor's");
     const [notes, setNotes] =  useState("");
     const [knowledge, setKnowledge] = useState("");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
-    const [typeList, setTypeList] = useState([]);
-    const [keywordsList, setKeywordsList] = useState([]);
+    const [typeList, setTypeList] = useState([""]);
+    const [keywordsList, setKeywordsList] = useState([""]);
     const [teacherList, setTeacherList] = useState([]);
     const [cdsList, setCdsList] = useState([]);
     const [optionsCds, setOptionsCds] = useState([]);
@@ -30,6 +29,8 @@ function InsertUpdateProposal(props) {
     const [alert, setAlert] = useState(false);
     const [isValidTitle, setIsValidTitle] = useState(true);
     const [isValidDescription, setIsValidDescription] = useState(true);
+    const [isValidType, setIsValidType] = useState(true);
+    const [isValidKeyword, setIsValidKeyword] = useState(true);
     const [isValidCds, setIsValidCds] = useState(true);
     const [validated, setValidated] = useState(false);
 
@@ -94,16 +95,17 @@ function InsertUpdateProposal(props) {
         } catch (err) {
             console.error("UseEffect error", err);
         }
-    };
-    const clearFields=()=>{
+    }
+
+    const clearFields= ()=> {
         setTitle("");
-        setLevel("");
+        setLevel("Bachelor's");
         setNotes("");
         setKnowledge("");
         setDescription("");
         setDate("");
-        setTypeList([]);
-        setKeywordsList([]);
+        setTypeList([""]);
+        setKeywordsList([""]);
         setSelectedCds([]);
         setSelectedSupervisors([]);
     }
@@ -125,9 +127,17 @@ function InsertUpdateProposal(props) {
     }
 
     const changeType = (ev, index) => {
-        const list = [...typeList];
-        list[index] = ev.target.value;
-        setTypeList(list);
+        if ((ev.target.value.trim()).length > 0 ) {
+            const list = [...typeList];
+            list[index] = ev.target.value;
+            setTypeList(list);
+            setIsValidType(true);
+        } else {
+            const list = [...typeList];
+            list[index] = ev.target.value;
+            setTypeList(list);
+            setIsValidType(false);
+        }
     }
 
     const addKeyword = () => {
@@ -141,9 +151,17 @@ function InsertUpdateProposal(props) {
     }
 
     const changeKeyword = (ev, index) => {
-        const list = [...keywordsList];
-        list[index] = ev.target.value;
-        setKeywordsList(list);
+        if ((ev.target.value.trim()).length > 0 ) {
+            const list = [...keywordsList];
+            list[index] = ev.target.value;
+            setKeywordsList(list);
+            setIsValidKeyword(true);
+        } else {
+            const list = [...keywordsList];
+            list[index] = ev.target.value;
+            setKeywordsList(list);
+            setIsValidKeyword(false);
+        }
     }
 
 
@@ -166,7 +184,12 @@ function InsertUpdateProposal(props) {
     const handleSubmit = (ev) => {
         ev.preventDefault();
 
-        if (ev.currentTarget.checkValidity() === false) {
+        const valid = isValidKeyword && isValidDescription && isValidType && isValidTitle && isValidCds;
+
+        if (selectedCds.length !== 0)
+            setIsValidCds(true);
+
+        if (ev.currentTarget.checkValidity() === false || !valid) {
             if (selectedCds.length === 0)
                 setIsValidCds(false);
 
@@ -193,10 +216,8 @@ function InsertUpdateProposal(props) {
             if (proposalID) {
                 proposal.id = proposalID;
                 updateProposal(proposal);
-            } else {
-
+            } else
                 insertProposal(proposal);
-            }
         }
 
         setValidated(true);
@@ -216,27 +237,29 @@ function InsertUpdateProposal(props) {
 
                 <Card.Body>
                     {/* TITLE */}
-                    <Row >
-                        <Form.Group >
-                            <Form.Label> Title </Form.Label>
-                            <Form.Control
-                                required
-                                type="text"
-                                placeholder="Title"
-                                value={title}
-                                isInvalid={!isValidTitle}
-                                onChange={ (ev) => {
-                                        if ((ev.target.value.trim()).length > 0 ) {
-                                            setTitle(ev.target.value);
-                                            setIsValidTitle(true);
-                                        } else {
-                                            setTitle(ev.target.value);
-                                            setIsValidTitle(false);
+                    <Row>
+                        <Form.Group>
+                            <Form.Floating>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    placeholder="Title"
+                                    value={title}
+                                    isInvalid={!isValidTitle}
+                                    onChange={ (ev) => {
+                                            if ((ev.target.value.trim()).length > 0 ) {
+                                                setTitle(ev.target.value);
+                                                setIsValidTitle(true);
+                                            } else {
+                                                setTitle(ev.target.value);
+                                                setIsValidTitle(false);
+                                            }
                                         }
                                     }
-                                }
-                            />
-                            <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
+                                />
+                                <label htmlFor="floatingTitle" > Title </label>
+                                <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
+                            </Form.Floating>
                         </Form.Group>
                     </Row>
                     {/* SUPERVISOR & CO-SUPERVISORS */}
@@ -251,7 +274,7 @@ function InsertUpdateProposal(props) {
                             />
                         </Form.Group>
                         <Form.Group as={Col} >
-                            <Form.Label> Co-supervisors </Form.Label>
+                            <Form.Label> Co-supervisors <em style={{"color": "dimgray"}}> (optional) </em> </Form.Label>
                             <MultiSelect
                                 options={optionsSupervisors}
                                 value={selectedSupervisors}
@@ -262,83 +285,91 @@ function InsertUpdateProposal(props) {
                     </Row>
                     {/* TYPE & KEYWORDS & LEVEL */}
                     <Row style={{"marginTop": "1rem"}} >
-                        <Form.Group as={Col} >
-                            <Form.Label> Thesis type </Form.Label>
-                            { typeList.length === 0 &&
-                                <>
-                                    <Row style={{"marginBottom": "0.5rem", "marginLeft": "0.2rem", "width": "4.65rem"}}>
-                                        <Button variant="success" size="sm" onClick={addType}> Add type </Button>
-                                    </Row>
-                                </>
-                            }
-                            {typeList.map( (singleType, index) => (
-                                <>
-                                    <Row style={{"marginBottom": "0.5rem"}}>
-                                        <Col>
-                                            <Form.Control
-                                                required
-                                                type="text"
-                                                placeholder="Type"
-                                                value={singleType}
-                                                onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
-                                                onChange={ (ev) => changeType(ev, index) }
-                                            />
-                                            <Form.Control.Feedback type="invalid"> Please write the type </Form.Control.Feedback>
-                                        </Col>
-                                        <Col>
-                                            {typeList.length !== 0 &&
-                                                <Button variant="danger" size="sm" onClick={() => removeType(index)}> X </Button>
-                                            }
-                                        </Col>
-                                    </Row>
-                                    {typeList.length - 1 === index &&
-                                        <Button variant="success" size="sm" onClick={addType}> Add type </Button>
-                                    }
-                                </>
-                            ))}
+                        <Col lg={4}>
+                            <Row style={{"visibility": "hidden"}}> - </Row>
+                            <Form.Group >
+                                <Form.Label> Thesis types </Form.Label>
+                                {typeList.map( (singleType, index) => (
+                                    <>
+                                        <Row style={{"marginBottom": "0.5rem"}}>
+                                            <Col>
+                                                <Form.Control
+                                                    required
+                                                    type="text"
+                                                    placeholder="Type"
+                                                    // style={{"width": "250px"}}
+                                                    value={singleType}
+                                                    onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
+                                                    onChange={ (ev) => changeType(ev, index) }
+                                                />
+                                                <Form.Control.Feedback type="invalid"> Please write the type </Form.Control.Feedback>
+                                            </Col>
+                                            <Col>
+                                                {typeList.length > 1 &&
+                                                    <Button variant="link" size="sm" onClick={() => removeType(index)}> <FontAwesomeIcon icon="fa-regular fa-circle-xmark" size="xl" style={{color: "#f50000",}} /> </Button>                                            }
+                                            </Col>
+                                        </Row>
+                                        {typeList.length - 1 === index &&
+                                            <Button variant="info" size="sm" onClick={addType}> Add type </Button>
+                                        }
+                                    </>
+                                ))}
                             </Form.Group>
-                        <Form.Group as={Col} >
-                            <Form.Label> Keywords </Form.Label>
-                            { keywordsList.length === 0 &&
-                                <>
-                                    <Row style={{"marginBottom": "0.5rem", "marginLeft": "0.2rem", "width": "6.3rem"}}>
-                                        <Button variant="success" size="sm" onClick={addKeyword}> Add keyword </Button>
-                                    </Row>
-                                </>
-                            }
-                            {keywordsList.map( (singleKeyword, index) => (
-                                <>
-                                    <Row style={{"marginBottom": "0.5rem"}}>
-                                        <Col>
-                                            <Form.Control
-                                                required
-                                                type="text"
-                                                placeholder="Keyword"
-                                                value={singleKeyword}
-                                                onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
-                                                onChange={ (ev) => changeKeyword(ev, index) }
-                                            />
-                                            <Form.Control.Feedback type="invalid"> Please write the keyword </Form.Control.Feedback>
-                                        </Col>
-                                        <Col>
-                                            {keywordsList.length !== 0 &&
-                                                <Button variant="danger" size="sm" onClick={() => removeKeyword(index)}> X </Button>
-                                            }
-                                        </Col>
-                                    </Row>
-                                    {keywordsList.length - 1 === index &&
-                                        <Button variant="success" size="sm" onClick={addKeyword}> Add keyword </Button>
-                                    }
-                                </>
-                            ))}
-                        </Form.Group>
-                        <Form.Group as={Col} >
-                            <Form.Label> Level </Form.Label>
-                            <Form.Select value={level} onChange={ev => setLevel(ev.target.value)} >
-                                <option value="BSc"> BSc </option>
-                                <option value="MSc"> MSc </option>
-                            </Form.Select>
-                        </Form.Group>
+                        </Col>
+                        <Col lg={4}>
+                            <Row style={{"visibility": "hidden"}}> - </Row>
+                            <Form.Group >
+                                <Form.Label> Thesis keywords </Form.Label>
+                                {keywordsList.map( (singleKeyword, index) => (
+                                    <>
+                                        <Row style={{"marginBottom": "0.5rem"}}>
+                                            <Col>
+                                                <Form.Control
+                                                    required
+                                                    type="text"
+                                                    placeholder="Keyword"
+                                                    // style={{"width": "200px"}}
+                                                    value={singleKeyword}
+                                                    onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
+                                                    onChange={ (ev) => changeKeyword(ev, index) }
+                                                />
+                                                <Form.Control.Feedback type="invalid"> Please write the keyword </Form.Control.Feedback>
+                                            </Col>
+                                            <Col>
+                                                {keywordsList.length > 1 &&
+                                                    <Button variant="link" size="sm" onClick={() => removeKeyword(index)}> <FontAwesomeIcon icon="fa-regular fa-circle-xmark" size="xl" style={{color: "#f50000",}} /> </Button>
+                                                }
+                                            </Col>
+                                        </Row>
+                                        {keywordsList.length - 1 === index &&
+                                            <Button variant="info" size="sm" onClick={addKeyword}> Add keyword </Button>
+                                        }
+                                    </>
+                                ))}
+                            </Form.Group>
+                        </Col>
+                        <Col lg={4}>
+                            <Row style={{"visibility": "hidden"}}> - </Row>
+                            <Form.Group>
+                                <Form.Label> Thesis level </Form.Label>
+                                <Form.Check
+                                    type="radio"
+                                    name="level"
+                                    label="Bachelor's"
+                                    value="Bachelor's"
+                                    checked={level === "Bachelor's"}
+                                    onChange={ev => setLevel(ev.target.value)}
+                                />
+                                <Form.Check
+                                    type="radio"
+                                    name="level"
+                                    label="Master's"
+                                    value="Master's"
+                                    checked={level === "Master's"}
+                                    onChange={ev => setLevel(ev.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
                     </Row>
                     {/* NOTES & REQUIRED KNOWLEDGE & DESCRIPTION */}
                     <Row style={{"marginTop": "2rem"}} >
@@ -350,7 +381,7 @@ function InsertUpdateProposal(props) {
                                 value={notes}
                                 onChange={ev => setNotes(ev.target.value)}
                             />
-                            <label htmlFor="floatingNotes" style={{"marginLeft": "0.5rem"}}> Notes </label>
+                            <label htmlFor="floatingNotes" style={{"marginLeft": "0.5rem"}}> Notes <em style={{"color": "dimgray"}}> (optional) </em> </label>
                         </Form.Floating>
                     </Row>
                     <Row style={{"marginTop": "1rem"}} >
@@ -362,7 +393,7 @@ function InsertUpdateProposal(props) {
                                 value={knowledge}
                                 onChange={ev => setKnowledge(ev.target.value)}
                             />
-                            <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Required knowledge </label>
+                            <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Required knowledge <em style={{"color": "dimgray"}}> (optional) </em> </label>
                         </Form.Floating>
                     </Row>
                     <Row style={{"marginTop": "1rem"}} >
@@ -371,6 +402,7 @@ function InsertUpdateProposal(props) {
                                 required
                                 as="textarea"
                                 type="text"
+                                style={{"height": "100px"}}
                                 placeholder="Description"
                                 value={description}
                                 isInvalid={!isValidDescription}
@@ -389,9 +421,22 @@ function InsertUpdateProposal(props) {
                             <Form.Control.Feedback type="invalid"> Please provide a description for the thesis </Form.Control.Feedback>
                         </Form.Floating>
                     </Row>
-                    {/* EXPIRATION DATE & CDS */}
+                    {/* CDS & EXPIRATION DATE */}
                     <Row style={{"marginTop": "1rem"}} >
-                        <Form.Group as={Col} style={{"marginTop": "1rem"}} >
+                        <Form.Group as={Col} >
+                            <Form.Label> CdS </Form.Label>
+                            <MultiSelect
+                                options={optionsCds}
+                                value={selectedCds}
+                                onChange={setSelectedCds}
+                                labelledBy="Select CdS"
+                            />
+                            { !isValidCds &&
+                                <Form.Label style={{"color": "red"}}> Please select at least one CdS <FontAwesomeIcon icon="fa-solid fa-circle-exclamation"/> </Form.Label>
+                            }
+                        </Form.Group>
+                        <Col sm={7}>
+                        <Form.Group style={{"marginTop": "1rem"}} >
                             <Form.Floating>
                                 <Form.Control
                                     required
@@ -404,23 +449,12 @@ function InsertUpdateProposal(props) {
                                 <Form.Control.Feedback type="invalid"> Please choose a date </Form.Control.Feedback>
                             </Form.Floating>
                         </Form.Group>
-                        <Form.Group as={Col} >
-                            <Form.Label> CdS </Form.Label>
-                            <MultiSelect
-                                options={optionsCds}
-                                value={selectedCds}
-                                onChange={setSelectedCds}
-                                labelledBy="Select CdS"
-                            />
-                            { !isValidCds &&
-                                <Form.Label style={{"color": "red"}}> Please select at least one CdS ! </Form.Label>
-                            }
-                        </Form.Group>
+                        </Col>
                     </Row>
                 </Card.Body>
 
                 <Card.Footer style={{"textAlign": "center"}}>
-                    <Button variant="primary" type="submit">
+                    <Button variant="outline-primary" type="submit">
                         { proposalID ?
                             "Update thesis proposal"
                             :

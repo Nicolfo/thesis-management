@@ -1,4 +1,14 @@
-import { Card, Form, Button, Row, Col, Accordion, AccordionContext, useAccordionButton } from "react-bootstrap";
+import {
+    Card,
+    Form,
+    Button,
+    Row,
+    Col,
+    Accordion,
+    AccordionContext,
+    useAccordionButton,
+    Offcanvas
+} from "react-bootstrap";
 import { getAllSupervisors } from "../API/Api-Search";
 import API from "../API/API2";
 import { useState, useEffect, useContext } from "react";
@@ -7,16 +17,17 @@ import { MultiSelect } from "react-multi-select-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 
+
 function ProposalsListContent({ user, applicationDate }) {
 
-    const levelOptions = [
-        "Any",
-        "Bachelor's",
-        "Master's"
-    ];
+    // const levelOptions = [
+    //     "Any",
+    //     "Bachelor's",
+    //     "Master's"
+    // ];
 
     const navigate = useNavigate();
-    const [showSearchBar,setShowSearchBar]=useState(false);
+    const [showSearchBar,setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
     const [selectedSupervisorIds, setSelectedSupervisorIds] = useState([]);
     const [selectedCoSupervisorIds, setSelectedCoSupervisorIds] = useState([]);
@@ -28,11 +39,11 @@ function ProposalsListContent({ user, applicationDate }) {
     const [description, setDescription] = useState("");
     const [requiredKnowledge, setRequiredKnowledge] = useState("");
     const [notes, setNotes] = useState("");
-    const [minExpiration, setMinExpiration] = useState("");
-    const [maxExpiration, setMaxExpiration] = useState("");
-    const [level, setLevel] = useState("Any");
-    const [cds, setCds] = useState("");
-
+    // const [minExpiration, setMinExpiration] = useState("");
+    // const [maxExpiration, setMaxExpiration] = useState("");
+    // const [level, setLevel] = useState("Any");
+    // const [cdsList, setCdsList] = useState([]);
+    // const [selectedCds, setSelectedCds] = useState([]);
     const [proposalsList, setProposalsList] = useState([]);
 
     useEffect(() => {
@@ -44,6 +55,8 @@ function ProposalsListContent({ user, applicationDate }) {
             setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
             const groups = await API.getAllGroups(user.token);
             setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
+            // const cds = await API.getAllCds(user.token);
+            // setCdsList(cds.map(c => { return {label: c, value: c}; }));
             const proposals = await API.getAllProposals(user.token);
             setProposalsList(proposals);
         };
@@ -60,11 +73,11 @@ function ProposalsListContent({ user, applicationDate }) {
             codGroupList: selectedGroupIds.length > 0 ? selectedGroupIds.map(e => e.value) : null,
             description: description || null,
             requiredKnowledge: requiredKnowledge || null,
-            notes: notes || null,
-            minExpiration: minExpiration || null,
-            maxExpiration: maxExpiration || null,
-            level: level === "Any" ? null : level,
-            CdS: cds || null,
+            notes: notes || null
+            // minExpiration: minExpiration || null,
+            // maxExpiration: maxExpiration || null,
+            // level: level === "Any" ? null : level,
+            // CdS: selectedCds.length > 0 ? selectedCds.map(c => c.value).join(", ") : null,
         };
 
 
@@ -78,94 +91,111 @@ function ProposalsListContent({ user, applicationDate }) {
 
     return (
         <>
-            <Button onClick={()=>setShowSearchBar(it=>!it)}>Show Search Form</Button>
-            { showSearchBar?
+            <Row style={{"textAlign": "end"}}>
+                <Col>
+                    <Button onClick={()=> setShowSearchBar(it=> !it )}> <FontAwesomeIcon icon={"magnifying-glass"} /> Show searching filters </Button>
+                </Col>
+            </Row>
+            <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true} >
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title> <Button variant="outline-primary" onClick={doSearch}> <FontAwesomeIcon icon={"magnifying-glass"} /> SEARCH BY </Button> </Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Floating>
+                                <Form.Control type="text" placeholder="Title" value={title} onChange={event => setTitle(event.target.value)} />
+                                <label htmlFor="floatingTitle" > Title </label>
+                            </Form.Floating>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Floating>
+                                <Form.Control type="text" placeholder="Keyword(s)" value={keywords} onChange={event => setKeywords(event.target.value)} />
+                                <label htmlFor="floatingKeyword(s)" > Keyword(s) </label>
+                            </Form.Floating>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Floating>
+                                <Form.Control type="text" placeholder="Type" value={type} onChange={event => setType(event.target.value)} />
+                                <label htmlFor="floatingType(s)" > Type(s) </label>
+                            </Form.Floating>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Floating>
+                                <Form.Control type="text" placeholder="Description" value={description} onChange={event => setDescription(event.target.value)} />
+                                <label htmlFor="floatingDescription" > Description </label>
+                            </Form.Floating>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Floating>
+                                <Form.Control type="text" placeholder="Required Knowledge" value={requiredKnowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
+                                <label htmlFor="floatingKnowledge" > Required Knowledge </label>
+                            </Form.Floating>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Floating>
+                                <Form.Control type="text" placeholder="Notes" value={notes} onChange={event => setNotes(event.target.value)} />
+                                <label htmlFor="floatingNotes" > Notes </label>
+                            </Form.Floating>
+                        </Form.Group>
+                        {/*<Form.Group className="mb-3">*/}
+                        {/*    <Form.Label>CdS</Form.Label>*/}
+                        {/*    <MultiSelect*/}
+                        {/*        options={cdsList}*/}
+                        {/*        value={selectedCds}*/}
+                        {/*        onChange={setSelectedCds}*/}
+                        {/*        labelledBy="Select CdS"*/}
+                        {/*    />*/}
+                        {/*</Form.Group>*/}
+                        <Form.Group className="mb-3">
+                            <Form.Label>Supervisor(s)</Form.Label>
+                            <MultiSelect
+                                options={teachersList}
+                                value={selectedSupervisorIds}
+                                onChange={setSelectedSupervisorIds}
+                                labelledBy="Select Supervisors"
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Co-Supervisor(s)</Form.Label>
+                            <MultiSelect
+                                options={teachersList}
+                                value={selectedCoSupervisorIds}
+                                onChange={setSelectedCoSupervisorIds}
+                                labelledBy="Select Co-Supervisors"
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Group(s)</Form.Label>
+                            <MultiSelect
+                                options={groupsList}
+                                value={selectedGroupIds}
+                                onChange={setSelectedGroupIds}
+                                labelledBy="Select Groups"
+                            />
+                        </Form.Group>
+                        {/*<Form.Group className="mb-3">*/}
+                        {/*    <Form.Label> Level </Form.Label>*/}
+                        {/*    <Form.Select name="level" value={level} onChange={(e) => setLevel(e.target.value)}>*/}
+                        {/*        { levelOptions.map(levelOption => <option value={levelOption}>{levelOption}</option>) }*/}
+                        {/*    </Form.Select>*/}
+                        {/*</Form.Group>*/}
+                        {/*<Form.Group className="mb-3">*/}
+                        {/*    <Form.Label>Min. Expiration Date</Form.Label>*/}
+                        {/*    <Form.Control type="date" value={minExpiration} onChange={event => setMinExpiration(event.target.value)} />*/}
+                        {/*</Form.Group>*/}
+                        {/*<Form.Group className="mb-3">*/}
+                        {/*    <Form.Label>Max. Expiration Date</Form.Label>*/}
+                        {/*    <Form.Control type="date" value={maxExpiration} onChange={event => setMaxExpiration(event.target.value)} />*/}
+                        {/*</Form.Group>*/}
+                    </Form>
+                </Offcanvas.Body>
+            </Offcanvas>
 
-
-        <Card>
-            <Card.Header>Search Proposal</Card.Header>
-            <Card.Body>
-                <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label>Title</Form.Label>
-                    <Form.Control type="text" placeholder="Title" value={title} onChange={event => setTitle(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Supervisor(s)</Form.Label>
-                    <MultiSelect
-                        options={teachersList}
-                        value={selectedSupervisorIds}
-                        onChange={setSelectedSupervisorIds}
-                        labelledBy="Select Supervisors"
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Co-Supervisor(s)</Form.Label>
-                    <MultiSelect
-                        options={teachersList}
-                        value={selectedCoSupervisorIds}
-                        onChange={setSelectedCoSupervisorIds}
-                        labelledBy="Select Co-Supervisors"
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Keywords</Form.Label>
-                    <Form.Control type="text" placeholder="Keywords" value={keywords} onChange={event => setKeywords(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Type</Form.Label>
-                    <Form.Control type="text" placeholder="Type" value={type} onChange={event => setType(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Group(s)</Form.Label>
-                    <MultiSelect
-                        options={groupsList}
-                        value={selectedGroupIds}
-                        onChange={setSelectedGroupIds}
-                        labelledBy="Select Groups"
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control type="text" placeholder="Description" value={description} onChange={event => setDescription(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Required Knowledge</Form.Label>
-                    <Form.Control type="text" placeholder="Required Knowledge" value={requiredKnowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Notes</Form.Label>
-                    <Form.Control type="text" placeholder="Notes" value={notes} onChange={event => setNotes(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Level</Form.Label>
-                    <Form.Select name="level" value={level} onChange={(e) => setLevel(e.target.value)}>
-                        { levelOptions.map(levelOption => <option value={levelOption}>{levelOption}</option>) }
-                    </Form.Select>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>CdS</Form.Label>
-                    <Form.Control type="text" placeholder="CdS" value={cds} onChange={event => setCds(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Min. Expiration Date</Form.Label>
-                    <Form.Control type="date" value={minExpiration} onChange={event => setMinExpiration(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Max. Expiration Date</Form.Label>
-                    <Form.Control type="date" value={maxExpiration} onChange={event => setMaxExpiration(event.target.value)} />
-                </Form.Group>
-                </Form>
-                <Button onClick={doSearch}><FontAwesomeIcon icon={"magnifying-glass"} /> Search</Button>
-            </Card.Body>
-        </Card>
-                :
-                <></>
-            }
-        <Card className="mt-3">
-            <Card.Header><b>Results</b></Card.Header>
-            <Card.Body><ProposalsList proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
-        </Card>
+            <Card className="mt-3">
+                <Card.Header><b>Results</b></Card.Header>
+                <Card.Body><ProposalsList proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
+            </Card>
         </>
     );
 }

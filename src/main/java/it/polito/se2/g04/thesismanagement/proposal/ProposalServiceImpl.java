@@ -128,7 +128,10 @@ public class ProposalServiceImpl implements ProposalService {
             }
         }
         if (proposalSearchRequest.getType() != null) {
-            predicates.add(cb.equal(cb.upper(proposal.get("type")), proposalSearchRequest.getType().toUpperCase()));
+            List<String> typeList = List.of(proposalSearchRequest.getType().split("[\\s,]+"));
+            for (String type : typeList) {
+                predicates.add(cb.like(cb.upper(proposal.get("type")), "%" + type.toUpperCase() + "%"));
+            }
         }
         if (proposalSearchRequest.getDescription() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("description")), "%" + proposalSearchRequest.getDescription().toUpperCase() + "%"));
@@ -142,12 +145,12 @@ public class ProposalServiceImpl implements ProposalService {
         if (proposalSearchRequest.getNotes() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("notes")), "%" + proposalSearchRequest.getNotes().toUpperCase() + "%"));
         }
-        if (proposalSearchRequest.getMinExpiration() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMinExpiration()));
-        }
-        if (proposalSearchRequest.getMaxExpiration() != null) {
-            predicates.add(cb.lessThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMaxExpiration()));
-        }
+//        if (proposalSearchRequest.getMinExpiration() != null) {
+//            predicates.add(cb.greaterThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMinExpiration()));
+//        }
+//        if (proposalSearchRequest.getMaxExpiration() != null) {
+//            predicates.add(cb.lessThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMaxExpiration()));
+//        }
 
         cq.where(predicates.toArray(new Predicate[0]));
 
