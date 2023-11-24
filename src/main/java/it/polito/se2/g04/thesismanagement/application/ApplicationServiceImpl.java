@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.application;
 
+import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.proposal.*;
 import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
@@ -22,6 +23,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     private final AttachmentRepository attachmentRepository;
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
+    private final EmailService emailService;
 
     @Override
     public List<ApplicationDTO2> getApplicationsByProf(String profEmail) {
@@ -87,6 +89,8 @@ public class ApplicationServiceImpl implements ApplicationService{
                 return false;
             application.setStatus("ACCEPTED");
             applicationRepository.save(application);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
+            emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
             return false;
@@ -111,6 +115,8 @@ public class ApplicationServiceImpl implements ApplicationService{
             Application application = getApplicationByIdOriginal(applicationId);
             application.setStatus(newState);
             applicationRepository.save(application);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
+            emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
             return false;
@@ -138,6 +144,8 @@ public class ApplicationServiceImpl implements ApplicationService{
                 return false;
             application.setStatus("REJECTED");
             applicationRepository.save(application);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
+            emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
             return false;
