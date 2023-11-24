@@ -2,25 +2,30 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Form, Nav } from 'react-bootstrap';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import {useNavigate} from "react-router-dom";
+import { AuthContext } from 'react-oauth2-code-pkce';
 
 function NavBar(props) {
+
+    const { tokenData, token, login, logOut, idToken, error } = useContext(AuthContext);
 
     const [showVirtualClock, setShowVirtualClock] = useState(false);
 
     const navigate = useNavigate();
-    const handleClick=(e)=>{
+    const handleClick= (e)=> {
         e.preventDefault();
-        if(props.user===null)
-            navigate("/login");
-        else{
-
-            props.setUser(null);
+        if (props.user === null) {
+            login();
+          console.log("login");
+            //navigate("/login");
+        } else {
+            logOut();
+            /* props.setUser(null);
             localStorage.removeItem("username");
             localStorage.removeItem("token");
             localStorage.removeItem("role");
-            navigate("/login");
+            navigate("/login"); */
         }
     }
 

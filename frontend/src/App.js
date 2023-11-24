@@ -1,75 +1,45 @@
-  import { library } from '@fortawesome/fontawesome-svg-core';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navigate, BrowserRouter, Outlet, Route, BrowserRouter as Router, Routes, useLocation} from "react-router-dom";
-import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
-import ProposalList from "./Content/ProposalList";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { getAllSupervisors } from "./API/Api-Search";
 import RenderProposal from "./Content/RenderProposal";
-import NavBar from "./NavBar/NavBar";
 import Navigation from "./Navigation/Navigation";
-import {LoginLayout} from "./LoginLayout/LoginLayout";
-import { useEffect, useState } from 'react';
+import { LoginLayout } from "./LoginLayout/LoginLayout";
+import { useEffect, useState, useContext } from 'react';
 import dayjs from 'dayjs';
 import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
 import SideBar from "./SideBar/SideBar";
 import BrowseDecisions from "./Content/BrowseDecisions";
 import BrowseProposalsContent from './Content/BrowseProposalsContent';
-
-
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";
 import API from "./API/API2";
 import ProposalsListContent from './Content/ProposalsListContent';
+import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
 
-
-function Content(props) {
-
-  const path = useLocation().pathname.toString();
-
-  switch (path) {
-    case "/":
-      return <b>Home page</b>
-      /*return <Navigation user={user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>*/
-    case "/search-for-proposal":
-      return <ProposalList listOfSupervisors={props.listOfSupervisors} clickOnProposal={props.clickOnProposal} filterProposals={props.filterProposals} listOfProposal={props.listOfProposal} setProposalSelected={props.setProposalSelected}></ProposalList>
-    case "/teacher/application/browse":
-      return <BrowseApplicationsContent user={props.user}/>
-    case "/login":
-      return <LoginLayout user={props.user} setUser={props.setUser} />
-    case "/browseDecisions":
-      return <BrowseDecisions user={props.user} />
-    case "/teacher/application/view":
-      return <ApplicationViewLayout user={props.user} realDate={props.realDate} applicationDate={props.applicationDate} updateApplicationDate={props.updateApplicationDate}/>
-    case "/insertProposal":
-      return <InsertUpdateProposal user={props.user} />
-    case "/updateProposal/:proposalID":
-      return <InsertUpdateProposal user={props.user} />
-    case "/teacher/proposals":
-      return <BrowseProposalsContent user={props.user} />
-
-    default:
-      return <h1>Path not found</h1>
-  }
+const authConfig = {
+  clientId: 'oidc-client',
+  authorizationEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/auth',
+  logoutEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/logout',
+  tokenEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/token',
+  redirectUri: 'http://localhost:3000/',
+  scope: 'profile openid',
+  // Example to redirect back to original path after login has completed
+  // preLogin: () => localStorage.setItem('preLoginPath', window.location.pathname),
+  // postLogin: () => window.location.replace(localStorage.getItem('preLoginPath') || ''),
+  decodeToken: true,
+  autoLogin: false,
 }
+
 
 function App() {
 
+  const { tokenData, token, login, logOut, idToken, error } = useContext(AuthContext);
   const [user, setUser] = useState(null);
-
-
-  const [clickOnProposal, setClickOnProposal] = useState(0);
-
-
-//MOCK DATA
-  const listOfFilters = ["Professor", "Type"];
-  const correspondingFields = [2,5]
-  const [listOfProposal, setListOfProposal] = useState([])
-
-  const [listOfSupervisors, setListOfSupervisors] = useState([])
-  const [filteredProposals, setFilteredProposals] = useState([])
 
   /*We use 3 states to manage the current date and the virtual clock:
     - realDate: this represents the real current date, according to the system. It is refreshed at every render
@@ -102,89 +72,21 @@ function App() {
   useEffect(() => {
     setRealDate(dayjs());
     setApplicationDate(realDate.add(offsetDate, "day"));
-   },[]);
+  }, []);
 
-
-
-function selectFilter(el1, el2, filterType){
-
-  switch(filterType) {
-    // by professor
-    case 0:
-
-
-      return (el1.supervisor.name == el2)
-      break;
-    case 1:
-
-      return (el1.level == el2)
-
-      // code block
-      break;
-    default:
-      // code block
-  }
-
-
-}
-
-
-function filterProposals(filters){
-  let listOfFilters = ["supervisor", "level"];
-  let index = 0;
-
-
-  setFilteredProposals(listOfProposal)
-  let xfilteredProposals = [...listOfProposal]
-
-  let noFilterSelected = true;
-
-
-  for(const filterx  of filters){
-
-    if(filterx === "All"){
-    }else {
-
-      noFilterSelected = false
-       xfilteredProposals = xfilteredProposals.filter((proposal , i) => {
-        if (Array.isArray(proposal[correspondingFields[index]])){
-
-          return (proposal[correspondingFields[index]].includes(filterx))
-
-        }else{
-          return(selectFilter(proposal, filterx, index))}
-      })
-
-    }
-    index++
-    }
-  setFilteredProposals([...xfilteredProposals])
-    if(noFilterSelected){
-      setFilteredProposals(listOfProposal)
-    }
-  }
-
-
-
-
-
-  const [proposalSelected, setProposalSelected] = useState(0);
-  const searchForProposalClicked = () => {
-    setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
-  }
-  useEffect(()=>{
-    if(user!==null){
+  useEffect(() => {
+    if (user !== null) {
       localStorage.setItem("email", user.email);
       localStorage.setItem("token", user.token);
       localStorage.setItem("role", user.role);
     }
     else {
-      const email=localStorage.getItem("email");
-      const token=localStorage.getItem("token");
-      const role=localStorage.getItem("role");
+      const email = localStorage.getItem("email");
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
 
-      if(email!==null && token !==null &&role!== null){
-        setUser({email:email,token:token,role:role});
+      if (email !== null && token !== null && role !== null) {
+        setUser({ email: email, token: token, role: role });
       }
 
     }
@@ -193,73 +95,55 @@ function filterProposals(filters){
   }
 
 
-,[user]);
-
-  useEffect( ()=> {
-    // call the api to retrieve the list of active proposal
-    // api called every time the user click on the button to search for proposal.
-    // retrieve all the proposals. for the filters, they are applicated on the font-end (we wanna evitate to do a lot of queries so a lot of api calls)
-    // cause we already have all the active proposals (more time to do api than local computation)
-    // we can do that because we can assume that the insert of a new proposal is a lot less of the number of search for a proposal
-  if(user!==null){
-    API.getAllProposals(user.token)
-        .then((list) => {
-          setListOfProposal(Array.from(Object.values(list)));
-          setFilteredProposals(Array.from(Object.values(list)))
-        })
-
-    getAllSupervisors()
-        .then((list) => {
-          setListOfSupervisors(list);
-        })
-  }
+    , [user]);
 
 
-  },[user]);
 
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={
-          <>
-            <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
-            <div className="row align-items-start">
-            <Navigation user={user} setUser={setUser} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
-            <div className="row g-0">
-            <SideBar user={user} searchForProposalClicked={searchForProposalClicked}/>
-            <div className="col-10 p-2">
-            <Outlet />
-            </div>
-            </div>
-            </div>
-            </div>
-          </>
-        }>
-          <Route index element={ <h1>Welcome to Thesis Manager!</h1> } />
-          <Route path="/search-for-proposal"
-            element={ <ProposalsListContent user={user} applicationDate={applicationDate} /> } />
-          <Route path="/teacher/application/browse"
-            element={ <BrowseApplicationsContent user={user}/> } />
-          <Route path="/login"
-            element={ <LoginLayout user={user} setUser={setUser} /> } />
-          <Route path="/browseDecisions"
-            element={ <BrowseDecisions user={user} /> } />
-          <Route path="/teacher/application/view"
-            element={ <ApplicationViewLayout user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}/> } />
-          <Route path="/insertProposal"
-            element={ <InsertUpdateProposal user={user} /> } />
-          <Route path="/updateProposal/:proposalID"
-            element={ <InsertUpdateProposal user={user} /> } />
-          <Route path="/teacher/proposals"
-            element={ <BrowseProposalsContent user={user} applicationDate={applicationDate} /> } />
-          <Route path="/proposal/apply/:proposalId"
-            element={ <RenderProposal user={user} /> } />
-          <Route path="*"
-            element={ <h1>Path not found</h1> } />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider authConfig={authConfig}>
+      <BrowserRouter>
+        <Routes>
+          <Route element={
+            <>
+              <div className="container-fluid" style={{ height: '90vh', padding: '0rem' }}>
+                <div className="row align-items-start">
+                  <Navigation user={user} setUser={setUser} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />
+                  <div className="row g-0">
+                    <SideBar user={user}  />
+                    <div className="col-10 p-2">
+                      <Outlet />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          }>
+            <Route index element={<h1>Welcome to Thesis Manager!</h1>} />
+            <Route path="/search-for-proposal"
+              element={<ProposalsListContent user={user} applicationDate={applicationDate} />} />
+            <Route path="/teacher/application/browse"
+              element={<BrowseApplicationsContent user={user} />} />
+            <Route path="/login"
+              element={<LoginLayout user={user} setUser={setUser} />} />
+            <Route path="/browseDecisions"
+              element={<BrowseDecisions user={user} />} />
+            <Route path="/teacher/application/view"
+              element={<ApplicationViewLayout user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate} />} />
+            <Route path="/insertProposal"
+              element={<InsertUpdateProposal user={user} />} />
+            <Route path="/updateProposal/:proposalID"
+              element={<InsertUpdateProposal user={user} />} />
+            <Route path="/teacher/proposals"
+              element={<BrowseProposalsContent user={user} applicationDate={applicationDate} />} />
+            <Route path="/proposal/apply/:proposalId"
+              element={<RenderProposal user={user} />} />
+            <Route path="*"
+              element={<h1>Path not found</h1>} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 
 }
