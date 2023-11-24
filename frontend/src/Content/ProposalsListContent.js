@@ -243,29 +243,33 @@ function ProposalEntry({ proposal, user }) {
             
             </Card.Header>
             <Accordion.Collapse eventKey={proposal.id} flush>
-            <Card.Body>
-                <Row>
-                    <Col><b>CdS</b><br/>{proposal.cdS}</Col>
-                    <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                    <Col><b>Level</b><br/>{proposal.level}</Col>
-                    <Col><b>Type</b><br/>{proposal.type}</Col>
-                </Row>
-                <Row>
-                    <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
-                    <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
-                    <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
-                </Row>
-                <Row className="pt-2">
-                    <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
-                    <Col md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
-                </Row>
-                <hr className="me-4"/>
-                <Row>
-                    <Col>
-                        {proposal.description}
-                    </Col>
-                </Row>
-            </Card.Body>
+                <Card.Body>
+                    <Row>
+                        <Col><b>CdS</b><br/>{proposal.cdS}</Col>
+                        <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
+                        <Col><b>Level</b><br/>{proposal.level}</Col>
+                        <Col><b>Type</b><br/>{proposal.type}</Col>
+                    </Row>
+                    <Row>
+                        <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
+                        { proposal.requiredKnowledge.length > 0 &&
+                            <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
+                        }
+                        <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
+                    </Row>
+                    <Row className="pt-2">
+                        <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
+                        { proposal.coSupervisors.length > 0 &&
+                            <Col md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
+                        }
+                    </Row>
+                    <hr className="me-4"/>
+                    <Row>
+                        <Col>
+                            {proposal.description}
+                        </Col>
+                    </Row>
+                </Card.Body>
             </Accordion.Collapse>
         </Card>
     )
