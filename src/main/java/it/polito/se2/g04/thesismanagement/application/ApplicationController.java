@@ -1,8 +1,8 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.security.old.user.UserInfoUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,15 +23,15 @@ public class ApplicationController {
     @GetMapping("/API/application/getByProf")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     public List<ApplicationDTO2> getAllByProf() {
-        UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return applicationService.getApplicationsByProf(auth.getUsername());
+        Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
+        return applicationService.getApplicationsByProf(auth.getName());
     }
 
     @GetMapping("/API/application/getByStudent")
     @PreAuthorize("isAuthenticated() && hasAuthority('STUDENT')")
     public List<ApplicationDTO3> getAllByStudent() {
-        UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return applicationService.getApplicationsByStudent(auth.getUsername());
+        Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
+        return applicationService.getApplicationsByStudent(auth.getName());
     }
 
     @GetMapping("/API/application/getApplicationsByProposal")
