@@ -2,7 +2,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Form, Nav } from 'react-bootstrap';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import {useNavigate} from "react-router-dom";
 import { AuthContext } from 'react-oauth2-code-pkce';
 
@@ -17,17 +17,24 @@ function NavBar(props) {
         e.preventDefault();
         if (props.user === null) {
             login();
-          console.log("login");
-            //navigate("/login");
         } else {
+            props.setUser(null);
             logOut();
-            /* props.setUser(null);
-            localStorage.removeItem("username");
-            localStorage.removeItem("token");
-            localStorage.removeItem("role");
-            navigate("/login"); */
         }
     }
+
+    /**
+     * Every time tokenData (the decoded token for the logged-in user on the browser) changes, we update the
+     * corresponding user state so that it is available for all the components.
+     * The user state is an object containing the user's email, name, surname, role and token.
+     */
+    useEffect(() => {
+      if (!props.user && tokenData) {
+        props.setUser({ email: tokenData.preferred_username, role: tokenData.role, name: tokenData.firstName, surname: tokenData.lastName, token: token });
+      } else {
+        props.setUser(null);
+      }
+    }, [tokenData]);
 
     return (
         <Navbar className='bg-color ps-3' data-bs-theme="dark">

@@ -20,6 +20,7 @@ import InsertUpdateProposal from "./Content/InsertUpdateProposal";
 import API from "./API/API2";
 import ProposalsListContent from './Content/ProposalsListContent';
 import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
+import { jwtDecode } from 'jwt-decode';
 
 const authConfig = {
   clientId: 'oidc-client',
@@ -38,7 +39,6 @@ const authConfig = {
 
 function App() {
 
-  const { tokenData, token, login, logOut, idToken, error } = useContext(AuthContext);
   const [user, setUser] = useState(null);
 
   /*We use 3 states to manage the current date and the virtual clock:
@@ -74,32 +74,6 @@ function App() {
     setApplicationDate(realDate.add(offsetDate, "day"));
   }, []);
 
-  useEffect(() => {
-    if (user !== null) {
-      localStorage.setItem("email", user.email);
-      localStorage.setItem("token", user.token);
-      localStorage.setItem("role", user.role);
-    }
-    else {
-      const email = localStorage.getItem("email");
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
-
-      if (email !== null && token !== null && role !== null) {
-        setUser({ email: email, token: token, role: role });
-      }
-
-    }
-
-
-  }
-
-
-    , [user]);
-
-
-
-
   return (
     <AuthProvider authConfig={authConfig}>
       <BrowserRouter>
@@ -119,6 +93,7 @@ function App() {
               </div>
             </>
           }>
+            
             <Route index element={<h1>Welcome to Thesis Manager!</h1>} />
             <Route path="/search-for-proposal"
               element={<ProposalsListContent user={user} applicationDate={applicationDate} />} />
@@ -140,6 +115,7 @@ function App() {
               element={<RenderProposal user={user} />} />
             <Route path="*"
               element={<h1>Path not found</h1>} />
+            
           </Route>
         </Routes>
       </BrowserRouter>
