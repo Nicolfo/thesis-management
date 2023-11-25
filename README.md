@@ -126,3 +126,11 @@ I want to update a thesis proposal
 - Student:
   - Email: nicolfo3@hotmail.it
   - Password: provaa
+
+## E-Mail Credentials
+- User/E-Mail: 
+  - PoliToServizioDiGestioneTesi@gmail.com
+- Password (to log in to account): 
+  - nKCTB6oQ1RO.gm 
+- App Password (to send email):
+  - tdmjsjxnmnadtrsr

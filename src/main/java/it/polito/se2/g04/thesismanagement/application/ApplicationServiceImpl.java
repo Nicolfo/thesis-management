@@ -89,7 +89,6 @@ public class ApplicationServiceImpl implements ApplicationService{
                 return false;
             application.setStatus("ACCEPTED");
             applicationRepository.save(application);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -103,6 +102,7 @@ public class ApplicationServiceImpl implements ApplicationService{
             Student loggedUser=studentRepository.getReferenceById(1L);
             Application toSave = new Application(loggedUser, attachmentRepository.getReferenceById(applicationDTO.getAttachmentID()), applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalID()));
             applicationRepository.save(toSave);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(toSave);
         }catch (Exception ex){
             throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
         }
@@ -115,7 +115,6 @@ public class ApplicationServiceImpl implements ApplicationService{
             Application application = getApplicationByIdOriginal(applicationId);
             application.setStatus(newState);
             applicationRepository.save(application);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -123,19 +122,6 @@ public class ApplicationServiceImpl implements ApplicationService{
         }
     }
 
-    /*
-     @Override
-      public void acceptApplication(Long applicationID) {
-          //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
-          try {
-              Application toAccept =applicationRepository.getReferenceById(applicationID);
-              toAccept.setStatus("ACCEPTED");
-              applicationRepository.save(toAccept);
-          }catch (Exception ex){
-              throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
-            }
-      }
-    */
       @Override
     public boolean rejectApplicationById(Long applicationId) {
         try {
@@ -144,27 +130,10 @@ public class ApplicationServiceImpl implements ApplicationService{
                 return false;
             application.setStatus("REJECTED");
             applicationRepository.save(application);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
             return false;
           }
     }
-  /*
-  @Override
-    public void declineApplication(Long applicationID) {
-        //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
-        try {
-            Application toAccept =applicationRepository.getReferenceById(applicationID);
-            toAccept.setStatus("DECLINED");
-            applicationRepository.save(toAccept);
-        }catch (Exception ex){
-            throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
-          }
-    }
-  
-  */
- 
-
 }
