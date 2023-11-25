@@ -97,7 +97,7 @@ function InsertUpdateProposal(props) {
         }
     }
 
-    const clearFields= ()=> {
+    const clearFields = ()=> {
         setTitle("");
         setLevel("Bachelor's");
         setNotes("");
@@ -109,6 +109,7 @@ function InsertUpdateProposal(props) {
         setSelectedCds([]);
         setSelectedSupervisors([]);
     }
+
     useEffect(() => {
         if(!proposalID)
             clearFields();

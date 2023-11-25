@@ -46,10 +46,23 @@ function ProposalsListContent({ user, applicationDate }) {
     // const [selectedCds, setSelectedCds] = useState([]);
     const [proposalsList, setProposalsList] = useState([]);
 
+
+    const clearFields = ()=> {
+        setTitle("");
+        setNotes("");
+        setRequiredKnowledge("");
+        setDescription("");
+        setType("");
+        setKeywords("");
+        setSelectedGroupIds([]);
+        setSelectedSupervisorIds([]);
+        setSelectedCoSupervisorIds([]);
+    }
+
     useEffect(() => {
-        if (!user) {
+        if (!user)
             navigate("/login");
-        }
+
         const getResources = async () => {
             const teachers = await getAllSupervisors(user.token);
             setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
@@ -60,6 +73,7 @@ function ProposalsListContent({ user, applicationDate }) {
             const proposals = await API.getAllProposals(user.token);
             setProposalsList(proposals);
         };
+
         getResources();
     }, [])
 
@@ -80,8 +94,6 @@ function ProposalsListContent({ user, applicationDate }) {
             // CdS: selectedCds.length > 0 ? selectedCds.map(c => c.value).join(", ") : null,
         };
 
-
-        
         // Remove properties with null values
         Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
         
@@ -98,7 +110,11 @@ function ProposalsListContent({ user, applicationDate }) {
             </Row>
             <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true} >
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title> <Button variant="outline-primary" onClick={doSearch}> <FontAwesomeIcon icon={"magnifying-glass"} /> SEARCH BY </Button> </Offcanvas.Title>
+                    <Offcanvas.Title>
+                        <Button variant="outline-primary" onClick={doSearch}> <FontAwesomeIcon icon={"magnifying-glass"} /> SEARCH BY </Button>
+                        {" "}
+                        <Button variant="outline-danger" size="sm" onClick={clearFields}> <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-left" /> Reset filters </Button>
+                    </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     <Form>
