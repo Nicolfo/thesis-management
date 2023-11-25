@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import jakarta.persistence.*;
@@ -17,6 +16,7 @@ public class ApplicationDTO4 {
     private Date applyDate;
     private Proposal proposal;
 
-    private String status= "PENDING"; //status of the application (PENDING/ACCEPTED/REJECTED)
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
 }

@@ -12,6 +12,7 @@ import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,19 +55,52 @@ public class ApplicationServiceImpl implements ApplicationService{
     }
 
     @Override
-    public List<ApplicationDTO4> getApplicationsByProposal(Long proposalId) {
+    public List<ApplicationDTO4> getApplicationsByProposal(Long proposalId){
+        return getApplicationsByProposal(proposalId,true);
+    }
+
+    /**
+     * This method returns all applications that belong to the given proposal id. If authenticationNeeded is true,
+     * the applications are only returned if the logged-in user is a supervisor or co supervisor of the given proposal.
+     * Otherwise, an error is thrown.
+     * @param proposalId id of the proposal, of which the applications should be returned
+     * @param authenticationNeeded if true, it is checked that the
+     * @return List of applications to the given proposal
+     */
+    private List<ApplicationDTO4> getApplicationsByProposal(Long proposalId, boolean authenticationNeeded) {
         if(!proposalRepository.existsById(proposalId) ){
             throw new ProposalNotFoundException("Specified proposal id not found");
         }
+        if(authenticationNeeded){
         UserInfoUserDetails auth =(UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String profEmail= auth.getUsername();
         if(proposalRepository.getReferenceById(proposalId).getSupervisor().getEmail().compareTo(profEmail)==0){
 
             List<Application> toReturn= applicationRepository.getApplicationByProposal_Id(proposalId);
-            return toReturn.stream().map(it->new ApplicationDTO4(it.getId(),it.getStudent(),it.getAttachment().getAttachmentId(),it.getApplyDate(),it.getProposal(),it.getStatus())).toList();
+            return toReturn.stream().map(it->new ApplicationDTO4(
+                    it.getId(),
+                    it.getStudent(),
+                    it.getAttachment() != null ? it.getAttachment().getAttachmentId() : null,
+                    it.getApplyDate(),
+                    it.getProposal(),
+                    it.getStatus()
+            )).toList();
 
         }
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
+        }
+        else  {
+            List<Application> toReturn = applicationRepository.getApplicationByProposal_Id(proposalId);
+            return toReturn.stream().map(it->new ApplicationDTO4(
+                    it.getId(),
+                    it.getStudent(),
+                    it.getAttachment() != null ? it.getAttachment().getAttachmentId() : null,
+                    it.getApplyDate(),
+                    it.getProposal(),
+                    it.getStatus()
+            )).toList();
+
+        }
     }
 
     @Override
@@ -83,11 +117,11 @@ public class ApplicationServiceImpl implements ApplicationService{
   public boolean acceptApplicationById(Long applicationId) {
         try {
             Application application = getApplicationByIdOriginal(applicationId);
-            if (!(application.getStatus().compareTo("PENDING")==0))
+            if (application.getStatus() != ApplicationStatus.PENDING)
                 return false;
-            application.setStatus("ACCEPTED");
+            application.setStatus(ApplicationStatus.ACCEPTED);
             applicationRepository.save(application);
-            return true;
+            return rejectApplicationsByProposal(application.getProposal().getId(),applicationId);
         } catch (Exception e) {
             return false;
              }
@@ -108,9 +142,13 @@ public class ApplicationServiceImpl implements ApplicationService{
     @Override
     public boolean changeApplicationStateById(Long applicationId, String newState) {
         try {
+            ApplicationStatus newStateEnum = ApplicationStatus.valueOf(newState);
             Application application = getApplicationByIdOriginal(applicationId);
-            application.setStatus(newState);
+            application.setStatus(newStateEnum);
             applicationRepository.save(application);
+            if(newStateEnum == ApplicationStatus.REJECTED){
+                return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
+            }
             return true;
         } catch (Exception e) {
             return false;
@@ -134,14 +172,26 @@ public class ApplicationServiceImpl implements ApplicationService{
     public boolean rejectApplicationById(Long applicationId) {
         try {
             Application application = getApplicationByIdOriginal(applicationId);
-            if (!(application.getStatus().compareTo("PENDING")==0))
+            if (application.getStatus()!= ApplicationStatus.PENDING)
                 return false;
-            application.setStatus("REJECTED");
+            application.setStatus(ApplicationStatus.REJECTED);
             applicationRepository.save(application);
             return true;
         } catch (Exception e) {
             return false;
           }
+    }
+
+    @Override
+    public boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId){
+          boolean success = true;
+          List<ApplicationDTO4> applicationList = getApplicationsByProposal(proposalId, false);
+
+          for (ApplicationDTO4 application: applicationList)
+              if(!Objects.equals(exceptionApplicationId, application.getId()))
+                  success = success && (this.rejectApplicationById(application.getId())|| application.getStatus() != ApplicationStatus.PENDING);
+
+          return success;
     }
   /*
   @Override

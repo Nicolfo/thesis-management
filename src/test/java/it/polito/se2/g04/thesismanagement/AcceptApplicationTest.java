@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.gson.JsonParser;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.department.Department;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
@@ -60,11 +61,11 @@ public class AcceptApplicationTest {
 
     private Teacher teacher;
     private Student student;
-    private Proposal proposal;
     private Proposal proposal1;
     private Proposal proposal2;
     private Application application1;
     private Application application2;
+    private Application application3;
     private RegisterDTO teacherReg;
     private LoginDTO teacherLogin;
     private String token2;
@@ -109,6 +110,7 @@ public class AcceptApplicationTest {
         proposal2 = proposalRepository.save(proposal2);
 
         application1 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal2);
+        application3 = new Application(student,null,new Date(2023,Calendar.OCTOBER,26),proposal2);
         application2 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,7),proposal1);
         applicationRepository.save(application1);
         applicationRepository.save(application2);
@@ -176,10 +178,12 @@ public class AcceptApplicationTest {
     @Test
     @Rollback
     public void acceptApplication() throws Exception {
-        application1.setStatus("PENDING");
-        application2.setStatus("REJECTED");
+        application1.setStatus(ApplicationStatus.PENDING);
+        application2.setStatus(ApplicationStatus.PENDING);
+        application3.setStatus(ApplicationStatus.PENDING);
         application1 = applicationRepository.save(application1);
         application2 = applicationRepository.save(application2);
+        application3 = applicationRepository.save(application3);
 
         //get result
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/1")
@@ -190,7 +194,13 @@ public class AcceptApplicationTest {
         String json = res.getResponse().getContentAsString();
 
         assertEquals(json, "true");
-        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo("ACCEPTED"));
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.ACCEPTED));
+        assertEquals(0, applicationRepository.getApplicationById(3L).getStatus().compareTo(ApplicationStatus.REJECTED));
+        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));
+
+        application2.setStatus(ApplicationStatus.REJECTED);
+        application2 = applicationRepository.save(application2);
+
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/2")
@@ -201,10 +211,10 @@ public class AcceptApplicationTest {
         json = res.getResponse().getContentAsString();
 
         assertEquals(json, "false");
-        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo("REJECTED"));
+        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         //get result
-        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/3")
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/4")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + token2))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -222,7 +232,7 @@ public class AcceptApplicationTest {
         json = res.getResponse().getContentAsString();
         assertEquals(json, "false");
 
-        application1.setStatus("PENDING");
+        application1.setStatus(ApplicationStatus.PENDING);
         application1 = applicationRepository.save(application1);
 
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/1")
@@ -233,7 +243,7 @@ public class AcceptApplicationTest {
         json = res.getResponse().getContentAsString();
 
         assertEquals(json, "true");
-        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo("REJECTED"));
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -243,7 +253,7 @@ public class AcceptApplicationTest {
         json = res.getResponse().getContentAsString();
 
         assertEquals(json, "false");
-        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo("REJECTED"));
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.REJECTED));
     }
 
 }

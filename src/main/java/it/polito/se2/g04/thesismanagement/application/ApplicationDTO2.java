@@ -1,13 +1,9 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.attachment.Attachment;
-import it.polito.se2.g04.thesismanagement.proposal.Proposal;
-import it.polito.se2.g04.thesismanagement.student.Student;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Date;
 
@@ -27,7 +23,8 @@ public class ApplicationDTO2 {
     private Long proposalId;
     private String proposalTitle;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
 
 
 
