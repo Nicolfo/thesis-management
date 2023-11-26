@@ -1,5 +1,5 @@
 # Thesis management
-
+[gradle](gradle)
 ## Covered stories
 
 ### 1. Insert Proposal

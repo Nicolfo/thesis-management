@@ -33,4 +33,13 @@ public class StudentServiceImpl implements StudentService{
         return new StudentDTO(student.getName() + " " + student.getSurname());
 
     }
+
+
+    @Override
+    public String getCdS(String email) {
+
+
+        return studentRepository.getStudentByEmail(email).getDegree().getTitleDegree();
+
+    }
 }
