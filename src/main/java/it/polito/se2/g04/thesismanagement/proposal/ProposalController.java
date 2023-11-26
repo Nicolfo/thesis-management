@@ -1,9 +1,11 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,7 +55,15 @@ public class ProposalController {
     @PostMapping("/API/proposal/insert/")
     @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProposal(@RequestBody ProposalDTO proposal){
+    public void createProposal(@RequestBody ProposalDTO proposal, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            throw (new createUpdateProposalWithNoPathVariable(
+                    String.join(bindingResult.getAllErrors()
+                        .stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .toString()))
+            );
+        }
         proposalService.createProposal(proposal);
     }
 
