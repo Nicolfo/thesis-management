@@ -2,8 +2,8 @@ package it.polito.se2.g04.thesismanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.polito.se2.g04.thesismanagement.security.old.user.User;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -53,11 +54,6 @@ public class TeacherControllerTest {
         g2 = teacherRepository.save(g2);
         g3 = new Teacher("Verdi", "Luigi","l.verdi@example.com",null,null);
         g3 = teacherRepository.save(g3);
-
-        //mock logged in user
-        User user = new User("test@example.com", "password", "TEACHER");
-        Authentication auth = new TestingAuthenticationToken(user, "password");
-        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     @AfterAll
@@ -67,6 +63,7 @@ public class TeacherControllerTest {
 
     @Test
     @Rollback
+    @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
     public void getAllTeachers() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getAll")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -75,7 +72,7 @@ public class TeacherControllerTest {
         String json = res.getResponse().getContentAsString();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        Teacher[] teachers = mapper.readValue(json, Teacher[].class);
+        TeacherDTO[] teachers = mapper.readValue(json, TeacherDTO[].class);
 
         // Check that size matches
         assertEquals(3, teachers.length, "Teachers' getAll should return 3 values");
@@ -97,7 +94,7 @@ public class TeacherControllerTest {
         json = res.getResponse().getContentAsString();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        teachers = mapper.readValue(json, Teacher[].class);
+        teachers = mapper.readValue(json, TeacherDTO[].class);
 
         // Check that size matches
         assertEquals(4, teachers.length, "Teachers' getAll should return 4 values after insert");

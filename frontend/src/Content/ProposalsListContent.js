@@ -44,7 +44,7 @@ function ProposalsListContent({ user, applicationDate }) {
             setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
             const groups = await API.getAllGroups(user.token);
             setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
-            const proposals = await API.getAllProposals(user.token);
+            const proposals = await API.searchProposals(user.token, {});
             setProposalsList(proposals);
         };
         getResources();

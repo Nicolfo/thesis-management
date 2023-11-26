@@ -25,7 +25,7 @@ public class ProposalController {
     @GetMapping("/API/proposal/getAll")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public List<Proposal> getAllProposals() {
+    public List<ProposalFullDTO> getAllProposals() {
         return proposalService.getAllNotArchivedProposals();
     }
 
@@ -36,7 +36,7 @@ public class ProposalController {
      */
     @GetMapping("/API/proposal/getByProf")
     @ResponseStatus(HttpStatus.OK)
-    public List<Proposal> getProposalsByProf() {
+    public List<ProposalFullDTO> getProposalsByProf() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         return proposalService.getProposalsByProf(username);
@@ -77,7 +77,7 @@ public class ProposalController {
     @PostMapping("/API/proposal/search")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public List<Proposal> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
