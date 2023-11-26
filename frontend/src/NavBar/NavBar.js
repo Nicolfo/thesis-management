@@ -30,7 +30,12 @@ function NavBar(props) {
      */
     useEffect(() => {
       if (!props.user && tokenData) {
-        props.setUser({ email: tokenData.preferred_username, role: tokenData.role, name: tokenData.firstName, surname: tokenData.lastName, token: token });
+          let role;
+          if( tokenData.realm_access.roles.includes("STUDENT"))
+          role = "STUDENT";
+          else if(tokenData.realm_access.roles.includes("TEACHER"))
+          role = "TEACHER";
+        props.setUser({ email: tokenData.preferred_username, role: role , name: tokenData.firstName, surname: tokenData.lastName, token: token });
       } else {
         props.setUser(null);
       }
