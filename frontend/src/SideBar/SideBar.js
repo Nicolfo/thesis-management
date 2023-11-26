@@ -23,7 +23,6 @@ function SideBar(props) {
                                     <Button variant="light" block
                                             className={path === '/search-for-proposal' ? "active" : ""} onClick={() => {
                                         navigate('/search-for-proposal');
-                                        props.searchForProposalClicked()
                                     }}>
                                         Search for proposal
                                     </Button>

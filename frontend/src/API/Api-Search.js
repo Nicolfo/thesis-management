@@ -52,7 +52,7 @@ export async function uploadFile(file){
 }
 
 export async function insertApplication(cvId, proposalId) {
-    fetch(URL + '/API/application/insert', {
+    fetch(URL + '/API/application/insert/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

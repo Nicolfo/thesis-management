@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import it.polito.se2.g04.thesismanagement.group.GroupDTO;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import lombok.AllArgsConstructor;
@@ -17,8 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 public class ProposalFullDTO {
     private String title;
-    private TeacherDTO supervisorId;
+    private TeacherDTO supervisor;
     private List<TeacherDTO> coSupervisors;
+    private List<GroupDTO> groups;
     private String description;
     private String requiredKnowledge;
     private String notes;
@@ -35,6 +37,7 @@ public class ProposalFullDTO {
                 proposal.getTitle(),
                 TeacherDTO.fromTeacher(proposal.getSupervisor()),
                 proposal.getCoSupervisors() != null ? proposal.getCoSupervisors().stream().map(TeacherDTO::fromTeacher).toList() : new ArrayList<>(),
+                proposal.getGroups() != null ? proposal.getGroups().stream().map(GroupDTO::fromGroup).toList() : new ArrayList<>(),
                 proposal.getDescription(),
                 proposal.getRequiredKnowledge(),
                 proposal.getNotes(),

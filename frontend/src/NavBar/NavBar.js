@@ -19,6 +19,7 @@ function NavBar(props) {
             login();
         } else {
             props.setUser(null);
+            navigate("/");
             logOut();
         }
     }

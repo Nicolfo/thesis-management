@@ -87,7 +87,7 @@ const getByEmail = async (email,jwt) => {
 }
 
 const insertProposal = async (proposal,jwt) => {
-    return fetch(SERVER_URL + 'proposal/insert', {
+    return fetch(SERVER_URL + 'proposal/insert/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
