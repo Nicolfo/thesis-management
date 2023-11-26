@@ -43,7 +43,7 @@ public class ProposalController {
     }
 
     @GetMapping("/API/proposal/getTitleByProposalId/{proposalId}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public String getTitleByProposalId(@PathVariable Long proposalId) {
         return proposalService.getTitleByProposalId(proposalId);
     }
@@ -51,7 +51,7 @@ public class ProposalController {
 
 
     @PostMapping("/API/proposal/insert/")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void createProposal(@RequestBody ProposalDTO proposal){
         proposalService.createProposal(proposal);
@@ -60,7 +60,7 @@ public class ProposalController {
 
 
     @PutMapping("/API/proposal/update/{id}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
         proposalService.updateProposal(id, proposal);
@@ -68,7 +68,7 @@ public class ProposalController {
     }
 
     @PostMapping("/API/proposal/update/")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void UpdateProposalWithNoPathVariable(){
         throw new createUpdateProposalWithNoPathVariable("Can't update a proposal without filling the form");
