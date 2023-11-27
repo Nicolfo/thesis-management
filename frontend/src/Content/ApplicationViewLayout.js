@@ -1,10 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, Button, Card, Container, Row, Col} from "react-bootstrap";
 
-const SERVER_URL = "http://localhost:8080";
+const SERVER_URL = "http://localhost:8081";
 
 function ApplicationViewLayout(props) {
+
+    const navigate = useNavigate();
+
+    if(!props.user || props.user.role !== "TEACHER") {
+        navigate("/notAuthorized");
+    }
+
     const applicationId = new URLSearchParams(useLocation().search).get("applicationId");
     const [applicationData, setApplicationData] = useState(null);
     const [studentGradesData, setStudentGradesData] = useState(null);
@@ -74,6 +81,31 @@ function ApplicationViewLayout(props) {
                 setShowError(true);
             });
     }
+
+    const changeApplicationState = (newState) => {
+        if(props.user && props.user.token)
+            fetch(`${SERVER_URL}/API/application/changeApplicationStateById/` + applicationId + '/' + newState,{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.user.token}`,
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        setShowSuccess(true);
+                        fetchApplicationData();
+                    } else {
+                        setShowError(true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    setShowError(true);
+                });
+    }
+
     const rejectApplication = () => {
         if(props.user && props.user.token)
         fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
@@ -115,12 +147,16 @@ function ApplicationViewLayout(props) {
                             <Card.Header as="h5">Application Information</Card.Header>
                             <Card.Body>
                                 <Card.Text>
-                                    Attachment: {applicationData.attachmentId ?
+                                    <strong>Attachment:</strong> {applicationData.attachmentId ?
                                     <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
                                        download>Download</a>
-                                    : 'No attachment'} <br/>
-                                    Apply Date: {new Date(applicationData.applyDate).toLocaleString('it-IT')} <br/>
-                                    Accepted: {applicationData.status}
+                                    : 'No attachment'}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>State:</strong> {applicationData.status}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -131,22 +167,40 @@ function ApplicationViewLayout(props) {
                                 <Card.Header as="h5">Proposal Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
-                                        Title: {applicationData.proposal.title} <br/>
-                                        Supervisor: {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}
-                                        <br/>
-                                        Co-Supervisors: {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}
-                                        <br/>
-                                        Keywords: {applicationData.proposal.keywords} <br/>
-                                        Type: {applicationData.proposal.type} <br/>
-                                        Groups: {applicationData.proposal.groups.map(group => group.name).join(', ')}
-                                        <br/>
-                                        Description: {applicationData.proposal.description} <br/>
-                                        Required Knowledge: {applicationData.proposal.requiredKnowledge} <br/>
-                                        Notes: {applicationData.proposal.notes} <br/>
-                                        Expiration: {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}
-                                        <br/>
-                                        Level: {applicationData.proposal.level} <br/>
-                                        CdS: {applicationData.proposal.cdS}
+                                        <strong>Title:</strong> {applicationData.proposal.title}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Supervisor:</strong> {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Co-Supervisors:</strong> {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Keywords:</strong> {applicationData.proposal.keywords}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Type:</strong> {applicationData.proposal.type}
+                                    </Card.Text>
+                                    <Card.Text>
+                                            <strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Description:</strong> {applicationData.proposal.description}
+                                    </Card.Text>
+                                    <Card.Text>
+                                            <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        {applicationData.proposal.notes && <><div><strong>Notes:</strong> {applicationData.proposal.notes}</div></> }
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Level:</strong> {applicationData.proposal.level}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>CdS:</strong> {applicationData.proposal.cdS}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -156,14 +210,30 @@ function ApplicationViewLayout(props) {
                             <Card.Header as="h5">Student Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
-                                        Surname: {applicationData.student.surname} <br/>
-                                        Name: {applicationData.student.name} <br/>
-                                        Gender: {applicationData.student.gender} <br/>
-                                        Nationality: {applicationData.student.nationality} <br/>
-                                        Email: {applicationData.student.email} <br/>
-                                        Degree: {applicationData.student.degree.codDegree} <br/>
-                                        Enrollment Year: {applicationData.student.enrollmentYear} <br/>
-                                        Grades: <br/>
+                                        <strong>Surname:</strong> {applicationData.student.surname}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Name:</strong> {applicationData.student.name}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Gender:</strong> {applicationData.student.gender}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Nationality:</strong> {applicationData.student.nationality}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Email:</strong> {applicationData.student.email}
+                                    </Card.Text>
+                                    <Card.Text>
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Enrollment Year:</strong> {applicationData.student.enrollmentYear}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Average grades:</strong> {applicationData.studentAverageGrades}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Grades:</strong>
                                         {studentGradesData.length > 0 ? (
 
                                             <ul>
@@ -187,7 +257,11 @@ function ApplicationViewLayout(props) {
                                 <Button variant="inline" color={"error"} onClick={() => rejectApplication()}>Reject</Button>
                             </>
                         ) : (
-                            ""
+                            <>
+                                <button type="button" className="btn btn-outline-success" onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</button>
+                                <button type="button" className="btn btn-outline-info" onClick={() => changeApplicationState("PENDING")}>Update State to Pending</button>
+                                <button type="button" className="btn btn-outline-danger" onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</button>
+                            </>
                         )}
                     </Col>
                 </Row>

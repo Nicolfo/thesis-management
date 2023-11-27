@@ -3,10 +3,8 @@ package it.polito.se2.g04.thesismanagement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.polito.se2.g04.thesismanagement.group.Group;
+import it.polito.se2.g04.thesismanagement.group.GroupDTO;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
-import it.polito.se2.g04.thesismanagement.proposal.Proposal;
-import it.polito.se2.g04.thesismanagement.security.user.User;
-import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -55,11 +53,6 @@ public class GroupControllerTest {
         g2 = groupRepository.save(g2);
         g3 = new Group("Group 3");
         g3 = groupRepository.save(g3);
-
-        //mock logged in user
-        User user = new User("test@example.com", "password", "TEACHER");
-        Authentication auth = new TestingAuthenticationToken(user, "password");
-        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     @AfterAll
@@ -77,7 +70,7 @@ public class GroupControllerTest {
         String json = res.getResponse().getContentAsString();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        Group[] groups = mapper.readValue(json, Group[].class);
+        GroupDTO[] groups = mapper.readValue(json, GroupDTO[].class);
 
         // Check that size matches
         assertEquals(3, groups.length, "Groups' getAll should return 3 values");
@@ -99,7 +92,7 @@ public class GroupControllerTest {
         json = res.getResponse().getContentAsString();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        groups = mapper.readValue(json, Group[].class);
+        groups = mapper.readValue(json, GroupDTO[].class);
 
         // Check that size matches
         assertEquals(4, groups.length, "Groups' getAll should return 4 values after insert");

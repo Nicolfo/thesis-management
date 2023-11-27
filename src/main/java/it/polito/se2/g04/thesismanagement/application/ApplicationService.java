@@ -14,6 +14,8 @@ public interface ApplicationService {
     public boolean acceptApplicationById(Long applicationId);
     public boolean rejectApplicationById(Long applicationId);
     public void applyForProposal(ApplicationDTO applicationDTO);
+    boolean changeApplicationStateById(Long applicationId, String newState);
+    boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId);
    
   /*
    public void acceptApplication(Long applicationID);

@@ -1,24 +1,19 @@
 package it.polito.se2.g04.thesismanagement;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.gson.JsonParser;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
-import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
 import it.polito.se2.g04.thesismanagement.department.Department;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
-import it.polito.se2.g04.thesismanagement.security.user.LoginDTO;
-import it.polito.se2.g04.thesismanagement.security.user.RegisterDTO;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +23,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -62,8 +58,6 @@ public class BrowseApplicationTests {
     private ProposalRepository proposalRepository;
     @Autowired
     private ApplicationRepository applicationRepository;
-
-    private RegisterDTO teacherReg;
     private Teacher teacher;
     private Student student;
 
@@ -86,15 +80,10 @@ public class BrowseApplicationTests {
         Group saved=groupRepository.save(new Group("Group 1"));
         Department department=departmentRepository.save(new Department("Department 1"));
 
-        teacherReg = new RegisterDTO("surname_1","name","email2@email.com","TEACHER","prova2", saved.getCodGroup(), department.getCodDepartment(),null,null,null,0);
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(teacherReg)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        teacher = new Teacher("surname_1","name","email2@email.com",saved, department);
+        teacherRepository.save(teacher);
 
 
-
-        teacher=teacherRepository.findByEmail(teacherReg.getEmail());
         student = new Student("Georgina","Ferrell","female","italian","georgina.ferrell@example.com",null,2020);
         studentRepository.save(student);
 
@@ -123,23 +112,12 @@ public class BrowseApplicationTests {
 
     @Test
     @Rollback
+    @WithMockUser(username = "email2@email.com", roles = {"TEACHER"})
     public void getAllApplicationProf() throws Exception {
         ObjectMapper objectMapper=new ObjectMapper();
 
-
-        LoginDTO teacherLogin= new LoginDTO(teacherReg.getEmail(),teacherReg.getPassword());
-
-        MvcResult res2=mockMvc.perform(MockMvcRequestBuilders.post("/API/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(teacherLogin)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").exists())
-                .andReturn();
-        String token2=JsonParser.parseString(res2.getResponse().getContentAsString()).getAsJsonObject().get("token").getAsString();
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByProf")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2));
 

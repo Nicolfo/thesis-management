@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.gson.JsonParser;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.department.Department;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
-import it.polito.se2.g04.thesismanagement.security.user.LoginDTO;
-import it.polito.se2.g04.thesismanagement.security.user.RegisterDTO;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -23,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -60,13 +60,12 @@ public class AcceptApplicationTest {
 
     private Teacher teacher;
     private Student student;
-    private Proposal proposal;
     private Proposal proposal1;
     private Proposal proposal2;
     private Application application1;
     private Application application2;
-    private RegisterDTO teacherReg;
-    private LoginDTO teacherLogin;
+
+    private Application application3;
     private String token2;
 
 
@@ -75,26 +74,8 @@ public class AcceptApplicationTest {
     public void setup() throws Exception {
         ObjectMapper objectMapper=new ObjectMapper();
 
-
         Group saved=groupRepository.save(new Group("Group 1"));
         Department department=departmentRepository.save(new Department("Department 1"));
-
-        teacherReg = new RegisterDTO("surname_1", "name", "email2@example.com", "TEACHER", "prova2", saved.getCodGroup(), department.getCodDepartment(), null, null, null, 0);
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(teacherReg)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        teacherLogin = new LoginDTO(teacherReg.getEmail(),teacherReg.getPassword());
-
-        MvcResult res2=mockMvc.perform(MockMvcRequestBuilders.post("/API/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(teacherLogin)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").exists())
-                .andReturn();
-        token2= JsonParser.parseString(res2.getResponse().getContentAsString()).getAsJsonObject().get("token").getAsString();
 
         teacher = new Teacher("Gerald", "Juarez","test@example.com",null,null);
         teacherRepository.save(teacher);
@@ -109,6 +90,7 @@ public class AcceptApplicationTest {
         proposal2 = proposalRepository.save(proposal2);
 
         application1 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal2);
+        application3 = new Application(student,null,new Date(2023,Calendar.OCTOBER,26),proposal2);
         application2 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,7),proposal1);
         applicationRepository.save(application1);
         applicationRepository.save(application2);
@@ -123,28 +105,25 @@ public class AcceptApplicationTest {
 
     @Test
     @Rollback
+    @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
     public void testAcceptApplication() throws Exception {
         //create error result
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
 
         //start valid tests
         MvcResult res =  mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -159,8 +138,7 @@ public class AcceptApplicationTest {
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/"+2)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
@@ -175,38 +153,44 @@ public class AcceptApplicationTest {
 
     @Test
     @Rollback
+    @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
     public void acceptApplication() throws Exception {
-        application1.setStatus("PENDING");
-        application2.setStatus("REJECTED");
+        application1.setStatus(ApplicationStatus.PENDING);
+        application2.setStatus(ApplicationStatus.PENDING);
+        application3.setStatus(ApplicationStatus.PENDING);
         application1 = applicationRepository.save(application1);
         application2 = applicationRepository.save(application2);
+        application3 = applicationRepository.save(application3);
 
         //get result
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         String json = res.getResponse().getContentAsString();
 
         assertEquals(json, "true");
-        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo("ACCEPTED"));
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.ACCEPTED));
+        assertEquals(0, applicationRepository.getApplicationById(3L).getStatus().compareTo(ApplicationStatus.REJECTED));
+        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));
+
+        application2.setStatus(ApplicationStatus.REJECTED);
+        application2 = applicationRepository.save(application2);
+
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
         assertEquals(json, "false");
-        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo("REJECTED"));
+        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/3")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
@@ -215,35 +199,32 @@ public class AcceptApplicationTest {
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/3")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
         assertEquals(json, "false");
 
-        application1.setStatus("PENDING");
+        application1.setStatus(ApplicationStatus.PENDING);
         application1 = applicationRepository.save(application1);
 
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
         assertEquals(json, "true");
-        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo("REJECTED"));
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + token2))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
         assertEquals(json, "false");
-        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo("REJECTED"));
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.REJECTED));
     }
 
 }

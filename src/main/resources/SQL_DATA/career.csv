@@ -4,10 +4,38 @@
 3,01SQNOV,Software Engineering II,6,30,2022-03-10 12:18:45.234567,300001
 4,01TYMOV,Information systems security,6,18,2020-05-02 08:54:20.345678,300003
 5,01NYHOV,System and device programming,10,27,2021-07-12 14:36:40.876543,300003
-6,02JEUOV,Formal languages and compilers,6,29,2022-08-05 11:27:55.432109,30008
+6,02JEUOV,Formal languages and compilers,6,29,2022-08-05 11:27:55.432109,300008
 7,02JSKOV,Human Computer Interaction,6,32,2020-09-14 10:09:10.987654,300005
 8,02LSEOV,Computer architectures,10,28,2021-10-25 16:42:35.543210,300001
 9,01SQJOV,Data Science and Database Technology,8,25,2022-11-08 13:24:50.098765,300010
 10,01OTWOV,Computer network technologies and services,6,24,2020-12-01 11:15:05.654321,300002
 11,04GSPOV,Software engineering,8,26,2021-12-31 17:57:25.210987,300004
 12,01TXYOV,Web Applications I,6,27,2022-01-15 12:03:40.765432,300006
+13,01DSHOV,Big data processing and analytics,6,22,2021-08-20 09:45:10.123456,300007
+14,02GOLOV,Architetture dei sistemi di elaborazione,6,28,2022-06-15 15:30:30.987654,300002
+15,01SQJOV,Data Science and Database Technology,8,25,2023-02-02 12:18:45.234567,300005
+16,02KPNOV,Tecnologie e servizi di rete,6,18,2022-04-05 08:54:20.345678,300008
+17,05BIDOV,Ingegneria del software,8,30,2021-11-10 14:36:40.876543,300009
+18,02GRSOV,Programmazione di sistema,6,29,2020-10-25 11:27:55.432109,300003
+19,01URTOV,Machine learning and pattern recognition,6,32,2022-09-14 10:09:10.987654,300006
+20,01DSHOV,Big data processing and analytics,6,26,2020-11-08 13:24:50.098765,300001
+21,02GOLOV,Architetture dei sistemi di elaborazione,6,23,2023-07-01 11:15:05.654321,300004
+22,01SQJOV,Data Science and Database Technology,8,27,2022-12-15 17:57:25.210987,300010
+23,02KPNOV,Tecnologie e servizi di rete,6,20,2020-04-08 12:03:40.765432,300009
+24,05BIDOV,Ingegneria del software,8,24,2023-03-25 09:30:22.548215,300003
+25,02GRSOV,Programmazione di sistema,6,30,2021-01-28 14:16:30.987654,300007
+26,01URTOV,Machine learning and pattern recognition,6,29,2020-02-12 12:18:45.234567,300010
+27,01DSHOV,Big data processing and analytics,6,21,2022-05-03 08:54:20.345678,300004
+28,02GOLOV,Architetture dei sistemi di elaborazione,6,25,2023-10-20 14:36:40.876543,300006
+29,01SQJOV,Data Science and Database Technology,8,26,2021-06-05 11:27:55.432109,300008
+30,02KPNOV,Tecnologie e servizi di rete,6,28,2022-08-15 10:09:10.987654,300001
+31,05BIDOV,Ingegneria del software,8,23,2020-09-01 16:42:35.543210,300002
+32,02GRSOV,Programmazione di sistema,6,30,2021-12-18 13:24:50.098765,300005
+33,01URTOV,Machine learning and pattern recognition,6,22,2020-11-23 11:15:05.654321,300009
+34,01DSHOV,Big data processing and analytics,6,24,2022-02-05 17:57:25.210987,300003
+35,02GOLOV,Architetture dei sistemi di elaborazione,6,28,2023-01-15 12:03:40.765432,300010
+36,01SQJOV,Data Science and Database Technology,8,27,2022-05-10 09:30:22.548215,300001
+37,02KPNOV,Tecnologie e servizi di rete,6,26,2020-08-04 14:16:30.987654,300007
+38,05BIDOV,Ingegneria del software,8,29,2023-11-28 11:27:55.432109,300004
+39,02GRSOV,Programmazione di sistema,6,25,2021-02-20 10:09:10.987654,300006
+40,01URTOV,Machine learning and pattern recognition,6,30,2020-03-15 16:42:35.543210,300008

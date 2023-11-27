@@ -1,6 +1,6 @@
 
 
-const SERVER_URL = "http://localhost:8080/API/";
+const SERVER_URL = "http://localhost:8081/API/";
 
 /**
  * A utility function for parsing the HTTP response.
@@ -87,7 +87,7 @@ const getByEmail = async (email,jwt) => {
 }
 
 const insertProposal = async (proposal,jwt) => {
-    return fetch(SERVER_URL + 'proposal/insert', {
+    return fetch(SERVER_URL + 'proposal/insert/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

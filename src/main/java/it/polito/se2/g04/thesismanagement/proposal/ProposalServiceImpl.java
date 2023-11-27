@@ -34,18 +34,16 @@ public class ProposalServiceImpl implements ProposalService {
 
 
     @Override
-    public List<Proposal> getAllProposals(){
-        return proposalRepository.findAll();
+    public List<ProposalFullDTO> getAllProposals(){
+        return proposalRepository.findAll().stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Override
-    public List<Proposal> getProposalsByProf(String UserName){
+    public List<ProposalFullDTO> getProposalsByProf(String UserName){
         Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchivedOrderById(teacher, false);
-            /*List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchivedOrderById(teacher, false);
-            supervisorProposals.addAll(coSupervisorProposals);*/
-            return supervisorProposals;
+            return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
         }
         return new ArrayList<>();
     }
@@ -62,7 +60,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal createProposal(ProposalDTO proposalDTO) {
+    public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
         Teacher teacher=teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
         Proposal toAdd=new Proposal(
                 proposalDTO.getTitle(),
@@ -78,12 +76,11 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getLevel(),
                 proposalDTO.getCds()
         );
-        System.out.println( toAdd);
-        return proposalRepository.save(toAdd) ;
+        return ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
     }
 
     @Override
-    public Proposal updateProposal(Long id, ProposalDTO proposalDTO) {
+    public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
                 old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
@@ -102,16 +99,16 @@ public class ProposalServiceImpl implements ProposalService {
                 old.setCdS(proposalDTO.getCds());
                 old.setKeywords(proposalDTO.getKeywords());
 
-        return proposalRepository.save(old);
+        return ProposalFullDTO.fromProposal(proposalRepository.save(old));
     }
 
     @Override
-    public List<Proposal> getAllNotArchivedProposals(){
-        return proposalRepository.findAllByArchived(false);
+    public List<ProposalFullDTO> getAllNotArchivedProposals(){
+        return proposalRepository.findAllByArchived(false).stream().map(ProposalFullDTO::fromProposal).toList();
     }
     @Query
     @Override
-    public List<Proposal> searchProposals(ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
@@ -120,7 +117,9 @@ public class ProposalServiceImpl implements ProposalService {
 
         // We gradually add predicates to the query, depending on
         // the specified filters.
+
         predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
+
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
         }
@@ -131,7 +130,10 @@ public class ProposalServiceImpl implements ProposalService {
             }
         }
         if (proposalSearchRequest.getType() != null) {
-            predicates.add(cb.equal(cb.upper(proposal.get("type")), proposalSearchRequest.getType().toUpperCase()));
+            List<String> typeList = List.of(proposalSearchRequest.getType().split("[\\s,]+"));
+            for (String type : typeList) {
+                predicates.add(cb.like(cb.upper(proposal.get("type")), "%" + type.toUpperCase() + "%"));
+            }
         }
         if (proposalSearchRequest.getDescription() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("description")), "%" + proposalSearchRequest.getDescription().toUpperCase() + "%"));
@@ -145,12 +147,12 @@ public class ProposalServiceImpl implements ProposalService {
         if (proposalSearchRequest.getNotes() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("notes")), "%" + proposalSearchRequest.getNotes().toUpperCase() + "%"));
         }
-        if (proposalSearchRequest.getMinExpiration() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMinExpiration()));
-        }
-        if (proposalSearchRequest.getMaxExpiration() != null) {
-            predicates.add(cb.lessThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMaxExpiration()));
-        }
+//        if (proposalSearchRequest.getMinExpiration() != null) {
+//            predicates.add(cb.greaterThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMinExpiration()));
+//        }
+//        if (proposalSearchRequest.getMaxExpiration() != null) {
+//            predicates.add(cb.lessThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMaxExpiration()));
+//        }
 
         cq.where(predicates.toArray(new Predicate[0]));
 
@@ -193,7 +195,7 @@ public class ProposalServiceImpl implements ProposalService {
             }
         }
 
-        return filteredList;
+        return filteredList.stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
 

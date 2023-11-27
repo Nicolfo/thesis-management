@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.Date;
 @Getter
 @AllArgsConstructor
@@ -16,7 +17,9 @@ public class ApplicationDTO4 {
     private Long attachmentId;
     private Date applyDate;
     private Proposal proposal;
+    private BigDecimal studentAverageGrades;
 
-    private String status= "PENDING"; //status of the application (PENDING/ACCEPTED/REJECTED)
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
 }
