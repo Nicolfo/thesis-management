@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, Button, Card, Container, Row, Col} from "react-bootstrap";
 
-const SERVER_URL = "http://localhost:8080";
+const SERVER_URL = "http://localhost:8081";
 
 function ApplicationViewLayout(props) {
 

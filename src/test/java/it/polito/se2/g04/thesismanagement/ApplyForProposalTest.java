@@ -17,12 +17,9 @@ import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
-import it.polito.se2.g04.thesismanagement.security.user.LoginDTO;
-import it.polito.se2.g04.thesismanagement.security.user.RegisterDTO;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
-import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -30,19 +27,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -70,10 +66,6 @@ public class ApplyForProposalTest {
     private ProposalRepository proposalRepository;
     @Autowired
     private StudentRepository studentRepository;
-
-    private RegisterDTO studentReg;
-    private RegisterDTO teacherReg;
-    private String token;
     private Proposal proposal;
     // You can still mock your service if needed
 
@@ -84,25 +76,7 @@ public class ApplyForProposalTest {
         Group group=groupRepository.save(new Group("Group 1"));
         Department department=departmentRepository.save(new Department("Department 1"));
         Degree degree=degreeRepository.save(new Degree("Degree 1"));
-        studentReg = new RegisterDTO("surname_1","name","email@email.com","STUDENT","prova1",null, null,"MALE","IT",degree.getCodDegree(),2022);
 
-        ObjectMapper objectMapper=new ObjectMapper();
-        //create user and parse JWT
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(studentReg)))
-                .andExpect(status().isOk());
-
-        LoginDTO studentLogin= new LoginDTO(studentReg.getEmail(),studentReg.getPassword());
-
-        MvcResult res=mockMvc.perform(MockMvcRequestBuilders.post("/API/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(studentLogin)))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").exists())
-                .andReturn();
-        token=JsonParser.parseString(res.getResponse().getContentAsString()).getAsJsonObject().get("token").getAsString();
 
         // Create a Teacher object for the supervisor
         Teacher supervisor = new Teacher("Supervisor Surname", "Supervisor Name", "supervisor@email.com", group, department);
@@ -149,6 +123,7 @@ public class ApplyForProposalTest {
     }
     @Test
     @Rollback
+    @WithMockUser(username = "email@email.com", roles = {"STUDENT"})
     public void testApplyProposalAndUploadFile() throws Exception {
         Path tempFile = Files.createTempFile("test-file", ".txt");
         Files.write(tempFile, "Test file content".getBytes());
@@ -156,8 +131,7 @@ public class ApplyForProposalTest {
 
         // Upload a file to get the AttachmentDTO
         MvcResult uploadResult = mockMvc.perform(MockMvcRequestBuilders.multipart("/API/uploadFile")
-                        .file(file)
-                        .header("Authorization", "Bearer " + token))
+                        .file(file))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -175,7 +149,6 @@ public class ApplyForProposalTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/insert")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
                 .content(new ObjectMapper().writeValueAsString(applicationDTO));
 
         // Perform the request and assert the status

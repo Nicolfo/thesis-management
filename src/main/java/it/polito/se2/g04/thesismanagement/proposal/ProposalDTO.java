@@ -1,14 +1,16 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.group.Group;
-import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 @AllArgsConstructor
 @Getter
+@Setter
+@NoArgsConstructor
 public class ProposalDTO {
     private String title;
     private Long supervisorId;

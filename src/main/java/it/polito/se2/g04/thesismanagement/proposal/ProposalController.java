@@ -1,15 +1,12 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import it.polito.se2.g04.thesismanagement.security.user.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @RestController
@@ -28,7 +25,7 @@ public class ProposalController {
     @GetMapping("/API/proposal/getAll")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public List<Proposal> getAllProposals() {
+    public List<ProposalFullDTO> getAllProposals() {
         return proposalService.getAllNotArchivedProposals();
     }
 
@@ -39,14 +36,14 @@ public class ProposalController {
      */
     @GetMapping("/API/proposal/getByProf")
     @ResponseStatus(HttpStatus.OK)
-    public List<Proposal> getProposalsByProf() {
-        UserInfoUserDetails auth =(UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = auth.getUsername();
+    public List<ProposalFullDTO> getProposalsByProf() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
         return proposalService.getProposalsByProf(username);
     }
 
     @GetMapping("/API/proposal/getTitleByProposalId/{proposalId}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public String getTitleByProposalId(@PathVariable Long proposalId) {
         return proposalService.getTitleByProposalId(proposalId);
     }
@@ -54,7 +51,7 @@ public class ProposalController {
 
 
     @PostMapping("/API/proposal/insert/")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void createProposal(@RequestBody ProposalDTO proposal){
         proposalService.createProposal(proposal);
@@ -63,7 +60,7 @@ public class ProposalController {
 
 
     @PutMapping("/API/proposal/update/{id}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
     public void UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
         proposalService.updateProposal(id, proposal);
@@ -71,7 +68,7 @@ public class ProposalController {
     }
 
     @PostMapping("/API/proposal/update/")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void UpdateProposalWithNoPathVariable(){
         throw new createUpdateProposalWithNoPathVariable("Can't update a proposal without filling the form");
@@ -80,7 +77,7 @@ public class ProposalController {
     @PostMapping("/API/proposal/search")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public List<Proposal> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
         return proposalService.searchProposals(proposalSearchRequest);
     }
 

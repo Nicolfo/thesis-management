@@ -20,7 +20,7 @@ public class DegreeController {
     }
 
     @GetMapping("/API/Degree/getAllNames")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public List<String> getAllNames(){
         return degreeService.getAllName();
     }

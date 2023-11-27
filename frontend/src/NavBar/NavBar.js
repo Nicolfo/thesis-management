@@ -2,28 +2,46 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Button, Col, Form, Nav} from 'react-bootstrap';
-import {useState} from 'react';
+import {useState,useContext,useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
+import { AuthContext } from 'react-oauth2-code-pkce';
 
 function NavBar(props) {
+
+    const { tokenData, token, login, logOut, idToken, error } = useContext(AuthContext);
 
     const [showVirtualClock, setShowVirtualClock] = useState(false);
 
     const path = useLocation().pathname;
     const navigate = useNavigate();
-
-    const handleClick = (e) => {
+    const handleClick= (e)=> {
         e.preventDefault();
-        if (props.user === null)
-            navigate("/login");
-        else {
+        if (props.user === null) {
+            login();
+        } else {
             props.setUser(null);
-            localStorage.removeItem("email");
-            localStorage.removeItem("token");
-            localStorage.removeItem("role");
-            navigate("/login");
+            navigate("/");
+            logOut();
         }
     }
+
+    /**
+     * Every time tokenData (the decoded token for the logged-in user on the browser) changes, we update the
+     * corresponding user state so that it is available for all the components.
+     * The user state is an object containing the user's email, name, surname, role and token.
+     */
+    useEffect(() => {
+      if (!props.user && tokenData) {
+          let role;
+          if( tokenData.realm_access.roles.includes("STUDENT"))
+          role = "STUDENT";
+          else if(tokenData.realm_access.roles.includes("TEACHER"))
+          role = "TEACHER";
+        props.setUser({ email: tokenData.preferred_username, role: role , name: tokenData.firstName, surname: tokenData.lastName, token: token });
+      } else {
+        props.setUser(null);
+      }
+    }, [tokenData]);
 
     const userIsTeacher = () => {
         return props.user && props.user.role === "TEACHER";

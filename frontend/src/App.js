@@ -4,24 +4,40 @@ import {fas} from '@fortawesome/free-solid-svg-icons';
 import {far} from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter, Navigate, Outlet, Route, Routes} from "react-router-dom";
-import {getAllSupervisors} from "./API/Api-Search";
-import API from "./API/API2";
+import { Navigate, BrowserRouter, Outlet, Route, BrowserRouter as Router, Routes, useLocation} from "react-router-dom";
+import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
+import ProposalList from "./Content/ProposalList";
 import RenderProposal from "./Content/RenderProposal";
+import NavBar from "./NavBar/NavBar";
+import Navigation from "./Navigation/Navigation";
 import {LoginLayout} from "./LoginLayout/LoginLayout";
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
 import BrowseDecisions from "./Content/BrowseDecisions";
 import BrowseProposalsContent from './Content/BrowseProposalsContent';
-
-
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";
 import ProposalsListContent from './Content/ProposalsListContent';
-import NavBar from "./NavBar/NavBar";
+import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
+import { jwtDecode } from 'jwt-decode';
 import NotAuthorizedLayout from "./Content/NotAuthorizedLayout";
 import NotFound from "./Content/NotFound";
+import API from "./API/API2";
+const authConfig = {
+  clientId: 'oidc-client',
+  authorizationEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/auth',
+  logoutEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/logout',
+  tokenEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/token',
+  redirectUri: 'http://localhost:3000/',
+  scope: 'profile openid',
+  // Example to redirect back to original path after login has completed
+  // preLogin: () => localStorage.setItem('preLoginPath', window.location.pathname),
+  // postLogin: () => window.location.replace(localStorage.getItem('preLoginPath') || ''),
+  decodeToken: true,
+  autoLogin: false,
+}
+
 
 function App() {
 
@@ -70,6 +86,7 @@ function App() {
         setRealDate(dayjs());
         setApplicationDate(realDate.add(offsetDate, "day"));
     }, []);
+
 
 
     function selectFilter(el1, el2, filterType) {
@@ -142,6 +159,7 @@ function App() {
     }, [user]);
 
     return (
+        <AuthProvider authConfig={authConfig}>
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={
@@ -160,7 +178,7 @@ function App() {
                 }>
                     <Route index element={(user && user.role === "TEACHER" && <Navigate to={"/teacher/proposals"}/>)
                                           || (user && user.role === "STUDENT" && <Navigate to={"/search-for-proposal"}/>)
-                                          || (!user && <Navigate to={"/login"}/>) }/>
+                                          || (!user && <h1>Welcome to Thesis Manager!</h1> ) }/>
                     <Route path="/login"
                            element={(user && user.role === "TEACHER" && <Navigate to={"/teacher/proposals"}/>)
                                || (user && user.role === "STUDENT" && <Navigate to={"/search-for-proposal"}/>)
@@ -190,6 +208,7 @@ function App() {
                 </Route>
             </Routes>
         </BrowserRouter>
+        </AuthProvider>
     );
 
 }

@@ -1,9 +1,9 @@
 package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.proposal.*;
-import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
@@ -72,9 +72,8 @@ public class ApplicationServiceImpl implements ApplicationService{
         if(!proposalRepository.existsById(proposalId) ){
             throw new ProposalNotFoundException("Specified proposal id not found");
         }
-        if(authenticationNeeded){
-        UserInfoUserDetails auth =(UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String profEmail= auth.getUsername();
+        Authentication auth =SecurityContextHolder.getContext().getAuthentication();
+        String profEmail= auth.getName();
         if(proposalRepository.getReferenceById(proposalId).getSupervisor().getEmail().compareTo(profEmail)==0){
 
             List<Application> toReturn= applicationRepository.getApplicationByProposal_Id(proposalId);

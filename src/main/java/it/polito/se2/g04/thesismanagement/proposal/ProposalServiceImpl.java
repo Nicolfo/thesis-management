@@ -31,18 +31,16 @@ public class ProposalServiceImpl implements ProposalService {
 
 
     @Override
-    public List<Proposal> getAllProposals(){
-        return proposalRepository.findAll();
+    public List<ProposalFullDTO> getAllProposals(){
+        return proposalRepository.findAll().stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Override
-    public List<Proposal> getProposalsByProf(String UserName){
+    public List<ProposalFullDTO> getProposalsByProf(String UserName){
         Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchivedOrderById(teacher, false);
-            /*List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchivedOrderById(teacher, false);
-            supervisorProposals.addAll(coSupervisorProposals);*/
-            return supervisorProposals;
+            return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
         }
         return new ArrayList<>();
     }
@@ -59,7 +57,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal createProposal(ProposalDTO proposalDTO) {
+    public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
         Teacher teacher=teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
         Proposal toAdd=new Proposal(
                 proposalDTO.getTitle(),
@@ -75,12 +73,11 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getLevel(),
                 proposalDTO.getCds()
         );
-        System.out.println( toAdd);
-        return proposalRepository.save(toAdd) ;
+        return ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
     }
 
     @Override
-    public Proposal updateProposal(Long id, ProposalDTO proposalDTO) {
+    public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
                 old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
@@ -99,16 +96,16 @@ public class ProposalServiceImpl implements ProposalService {
                 old.setCdS(proposalDTO.getCds());
                 old.setKeywords(proposalDTO.getKeywords());
 
-        return proposalRepository.save(old);
+        return ProposalFullDTO.fromProposal(proposalRepository.save(old));
     }
 
     @Override
-    public List<Proposal> getAllNotArchivedProposals(){
-        return proposalRepository.findAllByArchived(false);
+    public List<ProposalFullDTO> getAllNotArchivedProposals(){
+        return proposalRepository.findAllByArchived(false).stream().map(ProposalFullDTO::fromProposal).toList();
     }
     @Query
     @Override
-    public List<Proposal> searchProposals(ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
@@ -194,6 +191,6 @@ public class ProposalServiceImpl implements ProposalService {
             }
         }
 
-        return filteredList;
+        return filteredList.stream().map(ProposalFullDTO::fromProposal).toList();
     }
 }
