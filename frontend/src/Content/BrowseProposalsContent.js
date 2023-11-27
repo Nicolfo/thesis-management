@@ -32,7 +32,7 @@ export default function BrowseProposalsContent(props) {
         if(props.user)  {
             getProposalList();
         }
-    }, [props.user]);
+    }, [props.user, deleting]);
 
     return (
         <>
