@@ -73,36 +73,13 @@ function LoginForm(props) {
     )
 }
 
-function LogoutButton(props) {
-    const navigate = useNavigate();
-
-    const handleLogout = async () => {
-        //await API.logout();
-        // clean up everything
-        //props.setUser(null);
-    };
-
-    return (
-        <Button variant="outline-light" onClick={() => {
-            navigate('/');
-            handleLogout();
-        }}>Logout</Button>
-    )
-}
-
-function LoginButton(props) {
-    const navigate = useNavigate();
-    return (
-        <Button variant="outline-light" onClick={() => navigate('/login')}>Login</Button>
-    )
-}
-
 function LoginLayout(props) {
+    if(!props.user)
     return (
         <>
             <Row className="vh-100 login-padding-top">
                 <Col md={6} mp={0} className="below-nav">
-                    <LoginForm setUser={props.setUser}/>
+                    <LoginForm user={props.user} setUser={props.setUser}/>
                 </Col>
                 <Col md={6} className="ps-5 pt-4">
                     <img src={thesisicon} alt="My Image" style={{width:"350px",height:"350px"}} className="rounded"/>
@@ -111,4 +88,4 @@ function LoginLayout(props) {
         </>
     );
 }
-export { LoginForm, LogoutButton, LoginButton, LoginLayout };
+export { LoginForm, LoginLayout };

@@ -9,6 +9,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function BrowseApplicationsContent(props) {
 
+    const navigate = useNavigate();
+
+    if(!props.user || props.user.role !== "TEACHER") {
+        navigate("/notAuthorized");
+    }
+
     const [applications, setApplications] = useState([]);
 
     useEffect(() => {
@@ -33,12 +39,12 @@ function BrowseApplicationsContent(props) {
                 <Table striped hover className="mb-4">
                     <thead>
                     <tr>
-                        <th>Title</th>
-                        <th className="d-none d-md-table-cell">Apply date</th>
-                        <th className="d-none d-md-table-cell">Student</th>
-                        <th className="d-none d-md-table-cell">Average grades</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th className="col-4">Title</th>
+                        <th className="d-none d-md-table-cell col-2">Apply date</th>
+                        <th className="d-none d-md-table-cell col-2">Student</th>
+                        <th className="d-none d-md-table-cell col-2">Average grades</th>
+                        <th className="col-1">Status</th>
+                        <th className="col-1">Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -66,8 +72,9 @@ function ApplicationRow(props) {
             <td className="d-none d-md-table-cell">{props.application.studentAverageGrades}</td>
             <td>{props.application.status}</td>
             <td>
-                <Button onClick={() => handleViewInfo(props.application.id)}>
-                    View info <FontAwesomeIcon icon={"chevron-right"} />
+                <Button classname="d-flex align-items-center" onClick={() => handleViewInfo(props.application.id)} style={{ display: 'flex', alignItems: 'center' }}>
+                    <span className="d-none d-md-table-cell">View info </span>
+                    <FontAwesomeIcon icon={"chevron-right"} />
                 </Button>
             </td>
         </tr>

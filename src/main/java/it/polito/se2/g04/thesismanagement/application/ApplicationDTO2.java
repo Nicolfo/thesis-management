@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class ApplicationDTO2 {
     private Long studentId;
     private String studentName;
     private String studentSurname;
-    private double studentAverageGrades;
+    private BigDecimal studentAverageGrades;
 
     private Long attachmentId;
     private Date applyDate;

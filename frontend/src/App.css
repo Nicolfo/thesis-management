@@ -79,13 +79,12 @@
   }
 }
 
-.login-padding-top {
-  padding-top: 10vh;
+.card-text {
+  margin-bottom: 0.1rem;
 }
 
-div {
-  margin-right:0 !important;
-  padding-right:0 !important;
+.login-padding-top {
+  padding-top: 10vh;
 }
 
 .bordered-box {

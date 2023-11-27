@@ -18,7 +18,7 @@ function NavBar(props) {
             navigate("/login");
         else {
             props.setUser(null);
-            localStorage.removeItem("username");
+            localStorage.removeItem("email");
             localStorage.removeItem("token");
             localStorage.removeItem("role");
             navigate("/login");
@@ -29,8 +29,6 @@ function NavBar(props) {
         return props.user && props.user.role === "TEACHER";
     }
     const userIsStudent = () => {
-        {props.user && console.log("user", props.user)}
-        {props.user && console.log("role", props.user.role)}
         return props.user && props.user.role === "STUDENT";
     }
 
@@ -39,7 +37,7 @@ function NavBar(props) {
         <>
             <Navbar className="bg-color ps-3" expand="md" data-bs-theme="dark">
                 <Container fluid>
-                    <Navbar.Brand>
+                    <Navbar.Brand href="/">
                         <FontAwesomeIcon icon="fa-book"/> Thesis Manager
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarResponsive"/>

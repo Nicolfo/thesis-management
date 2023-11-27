@@ -1,11 +1,18 @@
 import {useEffect, useState} from "react";
 import {Badge, Card, Col, Row, Table} from "react-bootstrap";
 import API from "../API/Api";
+import {useNavigate} from "react-router-dom";
 
 
 function BrowseDecisions(props) {
 
     const [applications, setApplications] = useState([]);
+
+    const navigate = useNavigate();
+
+    if(!props.user || props.user.role !== "STUDENT") {
+        navigate("/notAuthorized");
+    }
 
     useEffect(() => {
         const getApplicationsByStudent = async () => {
@@ -19,7 +26,7 @@ function BrowseDecisions(props) {
         };
 
         getApplicationsByStudent();
-    }, []);
+    }, [props.user]);
 
 
     return (
