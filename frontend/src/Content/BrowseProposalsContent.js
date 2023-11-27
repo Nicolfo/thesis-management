@@ -80,28 +80,28 @@ function ProposalAccordion({ proposal }) {
                             </div>
                             }
                         >
-                            <Dropdown.Item as="button" style={{color: "orange"}} onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
+                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-pencil" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Update </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "green"}} onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
+                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-copy" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#5c0000"}}>
+                            <Dropdown.Item as="button" style={{color: "#0B67A5"}}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-box-archive" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Archive </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "red"}}>
+                            <Dropdown.Item as="button" style={{color: "#0B67A5"}}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-trash-can" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
