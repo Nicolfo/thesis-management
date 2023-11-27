@@ -114,7 +114,7 @@ function App() {
         setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
     }
     useEffect(() => {
-            if (user !== null) {
+            /*if (user !== null) {
                 localStorage.setItem("email", user.email);
                 localStorage.setItem("token", user.token);
                 localStorage.setItem("role", user.role);
@@ -129,7 +129,7 @@ function App() {
 
             }
 
-
+*/
         }
 
 

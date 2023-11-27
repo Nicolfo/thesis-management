@@ -16,12 +16,16 @@ function NavBar(props) {
     const navigate = useNavigate();
     const handleClick= (e)=> {
         e.preventDefault();
-        if (props.user === null) {
+        if (props.user === undefined || props.user === null) {
             login();
         } else {
-            props.setUser(null);
-            navigate("/");
+            console.log(props.user)
             logOut();
+            props.setUser(null);
+
+
+            navigate("/");
+
         }
     }
 
