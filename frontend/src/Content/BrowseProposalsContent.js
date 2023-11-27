@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useEffect, useContext } from "react";
 import API from "../API/Api";
-import {archiveProposal} from "../API/Api-Search";
 
 
 import {Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext, DropdownButton,Modal, Dropdown,ModalBody, ModalTitle} from "react-bootstrap";
@@ -36,7 +35,7 @@ export default function BrowseProposalsContent(props) {
         if(props.user)  {
             getProposalList();
         }
-    }, [props.user, deleting]);
+    }, [props.user, deleting, proposalList]);
 
     return (
         <>
@@ -81,7 +80,7 @@ function View() {
     return null;
 }
 
-function ProposalAccordion({ proposal, setDeleting, setDeletingID }) {
+function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
     const navigate = useNavigate();
 
     function deleteProp(proposalId){
@@ -121,7 +120,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID }) {
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#0B67A5"}}onClick={() => {archiveProposal(proposal.id, props.user.token)}} >
+                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => {archiveProposal(proposal.id, user.token)}} >
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-box-archive" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
@@ -191,7 +190,7 @@ function Warning(props) {
 
                 <Modal.Footer>
                     <Button variant="primary" onClick={()=>props.setDeleting(false)}>Undo</Button>
-                    <Button variant="danger" onClick={()=> { deleteProposal(props.deletingID,props.user.token); props.setDeleting(false); }}>Delete</Button>
+                    <Button variant="danger" onClick={()=> { deleteProposal(props.deletingID,props.user.token);props.setDeleting(false); }}>Delete</Button>
                 </Modal.Footer>
             </Modal.Dialog>
         </div>
