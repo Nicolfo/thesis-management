@@ -1,7 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 
-import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -97,24 +96,25 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
 
-    public List<Proposal> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         String cds = studentService.getCdS(username);
-        proposalSearchRequest.setCdS(cds);
 
+        proposalSearchRequest.setCdS(cds);
+        System.out.println(proposalSearchRequest.getCdS());
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
     @PostMapping("/API/proposal/archive/{id}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void archiveProposal(@PathVariable Long id){
         proposalService.archiveProposal(id);
     }
 
     @DeleteMapping("/API/proposal/delete/{id}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteProposal(@PathVariable Long id){
         proposalService.deleteProposal(id);

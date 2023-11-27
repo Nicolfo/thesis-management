@@ -118,7 +118,7 @@ public class ProposalServiceImpl implements ProposalService {
         // We gradually add predicates to the query, depending on
         // the specified filters.
 
-        predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
+        predicates.add(cb.like(cb.upper(proposal.get("CdS")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
 
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));

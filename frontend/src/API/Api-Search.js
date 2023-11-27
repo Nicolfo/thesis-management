@@ -66,13 +66,13 @@ export async function insertApplication(cvId, proposalId) {
 )};
 
 
-export async function deleteProposal(proposalId) {
+export async function deleteProposal(proposalId,jwt) {
 
-    return getJson( fetch(URL + '/API/proposal/delete', {
+    return  fetch(URL + '/API/proposal/delete/'+proposalId, {
         method: 'DELETE',
-        headers : {'Content-Type': 'application/json'},
-        body: JSON.stringify({"proposalId": proposalId})
-    }))
+        headers : {'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`}
+    })
 };
 
 

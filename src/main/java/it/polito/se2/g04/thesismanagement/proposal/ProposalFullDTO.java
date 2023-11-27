@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProposalFullDTO {
+    private Long id;
     private String title;
     private TeacherDTO supervisor;
     private List<TeacherDTO> coSupervisors;
@@ -34,6 +35,7 @@ public class ProposalFullDTO {
         if (proposal == null)
             return null;
         return new ProposalFullDTO(
+                proposal.getId(),
                 proposal.getTitle(),
                 TeacherDTO.fromTeacher(proposal.getSupervisor()),
                 proposal.getCoSupervisors() != null ? proposal.getCoSupervisors().stream().map(TeacherDTO::fromTeacher).toList() : new ArrayList<>(),
