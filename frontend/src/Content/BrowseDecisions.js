@@ -27,11 +27,17 @@ function BrowseDecisions(props) {
             <Card.Header as="h3" style={{"textAlign": "center"}}>
                 Your applications
             </Card.Header>
-            <Table>
-                <tbody>
+            { applications.length > 0 ?
+                <Table>
+                    <tbody>
                     { applications.map((application) => <TableRow key={application.id} application={application} /> )}
-                </tbody>
-            </Table>
+                    </tbody>
+                </Table>
+                :
+                <Card.Body as="h5" style={{"textAlign": "center"}}>
+                    You have no applications yet
+                </Card.Body>
+            }
         </Card>
     );
 }

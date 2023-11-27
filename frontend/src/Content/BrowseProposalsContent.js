@@ -78,7 +78,7 @@ function ProposalAccordion({ proposal }) {
                                     <span className="d-none d-md-table-cell"> Update </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "green"}}>
+                            <Dropdown.Item as="button" style={{color: "green"}} onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-copy" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>

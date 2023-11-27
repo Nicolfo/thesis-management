@@ -8,7 +8,7 @@ import API from "../API/API2";
 
 
 function InsertUpdateProposal(props) {
-    const { proposalID } = useParams();
+    const { editProposalID, copyProposalID } = useParams();
     const navigate= useNavigate();
 
     const [supervisor, setSupervisor] = useState({});
@@ -61,31 +61,32 @@ function InsertUpdateProposal(props) {
             setSupervisor(supervisor);
 
             const proposals = await API.getProposalsByProf(props.user.token);
-            // If edit then update
-            let edit = proposalID && proposals.find( (p) => p.id === parseInt(proposalID));
+            // If edit or copy, then populate the fields
+            let editORCopy = ( (editProposalID && proposals.find( (p) => p.id === parseInt(editProposalID))) || (copyProposalID && proposals.find( (p) => p.id === parseInt(copyProposalID))) );
 
-            if (edit) {
-                setTitle(edit.title);
-                setLevel(edit.level);
-                setNotes(edit.notes);
-                setKnowledge(edit.requiredKnowledge);
-                setDescription(edit.description);
-                setDate(dayjs(edit.expiration).format("YYYY-MM-DD"));
-                if(edit.type!=="")
-                setTypeList(edit.type.split(", "));
+            if (editORCopy) {
+                setTitle(editORCopy.title);
+                setLevel(editORCopy.level);
+                setNotes(editORCopy.notes);
+                setKnowledge(editORCopy.requiredKnowledge);
+                setDescription(editORCopy.description);
+                setDate(dayjs(editORCopy.expiration).format("YYYY-MM-DD"));
 
-                if(edit.keywords!=="")
-                setKeywordsList(edit.keywords.split(", "));
+                if(editORCopy.type !== "")
+                    setTypeList(editORCopy.type.split(", "));
+
+                if(editORCopy.keywords !== "")
+                    setKeywordsList(editORCopy.keywords.split(", "));
 
                 let CDS = [];
-                edit.cdS.split(", ").forEach( (c) => {
+                editORCopy.cdS.split(", ").forEach( (c) => {
                     let elem= {label: c, value: c};
                     CDS.push(elem);
                 } );
                 setSelectedCds(CDS);
 
                 let supervisors = [];
-                edit.coSupervisors.forEach( (t) => {
+                editORCopy.coSupervisors.forEach( (t) => {
                     let elem= {label: `${t.surname} ${t.name}`, value: t.id};
                     supervisors.push(elem);
                 } );
@@ -111,10 +112,10 @@ function InsertUpdateProposal(props) {
     }
 
     useEffect(() => {
-        if(!proposalID)
+        if( (!editProposalID) || (!copyProposalID) )
             clearFields();
         getAllTeachersGroupsCds();
-    }, [proposalID])
+    }, [editProposalID, copyProposalID])
 
 
     const addType = () => {
@@ -214,8 +215,8 @@ function InsertUpdateProposal(props) {
                 expiration: dayjs(date).format("YYYY-MM-DD"),
                 cds: (selectedCds.map( (c) => c.value)).join(", ")
             }
-            if (proposalID) {
-                proposal.id = proposalID;
+            if (editProposalID) {
+                proposal.id = editProposalID;
                 updateProposal(proposal);
             } else
                 insertProposal(proposal);
@@ -229,7 +230,7 @@ function InsertUpdateProposal(props) {
         <Card style={{"marginTop": "1rem", "marginBottom": "2rem"}}>
             <Form validated={validated} onSubmit={handleSubmit} noValidate>
                 <Card.Header as="h3" style={{"textAlign": "center"}}>
-                    { proposalID ?
+                    { editProposalID ?
                         "Update proposal"
                         :
                         "Insert proposal"
@@ -456,7 +457,7 @@ function InsertUpdateProposal(props) {
 
                 <Card.Footer style={{"textAlign": "center"}}>
                     <Button variant="outline-primary" type="submit">
-                        { proposalID ?
+                        { editProposalID ?
                             "Update thesis proposal"
                             :
                             <><FontAwesomeIcon icon={"upload"} /> Publish thesis proposal</>

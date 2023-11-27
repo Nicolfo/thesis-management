@@ -172,7 +172,9 @@ function App() {
                                                            updateApplicationDate={updateApplicationDate}/>}/>
                     <Route path="/insertProposal"
                            element={<InsertUpdateProposal user={user}/>}/>
-                    <Route path="/updateProposal/:proposalID"
+                    <Route path="/updateProposal/:editProposalID"
+                           element={<InsertUpdateProposal user={user}/>}/>
+                    <Route path="/copyProposal/:copyProposalID"
                            element={<InsertUpdateProposal user={user}/>}/>
                     <Route path="/teacher/proposals"
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
