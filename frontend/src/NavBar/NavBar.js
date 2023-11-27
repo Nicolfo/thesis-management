@@ -51,7 +51,7 @@ function NavBar(props) {
     }
 
     return (
-        (userIsStudent() || userIsTeacher()) &&
+
         <>
             <Navbar className="bg-color ps-3" expand="md" data-bs-theme="dark">
                 <Container fluid>

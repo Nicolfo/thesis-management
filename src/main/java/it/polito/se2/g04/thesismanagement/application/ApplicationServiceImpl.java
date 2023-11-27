@@ -83,25 +83,18 @@ public class ApplicationServiceImpl implements ApplicationService{
                     it.getAttachment() != null ? it.getAttachment().getAttachmentId() : null,
                     it.getApplyDate(),
                     it.getProposal(),
+                    BigDecimal.valueOf(studentService.getAverageMarks(it.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP),
                     it.getStatus()
             )).toList();
 
         }
+
+
+
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
         }
-        else  {
-            List<Application> toReturn = applicationRepository.getApplicationByProposal_Id(proposalId);
-            return toReturn.stream().map(it->new ApplicationDTO4(
-                    it.getId(),
-                    it.getStudent(),
-                    it.getAttachment() != null ? it.getAttachment().getAttachmentId() : null,
-                    it.getApplyDate(),
-                    it.getProposal(),
-                    it.getStatus()
-            )).toList();
 
-        }
-    }
+
 
     @Override
     public ApplicationDTO4 getApplicationById(Long applicationId){

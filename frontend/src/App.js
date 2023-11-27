@@ -6,10 +6,10 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navigate, BrowserRouter, Outlet, Route, BrowserRouter as Router, Routes, useLocation} from "react-router-dom";
 import {getAllProposal, getAllSupervisors} from "./API/Api-Search";
-import ProposalList from "./Content/ProposalList";
+
 import RenderProposal from "./Content/RenderProposal";
 import NavBar from "./NavBar/NavBar";
-import Navigation from "./Navigation/Navigation";
+
 import {LoginLayout} from "./LoginLayout/LoginLayout";
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
@@ -20,7 +20,7 @@ import BrowseProposalsContent from './Content/BrowseProposalsContent';
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";
 import ProposalsListContent from './Content/ProposalsListContent';
 import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
-import { jwtDecode } from 'jwt-decode';
+
 import NotAuthorizedLayout from "./Content/NotAuthorizedLayout";
 import NotFound from "./Content/NotFound";
 import API from "./API/API2";
