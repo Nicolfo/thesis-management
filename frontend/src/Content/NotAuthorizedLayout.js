@@ -7,10 +7,6 @@
 
         const navigate = useNavigate();
 
-        if(!props.user) {
-            navigate('/login');
-        }
-
         const goHome = (e) => {
             e.preventDefault();
                 navigate("/");
