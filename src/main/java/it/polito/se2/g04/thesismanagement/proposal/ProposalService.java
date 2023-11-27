@@ -34,5 +34,8 @@ public interface ProposalService {
      */
     List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest);
 
+    Proposal archiveProposal(Long id);
+    void deleteProposal(Long id);
+
 }
 

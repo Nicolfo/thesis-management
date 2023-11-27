@@ -1,10 +1,18 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+
+import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
+import it.polito.se2.g04.thesismanagement.student.StudentService;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -15,8 +23,11 @@ public class ProposalController {
 
     private final ProposalService proposalService;
 
-    public ProposalController(ProposalService proposalService) {
+    private final StudentService studentService;
+
+    public ProposalController(ProposalService proposalService, StudentService studentService) {
         this.proposalService = proposalService;
+        this.studentService = studentService;
     }
 
     /**
@@ -53,7 +64,15 @@ public class ProposalController {
     @PostMapping("/API/proposal/insert/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProposal(@RequestBody ProposalDTO proposal){
+    public void createProposal(@RequestBody ProposalDTO proposal, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            throw (new createUpdateProposalWithNoPathVariable(
+                    String.join(bindingResult.getAllErrors()
+                        .stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .toString()))
+            );
+        }
         proposalService.createProposal(proposal);
     }
 
@@ -77,8 +96,28 @@ public class ProposalController {
     @PostMapping("/API/proposal/search")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProposalFullDTO> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+
+    public List<Proposal> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        String cds = studentService.getCdS(username);
+        proposalSearchRequest.setCdS(cds);
+
         return proposalService.searchProposals(proposalSearchRequest);
+    }
+
+    @PostMapping("/API/proposal/archive/{id}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public void archiveProposal(@PathVariable Long id){
+        proposalService.archiveProposal(id);
+    }
+
+    @DeleteMapping("/API/proposal/delete/{id}")
+    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProposal(@PathVariable Long id){
+        proposalService.deleteProposal(id);
     }
 
 }

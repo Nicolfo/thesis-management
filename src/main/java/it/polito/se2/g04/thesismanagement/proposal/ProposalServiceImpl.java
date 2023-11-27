@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -21,12 +22,14 @@ import java.util.stream.Stream;
 public class ProposalServiceImpl implements ProposalService {
     private final ProposalRepository proposalRepository;
     private final TeacherRepository teacherRepository;
+    private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository) {
+    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
+        this.applicationRepository= applicationRepository;
     }
 
 
@@ -115,7 +118,8 @@ public class ProposalServiceImpl implements ProposalService {
         // We gradually add predicates to the query, depending on
         // the specified filters.
 
-//        predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
+        predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
+
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
         }
@@ -192,5 +196,31 @@ public class ProposalServiceImpl implements ProposalService {
         }
 
         return filteredList.stream().map(ProposalFullDTO::fromProposal).toList();
+    }
+
+
+
+    @Override
+    public Proposal archiveProposal(Long id) {
+        if(!proposalRepository.existsById(id)){
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+        }
+        Proposal old= proposalRepository.getReferenceById(id);
+        if (old.getArchived()){
+            throw(new ProposalNotFoundException("Proposal already archived"));
+        }else{
+            old.setArchived(true);
+        }
+
+        return proposalRepository.save(old);
+    }
+
+    @Override
+    public void deleteProposal(Long id){
+        if(!proposalRepository.existsById(id))
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+
+        applicationRepository.getApplicationByProposal_Id(id).forEach(it->applicationRepository.deleteById(it.getId()));
+        proposalRepository.deleteById(id);
     }
 }
