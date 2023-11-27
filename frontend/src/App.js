@@ -72,27 +72,27 @@ function App() {
     }, []);
 
 
-    function selectFilter(el1, el2, filterType) {
-
-        switch (filterType) {
-            // by professor
-            case 0:
-
-
-                return (el1.supervisor.name == el2)
-                break;
-            case 1:
-
-                return (el1.level == el2)
-
-                // code block
-                break;
-            default:
-            // code block
-        }
-
-
-    }
+    // function selectFilter(el1, el2, filterType) {
+    //
+    //     switch (filterType) {
+    //         // by professor
+    //         case 0:
+    //
+    //
+    //             return (el1.supervisor.name == el2)
+    //             break;
+    //         case 1:
+    //
+    //             return (el1.level == el2)
+    //
+    //             // code block
+    //             break;
+    //         default:
+    //         // code block
+    //     }
+    //
+    //
+    // }
 
     const searchForProposalClicked = () => {
         setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
