@@ -5,7 +5,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import API from "../API/API2";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function InsertUpdateProposal(props) {

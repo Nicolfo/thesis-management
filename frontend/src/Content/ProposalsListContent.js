@@ -1,4 +1,4 @@
-import { Card, Form, Button, Row, Col, Accordion, AccordionContext, useAccordionButton } from "react-bootstrap";
+import { Card, Form, Button, Row, Col, Accordion, AccordionContext, Offcanvas, useAccordionButton } from "react-bootstrap";
 import { getAllSupervisors } from "../API/Api-Search";
 import API from "../API/API2";
 import { useState, useEffect, useContext } from "react";
