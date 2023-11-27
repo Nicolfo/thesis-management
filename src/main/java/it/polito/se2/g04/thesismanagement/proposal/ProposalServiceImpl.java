@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -219,10 +218,7 @@ public class ProposalServiceImpl implements ProposalService {
         if(!proposalRepository.existsById(id))
             throw(new ProposalNotFoundException("Proposal with this id does not exist"));
 
+        applicationRepository.getApplicationByProposal_Id(id).forEach(it->applicationRepository.deleteById(it.getId()));
         proposalRepository.deleteById(id);
-        for (Application application: applicationRepository.getApplicationByProposal_Id(id)){
-            applicationRepository.deleteById(application.getId());
-        }
     }
-
 }
