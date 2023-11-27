@@ -466,9 +466,17 @@ function InsertUpdateProposal(props) {
                             <><FontAwesomeIcon icon={"upload"} /> Publish thesis proposal</>
                         }
                     </Button>
-                    {alert &&
-                        <Alert variant="success" onClose={() => setAlert(false)} dismissible > Api successful </Alert>
+
+                    { (editProposalID || copyProposalID) ?
+                        <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => navigate('/teacher/proposals')}>
+                            Cancel
+                        </Button>
+                        :
+                        <></>
                     }
+                    {/*{alert &&*/}
+                    {/*    <Alert variant="success" onClose={() => setAlert(false)} dismissible > Api successful </Alert>*/}
+                    {/*}*/}
                 </Card.Footer>
             </Form>
         </Card>

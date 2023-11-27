@@ -21,7 +21,7 @@ function ProposalsListContent({ user, applicationDate }) {
     //     "Master's"
     // ];
 
-    const [showSearchBar,setShowSearchBar]=useState(false);
+    const [showSearchBar,setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
     const [selectedSupervisorIds, setSelectedSupervisorIds] = useState([]);
     const [selectedCoSupervisorIds, setSelectedCoSupervisorIds] = useState([]);
@@ -107,7 +107,7 @@ function ProposalsListContent({ user, applicationDate }) {
             <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true} >
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>
-                        <Button variant="outline-primary" onClick={doSearch}> <FontAwesomeIcon icon={"magnifying-glass"} /> SEARCH BY </Button>
+                        <Button variant="outline-primary" onClick={() => { doSearch(); setShowSearchBar(false); }}> <FontAwesomeIcon icon={"magnifying-glass"} /> SEARCH BY </Button>
                         {" "}
                         <Button variant="outline-danger" size="sm" onClick={clearFields}> <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-left" /> Reset filters </Button>
                     </Offcanvas.Title>

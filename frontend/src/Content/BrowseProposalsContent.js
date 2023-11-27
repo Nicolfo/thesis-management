@@ -55,18 +55,18 @@ function CustomToggle({ children, eventKey, callback }) {
         () => callback && callback(eventKey),
     );
 
-    // const isCurrentEventKey = activeEventKey === eventKey;
+    const isCurrentEventKey = activeEventKey === eventKey;
   
     return (
       <Button
         onClick={decoratedOnClick}
       >
-        {/*<FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />*/}
-          <div className="d-flex align-items-center">
-              <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
-              <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-              <span className="d-none d-md-table-cell"> Info </span>
-          </div>
+
+      <div className="d-flex align-items-center">
+          <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
+          <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+          <span className="d-none d-md-table-cell"> Info </span>
+      </div>
 
       </Button>
     );

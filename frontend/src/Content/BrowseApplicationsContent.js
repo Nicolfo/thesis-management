@@ -34,18 +34,26 @@ function BrowseApplicationsContent(props) {
     return (
         <>
             <div className="bordered-box">
-                <h1>My application proposals</h1>
+                <h1 style={{"textAlign": "center"}}>My application proposals</h1>
                 <hr className="separator" />
                 <Table striped hover className="mb-4">
                     <thead>
-                    <tr>
-                        <th className="col-4">Title</th>
-                        <th className="d-none d-md-table-cell col-2">Apply date</th>
-                        <th className="d-none d-md-table-cell col-2">Student</th>
-                        <th className="d-none d-md-table-cell col-2">Average grades</th>
-                        <th className="col-1">Status</th>
-                        <th className="col-1">Action</th>
-                    </tr>
+                        { applications.length > 0 ?
+                            <tr>
+                                <th className="col-4">Title</th>
+                                <th className="d-none d-md-table-cell col-2">Apply date</th>
+                                <th className="d-none d-md-table-cell col-2">Student</th>
+                                <th className="d-none d-md-table-cell col-2">Average grades</th>
+                                <th className="col-1">Status</th>
+                                <th className="col-1">Action</th>
+                            </tr>
+                            :
+                            <tr>
+                                <th style={{"textAlign": "center"}}>
+                                    You have no applications yet
+                                </th>
+                            </tr>
+                        }
                     </thead>
                     <tbody>
                     {applications.map((application) => (
