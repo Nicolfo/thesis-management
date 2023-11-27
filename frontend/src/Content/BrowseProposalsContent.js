@@ -7,14 +7,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import {archiveProposal, deleteProposal} from "../API/Api-Search";
 import dayjs from "dayjs";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 export default function BrowseProposalsContent(props) {
 
     const navigate = useNavigate();
-
-    if(!props.user || props.user.role !== "TEACHER") {
+    const {token} = useContext(AuthContext);
+    if( !token )
         navigate("/notAuthorized");
-    }
+    if(props.user && props.user.role==="STUDENT")
+        navigate("/notAuthorized");
 
     const getProposalList = async () => {
         const list = await API.getProposalsByProf(props.user.token);

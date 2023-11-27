@@ -7,8 +7,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import { AuthContext } from 'react-oauth2-code-pkce';
 
 function NavBar(props) {
-
-    const { tokenData, token, login, logOut, idToken, error } = useContext(AuthContext);
+    const { tokenData, token, login, logOut, loginInProgress, error } = useContext(AuthContext);
 
     const [showVirtualClock, setShowVirtualClock] = useState(false);
 
@@ -16,16 +15,13 @@ function NavBar(props) {
     const navigate = useNavigate();
     const handleClick= (e)=> {
         e.preventDefault();
+
         if (props.user === undefined || props.user === null) {
             login();
         } else {
             console.log(props.user)
+
             logOut();
-            props.setUser(null);
-
-
-            navigate("/");
-
         }
     }
 
@@ -42,8 +38,6 @@ function NavBar(props) {
           else if(tokenData.realm_access.roles.includes("TEACHER"))
           role = "TEACHER";
         props.setUser({ email: tokenData.preferred_username, role: role , name: tokenData.firstName, surname: tokenData.lastName, token: token });
-      } else {
-        props.setUser(null);
       }
     }, [tokenData]);
 

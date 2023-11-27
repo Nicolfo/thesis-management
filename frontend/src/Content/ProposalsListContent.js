@@ -6,21 +6,18 @@ import { useNavigate } from "react-router-dom";
 import { MultiSelect } from "react-multi-select-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 function ProposalsListContent({ user, applicationDate }) {
 
     const navigate = useNavigate();
-
-    if(!user || user.role !== "STUDENT") {
-        navigate("/notAuthorized");
-    }
 
     // const levelOptions = [
     //     "Any",
     //     "Bachelor's",
     //     "Master's"
     // ];
-
+    const {token} = useContext(AuthContext);
     const [showSearchBar,setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
     const [selectedSupervisorIds, setSelectedSupervisorIds] = useState([]);
@@ -54,6 +51,10 @@ function ProposalsListContent({ user, applicationDate }) {
     }
 
     useEffect(() => {
+        if( !token )
+            navigate("/notAuthorized");
+        if(user && user.role==="TEACHER")
+            navigate("/notAuthorized");
         if (!user) {
             return;
         }

@@ -1,21 +1,28 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Badge, Card, Col, Row, Table} from "react-bootstrap";
 import API from "../API/Api";
 import {useNavigate} from "react-router-dom";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 
 function BrowseDecisions(props) {
+    const {token} = useContext(AuthContext);
 
     const [applications, setApplications] = useState([]);
 
     const navigate = useNavigate();
 
-    if(!props.user || props.user.role !== "STUDENT") {
-        navigate("/notAuthorized");
-    }
+
 
     useEffect(() => {
+        if( !token )
+            navigate("/notAuthorized");
+        if(props.user && props.user.role==="TEACHER")
+            navigate("/notAuthorized");
         const getApplicationsByStudent = async () => {
+            if(!props.user)
+                return;
+
             try {
                 const applications = await API.getApplicationsByStudent(props.user.token);
                 setApplications(applications);

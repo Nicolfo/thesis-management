@@ -1,8 +1,9 @@
 import {insertApplication, uploadFile} from "../API/Api-Search";
 import {Button, FormGroup, FormLabel, Alert} from "react-bootstrap";
 import {useNavigate, useParams} from 'react-router-dom';
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 
 function RenderProposal(props){
@@ -11,9 +12,11 @@ function RenderProposal(props){
 
     const navigate = useNavigate();
 
-    if(!props.user || props.user.role !== "STUDENT") {
+    const {token} = useContext(AuthContext);
+    if( !token )
         navigate("/notAuthorized");
-    }
+    if(props.user && props.user.role==="TEACHER")
+        navigate("/notAuthorized");
 
     const [cv, setCv] = useState();
     const [cvSelected, setCvSelected] = useState(true);

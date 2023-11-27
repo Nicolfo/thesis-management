@@ -1,19 +1,22 @@
 import {Alert, Button, Card, Col, Form, Row} from "react-bootstrap";
 import { MultiSelect } from "react-multi-select-component";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import API from "../API/API2";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 
 function InsertUpdateProposal(props) {
     const { editProposalID, copyProposalID } = useParams();
     const navigate = useNavigate();
-
-    if(!props.user || props.user.role !== "TEACHER") {
+    const {token} = useContext(AuthContext);
+    if( !token )
         navigate("/notAuthorized");
-    }
+    if(props.user && props.user.role==="STUDENT")
+        navigate("/notAuthorized");
+
     const [supervisor, setSupervisor] = useState({});
     const [title, setTitle] =  useState("");
     const [level, setLevel] =  useState("Bachelor's");

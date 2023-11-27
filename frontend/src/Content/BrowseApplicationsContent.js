@@ -1,23 +1,28 @@
-import { useState } from "react";
+import {useContext, useState} from "react";
 import { useEffect } from "react";
 import API from "../API/Api";
 import {Button, Table} from "react-bootstrap";
 import dayjs from 'dayjs';
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 
 function BrowseApplicationsContent(props) {
 
     const navigate = useNavigate();
-
-    if(!props.user || props.user.role !== "TEACHER") {
+    const {token} = useContext(AuthContext);
+    if( !token )
         navigate("/notAuthorized");
-    }
+    if(props.user && props.user.role==="STUDENT")
+        navigate("/notAuthorized");
+
 
     const [applications, setApplications] = useState([]);
 
     useEffect(() => {
+            if(!props.user || props.user.role !== "TEACHER")
+                return;
         const getApplicationsByProf = async () => {
             if(props.user && props.user.token)
             try {

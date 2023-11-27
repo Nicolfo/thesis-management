@@ -11,7 +11,7 @@ import RenderProposal from "./Content/RenderProposal";
 import NavBar from "./NavBar/NavBar";
 
 import {LoginLayout} from "./LoginLayout/LoginLayout";
-import { useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
@@ -24,19 +24,7 @@ import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
 import NotAuthorizedLayout from "./Content/NotAuthorizedLayout";
 import NotFound from "./Content/NotFound";
 import API from "./API/API2";
-const authConfig = {
-  clientId: 'oidc-client',
-  authorizationEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/auth',
-  logoutEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/logout',
-  tokenEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/token',
-  redirectUri: 'http://localhost:3000/',
-  scope: 'profile openid',
-  // Example to redirect back to original path after login has completed
-  // preLogin: () => localStorage.setItem('preLoginPath', window.location.pathname),
-  // postLogin: () => window.location.replace(localStorage.getItem('preLoginPath') || ''),
-  decodeToken: true,
-  autoLogin: false,
-}
+
 
 
 function App() {
@@ -113,8 +101,8 @@ function App() {
     const searchForProposalClicked = () => {
         setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
     }
-    useEffect(() => {
-            /*if (user !== null) {
+    /*useEffect(() => {
+            if (user !== null) {
                 localStorage.setItem("email", user.email);
                 localStorage.setItem("token", user.token);
                 localStorage.setItem("role", user.role);
@@ -129,12 +117,12 @@ function App() {
 
             }
 
-*/
         }
 
 
         , [user]);
 
+*/
     useEffect(() => {
         // call the api to retrieve the list of active proposal
         // api called every time the user click on the button to search for proposal.
@@ -158,7 +146,7 @@ function App() {
     }, [user]);
 
     return (
-        <AuthProvider authConfig={authConfig}>
+
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={
@@ -178,10 +166,6 @@ function App() {
                     <Route index element={(user && user.role === "TEACHER" && <Navigate to={"/teacher/proposals"}/>)
                                           || (user && user.role === "STUDENT" && <Navigate to={"/search-for-proposal"}/>)
                                           || (!user && <h1>Welcome to Thesis Manager!</h1> ) }/>
-                    <Route path="/login"
-                           element={(user && user.role === "TEACHER" && <Navigate to={"/teacher/proposals"}/>)
-                               || (user && user.role === "STUDENT" && <Navigate to={"/search-for-proposal"}/>)
-                               || (!user && <LoginLayout user={user} setUser={setUser}/>)}/>
                     <Route path="/search-for-proposal"
                            element={<ProposalsListContent user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/browseDecisions"
@@ -207,7 +191,7 @@ function App() {
                 </Route>
             </Routes>
         </BrowserRouter>
-        </AuthProvider>
+
     );
 
 }

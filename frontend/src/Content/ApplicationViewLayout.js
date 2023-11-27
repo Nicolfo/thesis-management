@@ -1,16 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, Button, Card, Container, Row, Col} from "react-bootstrap";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 const SERVER_URL = "http://localhost:8081";
 
 function ApplicationViewLayout(props) {
 
     const navigate = useNavigate();
-
-    if(!props.user || props.user.role !== "TEACHER") {
+    const {token} = useContext(AuthContext);
+    if( !token )
         navigate("/notAuthorized");
-    }
+    if(props.user && props.user.role==="STUDENT")
+        navigate("/notAuthorized");
 
     const applicationId = new URLSearchParams(useLocation().search).get("applicationId");
     const [applicationData, setApplicationData] = useState(null);
