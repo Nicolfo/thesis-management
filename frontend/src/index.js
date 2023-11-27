@@ -9,7 +9,7 @@ const authConfig = {
     authorizationEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/auth',
     logoutEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/logout',
     tokenEndpoint: 'http://localhost:8080/realms/oidcrealm/protocol/openid-connect/token',
-    redirectUri: 'http://localhost:3000/',
+    redirectUri: 'http://localhost:3000/', //change this to localhost:3000 if in developent/ localhost:8081 in deploy
     scope: 'profile openid',
     // Example to redirect back to original path after login has completed
     // preLogin: () => localStorage.setItem('preLoginPath', window.location.pathname),
