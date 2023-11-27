@@ -11,6 +11,7 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 it.getStudent().getId(),
                 it.getStudent().getName(),
                 it.getStudent().getSurname(),
-                studentService.getAverageMarks(it.getStudent().getId()),
+                BigDecimal.valueOf(studentService.getAverageMarks(it.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP),
                 it.getAttachment()!=null?it.getAttachment().getAttachmentId():null,
                 it.getApplyDate(),
                 it.getProposal().getId(),
@@ -106,7 +107,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     @Override
     public ApplicationDTO4 getApplicationById(Long applicationId){
         Application toReturn= applicationRepository.getApplicationById(applicationId);
-        return new ApplicationDTO4(toReturn.getId(),toReturn.getStudent(),toReturn.getAttachment()!=null?toReturn.getAttachment().getAttachmentId():null,toReturn.getApplyDate(),toReturn.getProposal(),toReturn.getStatus());
+        return new ApplicationDTO4(toReturn.getId(),toReturn.getStudent(),toReturn.getAttachment()!=null?toReturn.getAttachment().getAttachmentId():null,toReturn.getApplyDate(),toReturn.getProposal(),BigDecimal.valueOf(studentService.getAverageMarks(toReturn.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP),toReturn.getStatus());
     }
     public Application getApplicationByIdOriginal(Long applicationId){
         Application toReturn= applicationRepository.getApplicationById(applicationId);

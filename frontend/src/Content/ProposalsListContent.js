@@ -1,14 +1,4 @@
-import {
-    Card,
-    Form,
-    Button,
-    Row,
-    Col,
-    Accordion,
-    AccordionContext,
-    useAccordionButton,
-    Offcanvas
-} from "react-bootstrap";
+import { Card, Form, Button, Row, Col, Accordion, AccordionContext, useAccordionButton } from "react-bootstrap";
 import { getAllSupervisors } from "../API/Api-Search";
 import API from "../API/API2";
 import { useState, useEffect, useContext } from "react";
@@ -17,8 +7,13 @@ import { MultiSelect } from "react-multi-select-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 
-
 function ProposalsListContent({ user, applicationDate }) {
+
+    const navigate = useNavigate();
+
+    if(!user || user.role !== "STUDENT") {
+        navigate("/notAuthorized");
+    }
 
     // const levelOptions = [
     //     "Any",
@@ -26,8 +21,7 @@ function ProposalsListContent({ user, applicationDate }) {
     //     "Master's"
     // ];
 
-    const navigate = useNavigate();
-    const [showSearchBar,setShowSearchBar] = useState(false);
+    const [showSearchBar,setShowSearchBar]=useState(false);
     const [teachersList, setTeachersList] = useState([]);
     const [selectedSupervisorIds, setSelectedSupervisorIds] = useState([]);
     const [selectedCoSupervisorIds, setSelectedCoSupervisorIds] = useState([]);
@@ -60,8 +54,9 @@ function ProposalsListContent({ user, applicationDate }) {
     }
 
     useEffect(() => {
-        if (!user)
-            navigate("/login");
+        if (!user) {
+            return;
+        }
 
         const getResources = async () => {
             const teachers = await getAllSupervisors(user.token);
@@ -73,9 +68,8 @@ function ProposalsListContent({ user, applicationDate }) {
             const proposals = await API.getAllProposals(user.token);
             setProposalsList(proposals);
         };
-
         getResources();
-    }, [])
+    }, [user])
 
     const doSearch = async () => {
         const requestBody = {
@@ -94,6 +88,8 @@ function ProposalsListContent({ user, applicationDate }) {
             // CdS: selectedCds.length > 0 ? selectedCds.map(c => c.value).join(", ") : null,
         };
 
+
+        
         // Remove properties with null values
         Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
         

@@ -10,6 +10,11 @@ function RenderProposal(props){
     const { proposalId } = useParams();
 
     const navigate = useNavigate();
+
+    if(!props.user || props.user.role !== "STUDENT") {
+        navigate("/notAuthorized");
+    }
+
     const [cv, setCv] = useState();
     const [cvSelected, setCvSelected] = useState(true);
 

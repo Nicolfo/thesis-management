@@ -8,15 +8,24 @@ import dayjs from "dayjs";
 
 export default function BrowseProposalsContent(props) {
 
+    const navigate = useNavigate();
+
+    if(!props.user || props.user.role !== "TEACHER") {
+        navigate("/notAuthorized");
+    }
+
+    const getProposalList = async () => {
+        const list = await API.getProposalsByProf(props.user.token);
+        setProposalList(list);
+    }
+
     const [proposalList, setProposalList] = useState([]);
     
     useEffect(() => {
-        const getProposalList = async () => {
-            const list = await API.getProposalsByProf(props.user.token);
-            setProposalList(list);
+        if(props.user)  {
+            getProposalList();
         }
-        getProposalList();
-    }, []);
+    }, [props.user]);
 
     return (
         <>

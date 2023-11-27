@@ -1,10 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, Button, Card, Container, Row, Col} from "react-bootstrap";
 
 const SERVER_URL = "http://localhost:8080";
 
 function ApplicationViewLayout(props) {
+
+    const navigate = useNavigate();
+
+    if(!props.user || props.user.role !== "TEACHER") {
+        navigate("/notAuthorized");
+    }
+
     const applicationId = new URLSearchParams(useLocation().search).get("applicationId");
     const [applicationData, setApplicationData] = useState(null);
     const [studentGradesData, setStudentGradesData] = useState(null);
@@ -143,8 +150,12 @@ function ApplicationViewLayout(props) {
                                     <strong>Attachment:</strong> {applicationData.attachmentId ?
                                     <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
                                        download>Download</a>
-                                    : 'No attachment'} <br/>
-                                    <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')} <br/>
+                                    : 'No attachment'}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
+                                </Card.Text>
+                                <Card.Text>
                                     <strong>State:</strong> {applicationData.status}
                                 </Card.Text>
                             </Card.Body>
@@ -156,18 +167,40 @@ function ApplicationViewLayout(props) {
                                 <Card.Header as="h5">Proposal Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
-                                        <div><strong>Title:</strong> {applicationData.proposal.title} </div>
-                                        <div><strong>Supervisor:</strong> {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}</div>
-                                        <div><strong>Co-Supervisors:</strong> {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}</div>
-                                        <div><strong>Keywords:</strong> {applicationData.proposal.keywords} </div>
-                                        <div><strong>Type:</strong> {applicationData.proposal.type}</div>
-                                        <div><strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}</div>
-                                        <div><strong>Description:</strong> {applicationData.proposal.description}</div>
-                                        <div><strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge} </div>
-                                        {applicationData.proposal.notes && <><div><strong>Notes:</strong> ${applicationData.proposal.notes}</div></> }
-                                        <div><strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}</div>
-                                        <div><strong>Level:</strong> {applicationData.proposal.level} </div>
-                                        <div><strong>CdS:</strong> {applicationData.proposal.cdS}</div>
+                                        <strong>Title:</strong> {applicationData.proposal.title}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Supervisor:</strong> {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Co-Supervisors:</strong> {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Keywords:</strong> {applicationData.proposal.keywords}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Type:</strong> {applicationData.proposal.type}
+                                    </Card.Text>
+                                    <Card.Text>
+                                            <strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Description:</strong> {applicationData.proposal.description}
+                                    </Card.Text>
+                                    <Card.Text>
+                                            <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        {applicationData.proposal.notes && <><div><strong>Notes:</strong> {applicationData.proposal.notes}</div></> }
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Level:</strong> {applicationData.proposal.level}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>CdS:</strong> {applicationData.proposal.cdS}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -177,14 +210,30 @@ function ApplicationViewLayout(props) {
                             <Card.Header as="h5">Student Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
-                                        <div><strong>Surname:</strong> {applicationData.student.surname} </div>
-                                        <div><strong>Name:</strong> {applicationData.student.name} </div>
-                                        <div><strong>Gender:</strong> {applicationData.student.gender} </div>
-                                        <div><strong>Nationality:</strong> {applicationData.student.nationality} </div>
-                                        <div><strong>Email:</strong> {applicationData.student.email} </div>
-                                        <div><strong>Degree:</strong> {applicationData.student.degree.codDegree} </div>
-                                        <div><strong>Enrollment Year:</strong> {applicationData.student.enrollmentYear} </div>
-                                        <div><strong>Grades:</strong>
+                                        <strong>Surname:</strong> {applicationData.student.surname}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Name:</strong> {applicationData.student.name}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Gender:</strong> {applicationData.student.gender}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Nationality:</strong> {applicationData.student.nationality}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Email:</strong> {applicationData.student.email}
+                                    </Card.Text>
+                                    <Card.Text>
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Enrollment Year:</strong> {applicationData.student.enrollmentYear}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Average grades:</strong> {applicationData.studentAverageGrades}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Grades:</strong>
                                         {studentGradesData.length > 0 ? (
 
                                             <ul>
@@ -194,7 +243,7 @@ function ApplicationViewLayout(props) {
                                             </ul>
                                         ) : (
                                             "No grades available."
-                                        )}</div>
+                                        )}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>

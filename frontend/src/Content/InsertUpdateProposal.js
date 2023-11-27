@@ -5,12 +5,17 @@ import {useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import API from "../API/API2";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function InsertUpdateProposal(props) {
     const { proposalID } = useParams();
-    const navigate= useNavigate();
 
+    const navigate = useNavigate();
+
+    if(!props.user || props.user.role !== "TEACHER") {
+        navigate("/notAuthorized");
+    }
     const [supervisor, setSupervisor] = useState({});
     const [title, setTitle] =  useState("");
     const [level, setLevel] =  useState("Bachelor's");
@@ -219,6 +224,7 @@ function InsertUpdateProposal(props) {
                 updateProposal(proposal);
             } else
                 insertProposal(proposal);
+            }
         }
 
         setValidated(true);
