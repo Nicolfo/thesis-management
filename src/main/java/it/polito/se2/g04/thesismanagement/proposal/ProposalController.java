@@ -95,7 +95,6 @@ public class ProposalController {
     @PostMapping("/API/proposal/search")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-
     public List<ProposalFullDTO> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();

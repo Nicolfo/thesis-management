@@ -30,11 +30,6 @@ function ProposalsListContent({ user, applicationDate }) {
     const [description, setDescription] = useState("");
     const [requiredKnowledge, setRequiredKnowledge] = useState("");
     const [notes, setNotes] = useState("");
-    // const [minExpiration, setMinExpiration] = useState("");
-    // const [maxExpiration, setMaxExpiration] = useState("");
-    // const [level, setLevel] = useState("Any");
-    // const [cdsList, setCdsList] = useState([]);
-    // const [selectedCds, setSelectedCds] = useState([]);
     const [proposalsList, setProposalsList] = useState([]);
 
 
@@ -64,9 +59,7 @@ function ProposalsListContent({ user, applicationDate }) {
             setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
             const groups = await API.getAllGroups(user.token);
             setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
-            // const cds = await API.getAllCds(user.token);
-            // setCdsList(cds.map(c => { return {label: c, value: c}; }));
-            const proposals = await API.getAllProposals(user.token);
+            const proposals = await API.searchProposals(user.token, {});
             setProposalsList(proposals);
         };
         getResources();
@@ -83,14 +76,8 @@ function ProposalsListContent({ user, applicationDate }) {
             description: description || null,
             requiredKnowledge: requiredKnowledge || null,
             notes: notes || null
-            // minExpiration: minExpiration || null,
-            // maxExpiration: maxExpiration || null,
-            // level: level === "Any" ? null : level,
-            // CdS: selectedCds.length > 0 ? selectedCds.map(c => c.value).join(", ") : null,
         };
 
-
-        
         // Remove properties with null values
         Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
         
