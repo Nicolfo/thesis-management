@@ -1,4 +1,4 @@
-import { Card, Form, Button, Row, Col, Accordion, AccordionContext, Offcanvas, useAccordionButton } from "react-bootstrap";
+import { Card, Form, Button, Row, Col, Accordion, AccordionContext, Offcanvas, useAccordionButton, Alert } from "react-bootstrap";
 import API from "../API/Api";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,7 @@ function ProposalsListContent({ user, applicationDate }) {
     const [requiredKnowledge, setRequiredKnowledge] = useState("");
     const [notes, setNotes] = useState("");
     const [proposalsList, setProposalsList] = useState([]);
+    const [error, setError] = useState("");
 
 
     const clearFields = ()=> {
@@ -54,12 +55,16 @@ function ProposalsListContent({ user, applicationDate }) {
         }
 
         const getResources = async () => {
-            const teachers = await API.getAllSupervisors(user.token);
-            setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
-            const groups = await API.getAllGroups(user.token);
-            setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
-            const proposals = await API.searchProposals(user.token, {});
-            setProposalsList(proposals);
+            try {
+                const teachers = await API.getAllSupervisors(user.token);
+                setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
+                const groups = await API.getAllGroups(user.token);
+                setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
+                const proposals = await API.searchProposals(user.token, {});
+                setProposalsList(proposals);
+            } catch (error) {
+                handleError(error);
+            }
         };
         getResources();
     }, [user])
@@ -80,12 +85,37 @@ function ProposalsListContent({ user, applicationDate }) {
         // Remove properties with null values
         Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
         
-        const proposals = await API.searchProposals(user.token, requestBody);
-        setProposalsList(proposals);
+        try {
+            const proposals = await API.searchProposals(user.token, requestBody);
+            setProposalsList(proposals);
+        } catch (error) {
+            handleError(error);
+        }
+        
+    }
+
+    const handleError = error => {
+        if (error.error) 
+            setError(error.error);
+        else if (error.message)
+            setError(error.message);
+        else if (typeof error === "string")
+            setError(error);
+        else
+            setError("Error");
     }
 
     return (
         <>
+            { error !== "" &&
+              <Row>
+                <Col>
+                  <Alert variant="danger" dismissible onClose={() => setError("")} >
+                    {error}
+                  </Alert>
+                </Col>
+              </Row>
+            }
             <Row style={{"textAlign": "end"}}>
                 <Col>
                     <Button onClick={()=> setShowSearchBar(it=> !it )}> <FontAwesomeIcon icon={"magnifying-glass"} /> Show searching filters </Button>
