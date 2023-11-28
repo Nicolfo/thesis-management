@@ -171,7 +171,7 @@ async function archiveProposal(proposalId,jwt) {
 
 async function deleteProposal(proposalId,jwt) {
     return new Promise((resolve, reject) => {
-        fetch(URL + '/API/proposal/delete/' + proposalId, {
+        fetch(SERVER_URL + 'proposal/delete/' + proposalId, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -189,6 +189,7 @@ async function deleteProposal(proposalId,jwt) {
             })
             .catch(error => {
                 // Handle network errors or other exceptions
+
                 reject(`Error: ${error.message}`);
             });
     });
@@ -203,7 +204,7 @@ async function uploadFile(file){
     formData.append("file", file, file.name);
     let respJson;
     let response;
-    try { response = await fetch(SERVER_URL +'/uploadFile', {
+    try { response = await fetch(SERVER_URL +'uploadFile', {
         method: "POST",body: formData,
     });  respJson = await response.json();
     } catch (e) { console.log(e); throw {status: 404, detail: "Cannot communicate with server"}
