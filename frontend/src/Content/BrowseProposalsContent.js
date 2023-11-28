@@ -6,7 +6,6 @@ import API from "../API/Api";
 import {Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext, DropdownButton,Modal, Dropdown,ModalBody, ModalTitle} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
-import {archiveProposal, deleteProposal} from "../API/Api-Search";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
 
@@ -42,7 +41,7 @@ export default function BrowseProposalsContent(props) {
         <>
 
             <h4>Your thesis proposals</h4>
-            {deleting? <Row><Col></Col><Col><Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID}> </Warning></Col> <Col></Col></Row>:
+            {deleting? <Row><Col></Col><Col><Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID} getProposalList={getProposalList}> </Warning></Col> <Col></Col></Row>:
             <Accordion defaultActiveKey="0">
                 { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ console.log(proposal);return <ProposalAccordion user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
             </Accordion>}
@@ -75,11 +74,6 @@ function CustomToggle({ children, eventKey, callback }) {
       </Button>
     );
   }
-
-
-function View() {
-    return null;
-}
 
 function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
     const navigate = useNavigate();
@@ -121,7 +115,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => {archiveProposal(proposal.id, user.token)}} >
+                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => {API.archiveProposal(proposal.id, user.token)}} >
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-box-archive" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
@@ -191,7 +185,7 @@ function Warning(props) {
 
                 <Modal.Footer>
                     <Button variant="primary" onClick={()=>props.setDeleting(false)}>Undo</Button>
-                    <Button variant="danger" onClick={()=> { deleteProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false);}) }}>Delete</Button>
+                    <Button variant="danger" onClick={()=> { API.deleteProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false); props.getProposalList() }) }}>Delete</Button>
                 </Modal.Footer>
             </Modal.Dialog>
         </div>

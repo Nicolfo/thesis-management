@@ -1,6 +1,5 @@
 import { Card, Form, Button, Row, Col, Accordion, AccordionContext, Offcanvas, useAccordionButton } from "react-bootstrap";
-import { getAllSupervisors } from "../API/Api-Search";
-import API from "../API/API2";
+import API from "../API/Api";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { MultiSelect } from "react-multi-select-component";
@@ -55,7 +54,7 @@ function ProposalsListContent({ user, applicationDate }) {
         }
 
         const getResources = async () => {
-            const teachers = await getAllSupervisors(user.token);
+            const teachers = await API.getAllSupervisors(user.token);
             setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
             const groups = await API.getAllGroups(user.token);
             setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
