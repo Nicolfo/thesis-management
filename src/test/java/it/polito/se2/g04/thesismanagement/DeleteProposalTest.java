@@ -9,7 +9,6 @@ import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
-import it.polito.se2.g04.thesismanagement.security.user.User;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -67,9 +66,9 @@ public class DeleteProposalTest {
     @BeforeAll
     public void setup() {
         //mock logged in user
-        User user = new User("test@example.com", "password", "TEACHER");
+        /*User user = new User("test@example.com", "password", "TEACHER");
         Authentication auth = new TestingAuthenticationToken(user, "password");
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContextHolder.getContext().setAuthentication(auth);*/
     }
 
     @AfterAll

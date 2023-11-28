@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
-import it.polito.se2.g04.thesismanagement.security.user.User;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,9 +46,9 @@ public class UpdateProposalTest {
     @BeforeAll
     public void setup() {
         //mock logged in user
-        User user = new User("test@example.com", "password", "TEACHER");
+        /*User user = new User("test@example.com", "password", "TEACHER");
         Authentication auth = new TestingAuthenticationToken(user, "password");
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContextHolder.getContext().setAuthentication(auth);*/
     }
 
     @AfterAll

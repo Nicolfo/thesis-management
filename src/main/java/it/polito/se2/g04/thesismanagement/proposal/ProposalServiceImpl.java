@@ -148,7 +148,7 @@ public class ProposalServiceImpl implements ProposalService {
             if (!List.of("Bachelor's", "Master's").contains(proposalSearchRequest.getLevel())) {
                 throw new ProposalLevelInvalidException("Proposal level '" + proposalSearchRequest.getLevel() + "' is not valid");
             }
-            predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel()));
+            predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel().toUpperCase()));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));

@@ -144,8 +144,11 @@ public class ApplyForProposalTest {
         Long attachmentID = attachmentDTO.getId();
 
         // Prepare a sample ApplicationDTO with the obtained attachmentID
-        ApplicationDTO applicationDTO = new ApplicationDTO(attachmentID,new Date(), proposal.getId());
-
+        ApplicationDTO applicationDTO = new ApplicationDTO();
+        applicationDTO.setAttachmentId(attachmentID);
+        applicationDTO.setApplyDate(new Date());
+        applicationDTO.setProposalId(proposal.getId());
+        //ApplicationDTO applicationDTO = new ApplicationDTO(attachmentID,new Date(), proposal.getId());
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/insert")
                 .contentType(MediaType.APPLICATION_JSON)
