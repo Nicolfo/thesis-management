@@ -39,7 +39,7 @@ function RenderProposal(props){
 
                     setCvSelected(true);
                 uploadFile(cv).then((id) => {
-                    insertApplication(id, proposalId)
+                    insertApplication(id, proposalId, props.user.token)
                 })
                 navigate('/search-for-proposal')}
                 else{

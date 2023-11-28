@@ -20,7 +20,7 @@ function NavBar(props) {
             login();
         } else {
             console.log(props.user)
-
+            navigate("/");
             logOut();
         }
     }

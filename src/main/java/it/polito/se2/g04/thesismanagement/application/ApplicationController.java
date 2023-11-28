@@ -22,33 +22,33 @@ public class ApplicationController {
 
     @GetMapping("/API/application/getByProf")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public List<ApplicationDTO2> getAllByProf() {
+    public List<ApplicationDTO> getAllByProf() {
         Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
         return applicationService.getApplicationsByProf(auth.getName());
     }
 
     @GetMapping("/API/application/getByStudent")
     @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
-    public List<ApplicationDTO3> getAllByStudent() {
+    public List<ApplicationDTO> getAllByStudent() {
         Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
         return applicationService.getApplicationsByStudent(auth.getName());
     }
 
     @GetMapping("/API/application/getApplicationsByProposal")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public List<ApplicationDTO4> getApplicationByProposal(Long proposalId) {
+    public List<ApplicationDTO> getApplicationByProposal(Long proposalId) {
         return applicationService.getApplicationsByProposal(proposalId);
     }
 
-    @PostMapping("/insert")
-    @PreAuthorize("hasRole('STUDENT')")
+    @PostMapping("/API/application/insert/")
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
     public void insertApplication(@RequestBody ApplicationDTO applicationDTO) {
         applicationService.applyForProposal(applicationDTO);
     }
 
     @GetMapping("/API/application/getApplicationById/{applicationId}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public ApplicationDTO4 getApplicationById(@PathVariable Long applicationId) {
+    public ApplicationDTO getApplicationById(@PathVariable Long applicationId) {
         return applicationService.getApplicationById(applicationId);
     }
 
@@ -111,17 +111,4 @@ public class ApplicationController {
     public boolean getApplicationByIdWithoutId() {
         throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
-
-
-  /*@PostMapping("/API/application/{applicationId}/accept")
-    public void acceptApplication(@PathVariable Long applicationId){
-        //TODO:check if the current user is a TEACHER
-        applicationService.acceptApplication(applicationId);
-    }
-
-    @PostMapping("/API/application/{applicationId}/decline")
-    public void declineApplication(@PathVariable Long applicationId){
-        //TODO:check if the current user is a TEACHER
-        applicationService.declineApplication(applicationId);
-    }*/
 }

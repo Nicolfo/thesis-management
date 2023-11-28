@@ -51,16 +51,17 @@ export async function uploadFile(file){
     }        return respJson
 }
 
-export async function insertApplication(cvId, proposalId) {
+export async function insertApplication(cvId, proposalId, jwt) {
     fetch(URL + '/API/application/insert/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify({
-            attachmentID: cvId.id,
+            attachmentId: cvId.id,
             applyDate:dayjs(),
-            proposalID: proposalId,
+            proposalId: proposalId,
         }),
     }
 )};
