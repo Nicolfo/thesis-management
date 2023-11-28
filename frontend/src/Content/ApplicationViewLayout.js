@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
-import {Alert, Button, Card, Container, Row, Col} from "react-bootstrap";
+import {Alert, Button, Card, Container, Row, Col, Badge} from "react-bootstrap";
 import {AuthContext} from "react-oauth2-code-pkce";
 
 const SERVER_URL = "http://localhost:8081";
@@ -136,6 +136,16 @@ function ApplicationViewLayout(props) {
         return <div>Loading...</div>;
     }
 
+    const statusBadge = () => {
+        if (applicationData.status === "PENDING")
+            return <Badge bg="primary"> ⦿ PENDING </Badge>
+        else if (applicationData.status === "ACCEPTED")
+            return <Badge bg="success"> ✓ ACCEPTED </Badge>
+        else if (applicationData.status === "REJECTED")
+            return <Badge bg="danger"> ✕ REJECTED </Badge>
+    }
+
+
     return (
         <Container>
             <Row className="justify-content-md-center">
@@ -158,7 +168,7 @@ function ApplicationViewLayout(props) {
                                     <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
                                 </Card.Text>
                                 <Card.Text>
-                                    <strong>State:</strong> {applicationData.status}
+                                    <strong>State:</strong> {statusBadge()}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -252,21 +262,34 @@ function ApplicationViewLayout(props) {
                         </Col>
                     </Row>
 
+                    <Row>
+                    { applicationData.status==="PENDING" ? (
+                        <Col md={9}>
+                            <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}>Accept</Button>
+                            {" "}
+                            <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}>Reject</Button>
+                        </Col>
+                    ) : applicationData.status==="ACCEPTED" ? (
+                        <Col md={9}>
+                            <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
+                            {" "}
+                            <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</Button>
+                        </Col>
+                    ) : (
+                        <Col md={9}>
+                            <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</Button>
+                            {" "}
+                            <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
+                        </Col>
+                    )
+                    }
 
-                        {applicationData.status==="PENDING" ? (
-                            <>
-                                <Button variant="success" onClick={() => acceptApplication()}>Accept</Button>
-                                <Button variant="inline" color={"error"} onClick={() => rejectApplication()}>Reject</Button>
-                            </>
-                        ) : (
-                            <>
-                                <button type="button" className="btn btn-outline-success" onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</button>
-                                <button type="button" className="btn btn-outline-info" onClick={() => changeApplicationState("PENDING")}>Update State to Pending</button>
-                                <button type="button" className="btn btn-outline-danger" onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</button>
-                            </>
-                        )}
+                    <Col style={{textAlign: "end"}}>
+                        <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}> Go back </Button>
                     </Col>
-                </Row>
+                    </Row>
+                </Col>
+            </Row>
         </Container>
     );
 }

@@ -194,9 +194,6 @@ function InsertUpdateProposal(props) {
 
         const valid = isValidKeyword && isValidDescription && isValidType && isValidTitle && isValidCds;
 
-        if (selectedCds.length !== 0)
-            setIsValidCds(true);
-
         if (ev.currentTarget.checkValidity() === false || !valid) {
             if (selectedCds.length === 0)
                 setIsValidCds(false);
@@ -436,7 +433,7 @@ function InsertUpdateProposal(props) {
                             <MultiSelect
                                 options={optionsCds}
                                 value={selectedCds}
-                                onChange={setSelectedCds}
+                                onChange={ev => {setIsValidCds(true); setSelectedCds(ev)}}
                                 labelledBy="Select CdS"
                             />
                             { !isValidCds &&

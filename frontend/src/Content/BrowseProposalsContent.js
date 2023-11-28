@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useEffect, useContext } from "react";
 import API from "../API/Api";
-
-
 import {Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext, DropdownButton,Modal, Dropdown,ModalBody, ModalTitle} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
+
 
 export default function BrowseProposalsContent(props) {
 
@@ -59,21 +58,21 @@ function CustomToggle({ children, eventKey, callback }) {
     );
 
     const isCurrentEventKey = activeEventKey === eventKey;
-  
+
     return (
-      <Button
-        onClick={decoratedOnClick}
-      >
+        <Button
+            onClick={decoratedOnClick}
+        >
 
-      <div className="d-flex align-items-center">
-          <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
-          <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-          <span className="d-none d-md-table-cell"> Info </span>
-      </div>
+            <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
+                <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                <span className="d-none d-md-table-cell"> Info </span>
+            </div>
 
-      </Button>
+        </Button>
     );
-  }
+}
 
 function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
     const navigate = useNavigate();
@@ -98,7 +97,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
                                 <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                 <span className="d-none d-md-table-cell"> Options </span>
                             </div>
-                            }
+                        }
                         >
                             <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
                                 <div className="d-flex align-items-center">
@@ -134,33 +133,33 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
                 </Row>
             </Card.Header>
             <Accordion.Collapse eventKey={proposal.id} flush>
-            <Card.Body>
-                <Row>
-                    <Col><b>CdS</b><br/>{proposal.cdS}</Col>
-                    <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                    <Col><b>Level</b><br/>{proposal.level}</Col>
-                    <Col><b>Type</b><br/>{proposal.type}</Col>
-                </Row>
-                <Row>
-                    <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
-                    { proposal.requiredKnowledge.length > 0 &&
-                        <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
-                    }
-                    <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
-                </Row>
-                <Row className="pt-2">
-                    <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
-                    { proposal.coSupervisors.length > 0 &&
-                        <Col md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
-                    }
-                </Row>
-                <hr className="me-4"/>
-                <Row>
-                    <Col>
-                        {proposal.description}
-                    </Col>
-                </Row>
-            </Card.Body>
+                <Card.Body>
+                    <Row>
+                        <Col><b>CdS</b><br/>{proposal.cdS}</Col>
+                        <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
+                        <Col><b>Level</b><br/>{proposal.level}</Col>
+                        <Col><b>Type</b><br/>{proposal.type}</Col>
+                    </Row>
+                    <Row>
+                        <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
+                        { proposal.requiredKnowledge.length > 0 &&
+                            <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
+                        }
+                        <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
+                    </Row>
+                    <Row className="pt-2">
+                        <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
+                        { proposal.coSupervisors.length > 0 &&
+                            <Col md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
+                        }
+                    </Row>
+                    <hr className="me-4"/>
+                    <Row>
+                        <Col>
+                            {proposal.description}
+                        </Col>
+                    </Row>
+                </Card.Body>
             </Accordion.Collapse>
         </Card>
     )
