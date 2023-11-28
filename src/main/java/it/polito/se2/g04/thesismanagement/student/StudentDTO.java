@@ -26,6 +26,8 @@ public class StudentDTO {
     }
 
     public static StudentDTO fromStudent(Student student) {
+        if (student == null)
+            return null;
         return new StudentDTO(
                 student.getName() + " " + student.getSurname(),
                 student.getId(),

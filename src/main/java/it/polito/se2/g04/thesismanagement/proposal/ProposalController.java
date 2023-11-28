@@ -30,7 +30,7 @@ public class ProposalController {
     }
 
     /**
-     * @return List<Proposal> List of all not archived proposals
+     * @return List<ProposalFullDTO> List of all not archived proposals
      */
     @GetMapping("/API/proposal/getAll")
     @PreAuthorize("isAuthenticated()")
@@ -40,7 +40,7 @@ public class ProposalController {
     }
 
     /**
-     * @return List<Proposal> list of all not archived proposals, that have the currently logged in teacher as
+     * @return List<ProposalFullDTO> list of all not archived proposals, that have the currently logged in teacher as
      * supervisor or co-supervisor. If there are no proposals for that teacher or the logged-in user is not a teacher,
      * an empty List is returned
      */

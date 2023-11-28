@@ -31,14 +31,14 @@ public class TeacherController {
     @GetMapping("API/teacher/getById/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public Teacher getById(@PathVariable Long id){
+    public TeacherDTO getById(@PathVariable Long id){
         return teacherService.getById(id);
     }
 
     @GetMapping("API/teacher/getByEmail/{email}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public Teacher getByEmail(@PathVariable String email){
+    public TeacherDTO getByEmail(@PathVariable String email){
         return teacherService.getByEmail(email);
     }
 

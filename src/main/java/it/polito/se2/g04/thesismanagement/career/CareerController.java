@@ -21,7 +21,7 @@ public class CareerController {
      */
     @GetMapping("/API/career/getByStudent/{studentId}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public List<Career> getGradesForStudent(@PathVariable Long studentId){
+    public List<CareerDTO> getGradesForStudent(@PathVariable Long studentId){
         return careerService.getGradesForStudent(studentId);
     }
 

@@ -14,6 +14,8 @@ public class DegreeDTO {
     private String titleDegree;
 
     public static DegreeDTO fromDegree(Degree degree) {
+        if (degree == null)
+            return null;
         return new DegreeDTO(degree.getCodDegree(), degree.getTitleDegree());
     }
 }
