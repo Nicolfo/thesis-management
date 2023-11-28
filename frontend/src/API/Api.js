@@ -170,12 +170,28 @@ async function archiveProposal(proposalId,jwt) {
 };
 
 async function deleteProposal(proposalId,jwt) {
-
-    fetch(SERVER_URL + 'proposal/delete/'+proposalId, {
-        method: 'DELETE',
-        headers : {'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`}
-    })
+    return new Promise((resolve, reject) => {
+        fetch(URL + '/API/proposal/delete/' + proposalId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-successful responses
+                    reject(`Error: ${response.status} - ${response.statusText}`);
+                } else {
+                    // Resolve if the status is OK
+                    resolve();
+                }
+            })
+            .catch(error => {
+                // Handle network errors or other exceptions
+                reject(`Error: ${error.message}`);
+            });
+    });
 };
 
 async function getAllSupervisors() {
