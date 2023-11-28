@@ -31,7 +31,7 @@ export default function BrowseProposalsContent(props) {
 
 
     useEffect(() => {
-        if(props.user)  {
+        if(props.user && !deleting)  {
 
             getProposalList();
         }
