@@ -33,9 +33,10 @@ export default function BrowseProposalsContent(props) {
 
     useEffect(() => {
         if(props.user)  {
+
             getProposalList();
         }
-    }, [props.user, deleting, proposalList]);
+    }, [props.user, deleting]);
 
     return (
         <>
@@ -190,7 +191,7 @@ function Warning(props) {
 
                 <Modal.Footer>
                     <Button variant="primary" onClick={()=>props.setDeleting(false)}>Undo</Button>
-                    <Button variant="danger" onClick={()=> { deleteProposal(props.deletingID,props.user.token);props.setDeleting(false); }}>Delete</Button>
+                    <Button variant="danger" onClick={()=> { deleteProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false);}) }}>Delete</Button>
                 </Modal.Footer>
             </Modal.Dialog>
         </div>
