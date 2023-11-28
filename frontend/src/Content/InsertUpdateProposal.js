@@ -4,7 +4,7 @@ import {useContext, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
-import API from "../API/API2";
+import API from "../API/Api";
 import {AuthContext} from "react-oauth2-code-pkce";
 
 
@@ -193,9 +193,6 @@ function InsertUpdateProposal(props) {
         ev.preventDefault();
 
         const valid = isValidKeyword && isValidDescription && isValidType && isValidTitle && isValidCds;
-
-        if (selectedCds.length !== 0)
-            setIsValidCds(true);
 
         if (ev.currentTarget.checkValidity() === false || !valid) {
             if (selectedCds.length === 0)
@@ -436,7 +433,7 @@ function InsertUpdateProposal(props) {
                             <MultiSelect
                                 options={optionsCds}
                                 value={selectedCds}
-                                onChange={setSelectedCds}
+                                onChange={ev => {setIsValidCds(true); setSelectedCds(ev)}}
                                 labelledBy="Select CdS"
                             />
                             { !isValidCds &&
@@ -477,9 +474,6 @@ function InsertUpdateProposal(props) {
                         :
                         <></>
                     }
-                    {/*{alert &&*/}
-                    {/*    <Alert variant="success" onClose={() => setAlert(false)} dismissible > Api successful </Alert>*/}
-                    {/*}*/}
                 </Card.Footer>
             </Form>
         </Card>

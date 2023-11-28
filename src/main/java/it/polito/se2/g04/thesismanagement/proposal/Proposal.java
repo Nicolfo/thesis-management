@@ -51,6 +51,7 @@ public class Proposal {
     private String type;
     @ManyToMany
     private List<Group> groups;
+    @Column(columnDefinition = "varchar(5000)")
     private String description;
     private String requiredKnowledge;
     private String notes;

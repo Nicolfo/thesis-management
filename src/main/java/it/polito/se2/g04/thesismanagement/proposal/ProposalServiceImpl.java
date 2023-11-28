@@ -115,9 +115,6 @@ public class ProposalServiceImpl implements ProposalService {
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        // We gradually add predicates to the query, depending on
-        // the specified filters.
-
         predicates.add(cb.like(cb.upper(proposal.get("CdS")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
 
         if (proposalSearchRequest.getTitle() != null) {
@@ -147,12 +144,12 @@ public class ProposalServiceImpl implements ProposalService {
         if (proposalSearchRequest.getNotes() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("notes")), "%" + proposalSearchRequest.getNotes().toUpperCase() + "%"));
         }
-//        if (proposalSearchRequest.getMinExpiration() != null) {
-//            predicates.add(cb.greaterThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMinExpiration()));
-//        }
-//        if (proposalSearchRequest.getMaxExpiration() != null) {
-//            predicates.add(cb.lessThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMaxExpiration()));
-//        }
+        if (proposalSearchRequest.getLevel() != null) {
+            if (!List.of("Bachelor's", "Master's").contains(proposalSearchRequest.getLevel())) {
+                throw new ProposalLevelInvalidException("Proposal level '" + proposalSearchRequest.getLevel() + "' is not valid");
+            }
+            predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel()));
+        }
 
         cq.where(predicates.toArray(new Predicate[0]));
 
@@ -170,22 +167,24 @@ public class ProposalServiceImpl implements ProposalService {
                     include = false;
                 }
             }
-            // Check if it has all the co-supervisors
+            // Check if it has at least one of the co-supervisors
             if (proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
+                include = false;
                 for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {
-                    if (!coSupervisorIdList.contains(filterId)) {
-                        include = false;
+                    if (coSupervisorIdList.contains(filterId)) {
+                        include = true;
                         break;
                     }
                 }
             }
-            // Check if it has all the groups
+            // Check if it has at least one of the groups
             if (proposalSearchRequest.getCodGroupList() != null) {
                 List<Long> codGroupList = prop.getGroups().stream().map(Group::getCodGroup).toList();
+                include = false;
                 for (Long codGroup : proposalSearchRequest.getCodGroupList()) {
-                    if (!codGroupList.contains(codGroup)) {
-                        include = false;
+                    if (codGroupList.contains(codGroup)) {
+                        include = true;
                         break;
                     }
                 }

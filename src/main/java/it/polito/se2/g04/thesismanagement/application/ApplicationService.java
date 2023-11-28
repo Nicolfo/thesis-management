@@ -7,10 +7,10 @@ import java.util.List;
 @Service
 public interface ApplicationService {
 
-    public List<ApplicationDTO2> getApplicationsByProf(String profEmail);
-    public List<ApplicationDTO3> getApplicationsByStudent(String studentEmail);
-    public List<ApplicationDTO4> getApplicationsByProposal(Long proposalId);
-    public ApplicationDTO4 getApplicationById(Long applicationId);
+    public List<ApplicationDTO> getApplicationsByProf(String profEmail);
+    public List<ApplicationDTO> getApplicationsByStudent(String studentEmail);
+    public List<ApplicationDTO> getApplicationsByProposal(Long proposalId);
+    public ApplicationDTO getApplicationById(Long applicationId);
     public boolean acceptApplicationById(Long applicationId);
     public boolean rejectApplicationById(Long applicationId);
     public void applyForProposal(ApplicationDTO applicationDTO);

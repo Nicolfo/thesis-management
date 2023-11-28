@@ -1,7 +1,7 @@
 import {useContext, useState} from "react";
 import { useEffect } from "react";
 import API from "../API/Api";
-import {Button, Table} from "react-bootstrap";
+import {Badge, Button, Table} from "react-bootstrap";
 import dayjs from 'dayjs';
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -73,6 +73,16 @@ function BrowseApplicationsContent(props) {
 
 function ApplicationRow(props) {
     const navigate = useNavigate();
+
+    const statusBadge = () => {
+        if (props.application.status === "PENDING")
+            return <Badge bg="primary"> ⦿ PENDING </Badge>
+        else if (props.application.status === "ACCEPTED")
+            return <Badge bg="success"> ✓ ACCEPTED </Badge>
+        else if (props.application.status === "REJECTED")
+            return <Badge bg="danger"> ✕ REJECTED </Badge>
+    }
+
     const handleViewInfo = (id) => {
         navigate("/teacher/application/view?applicationId=" + props.application.id);
     };
@@ -83,7 +93,7 @@ function ApplicationRow(props) {
             <td className="d-none d-md-table-cell">{dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss')}</td>
             <td className="d-none d-md-table-cell">{props.application.studentName} {props.application.studentSurname}</td>
             <td className="d-none d-md-table-cell">{props.application.studentAverageGrades}</td>
-            <td>{props.application.status}</td>
+            <td>{statusBadge()}</td>
             <td>
                 <Button classname="d-flex align-items-center" onClick={() => handleViewInfo(props.application.id)} style={{ display: 'flex', alignItems: 'center' }}>
                     <span className="d-none d-md-table-cell">View info </span>

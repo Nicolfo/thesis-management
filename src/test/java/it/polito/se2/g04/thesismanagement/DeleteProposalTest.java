@@ -117,5 +117,9 @@ public class DeleteProposalTest {
         mapper.registerModule(new JavaTimeModule());
         Application[] applicationOutput = mapper.readValue(json, Application[].class);
         assertEquals(0, proposalOutput.length, "applicationOutput should be empty");
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

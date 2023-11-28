@@ -1,4 +1,4 @@
-import {insertApplication, uploadFile} from "../API/Api-Search";
+import API from "../API/Api";
 import {Button, FormGroup, FormLabel, Alert} from "react-bootstrap";
 import {useNavigate, useParams} from 'react-router-dom';
 import {useContext, useState} from "react";
@@ -38,8 +38,8 @@ function RenderProposal(props){
                 if(cv != undefined){
 
                     setCvSelected(true);
-                uploadFile(cv).then((id) => {
-                    insertApplication(id, proposalId)
+                API.uploadFile(cv).then((id) => {
+                    API.insertApplication(id, proposalId, props.user.token)
                 })
                 navigate('/search-for-proposal')}
                 else{

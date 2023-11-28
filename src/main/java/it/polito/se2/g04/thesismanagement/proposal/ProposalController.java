@@ -30,7 +30,7 @@ public class ProposalController {
     }
 
     /**
-     * @return List<Proposal> List of all not archived proposals
+     * @return List<ProposalFullDTO> List of all not archived proposals
      */
     @GetMapping("/API/proposal/getAll")
     @PreAuthorize("isAuthenticated()")
@@ -40,7 +40,7 @@ public class ProposalController {
     }
 
     /**
-     * @return List<Proposal> list of all not archived proposals, that have the currently logged in teacher as
+     * @return List<ProposalFullDTO> list of all not archived proposals, that have the currently logged in teacher as
      * supervisor or co-supervisor. If there are no proposals for that teacher or the logged-in user is not a teacher,
      * an empty List is returned
      */
@@ -95,7 +95,6 @@ public class ProposalController {
     @PostMapping("/API/proposal/search")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-
     public List<ProposalFullDTO> searchProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -116,8 +115,16 @@ public class ProposalController {
     @DeleteMapping("/API/proposal/delete/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteProposal(@PathVariable Long id){
+    public String deleteProposal(@PathVariable Long id){
         proposalService.deleteProposal(id);
+        return "Deleted correctly";
+    }
+
+    @DeleteMapping("/API/proposal/delete")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProposal(){
+        throw new deleteWithNoId("can't delete a proposal without his id");
     }
 
 }
