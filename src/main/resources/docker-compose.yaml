@@ -9,7 +9,7 @@ services:
       - "8081"
     build:
       context: .
-    container_name: lab5
+    container_name: app
     depends_on:
       - db
       - keycloak
@@ -17,11 +17,11 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create
       - KEYCLOAK_HOST=keycloak
 
   db:
-    image: 'nicolfo/postgres-se2'
+    image: 'postgres:latest'
     container_name: db
     ports:
       - "5432:5432"
