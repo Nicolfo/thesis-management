@@ -43,7 +43,7 @@ export default function BrowseProposalsContent(props) {
             <h4>Your thesis proposals</h4>
             {deleting? <Row><Col></Col><Col><Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID} getProposalList={getProposalList}> </Warning></Col> <Col></Col></Row>:
             <Accordion defaultActiveKey="0">
-                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ console.log(proposal);return <ProposalAccordion user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
+                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ return <ProposalAccordion user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
             </Accordion>}
         </>
     );
@@ -79,7 +79,6 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
     const navigate = useNavigate();
 
     function deleteProp(proposalId){
-        console.log(proposalId)
         setDeleting(true);
         setDeletingID(proposalId)
     }
