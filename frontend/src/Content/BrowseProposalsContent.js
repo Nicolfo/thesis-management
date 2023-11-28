@@ -32,6 +32,8 @@ export default function BrowseProposalsContent(props) {
 
     useEffect(() => {
         if(props.user)  {
+            console.log("user", props.user);
+            console.log("deleting", deleting);
             getProposalList();
         }
     }, [props.user, deleting]);
@@ -39,10 +41,10 @@ export default function BrowseProposalsContent(props) {
     return (
         <>
 
-            <h4>Your thesis proposals</h4>
-            {deleting? <Row><Col></Col><Col><Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID}> </Warning></Col> <Col></Col></Row>:
+
+            {deleting? <Row><Col></Col><Col><Warning user={props.user} setDeleting={setDeleting} deletingID={deletingID}> <h4>Your thesis proposals</h4></Warning></Col> <Col></Col></Row>:
             <Accordion defaultActiveKey="0">
-                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ console.log(proposal);return <ProposalAccordion user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
+                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ return <ProposalAccordion user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
             </Accordion>}
         </>
     );
@@ -83,7 +85,6 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID }) {
     const navigate = useNavigate();
 
     function deleteProp(proposalId){
-        console.log(proposalId)
         setDeleting(true);
         setDeletingID(proposalId)
     }
@@ -126,7 +127,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID }) {
                                     <span className="d-none d-md-table-cell"> Archive </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => {deleteProp(proposal.id); console.log(proposal.id)}}>
+                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => {deleteProp(proposal.id)}}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-trash-can" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
@@ -175,8 +176,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID }) {
 function Warning(props) {
     return (
         <div
-            className="modal show"
-            style={{ display: 'block', position: 'initial' }}
+            className="modal show d-flex align-items-center justify-content-center vh-100"
         >
             <Modal.Dialog>
                 <Modal.Header >

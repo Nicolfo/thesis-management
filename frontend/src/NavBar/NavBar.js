@@ -19,8 +19,6 @@ function NavBar(props) {
         if (props.user === undefined || props.user === null) {
             login();
         } else {
-            console.log(props.user)
-
             logOut();
         }
     }
