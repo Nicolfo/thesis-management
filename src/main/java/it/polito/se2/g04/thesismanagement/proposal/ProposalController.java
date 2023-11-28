@@ -115,8 +115,9 @@ public class ProposalController {
     @DeleteMapping("/API/proposal/delete/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteProposal(@PathVariable Long id){
+    public String deleteProposal(@PathVariable Long id){
         proposalService.deleteProposal(id);
+        return "Deleted correctly";
     }
 
 }

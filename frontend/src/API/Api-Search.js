@@ -69,20 +69,54 @@ export async function insertApplication(cvId, proposalId, jwt) {
 
 export async function deleteProposal(proposalId,jwt) {
 
-    fetch(URL + '/API/proposal/delete/'+proposalId, {
-        method: 'DELETE',
-        headers : {'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`}
-    })
+    return new Promise((resolve, reject) => {
+        fetch(URL + '/API/proposal/delete/' + proposalId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-successful responses
+                    reject(`Error: ${response.status} - ${response.statusText}`);
+                } else {
+                    // Resolve if the status is OK
+                    resolve();
+                }
+            })
+            .catch(error => {
+                // Handle network errors or other exceptions
+                reject(`Error: ${error.message}`);
+            });
+    });
 };
 
 
 export async function archiveProposal(proposalId,jwt) {
 
-    fetch(URL + `/API/proposal/archive/${proposalId}`, {
-        method: 'POST',
-        headers : {'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`,},
-        body: JSON.stringify({"proposalId": proposalId})
-    })
+    return new Promise((resolve, reject) => {
+        fetch(URL + `/API/proposal/archive/${proposalId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`,
+            },
+            body: JSON.stringify({ "proposalId": proposalId })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-successful responses
+                    reject(`Error: ${response.status} - ${response.statusText}`);
+                } else {
+                    // Resolve if the status is OK
+                    resolve();
+                }
+            })
+            .catch(error => {
+                // Handle network errors or other exceptions
+                reject(`Error: ${error.message}`);
+            });
+    });
 };
