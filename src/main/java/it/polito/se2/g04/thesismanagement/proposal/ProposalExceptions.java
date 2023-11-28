@@ -16,6 +16,10 @@ public class ProposalExceptions {
     public ProblemDetail handleServiceNotFound(createUpdateProposalWithNoPathVariable e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
+    @ExceptionHandler(deleteWithNoId.class)
+    public ProblemDetail handleServiceNotFound(deleteWithNoId e){
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
+    }
 }
 
 class JsonStringCantDeserialize extends RuntimeException{
@@ -26,4 +30,8 @@ class createUpdateProposalWithNoPathVariable extends RuntimeException {
     public createUpdateProposalWithNoPathVariable(String message) {
         super(message);
     }
+}
+
+class deleteWithNoId extends RuntimeException{
+    public deleteWithNoId(String message) {super(message);}
 }

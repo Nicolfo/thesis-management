@@ -120,4 +120,11 @@ public class ProposalController {
         return "Deleted correctly";
     }
 
+    @DeleteMapping("/API/proposal/delete")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProposal(){
+        throw new deleteWithNoId("can't delete a proposal without his id");
+    }
+
 }

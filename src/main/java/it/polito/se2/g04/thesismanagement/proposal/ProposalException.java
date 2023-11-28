@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.group.GroupNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,4 +16,6 @@ public class ProposalException {
     public ProblemDetail proposalOwnership(ProposalOwnershipException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());
     }
+
+
 }
