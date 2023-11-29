@@ -13,7 +13,6 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -81,6 +80,9 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
+        if(!proposalRepository.existsById(id))
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
                 old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
