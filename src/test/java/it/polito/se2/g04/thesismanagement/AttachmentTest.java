@@ -95,6 +95,11 @@ public class AttachmentTest {
         Assert.isTrue(attachmentDTO.getFilename().compareTo("test-file.txt")==0);
     }
 
+    @AfterAll
+    public void cleanup() {
+
+    }
+
 
     @Test
     @Rollback

@@ -95,12 +95,16 @@ public class AcceptApplicationTest {
         applicationRepository.save(application1);
         applicationRepository.save(application2);
     }
+
     @AfterAll
     public void CleanUp(){
         applicationRepository.deleteAll();
         proposalRepository.deleteAll();
         teacherRepository.deleteAll();
         studentRepository.deleteAll();
+        groupRepository.deleteAll();
+        departmentRepository.deleteAll();
+
     }
 
     @Test
@@ -163,13 +167,13 @@ public class AcceptApplicationTest {
         application3 = applicationRepository.save(application3);
 
         //get result
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/1")
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/" + application1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         String json = res.getResponse().getContentAsString();
 
-        assertEquals(json, "true");
+        assertEquals("true", json);
         assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.ACCEPTED));
         assertEquals(0, applicationRepository.getApplicationById(3L).getStatus().compareTo(ApplicationStatus.REJECTED));
         assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -64,10 +65,10 @@ public class ProposalServiceImpl implements ProposalService {
         Proposal toAdd=new Proposal(
                 proposalDTO.getTitle(),
                 teacher,
-                proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it)).toList(),
+                proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : null,
                 proposalDTO.getKeywords(),
                 proposalDTO.getType(),
-                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup())).toList(),
+                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
                 proposalDTO.getDescription(),
                 proposalDTO.getRequiredKnowledge(),
                 proposalDTO.getNotes(),
@@ -85,23 +86,22 @@ public class ProposalServiceImpl implements ProposalService {
 
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
-                old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
-                if(proposalDTO.getCoSupervisors().size()>0) {
-                    old.getCoSupervisors().clear();
-                    proposalDTO.getCoSupervisors().stream().forEach(it -> old.getCoSupervisors().add(teacherRepository.getReferenceById(it)));
-                }
-                old.setType(proposalDTO.getType());
-                old.getGroups().clear();
-                old.getGroups().addAll(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup())).toList());
-                old.setDescription(proposalDTO.getDescription());
-                old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
-                old.setNotes(proposalDTO.getNotes());
-                old.setExpiration(proposalDTO.getExpiration());
-                old.setLevel(proposalDTO.getLevel());
-                old.setCdS(proposalDTO.getCds());
-                old.setKeywords(proposalDTO.getKeywords());
+        old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
+        if(proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
+            old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()));
+        }
+        old.setType(proposalDTO.getType());
+        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
+        old.setDescription(proposalDTO.getDescription());
+        old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
+        old.setNotes(proposalDTO.getNotes());
+        old.setExpiration(proposalDTO.getExpiration());
+        old.setLevel(proposalDTO.getLevel());
+        old.setCdS(proposalDTO.getCds());
+        old.setKeywords(proposalDTO.getKeywords());
 
-        return ProposalFullDTO.fromProposal(proposalRepository.save(old));
+        Proposal updated = proposalRepository.save(old);
+        return ProposalFullDTO.fromProposal(updated);
     }
 
     @Override

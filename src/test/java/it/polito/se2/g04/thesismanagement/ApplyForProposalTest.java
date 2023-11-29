@@ -150,7 +150,7 @@ public class ApplyForProposalTest {
         applicationDTO.setProposalId(proposal.getId());
         //ApplicationDTO applicationDTO = new ApplicationDTO(attachmentID,new Date(), proposal.getId());
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/insert")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/API/application/insert/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(applicationDTO));
 

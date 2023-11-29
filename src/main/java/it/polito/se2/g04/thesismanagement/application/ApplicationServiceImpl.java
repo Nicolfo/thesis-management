@@ -152,7 +152,7 @@ public class ApplicationServiceImpl implements ApplicationService{
             if (application.getStatus() != ApplicationStatus.PENDING)
                 return false;
             application.setStatus(ApplicationStatus.ACCEPTED);
-            applicationRepository.save(application);
+            application = applicationRepository.save(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return rejectApplicationsByProposal(application.getProposal().getId(),applicationId);
         } catch (Exception e) {
