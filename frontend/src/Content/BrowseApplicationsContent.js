@@ -41,7 +41,7 @@ function BrowseApplicationsContent(props) {
             <div className="bordered-box">
                 <h1 style={{"textAlign": "center"}}>My application proposals</h1>
                 <hr className="separator" />
-                <Table striped hover className="mb-4">
+                <Table responsive striped hover className="mb-4">
                     <thead>
                         { applications.length > 0 ?
                             <tr>
@@ -96,7 +96,8 @@ function ApplicationRow(props) {
             <td>{statusBadge()}</td>
             <td>
                 <Button classname="d-flex align-items-center" onClick={() => handleViewInfo(props.application.id)} style={{ display: 'flex', alignItems: 'center' }}>
-                    <span className="d-none d-md-table-cell">View info </span>
+                    <span className="d-none d-md-table-cell"> View info </span>
+                    <p style={{visibility: "hidden"}} className="d-none d-md-table-cell">_</p>
                     <FontAwesomeIcon icon={"chevron-right"} />
                 </Button>
             </td>
