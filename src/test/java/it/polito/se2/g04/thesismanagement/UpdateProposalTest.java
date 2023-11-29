@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -81,7 +83,12 @@ public class UpdateProposalTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/update/{id}", 2f)
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/update/a")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/update/" + new Random().nextLong(2,100))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
