@@ -30,13 +30,6 @@ public interface ApplicationService {
      */
     public boolean rejectApplicationById(Long applicationId);
     public void applyForProposal(ApplicationDTO applicationDTO);
-    boolean changeApplicationStateById(Long applicationId, String newState);
-    boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId);
-   
-  /*
-   public void acceptApplication(Long applicationID);
-
-
     /**
      * This method changes the state of a given application to the given string. This is done regardless
      * the current state of the application. After the state was changed, the student who handed in the application
@@ -46,4 +39,7 @@ public interface ApplicationService {
      * @return true if changing the state was successful, false if it wasn't.
      */
     boolean changeApplicationStateById(Long applicationId, String newState);
+    boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId);
+   
+
 }

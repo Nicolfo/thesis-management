@@ -166,8 +166,8 @@ public class ApplicationServiceImpl implements ApplicationService{
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Student loggedUser = studentRepository.getStudentByEmail(auth.getName());
             Application toSave = new Application(loggedUser, attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()), applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
-            applicationRepository.save(toSave);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(toSave);
+            Application saved=applicationRepository.save(toSave);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
         }catch (Exception ex){
             throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
         }
