@@ -127,5 +127,4 @@ I want to update a thesis proposal
   - Email: nicolfo2@hotmail.it
   - Password: Test.123456
 - Student:
-  - Email: nicolfo3@hotmail.it
   - Password: Test.654321

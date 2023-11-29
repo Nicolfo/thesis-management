@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.application;
 
+import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.proposal.*;
 import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
@@ -25,6 +26,7 @@ public class ApplicationServiceImpl implements ApplicationService{
     private final AttachmentRepository attachmentRepository;
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
+    private final EmailService emailService;
 
     @Override
     public List<ApplicationDTO> getApplicationsByProf(String profEmail) {
@@ -151,6 +153,7 @@ public class ApplicationServiceImpl implements ApplicationService{
                 return false;
             application.setStatus(ApplicationStatus.ACCEPTED);
             applicationRepository.save(application);
+            emailService.notifyStudentOfApplicationDecision(application);
             return rejectApplicationsByProposal(application.getProposal().getId(),applicationId);
         } catch (Exception e) {
             return false;
@@ -164,6 +167,7 @@ public class ApplicationServiceImpl implements ApplicationService{
             Student loggedUser = studentRepository.getStudentByEmail(auth.getName());
             Application toSave = new Application(loggedUser, attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()), applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
             applicationRepository.save(toSave);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(toSave);
         }catch (Exception ex){
             throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
         }
@@ -177,7 +181,9 @@ public class ApplicationServiceImpl implements ApplicationService{
             Application application = getApplicationByIdOriginal(applicationId);
             application.setStatus(newStateEnum);
             applicationRepository.save(application);
-            if(newStateEnum == ApplicationStatus.REJECTED){
+
+            emailService.notifyStudentOfApplicationDecision(application);
+            if(newStateEnum == ApplicationStatus.ACCEPTED){
                 return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
             }
             return true;
@@ -186,19 +192,6 @@ public class ApplicationServiceImpl implements ApplicationService{
         }
     }
 
-    /*
-     @Override
-      public void acceptApplication(Long applicationID) {
-          //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
-          try {
-              Application toAccept =applicationRepository.getReferenceById(applicationID);
-              toAccept.setStatus("ACCEPTED");
-              applicationRepository.save(toAccept);
-          }catch (Exception ex){
-              throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
-            }
-      }
-    */
       @Override
     public boolean rejectApplicationById(Long applicationId) {
         try {
@@ -207,11 +200,13 @@ public class ApplicationServiceImpl implements ApplicationService{
                 return false;
             application.setStatus(ApplicationStatus.REJECTED);
             applicationRepository.save(application);
+            emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
             return false;
           }
     }
+
 
     @Override
     public boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId){
@@ -239,5 +234,4 @@ public class ApplicationServiceImpl implements ApplicationService{
   
   */
  
-
 }

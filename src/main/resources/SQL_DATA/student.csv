@@ -1,11 +1,11 @@
 ﻿id,surname,name,gender,nationality,email,cod_degree,enrollment_year
-300001,Ferrari,Alessia,Female,Italy,alessia.ferrari@polito.it,1,2020
-300002,Müller,Lena,Female,Germany,lena.muller@polito.it,3,2021
-300003,Conti,Luca,Male,Italy,luca.conti@polito.it,2,2021
-300004,Smith,Emily,Female,United States,emily.smith@polito.it,1,2021
-300005,Esposito,Matteo,Male,Italy,matteo.esposito@polito.it,3,2021
-300006,Giordano,Chiara,Female,Italy,chiara.giordano@polito.it,1,2022
-300007,Bianchi,Luca,Male,Italy,luca.bianchi@polito.it,2,2022
-300008,Kumar,Raj,Male,India,raj.kumar@polito.it,3,2023
-300009,Santos,Maria,Female,Portugal,maria.santos@polito.it,2,2023
-300010,Nguyen,Quang,Male,Vietnam,quang.nguyen@polito.it,1,2023
+300001,Ferrari,Alessia,Female,Italy,alessia.ferrari@example.com,1,2020
+300002,Müller,Lena,Female,Germany,lena.muller@example.com,3,2021
+300003,Conti,Luca,Male,Italy,luca.conti@example.com,2,2021
+300004,Smith,Emily,Female,United States,emily.smith@example.com,1,2021
+300005,Esposito,Matteo,Male,Italy,matteo.esposito@example.com,3,2021
+300006,Giordano,Chiara,Female,Italy,chiara.giordano@example.com,1,2022
+300007,Bianchi,Luca,Male,Italy,luca.bianchi@example.com,2,2022
+300008,Kumar,Raj,Male,India,raj.kumar@example.com,3,2023
+300009,Santos,Maria,Female,Portugal,maria.santos@example.com,2,2023
+300010,Nguyen,Quang,Male,Vietnam,quang.nguyen@example.com,1,2023
