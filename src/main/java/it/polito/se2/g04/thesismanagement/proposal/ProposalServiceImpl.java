@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -12,7 +13,6 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -21,28 +21,28 @@ import java.util.stream.Stream;
 public class ProposalServiceImpl implements ProposalService {
     private final ProposalRepository proposalRepository;
     private final TeacherRepository teacherRepository;
+    private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository) {
+    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
+        this.applicationRepository= applicationRepository;
     }
 
 
     @Override
-    public List<Proposal> getAllProposals(){
-        return proposalRepository.findAll();
+    public List<ProposalFullDTO> getAllProposals(){
+        return proposalRepository.findAll().stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Override
-    public List<Proposal> getProposalsByProf(String UserName){
+    public List<ProposalFullDTO> getProposalsByProf(String UserName){
         Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchivedOrderById(teacher, false);
-            /*List<Proposal> coSupervisorProposals = proposalRepository.findAllByCoSupervisorsContainsAndArchivedOrderById(teacher, false);
-            supervisorProposals.addAll(coSupervisorProposals);*/
-            return supervisorProposals;
+            return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
         }
         return new ArrayList<>();
     }
@@ -59,7 +59,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal createProposal(ProposalDTO proposalDTO) {
+    public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
         Teacher teacher=teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
         Proposal toAdd=new Proposal(
                 proposalDTO.getTitle(),
@@ -75,12 +75,14 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getLevel(),
                 proposalDTO.getCds()
         );
-        System.out.println( toAdd);
-        return proposalRepository.save(toAdd) ;
+        return ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
     }
 
     @Override
-    public Proposal updateProposal(Long id, ProposalDTO proposalDTO) {
+    public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
+        if(!proposalRepository.existsById(id))
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
                 old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
@@ -99,24 +101,23 @@ public class ProposalServiceImpl implements ProposalService {
                 old.setCdS(proposalDTO.getCds());
                 old.setKeywords(proposalDTO.getKeywords());
 
-        return proposalRepository.save(old);
+        return ProposalFullDTO.fromProposal(proposalRepository.save(old));
     }
 
     @Override
-    public List<Proposal> getAllNotArchivedProposals(){
-        return proposalRepository.findAllByArchived(false);
+    public List<ProposalFullDTO> getAllNotArchivedProposals(){
+        return proposalRepository.findAllByArchived(false).stream().map(ProposalFullDTO::fromProposal).toList();
     }
     @Query
     @Override
-    public List<Proposal> searchProposals(ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        // We gradually add predicates to the query, depending on
-        // the specified filters.
+        predicates.add(cb.like(cb.upper(proposal.get("CdS")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
 
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
@@ -128,7 +129,10 @@ public class ProposalServiceImpl implements ProposalService {
             }
         }
         if (proposalSearchRequest.getType() != null) {
-            predicates.add(cb.equal(cb.upper(proposal.get("type")), proposalSearchRequest.getType().toUpperCase()));
+            List<String> typeList = List.of(proposalSearchRequest.getType().split("[\\s,]+"));
+            for (String type : typeList) {
+                predicates.add(cb.like(cb.upper(proposal.get("type")), "%" + type.toUpperCase() + "%"));
+            }
         }
         if (proposalSearchRequest.getDescription() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("description")), "%" + proposalSearchRequest.getDescription().toUpperCase() + "%"));
@@ -142,11 +146,11 @@ public class ProposalServiceImpl implements ProposalService {
         if (proposalSearchRequest.getNotes() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("notes")), "%" + proposalSearchRequest.getNotes().toUpperCase() + "%"));
         }
-        if (proposalSearchRequest.getMinExpiration() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMinExpiration()));
-        }
-        if (proposalSearchRequest.getMaxExpiration() != null) {
-            predicates.add(cb.lessThanOrEqualTo(proposal.<Timestamp>get("expiration"), proposalSearchRequest.getMaxExpiration()));
+        if (proposalSearchRequest.getLevel() != null) {
+            if (!List.of("Bachelor's", "Master's").contains(proposalSearchRequest.getLevel())) {
+                throw new ProposalLevelInvalidException("Proposal level '" + proposalSearchRequest.getLevel() + "' is not valid");
+            }
+            predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel().toUpperCase()));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
@@ -165,22 +169,24 @@ public class ProposalServiceImpl implements ProposalService {
                     include = false;
                 }
             }
-            // Check if it has all the co-supervisors
+            // Check if it has at least one of the co-supervisors
             if (proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
+                include = false;
                 for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {
-                    if (!coSupervisorIdList.contains(filterId)) {
-                        include = false;
+                    if (coSupervisorIdList.contains(filterId)) {
+                        include = true;
                         break;
                     }
                 }
             }
-            // Check if it has all the groups
+            // Check if it has at least one of the groups
             if (proposalSearchRequest.getCodGroupList() != null) {
                 List<Long> codGroupList = prop.getGroups().stream().map(Group::getCodGroup).toList();
+                include = false;
                 for (Long codGroup : proposalSearchRequest.getCodGroupList()) {
-                    if (!codGroupList.contains(codGroup)) {
-                        include = false;
+                    if (codGroupList.contains(codGroup)) {
+                        include = true;
                         break;
                     }
                 }
@@ -190,6 +196,32 @@ public class ProposalServiceImpl implements ProposalService {
             }
         }
 
-        return filteredList;
+        return filteredList.stream().map(ProposalFullDTO::fromProposal).toList();
+    }
+
+
+
+    @Override
+    public Proposal archiveProposal(Long id) {
+        if(!proposalRepository.existsById(id)){
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+        }
+        Proposal old= proposalRepository.getReferenceById(id);
+        if (old.getArchived()){
+            throw(new ProposalNotFoundException("Proposal already archived"));
+        }else{
+            old.setArchived(true);
+        }
+
+        return proposalRepository.save(old);
+    }
+
+    @Override
+    public void deleteProposal(Long id){
+        if(!proposalRepository.existsById(id))
+            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+
+        applicationRepository.getApplicationByProposal_Id(id).forEach(it->applicationRepository.deleteById(it.getId()));
+        proposalRepository.deleteById(id);
     }
 }

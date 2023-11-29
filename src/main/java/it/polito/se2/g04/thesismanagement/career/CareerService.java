@@ -10,5 +10,5 @@ public interface CareerService {
      * @param studentId Long describing the id of the Student of who the grades should be returned
      * @return List of Career, describing the grades the student with the given studentId has archieved
      */
-    public List<Career> getGradesForStudent (Long studentId);
+    public List<CareerDTO> getGradesForStudent (Long studentId);
 }

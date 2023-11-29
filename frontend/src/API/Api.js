@@ -1,7 +1,6 @@
-
-
-
-const SERVER_URL = "http://localhost:8080/API/";
+import dayjs from "dayjs";
+ 
+const SERVER_URL = "http://localhost:8081/API/";
 
 /**
  * A utility function for parsing the HTTP response.
@@ -57,37 +56,48 @@ const getProposalsByProf = async (jwt) => {
     }));
 }
 
-const getAllTeachers = async () => {
-    return getJson(fetch(SERVER_URL + 'teacher/getAll'));
+const getAllCds = async (jwt) => {
+    return getJson(fetch(SERVER_URL + 'Degree/getAllNames',{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
 }
 
-const getAllCds = async () => {
-    return getJson(fetch(SERVER_URL + 'Degree/getAllNames'));
+const getByEmail = async (email,jwt) => {
+    return getJson(fetch(`${SERVER_URL}teacher/getByEmail/${email}`,{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
 }
 
-const getByEmail = async (email) => {
-    return getJson(fetch(`${SERVER_URL}teacher/getByEmail/${email}`));
-}
-
-const insertProposal = async (proposal) => {
-    return getJson(fetch(`${SERVER_URL}proposal/insert/${proposal}`, {
+const insertProposal = async (proposal,jwt) => {
+    return fetch(SERVER_URL + 'proposal/insert/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
-    }))
+    })
 };
 
-const updateProposal = async (proposal) => {
-    return getJson(fetch(`${SERVER_URL}proposal/update/${proposal.id}`, {
+const updateProposal = async (proposal,jwt) => {
+    return fetch(`${SERVER_URL}proposal/update/${proposal.id}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
-    }))
+    })
 };
+
 const getApplicationsByProf = async (jwt) => {
     return getJson(fetch(SERVER_URL+"application/getByProf",{
         method: 'GET',
@@ -108,201 +118,114 @@ const getApplicationsByStudent = async (jwt) => {
     }));
 }
 
-
-
-// Get all proposals
-// TODO: this is a placeholder until the back-end endpoint is available
-// For now I always return the same hard-coded values
-const getAllProposals = async () => {
-    return [
-        {
-            "id": 2,
-            "title": "A Mobile App for Remote Telepathology",
-            "supervisor": {
-                "id": 3,
-                "surname": "Marchetto",
-                "name": "Guido",
-                "email": "g.marchetto@polito.iot",
-                "group": {
-                    "codGroup": "CHENERGY",
-                    "name": "Chemistry and Energy Technologies"
-                },
-                "department": {
-                    "codDepartment": "DET",
-                    "name": "Electronics and Telecommunications"
-                }
-            },
-            "coSupervisors": [
-                {
-                    "id": 1,
-                    "surname": "Rossi",
-                    "name": "Mario",
-                    "email": "m.rossi@polito.it",
-                    "group": {
-                        "codGroup": "CMPCS",
-                        "name": "Condensed Matter Physics and Complex Systems"
-                    },
-                    "department": {
-                        "codDepartment": "DAD",
-                        "name": "Architecture and Design"
-                    }
-                },
-                {
-                    "id": 3,
-                    "surname": "Bianchi",
-                    "name": "Luca",
-                    "email": "l.bianchi@polito.it",
-                    "group": {
-                        "codGroup": "CREST",
-                        "name": "Catalytic Reaction Engineering for Sustainable Technologies"
-                    },
-                    "department": {
-                        "codDepartment": "CCE",
-                        "name": "Control and Computer Engineering"
-                    }
-                }
-            ],
-            "keywords": "Mobile Applications, Artifical Intelligence, Human-Computer Interfaces, Machine Learning, Software Testing",
-            "type": "External Company Project",
-            "groups": [
-                {
-                    "codGroup": "GRAINS",
-                    "name": "Generative Relational Analysis and INtegrations Systems"
-                }
-            ],
-            "description": "Many End-to-End (E2E) testing tools allow developers to create repeatable test scripts that mimic a human user's interaction with the application and evaluate its response. Various paradigms of testing tools have been defined that are differentiated based upon the way the widgets are located on the GUI (e.g., text, images, layout properties). This thesis falls within the visual GUI testing paradigm scope, where screen snapshots used as visual locators:\n- identify the widgets, and\n- replicate an existing test suite across multiple devices or versions of the same app.\n\nThis technique leverages image recognition algorithms.\n\nIn particular, the thesis focuses on testing mobile applications where the same widgets have to be identified across multiple devices, with different screen sizes and characteristics. In this context, marginal variations in the graphical rendering can invalidate widgets' recognition if the image recognition algorithm is not sufficiently robust. This thesis aims to extend an existing prototype for visual GUI testing by leveraging deep learning. In particular, the following activities are envisioned:\n- Training a detector to identify widgets and their classes with high recall.\n- Using the features extracted by the neural network to match the same widgets when the app is rendered across multiple devices.\n- Investigating the possibility of integrating text extraction with image analysis.\n\nThe solution will be characterized and possibly optimized in terms of accuracy and execution speed. The developed techniques will be included in an open-source library.\nThe student should possess or should be willing to acquire these skills:\n- programming skills (Python, deep learning frameworks);\n- experience in training deep neural networks;\n- fundamentals of mobile development (Android GUI, the Android Studio development environment).",
-            "requiredKnowledge": "programming skills (Python, deep learning frameworks), experience in training deep neural networks, fundamentals of mobile development (Android GUI, the Android Studio development environment)",
-            "notes": "See also: http://grains.polito.it/work.php",
-            "expiration": "2024-07-19T22:00:00.000+00:00",
-            "level": "Master's",
-            "cdS": "Electrical Engineering"
-        },
-        {
-            "id": 3,
-            "title": "3D Reconstruction and VR visualization of nuclear scattering events",
-            "supervisor": {
-                "id": 1,
-                "surname": "Lamberti",
-                "name": "Fabrizio",
-                "email": "f.lamberti@polito.iot",
-                "group": {
-                    "codGroup": "CHENERGY",
-                    "name": "Chemistry and Energy Technologies"
-                },
-                "department": {
-                    "codDepartment": "DET",
-                    "name": "Electronics and Telecommunications"
-                }
-            },
-            "coSupervisors": [
-                {
-                    "id": 1,
-                    "surname": "Rossi",
-                    "name": "Mario",
-                    "email": "m.rossi@polito.it",
-                    "group": {
-                        "codGroup": "CMPCS",
-                        "name": "Condensed Matter Physics and Complex Systems"
-                    },
-                    "department": {
-                        "codDepartment": "DAD",
-                        "name": "Architecture and Design"
-                    }
-                },
-                {
-                    "id": 3,
-                    "surname": "Bianchi",
-                    "name": "Luca",
-                    "email": "l.bianchi@polito.it",
-                    "group": {
-                        "codGroup": "CREST",
-                        "name": "Catalytic Reaction Engineering for Sustainable Technologies"
-                    },
-                    "department": {
-                        "codDepartment": "CCE",
-                        "name": "Control and Computer Engineering"
-                    }
-                }
-            ],
-            "keywords": "Mobile Applications, Artifical Intelligence, Human-Computer Interfaces, Machine Learning, Software Testing",
-            "type": "External Company Project",
-            "groups": [
-                {
-                    "codGroup": "GRAINS",
-                    "name": "Generative Relational Analysis and INtegrations Systems"
-                }
-            ],
-            "description": "Many End-to-End (E2E) testing tools allow developers to create repeatable test scripts that mimic a human user's interaction with the application and evaluate its response. Various paradigms of testing tools have been defined that are differentiated based upon the way the widgets are located on the GUI (e.g., text, images, layout properties). This thesis falls within the visual GUI testing paradigm scope, where screen snapshots used as visual locators:\n- identify the widgets, and\n- replicate an existing test suite across multiple devices or versions of the same app.\n\nThis technique leverages image recognition algorithms.\n\nIn particular, the thesis focuses on testing mobile applications where the same widgets have to be identified across multiple devices, with different screen sizes and characteristics. In this context, marginal variations in the graphical rendering can invalidate widgets' recognition if the image recognition algorithm is not sufficiently robust. This thesis aims to extend an existing prototype for visual GUI testing by leveraging deep learning. In particular, the following activities are envisioned:\n- Training a detector to identify widgets and their classes with high recall.\n- Using the features extracted by the neural network to match the same widgets when the app is rendered across multiple devices.\n- Investigating the possibility of integrating text extraction with image analysis.\n\nThe solution will be characterized and possibly optimized in terms of accuracy and execution speed. The developed techniques will be included in an open-source library.\nThe student should possess or should be willing to acquire these skills:\n- programming skills (Python, deep learning frameworks);\n- experience in training deep neural networks;\n- fundamentals of mobile development (Android GUI, the Android Studio development environment).",
-            "requiredKnowledge": "programming skills (Python, deep learning frameworks), experience in training deep neural networks, fundamentals of mobile development (Android GUI, the Android Studio development environment)",
-            "notes": "See also: http://grains.polito.it/work.php",
-            "expiration": "2024-07-19T22:00:00.000+00:00",
-            "level": "Bachelor's",
-            "cdS": "Computer Engineering"
-        },
-        {
-            "id": 4,
-            "title": "Computer vision techniques for mobile testing",
-            "supervisor": {
-                "id": 2,
-                "surname": "Verdi",
-                "name": "Giuseppe",
-                "email": "g.verdi@polito.iot",
-                "group": {
-                    "codGroup": "CHENERGY",
-                    "name": "Chemistry and Energy Technologies"
-                },
-                "department": {
-                    "codDepartment": "DET",
-                    "name": "Electronics and Telecommunications"
-                }
-            },
-            "coSupervisors": [
-                {
-                    "id": 1,
-                    "surname": "Rossi",
-                    "name": "Mario",
-                    "email": "m.rossi@polito.it",
-                    "group": {
-                        "codGroup": "CMPCS",
-                        "name": "Condensed Matter Physics and Complex Systems"
-                    },
-                    "department": {
-                        "codDepartment": "DAD",
-                        "name": "Architecture and Design"
-                    }
-                },
-                {
-                    "id": 3,
-                    "surname": "Bianchi",
-                    "name": "Luca",
-                    "email": "l.bianchi@polito.it",
-                    "group": {
-                        "codGroup": "CREST",
-                        "name": "Catalytic Reaction Engineering for Sustainable Technologies"
-                    },
-                    "department": {
-                        "codDepartment": "CCE",
-                        "name": "Control and Computer Engineering"
-                    }
-                }
-            ],
-            "keywords": "Mobile Applications, Artifical Intelligence, Human-Computer Interfaces, Machine Learning, Software Testing",
-            "type": "External Company Project",
-            "groups": [
-                {
-                    "codGroup": "GRAINS",
-                    "name": "Generative Relational Analysis and INtegrations Systems"
-                }
-            ],
-            "description": "Many End-to-End (E2E) testing tools allow developers to create repeatable test scripts that mimic a human user's interaction with the application and evaluate its response. Various paradigms of testing tools have been defined that are differentiated based upon the way the widgets are located on the GUI (e.g., text, images, layout properties). This thesis falls within the visual GUI testing paradigm scope, where screen snapshots used as visual locators:\n- identify the widgets, and\n- replicate an existing test suite across multiple devices or versions of the same app.\n\nThis technique leverages image recognition algorithms.\n\nIn particular, the thesis focuses on testing mobile applications where the same widgets have to be identified across multiple devices, with different screen sizes and characteristics. In this context, marginal variations in the graphical rendering can invalidate widgets' recognition if the image recognition algorithm is not sufficiently robust. This thesis aims to extend an existing prototype for visual GUI testing by leveraging deep learning. In particular, the following activities are envisioned:\n- Training a detector to identify widgets and their classes with high recall.\n- Using the features extracted by the neural network to match the same widgets when the app is rendered across multiple devices.\n- Investigating the possibility of integrating text extraction with image analysis.\n\nThe solution will be characterized and possibly optimized in terms of accuracy and execution speed. The developed techniques will be included in an open-source library.\nThe student should possess or should be willing to acquire these skills:\n- programming skills (Python, deep learning frameworks);\n- experience in training deep neural networks;\n- fundamentals of mobile development (Android GUI, the Android Studio development environment).",
-            "requiredKnowledge": "programming skills (Python, deep learning frameworks), experience in training deep neural networks, fundamentals of mobile development (Android GUI, the Android Studio development environment)",
-            "notes": "See also: http://grains.polito.it/work.php",
-            "expiration": "2024-07-19T22:00:00.000+00:00",
-            "level": "Master's",
-            "cdS": "Computer Engineering"
-        },
-    ];
+const getAllProposals = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"proposal/getAll",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
 }
 
-const API = { getApplicationsByStudent,getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal };
+const getAllTeachers = async (jwt) => {
+    return getJson(fetch(SERVER_URL + 'teacher/getAll',{
+        method: 'GET',
+            headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const getAllGroups = async (jwt) => {
+    return getJson(fetch(SERVER_URL + "group/getAll" , {
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const searchProposals = async(jwt, body) => {
+    return getJson(fetch(SERVER_URL + "proposal/search" , {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+async function archiveProposal(proposalId,jwt) {
+
+    fetch(SERVER_URL + `proposal/archive/${proposalId}`, {
+        method: 'POST',
+        headers : {'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,},
+        body: JSON.stringify({"proposalId": proposalId})
+    })
+};
+
+async function deleteProposal(proposalId,jwt) {
+    return new Promise((resolve, reject) => {
+        fetch(SERVER_URL + 'proposal/delete/' + proposalId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-successful responses
+                    reject(`Error: ${response.status} - ${response.statusText}`);
+                } else {
+                    // Resolve if the status is OK
+                    resolve();
+                }
+            })
+            .catch(error => {
+                // Handle network errors or other exceptions
+
+                reject(`Error: ${error.message}`);
+            });
+    });
+};
+
+async function getAllSupervisors() {
+    return getJson( fetch(SERVER_URL + 'teacher/getAll'));
+};
+
+async function uploadFile(file){
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+    let respJson;
+    let response;
+    try { response = await fetch(SERVER_URL +'uploadFile', {
+        method: "POST",body: formData,
+    });  respJson = await response.json();
+    } catch (e) { console.log(e); throw {status: 404, detail: "Cannot communicate with server"}
+    }        return respJson
+}
+
+async function insertApplication(cvId, proposalId, jwt) {
+    fetch(SERVER_URL + 'application/insert/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
+        },
+        body: JSON.stringify({
+            attachmentId: cvId.id,
+            applyDate:dayjs(),
+            proposalId: proposalId,
+        }),
+    }
+)};
+
+
+const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal };
 export default API;

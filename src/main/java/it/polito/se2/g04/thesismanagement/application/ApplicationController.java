@@ -1,8 +1,8 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.security.user.UserInfoUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,34 +21,34 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @GetMapping("/API/application/getByProf")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public List<ApplicationDTO2> getAllByProf() {
-        UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return applicationService.getApplicationsByProf(auth.getUsername());
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    public List<ApplicationDTO> getAllByProf() {
+        Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
+        return applicationService.getApplicationsByProf(auth.getName());
     }
 
     @GetMapping("/API/application/getByStudent")
-    @PreAuthorize("isAuthenticated() && hasAuthority('STUDENT')")
-    public List<ApplicationDTO3> getAllByStudent() {
-        UserInfoUserDetails auth = (UserInfoUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return applicationService.getApplicationsByStudent(auth.getUsername());
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
+    public List<ApplicationDTO> getAllByStudent() {
+        Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
+        return applicationService.getApplicationsByStudent(auth.getName());
     }
 
     @GetMapping("/API/application/getApplicationsByProposal")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public List<ApplicationDTO4> getApplicationByProposal(Long proposalId) {
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    public List<ApplicationDTO> getApplicationByProposal(Long proposalId) {
         return applicationService.getApplicationsByProposal(proposalId);
     }
 
-    @PostMapping("/insert")
-    @PreAuthorize("hasAuthority('STUDENT')")
+    @PostMapping("/API/application/insert/")
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
     public void insertApplication(@RequestBody ApplicationDTO applicationDTO) {
         applicationService.applyForProposal(applicationDTO);
     }
 
     @GetMapping("/API/application/getApplicationById/{applicationId}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public ApplicationDTO4 getApplicationById(@PathVariable Long applicationId) {
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    public ApplicationDTO getApplicationById(@PathVariable Long applicationId) {
         return applicationService.getApplicationById(applicationId);
     }
 
@@ -60,7 +60,7 @@ public class ApplicationController {
      * @return true if accepting was successful, false if accepting was not successful
      */
     @GetMapping("/API/application/acceptApplicationById/{applicationId}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean acceptApplicationById(@PathVariable Long applicationId) {
         return applicationService.acceptApplicationById(applicationId);
     }
@@ -73,7 +73,7 @@ public class ApplicationController {
      * @return true if rejection was successful, false if rejection was not successful
      */
     @GetMapping("/API/application/rejectApplicationById/{applicationId}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean rejectApplicationById(@PathVariable Long applicationId) {
         return applicationService.rejectApplicationById(applicationId);
     }
@@ -89,39 +89,26 @@ public class ApplicationController {
      * @return true if changing the state was successful, false if changing the state was not successful
      */
     @GetMapping("/API/application/changeApplicationStateById/{applicationId}/{newState}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean changeApplicationStateById(@PathVariable Long applicationId, @PathVariable String newState) {
         return applicationService.changeApplicationStateById(applicationId, newState);
     }
 
     @GetMapping("/API/application/rejectApplicationById/")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean rejectApplicationByIdWithoutId() {
         throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
 
     @GetMapping("/API/application/acceptApplicationById/")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean acceptApplicationByIdWithoutId() {
         throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
 
     @GetMapping("/API/application/getApplicationById/")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean getApplicationByIdWithoutId() {
         throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
     }
-
-
-  /*@PostMapping("/API/application/{applicationId}/accept")
-    public void acceptApplication(@PathVariable Long applicationId){
-        //TODO:check if the current user is a TEACHER
-        applicationService.acceptApplication(applicationId);
-    }
-
-    @PostMapping("/API/application/{applicationId}/decline")
-    public void declineApplication(@PathVariable Long applicationId){
-        //TODO:check if the current user is a TEACHER
-        applicationService.declineApplication(applicationId);
-    }*/
 }

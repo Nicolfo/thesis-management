@@ -12,7 +12,7 @@ public class CareerServiceImpl implements CareerService {
 
 
     @Override
-    public List<Career> getGradesForStudent(Long studentId) {
-        return careerRepository.getAllByStudentId(studentId);
+    public List<CareerDTO> getGradesForStudent(Long studentId) {
+        return careerRepository.getAllByStudentId(studentId).stream().map(CareerDTO::fromCareer).toList();
     }
 }

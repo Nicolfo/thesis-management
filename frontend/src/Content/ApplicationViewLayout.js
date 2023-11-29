@@ -1,10 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {useLocation} from "react-router-dom";
-import {Alert, Button, Card, Container, Row, Col} from "react-bootstrap";
+import React, {useContext, useEffect, useState} from 'react';
+import {useLocation, useNavigate} from "react-router-dom";
+import {Alert, Button, Card, Container, Row, Col, Badge} from "react-bootstrap";
+import {AuthContext} from "react-oauth2-code-pkce";
 
-const SERVER_URL = "http://localhost:8080";
+const SERVER_URL = "http://localhost:8081";
 
 function ApplicationViewLayout(props) {
+
+    const navigate = useNavigate();
+    const {token} = useContext(AuthContext);
+    if( !token )
+        navigate("/notAuthorized");
+    if(props.user && props.user.role==="STUDENT")
+        navigate("/notAuthorized");
+
     const applicationId = new URLSearchParams(useLocation().search).get("applicationId");
     const [applicationData, setApplicationData] = useState(null);
     const [studentGradesData, setStudentGradesData] = useState(null);
@@ -127,6 +136,16 @@ function ApplicationViewLayout(props) {
         return <div>Loading...</div>;
     }
 
+    const statusBadge = () => {
+        if (applicationData.status === "PENDING")
+            return <Badge bg="primary"> ⦿ PENDING </Badge>
+        else if (applicationData.status === "ACCEPTED")
+            return <Badge bg="success"> ✓ ACCEPTED </Badge>
+        else if (applicationData.status === "REJECTED")
+            return <Badge bg="danger"> ✕ REJECTED </Badge>
+    }
+
+
     return (
         <Container>
             <Row className="justify-content-md-center">
@@ -143,9 +162,13 @@ function ApplicationViewLayout(props) {
                                     <strong>Attachment:</strong> {applicationData.attachmentId ?
                                     <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
                                        download>Download</a>
-                                    : 'No attachment'} <br/>
-                                    <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')} <br/>
-                                    <strong>State:</strong> {applicationData.status}
+                                    : 'No attachment'}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
+                                </Card.Text>
+                                <Card.Text>
+                                    <strong>State:</strong> {statusBadge()}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -156,18 +179,40 @@ function ApplicationViewLayout(props) {
                                 <Card.Header as="h5">Proposal Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
-                                        <div><strong>Title:</strong> {applicationData.proposal.title} </div>
-                                        <div><strong>Supervisor:</strong> {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}</div>
-                                        <div><strong>Co-Supervisors:</strong> {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}</div>
-                                        <div><strong>Keywords:</strong> {applicationData.proposal.keywords} </div>
-                                        <div><strong>Type:</strong> {applicationData.proposal.type}</div>
-                                        <div><strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}</div>
-                                        <div><strong>Description:</strong> {applicationData.proposal.description}</div>
-                                        <div><strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge} </div>
-                                        {applicationData.proposal.notes && <><div><strong>Notes:</strong> ${applicationData.proposal.notes}</div></> }
-                                        <div><strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}</div>
-                                        <div><strong>Level:</strong> {applicationData.proposal.level} </div>
-                                        <div><strong>CdS:</strong> {applicationData.proposal.cdS}</div>
+                                        <strong>Title:</strong> {applicationData.proposal.title}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Supervisor:</strong> {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Co-Supervisors:</strong> {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Keywords:</strong> {applicationData.proposal.keywords}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Type:</strong> {applicationData.proposal.type}
+                                    </Card.Text>
+                                    <Card.Text>
+                                            <strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Description:</strong> {applicationData.proposal.description}
+                                    </Card.Text>
+                                    <Card.Text>
+                                            <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        {applicationData.proposal.notes && <><div><strong>Notes:</strong> {applicationData.proposal.notes}</div></> }
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Level:</strong> {applicationData.proposal.level}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>CdS:</strong> {applicationData.proposal.cdS}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -177,14 +222,30 @@ function ApplicationViewLayout(props) {
                             <Card.Header as="h5">Student Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
-                                        <div><strong>Surname:</strong> {applicationData.student.surname} </div>
-                                        <div><strong>Name:</strong> {applicationData.student.name} </div>
-                                        <div><strong>Gender:</strong> {applicationData.student.gender} </div>
-                                        <div><strong>Nationality:</strong> {applicationData.student.nationality} </div>
-                                        <div><strong>Email:</strong> {applicationData.student.email} </div>
-                                        <div><strong>Degree:</strong> {applicationData.student.degree.codDegree} </div>
-                                        <div><strong>Enrollment Year:</strong> {applicationData.student.enrollmentYear} </div>
-                                        <div><strong>Grades:</strong>
+                                        <strong>Surname:</strong> {applicationData.student.surname}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Name:</strong> {applicationData.student.name}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Gender:</strong> {applicationData.student.gender}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Nationality:</strong> {applicationData.student.nationality}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Email:</strong> {applicationData.student.email}
+                                    </Card.Text>
+                                    <Card.Text>
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Enrollment Year:</strong> {applicationData.student.enrollmentYear}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Average grades:</strong> {applicationData.studentAverageGrades}
+                                    </Card.Text>
+                                    <Card.Text>
+                                        <strong>Grades:</strong>
                                         {studentGradesData.length > 0 ? (
 
                                             <ul>
@@ -194,28 +255,41 @@ function ApplicationViewLayout(props) {
                                             </ul>
                                         ) : (
                                             "No grades available."
-                                        )}</div>
+                                        )}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
                         </Col>
                     </Row>
 
+                    <Row>
+                    { applicationData.status==="PENDING" ? (
+                        <Col md={9}>
+                            <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}>Accept</Button>
+                            {" "}
+                            <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}>Reject</Button>
+                        </Col>
+                    ) : applicationData.status==="ACCEPTED" ? (
+                        <Col md={9}>
+                            <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
+                            {" "}
+                            <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</Button>
+                        </Col>
+                    ) : (
+                        <Col md={9}>
+                            <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</Button>
+                            {" "}
+                            <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
+                        </Col>
+                    )
+                    }
 
-                        {applicationData.status==="PENDING" ? (
-                            <>
-                                <Button variant="success" onClick={() => acceptApplication()}>Accept</Button>
-                                <Button variant="inline" color={"error"} onClick={() => rejectApplication()}>Reject</Button>
-                            </>
-                        ) : (
-                            <>
-                                <button type="button" className="btn btn-outline-success" onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</button>
-                                <button type="button" className="btn btn-outline-info" onClick={() => changeApplicationState("PENDING")}>Update State to Pending</button>
-                                <button type="button" className="btn btn-outline-danger" onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</button>
-                            </>
-                        )}
+                    <Col style={{textAlign: "end"}}>
+                        <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}> Go back </Button>
                     </Col>
-                </Row>
+                    </Row>
+                </Col>
+            </Row>
         </Container>
     );
 }

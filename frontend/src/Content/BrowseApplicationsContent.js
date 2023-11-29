@@ -1,17 +1,28 @@
-import { useState } from "react";
+import {useContext, useState} from "react";
 import { useEffect } from "react";
 import API from "../API/Api";
-import {Button, Table} from "react-bootstrap";
+import {Badge, Button, Table} from "react-bootstrap";
 import dayjs from 'dayjs';
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {AuthContext} from "react-oauth2-code-pkce";
 
 
 function BrowseApplicationsContent(props) {
 
+    const navigate = useNavigate();
+    const {token} = useContext(AuthContext);
+    if( !token )
+        navigate("/notAuthorized");
+    if(props.user && props.user.role==="STUDENT")
+        navigate("/notAuthorized");
+
+
     const [applications, setApplications] = useState([]);
 
     useEffect(() => {
+            if(!props.user || props.user.role !== "TEACHER")
+                return;
         const getApplicationsByProf = async () => {
             if(props.user && props.user.token)
             try {
@@ -28,18 +39,26 @@ function BrowseApplicationsContent(props) {
     return (
         <>
             <div className="bordered-box">
-                <h1>My application proposals</h1>
+                <h1 style={{"textAlign": "center"}}>My application proposals</h1>
                 <hr className="separator" />
                 <Table striped hover className="mb-4">
                     <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th className="d-none d-md-table-cell">Apply date</th>
-                        <th className="d-none d-md-table-cell">Student</th>
-                        <th className="d-none d-md-table-cell">Average grades</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
+                        { applications.length > 0 ?
+                            <tr>
+                                <th className="col-4">Title</th>
+                                <th className="d-none d-md-table-cell col-2">Apply date</th>
+                                <th className="d-none d-md-table-cell col-2">Student</th>
+                                <th className="d-none d-md-table-cell col-2">Average grades</th>
+                                <th className="col-1">Status</th>
+                                <th className="col-1">Action</th>
+                            </tr>
+                            :
+                            <tr>
+                                <th style={{"textAlign": "center"}}>
+                                    You have no applications yet
+                                </th>
+                            </tr>
+                        }
                     </thead>
                     <tbody>
                     {applications.map((application) => (
@@ -54,6 +73,16 @@ function BrowseApplicationsContent(props) {
 
 function ApplicationRow(props) {
     const navigate = useNavigate();
+
+    const statusBadge = () => {
+        if (props.application.status === "PENDING")
+            return <Badge bg="primary"> ⦿ PENDING </Badge>
+        else if (props.application.status === "ACCEPTED")
+            return <Badge bg="success"> ✓ ACCEPTED </Badge>
+        else if (props.application.status === "REJECTED")
+            return <Badge bg="danger"> ✕ REJECTED </Badge>
+    }
+
     const handleViewInfo = (id) => {
         navigate("/teacher/application/view?applicationId=" + props.application.id);
     };
@@ -64,10 +93,11 @@ function ApplicationRow(props) {
             <td className="d-none d-md-table-cell">{dayjs(props.application.applyDate).format('MMMM DD, YYYY HH:mm:ss')}</td>
             <td className="d-none d-md-table-cell">{props.application.studentName} {props.application.studentSurname}</td>
             <td className="d-none d-md-table-cell">{props.application.studentAverageGrades}</td>
-            <td>{props.application.status}</td>
+            <td>{statusBadge()}</td>
             <td>
-                <Button onClick={() => handleViewInfo(props.application.id)}>
-                    View info <FontAwesomeIcon icon={"chevron-right"} />
+                <Button classname="d-flex align-items-center" onClick={() => handleViewInfo(props.application.id)} style={{ display: 'flex', alignItems: 'center' }}>
+                    <span className="d-none d-md-table-cell">View info </span>
+                    <FontAwesomeIcon icon={"chevron-right"} />
                 </Button>
             </td>
         </tr>

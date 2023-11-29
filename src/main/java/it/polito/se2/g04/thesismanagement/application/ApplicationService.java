@@ -7,18 +7,20 @@ import java.util.List;
 @Service
 public interface ApplicationService {
 
-    List<ApplicationDTO2> getApplicationsByProf(String profEmail);
-    List<ApplicationDTO3> getApplicationsByStudent(String studentEmail);
-    List<ApplicationDTO4> getApplicationsByProposal(Long proposalId);
-    ApplicationDTO4 getApplicationById(Long applicationId);
-    /**
+
+    public List<ApplicationDTO> getApplicationsByProf(String profEmail);
+    public List<ApplicationDTO> getApplicationsByStudent(String studentEmail);
+    public List<ApplicationDTO> getApplicationsByProposal(Long proposalId);
+    public ApplicationDTO getApplicationById(Long applicationId);
+  /**
      * This method changes the state of a given application to accepted, if the current state is pending.
      * Otherwise, an error is thrown. After changing the state, the student who handed in the application is
      * notified via email
      * @param applicationId id of the application to be accepted
      * @return true if accepting was successful, otherwise false
      */
-    boolean acceptApplicationById(Long applicationId);
+    public boolean acceptApplicationById(Long applicationId);
+     
     /**
      * This method changes the state of a given application to rejected, if the current state is pending.
      * Otherwise, an error is thrown. After changing the state, the student who handed in the application is
@@ -26,8 +28,14 @@ public interface ApplicationService {
      * @param applicationId id of the application to be rejected
      * @return true if rejecting was successful, otherwise false
      */
-    boolean rejectApplicationById(Long applicationId);
-    void applyForProposal(ApplicationDTO applicationDTO);
+    public boolean rejectApplicationById(Long applicationId);
+    public void applyForProposal(ApplicationDTO applicationDTO);
+    boolean changeApplicationStateById(Long applicationId, String newState);
+    boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId);
+   
+  /*
+   public void acceptApplication(Long applicationID);
+
 
     /**
      * This method changes the state of a given application to the given string. This is done regardless

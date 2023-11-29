@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  app:
+    image: 'nicolfo/thesis-management'
+    ports:
+      - "8081:8081"
+    expose:
+      - "8081"
+    build:
+      context: src/main/java
+    container_name: app
+    depends_on:
+      - db
+      - keycloak
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create
+      - KEYCLOAK_HOST=keycloak
+
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+
+
+  keycloak:
+    image: 'dome015/keycloak-saml'
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    #    environment:
+    #      - KEYCLOAK_ADMIN_PASSWORD=admin
+    #      - KEYCLOAK_ADMIN=admin
+    command: start-dev

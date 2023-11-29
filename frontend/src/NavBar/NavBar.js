@@ -2,44 +2,57 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Button, Col, Form, Nav} from 'react-bootstrap';
-import {useState} from 'react';
+import {useState,useContext,useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
+import { AuthContext } from 'react-oauth2-code-pkce';
 
 function NavBar(props) {
+    const { tokenData, token, login, logOut, loginInProgress, error } = useContext(AuthContext);
 
     const [showVirtualClock, setShowVirtualClock] = useState(false);
 
     const path = useLocation().pathname;
     const navigate = useNavigate();
-
-    const handleClick = (e) => {
+    const handleClick= (e)=> {
         e.preventDefault();
-        if (props.user === null)
-            navigate("/login");
-        else {
-            props.setUser(null);
-            localStorage.removeItem("username");
-            localStorage.removeItem("token");
-            localStorage.removeItem("role");
-            navigate("/login");
+
+        if (props.user === undefined || props.user === null) {
+            login();
+        } else {
+            navigate("/");
+            logOut();
         }
     }
+
+    /**
+     * Every time tokenData (the decoded token for the logged-in user on the browser) changes, we update the
+     * corresponding user state so that it is available for all the components.
+     * The user state is an object containing the user's email, name, surname, role and token.
+     */
+    useEffect(() => {
+      if (!props.user && tokenData) {
+          let role;
+          if( tokenData.realm_access.roles.includes("STUDENT"))
+          role = "STUDENT";
+          else if(tokenData.realm_access.roles.includes("TEACHER"))
+          role = "TEACHER";
+        props.setUser({ email: tokenData.preferred_username, role: role , name: tokenData.firstName, surname: tokenData.lastName, token: token });
+      }
+    }, [tokenData]);
 
     const userIsTeacher = () => {
         return props.user && props.user.role === "TEACHER";
     }
     const userIsStudent = () => {
-        {props.user && console.log("user", props.user)}
-        {props.user && console.log("role", props.user.role)}
         return props.user && props.user.role === "STUDENT";
     }
 
     return (
-        (userIsStudent() || userIsTeacher()) &&
+
         <>
             <Navbar className="bg-color ps-3" expand="md" data-bs-theme="dark">
                 <Container fluid>
-                    <Navbar.Brand>
+                    <Navbar.Brand href="/">
                         <FontAwesomeIcon icon="fa-book"/> Thesis Manager
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarResponsive"/>
@@ -48,8 +61,8 @@ function NavBar(props) {
                             {userIsStudent() && (
                                 <>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/search-for-proposal' ? 'active' : ''}
+                                        variant={path === '/search-for-proposal' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/search-for-proposal' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/search-for-proposal');
                                             props.searchForProposalClicked();
@@ -58,8 +71,8 @@ function NavBar(props) {
                                         Search for proposal
                                     </Button>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/browseDecisions' ? 'active' : ''}
+                                        variant={path === '/browseDecisions' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/browseDecisions' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/browseDecisions');
                                         }}
@@ -71,8 +84,8 @@ function NavBar(props) {
                             {userIsTeacher() && (
                                 <>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/teacher/proposals' ? 'active' : ''}
+                                        variant={path === '/teacher/proposals' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/teacher/proposals' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/teacher/proposals');
                                         }}
@@ -80,8 +93,8 @@ function NavBar(props) {
                                         My thesis proposals
                                     </Button>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={path === '/insertProposal' ? 'active' : ''}
+                                        variant={path === '/insertProposal' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/insertProposal' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/insertProposal');
                                         }}
@@ -89,10 +102,8 @@ function NavBar(props) {
                                         Insert proposal
                                     </Button>
                                     <Button
-                                        variant="primary border-b no-border-lg margin-end-lg"
-                                        className={
-                                            path === '/teacher/application/browse' || path === '/teacher/application/view' ? 'active' : ''
-                                        }
+                                        variant={path === '/teacher/application/browse' || path === '/teacher/application/view' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/teacher/application/browse' || path === '/teacher/application/view' ? {backgroundColor: "#3B85B7", color: "white"} : {}}
                                         onClick={() => {
                                             navigate('/teacher/application/browse');
                                         }}

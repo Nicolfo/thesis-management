@@ -20,8 +20,8 @@ public class CareerController {
      * @return List of Career, describing the grades the student with the given studentId has archieved
      */
     @GetMapping("/API/career/getByStudent/{studentId}")
-    @PreAuthorize("isAuthenticated() && hasAuthority('TEACHER')")
-    public List<Career> getGradesForStudent(@PathVariable Long studentId){
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    public List<CareerDTO> getGradesForStudent(@PathVariable Long studentId){
         return careerService.getGradesForStudent(studentId);
     }
 

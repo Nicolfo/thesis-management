@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.c1c84382.css",
+    "main.js": "/static/js/main.c8731c4f.js",
+    "static/js/787.9e9f4ffd.chunk.js": "/static/js/787.9e9f4ffd.chunk.js",
+    "static/media/thesisicon.png": "/static/media/thesisicon.4a4c6a64cb56f9ebe6df.png",
+    "index.html": "/index.html",
+    "main.c1c84382.css.map": "/static/css/main.c1c84382.css.map",
+    "main.c8731c4f.js.map": "/static/js/main.c8731c4f.js.map",
+    "787.9e9f4ffd.chunk.js.map": "/static/js/787.9e9f4ffd.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c1c84382.css",
+    "static/js/main.c8731c4f.js"
+  ]
+}

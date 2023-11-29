@@ -4,11 +4,9 @@ import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
 
 
 import java.util.Date;
@@ -37,6 +35,7 @@ public class Application {
     @ManyToOne
     private Proposal proposal;
 
-    private String status= "PENDING"; //status of the application (PENDING/ACCEPTED/REJECTED)
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
 }

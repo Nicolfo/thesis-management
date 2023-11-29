@@ -10,4 +10,7 @@ public interface StudentService {
 
     public double getAverageMarks(Long studentId);
 
+    public String getCdS(String email);
+
+
 }
