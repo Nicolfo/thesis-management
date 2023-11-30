@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
-import {Alert, Button, Card, Container, Row, Col, Badge} from "react-bootstrap";
+import {Alert, Button, Card, Container, Row, Col, Badge, Spinner} from "react-bootstrap";
 import {AuthContext} from "react-oauth2-code-pkce";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -20,6 +20,7 @@ function ApplicationViewLayout(props) {
     const [studentGradesData, setStudentGradesData] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
 
@@ -62,7 +63,8 @@ function ApplicationViewLayout(props) {
     }
 
     const acceptApplication = () => {
-        if(props.user && props.user.token)
+        if(props.user && props.user.token) {
+            setLoading(true);
             fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId,{
                 method: 'GET',
                 headers:{
@@ -82,11 +84,15 @@ function ApplicationViewLayout(props) {
                 .catch(error => {
                     console.error('Error:', error);
                     setShowError(true);
-                });
+                })
+                .finally(() => setLoading(false));
+        }
+        
     }
 
     const changeApplicationState = (newState) => {
-        if(props.user && props.user.token)
+        if(props.user && props.user.token) {
+            setLoading(true);
             fetch(`${SERVER_URL}/API/application/changeApplicationStateById/` + applicationId + '/' + newState,{
                 method: 'GET',
                 headers:{
@@ -106,11 +112,15 @@ function ApplicationViewLayout(props) {
                 .catch(error => {
                     console.error('Error:', error);
                     setShowError(true);
-                });
+                })
+                .finally(() => setLoading(false));
+        }
+            
     }
 
     const rejectApplication = () => {
-        if(props.user && props.user.token)
+        if(props.user && props.user.token) {
+            setLoading(true);
             fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
                 method: 'GET',
                 headers:{
@@ -130,7 +140,10 @@ function ApplicationViewLayout(props) {
                 .catch(error => {
                     console.error('Error:', error);
                     setShowError(true);
-                });
+                })
+                .finally(() => setLoading(false));
+        }
+        
     }
 
     if (!applicationData || !studentGradesData) {
@@ -153,8 +166,7 @@ function ApplicationViewLayout(props) {
                 <Col md="auto">
                     <h1>Information about Application</h1>
 
-                    {showSuccess && <Alert variant="success">The application was successfully updated!</Alert>}
-                    {showError && <Alert variant="danger">There was an error updating the application.</Alert>}
+                    
 
                     <Card style={{marginBottom: '2rem'}}>
                         <Card.Header as="h5">Application Information</Card.Header>
@@ -262,13 +274,19 @@ function ApplicationViewLayout(props) {
                             </Card>
                         </Col>
                     </Row>
+                    
+                    {showSuccess && <Alert variant="success" dismissible>The application was successfully updated!</Alert>}
+                    {showError && <Alert variant="danger" dismissible>There was an error updating the application.</Alert>}
 
                     <Row>
-                        { applicationData.status==="PENDING" ? (
-                            <Col style={{textAlign: "center"}}>
-                                <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
-                                <Button variant="outline-success me-2" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}><FontAwesomeIcon icon="fa-solid fa-check" /> Accept</Button>
-                                <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}><FontAwesomeIcon icon="fa-solid fa-xmark" /> Reject</Button>
+                    { loading ?
+                        <Spinner animation="border" role="status"></Spinner>
+                        :
+                        (applicationData.status==="PENDING" ? (
+                            <Col md={9}>
+                                <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}>Accept</Button>
+                                {" "}
+                                <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}>Reject</Button>
                             </Col>
                         ) : applicationData.status==="ACCEPTED" ? (
                             <Col md={9}>
@@ -282,9 +300,12 @@ function ApplicationViewLayout(props) {
                                 {" "}
                                 <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
                             </Col>
-                        )
-                        }
-
+                        ))
+                        
+                    }
+                    <Col style={{textAlign: "end"}}>
+                        <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}> Go back </Button>
+                    </Col>
                     </Row>
                 </Col>
             </Row>
