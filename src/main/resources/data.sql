@@ -35,7 +35,7 @@ INSERT INTO public.group_table (cod_group, name) VALUES (19, 'TestGroup');
 INSERT INTO public.group_table (cod_group, name) VALUES (20, 'TORSEC - Security Group');
 INSERT INTO public.group_table (cod_group, name) VALUES (21, 'VANDAL - Visual and Multimodal Applied Learning Laboratory');
 INSERT INTO public.student (enrollment_year, cod_degree, id, email, gender, name, nationality, surname) VALUES (2023, 1, 300000, 'nicolfo3@hotmail.it', 'Male', 'Nicolo', 'Italy', 'Fontana');
-INSERT INTO public.student (enrollment_year, cod_degree, id, email, gender, name, nationality, surname) VALUES (2020, 1, 300001, 'alessia.ferrari@polito.it', 'Female', 'Alessia', 'Italy', 'Ferrari');
+INSERT INTO public.student (enrollment_year, cod_degree, id, email, gender, name, nationality, surname) VALUES (2020, 1, 300001, 'thesismanagementstudent1@gmail.com', 'Female', 'Alessia', 'Italy', 'Ferrari');
 INSERT INTO public.student (enrollment_year, cod_degree, id, email, gender, name, nationality, surname) VALUES (2021, 3, 300002, 'lena.muller@polito.it', 'Female', 'Lena', 'Germany', 'Müller');
 INSERT INTO public.student (enrollment_year, cod_degree, id, email, gender, name, nationality, surname) VALUES (2021, 2, 300003, 'luca.conti@polito.it', 'Male', 'Luca', 'Italy', 'Conti');
 INSERT INTO public.student (enrollment_year, cod_degree, id, email, gender, name, nationality, surname) VALUES (2021, 1, 300004, 'emily.smith@polito.it', 'Female', 'Emily', 'United States', 'Smith');
@@ -53,7 +53,7 @@ INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname)
 INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname) VALUES (2, 18, 300016, 'chiara.pagano@polito.it', 'Chiara', 'Pagano');
 INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname) VALUES (6, 16, 300017, 'chang.wei@polito.it', 'Chang', 'Wei');
 INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname) VALUES (6, 6, 300018, 'luca.marini@polito.it', 'Luca', 'Marini');
-INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname) VALUES (7, 14, 300019, 'marco.bianco@polito.it', 'Marco', 'Bianco');
+INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname) VALUES (7, 14, 300019, 'thesismanagementteacher1@gmail.com', 'Marco', 'Bianco');
 INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname) VALUES (2, 11, 300020, 'andrei.ivanov@polito.it', 'Andrei', 'Ivanov');
 INSERT INTO public.teacher (cod_department, cod_group, id, email, name, surname) VALUES (2, 11, 300021, 'nicolfo2@hotmail.it', 'Nicolo', 'Fontana');
 INSERT INTO public.proposal (archived, expiration, id, supervisor_id, cds, description, keywords, level, notes, required_knowledge, title, type) VALUES (false, '2024-05-20 22:00:00.000000', 1001, 300020, 'Aerospace Engineering', 'A generalized-likelihood-ratio-based test is proposed to acquire Starlink''s downlink signals.', 'Doppler effect, Downlink, Receivers, OFDM, Low earth orbit satellites, Bandwidth, Synchronization', 'Bachelor''s', '', 'Signal processing, Communication protocols, Statistics.', 'Acquisition Doppler Tracking and Positioning With Starlink LEO Satellites', 'Research');

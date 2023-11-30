@@ -80,6 +80,8 @@ public class BrowseProposalTest {
     public void CleanUp(){
         teacherRepository.deleteAll();
         proposalRepository.deleteAll();
+        departmentRepository.deleteAll();
+        groupRepository.deleteAll();
     }
 
     @Test

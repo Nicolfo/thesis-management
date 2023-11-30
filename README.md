@@ -1,5 +1,12 @@
 # Thesis management
 [gradle](gradle)
+
+## How to run the application
+
+- Run **Docker**
+- Navigate to the main project directory `thesis-management`
+- Run the command `docker-compose up`
+
 ## Covered stories
 
 ### 1. Insert Proposal
@@ -48,13 +55,6 @@ I want to update a thesis proposal
 
 ## API Server
 
-### Users
-- POST `/API/register`
-  - request body content: an object containing information about the user to register
-- POST `/API/login`
-  - request body content: an object containing the credentials to perform the login
-  - response body content: an object containing the logged in user information and the user's access token
-
 ### Students
 - GET `/API/student/getAverageMarks/<studentId>`
   - response body content: a double representing the student's average mark
@@ -78,12 +78,13 @@ I want to update a thesis proposal
   - request body content: an object containing information about the proposal to insert
 - PUT `/API/proposal/update`
   - request body content: an object containing information about the proposal to update
-- PUT `/API/proposal/search`
+- POST `/API/proposal/search`
   - request body content: an object containing the filters to search proposals
   - response body content: an array containing the proposals filtered with the info in the request body
-- POST `/API/proposal/archive{id}`
+- POST `/API/proposal/archive/<id>`
   - response body content: an object containing information about the proposal to archive
-
+- DELETE `/API/proposal/delete/<id>`
+  - delete proposal with specified id 
   
 ### Applications
 - GET `/API/application/getByProf`
