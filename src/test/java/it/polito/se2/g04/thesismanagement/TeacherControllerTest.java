@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -102,5 +103,48 @@ public class TeacherControllerTest {
         // Check that new title matches
         assertEquals(g4.getSurname(), teachers[3].getSurname(), "Wrong Teacher surname");
     }
+    @Test
+    @Rollback
+    @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
+    public void getByEmailTest()  throws Exception {
+        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
+        teacher= teacherRepository.save(teacher);
+        MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getByEmail/"+ teacher.getEmail())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        TeacherDTO teacherOutput = mapper.readValue(json, TeacherDTO.class);
+        assertEquals(teacher.getId(), teacherOutput.getId(), "the result has the same id");
 
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getByEmail")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
+    public void getByIdTest() throws Exception{
+        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
+        teacher= teacherRepository.save(teacher);
+        MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getById/"+ teacher.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        TeacherDTO teacherOutput = mapper.readValue(json, TeacherDTO.class);
+        assertEquals(teacher.getEmail(), teacherOutput.getEmail(), "the result has the same id");
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getById")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }

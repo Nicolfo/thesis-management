@@ -21,7 +21,6 @@ public class TeacherController {
     }
 
 
-
     @GetMapping("API/teacher/getAll")
     @ResponseStatus(HttpStatus.OK)
     public List<TeacherDTO> getAll(){
@@ -42,14 +41,14 @@ public class TeacherController {
         return teacherService.getByEmail(email);
     }
 
-    @GetMapping("API/teacher/getByEmail/")
+    @GetMapping("API/teacher/getByEmail")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public void getByEmailWithNoEmail(){
         //errorhandler placeholder
     }
 
-    @GetMapping("API/teacher/getById/")
+    @GetMapping("API/teacher/getById")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public void getByIdWithNoId(){
