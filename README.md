@@ -1,5 +1,12 @@
 # Thesis management
 [gradle](gradle)
+
+## How to run the application
+
+- Run **Docker**
+- Navigate to the main project directory `thesis-management`
+- Run the command `docker-compose up`
+
 ## Covered stories
 
 ### 1. Insert Proposal
