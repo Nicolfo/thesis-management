@@ -2,13 +2,14 @@ package it.polito.se2.g04.thesismanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.career.Career;
+import it.polito.se2.g04.thesismanagement.career.CareerDTO;
+import it.polito.se2.g04.thesismanagement.career.CareerRepository;
 import it.polito.se2.g04.thesismanagement.degree.Degree;
 import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
-import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
@@ -33,7 +34,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class DeleteProposalTest {
+public class careerTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -55,10 +55,10 @@ public class DeleteProposalTest {
     private StudentRepository studentRepository;
     @Autowired
     private DegreeRepository degreeRepository;
-
+    @Autowired
+    private CareerRepository careerRepository;
     @Autowired
     private MockMvc mockMvc;
-
 
 
     @Autowired
@@ -72,69 +72,45 @@ public class DeleteProposalTest {
     }
 
     @AfterAll
-    public void CleanUp(){
+    public void CleanUp() {
         applicationRepository.deleteAll();
         proposalRepository.deleteAll();
         teacherRepository.deleteAll();
         studentRepository.deleteAll();
         degreeRepository.deleteAll();
-
+        careerRepository.deleteAll();
     }
+
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void deleteProposal() throws Exception {
+    public void getGradesForStudentTest() throws Exception{
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacherRepository.save(teacher);
+
         Degree degree=new Degree("ingegneria informatica");
         degreeRepository.save(degree);
         Student student1=new Student("rossi", "marco", "male", "ita","m.rossi@example.com", degree, 2020);
-        Student student2=new Student("viola", "marta", "female", "ita", "m.viola@example.com", degree,2018);
-        studentRepository.saveAll(List.of(student2, student1));
-        Proposal proposal=new Proposal("test1",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
-        proposal = proposalRepository.save(proposal);
-        Application application1=new Application(student1,null, null, proposal);
-        applicationRepository.save(application1);
-        Application application2=new Application(student2,null, null, proposal);
-        applicationRepository.save(application2);
+        student1=studentRepository.save(student1);
+        Career career1=new Career("cod1","titolo1",6,22,null,student1);
+        Career career2=new Career("cod2","titolo2",6,23,null,student1);
+        Career career3=new Career("cod3","titolo3",6,24,null,student1);
+        careerRepository.saveAll(List.of(career1,career2,career3));
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/{id}",proposal.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        MvcResult res= mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getAll")
+        MvcResult res= mockMvc.perform(MockMvcRequestBuilders.get("/API/career/getByStudent/"+student1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         String json = res.getResponse().getContentAsString();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        Proposal[] proposalOutput = mapper.readValue(json, Proposal[].class);
-        assertEquals(0, proposalOutput.length, "proposalOutput should be empty");
+        CareerDTO[] careerOutput = mapper.readValue(json, CareerDTO[].class);
+        assertEquals(3, careerOutput.length, "careerOutput should belong 3");
 
-
-
-        res= mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByProf")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        json = res.getResponse().getContentAsString();
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        Application[] applicationOutput = mapper.readValue(json, Application[].class);
-        assertEquals(0, proposalOutput.length, "applicationOutput should be empty");
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete")
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/career/getByStudent/a")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/a")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/" + new Random().nextLong(2,100))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }
+
