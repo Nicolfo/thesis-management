@@ -6,6 +6,7 @@
 - Run **Docker**
 - Navigate to the main project directory `thesis-management`
 - Run the command `docker-compose up`
+- Acces the app via `http://localhost:8081/`
 
 ## Covered stories
 
