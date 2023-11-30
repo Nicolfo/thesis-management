@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {Alert, Button, Card, Container, Row, Col, Badge} from "react-bootstrap";
 import {AuthContext} from "react-oauth2-code-pkce";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const SERVER_URL = "http://localhost:8081";
 
@@ -27,61 +28,61 @@ function ApplicationViewLayout(props) {
 
     const fetchApplicationData = () => {
         if(props.user && props.user.token)
-        return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId,{
-            method: 'GET',
-            headers:{
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${props.user.token}`,
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                setApplicationData(data);
-
-                fetchStudentGradesData(data.student.id);
+            return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId,{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.user.token}`,
+                }
             })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    setApplicationData(data);
+
+                    fetchStudentGradesData(data.student.id);
+                })
+                .catch(error => console.error('Error:', error));
     }
 
     const fetchStudentGradesData = (studentId) => {
         if(props.user && props.user.token)
-        fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId,{
-            method: 'GET',
-            headers:{
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${props.user.token}`,
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                setStudentGradesData(data);
-
+            fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId,{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.user.token}`,
+                }
             })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    setStudentGradesData(data);
+
+                })
+                .catch(error => console.error('Error:', error));
     }
 
     const acceptApplication = () => {
         if(props.user && props.user.token)
-        fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId,{
-            method: 'GET',
-            headers:{
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${props.user.token}`,
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    setShowSuccess(true);
-                    fetchApplicationData();
-                } else {
-                    setShowError(true);
+            fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId,{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.user.token}`,
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                setShowError(true);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        setShowSuccess(true);
+                        fetchApplicationData();
+                    } else {
+                        setShowError(true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    setShowError(true);
+                });
     }
 
     const changeApplicationState = (newState) => {
@@ -110,26 +111,26 @@ function ApplicationViewLayout(props) {
 
     const rejectApplication = () => {
         if(props.user && props.user.token)
-        fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
-            method: 'GET',
-            headers:{
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${props.user.token}`,
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    setShowSuccess(true);
-                    fetchApplicationData();
-                } else {
-                    setShowError(true);
+            fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.user.token}`,
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                setShowError(true);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        setShowSuccess(true);
+                        fetchApplicationData();
+                    } else {
+                        setShowError(true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    setShowError(true);
+                });
     }
 
     if (!applicationData || !studentGradesData) {
@@ -156,22 +157,22 @@ function ApplicationViewLayout(props) {
                     {showError && <Alert variant="danger">There was an error updating the application.</Alert>}
 
                     <Card style={{marginBottom: '2rem'}}>
-                            <Card.Header as="h5">Application Information</Card.Header>
-                            <Card.Body>
-                                <Card.Text>
-                                    <strong>Attachment:</strong> {applicationData.attachmentId ?
-                                    <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
-                                       download>Download</a>
-                                    : 'No attachment'}
-                                </Card.Text>
-                                <Card.Text>
-                                    <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
-                                </Card.Text>
-                                <Card.Text>
-                                    <strong>State:</strong> {statusBadge()}
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
+                        <Card.Header as="h5">Application Information</Card.Header>
+                        <Card.Body>
+                            <Card.Text>
+                                <strong>Attachment:</strong> {applicationData.attachmentId ?
+                                <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
+                                   download>Download</a>
+                                : 'No attachment'}
+                            </Card.Text>
+                            <Card.Text>
+                                <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
+                            </Card.Text>
+                            <Card.Text>
+                                <strong>State:</strong> {statusBadge()}
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
 
                     <Row>
                         <Col md={6}>
@@ -194,13 +195,13 @@ function ApplicationViewLayout(props) {
                                         <strong>Type:</strong> {applicationData.proposal.type}
                                     </Card.Text>
                                     <Card.Text>
-                                            <strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}
+                                        <strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Description:</strong> {applicationData.proposal.description}
                                     </Card.Text>
                                     <Card.Text>
-                                            <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
+                                        <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
                                     </Card.Text>
                                     <Card.Text>
                                         {applicationData.proposal.notes && <><div><strong>Notes:</strong> {applicationData.proposal.notes}</div></> }
@@ -219,7 +220,7 @@ function ApplicationViewLayout(props) {
                         </Col>
                         <Col md={6}>
                             <Card style={{marginBottom: '2rem'}}>
-                            <Card.Header as="h5">Student Information</Card.Header>
+                                <Card.Header as="h5">Student Information</Card.Header>
                                 <Card.Body>
                                     <Card.Text>
                                         <strong>Surname:</strong> {applicationData.student.surname}
@@ -263,30 +264,27 @@ function ApplicationViewLayout(props) {
                     </Row>
 
                     <Row>
-                    { applicationData.status==="PENDING" ? (
-                        <Col md={9}>
-                            <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}>Accept</Button>
-                            {" "}
-                            <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}>Reject</Button>
-                        </Col>
-                    ) : applicationData.status==="ACCEPTED" ? (
-                        <Col md={9}>
-                            <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
-                            {" "}
-                            <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</Button>
-                        </Col>
-                    ) : (
-                        <Col md={9}>
-                            <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</Button>
-                            {" "}
-                            <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
-                        </Col>
-                    )
-                    }
+                        { applicationData.status==="PENDING" ? (
+                            <Col style={{textAlign: "center"}}>
+                                <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
+                                <Button variant="outline-success me-2" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}><FontAwesomeIcon icon="fa-solid fa-check" /> Accept</Button>
+                                <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}><FontAwesomeIcon icon="fa-solid fa-xmark" /> Reject</Button>
+                            </Col>
+                        ) : applicationData.status==="ACCEPTED" ? (
+                            <Col md={9}>
+                                <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
+                                {" "}
+                                <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</Button>
+                            </Col>
+                        ) : (
+                            <Col md={9}>
+                                <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</Button>
+                                {" "}
+                                <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
+                            </Col>
+                        )
+                        }
 
-                    <Col style={{textAlign: "end"}}>
-                        <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}> Go back </Button>
-                    </Col>
                     </Row>
                 </Col>
             </Row>

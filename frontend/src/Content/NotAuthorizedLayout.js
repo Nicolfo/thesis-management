@@ -13,7 +13,7 @@
         }
 
         return (
-            <Container className="d-flex align-items-center justify-content-center vh-100">
+            <Container className="d-flex mt-5 justify-content-center">
                 <Col md={5}>
                     <Card>
                         <Card.Header className="text-start pe-3">Error</Card.Header>
