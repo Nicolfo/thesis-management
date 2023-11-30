@@ -150,7 +150,7 @@ function App() {
             <Routes>
                 <Route path="/" element={
                     <>
-                        <div className="container-fluid" style={{height: '90vh', padding: '0rem'}}>
+                        <div className={!user ? "container-fluid background-with-image" : ""} style={{height: '100vh', width:'100vw', padding: '0rem'}}>
                             <div className="row align-items-start">
                                 <NavBar user={user} setUser={setUser} realDate={realDate}
                                         applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}
@@ -164,7 +164,7 @@ function App() {
                 }>
                     <Route index element={(user && user.role === "TEACHER" && <Navigate to={"/teacher/proposals"}/>)
                                           || (user && user.role === "STUDENT" && <Navigate to={"/search-for-proposal"}/>)
-                                          || (!user && <h1>Welcome to Thesis Manager!</h1> ) }/>
+                        || (!user && <h1>Welcome to thesis management!</h1> ) }/>
                     <Route path="/search-for-proposal"
                            element={<ProposalsListContent user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/browseDecisions"

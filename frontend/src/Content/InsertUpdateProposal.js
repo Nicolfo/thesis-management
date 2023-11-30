@@ -39,6 +39,7 @@ function InsertUpdateProposal(props) {
     const [isValidKeyword, setIsValidKeyword] = useState(true);
     const [isValidCds, setIsValidCds] = useState(true);
     const [validated, setValidated] = useState(false);
+    const [cancel, setCancel] = useState(false);
 
     const getAllTeachersGroupsCds = async () => {
         try {
@@ -228,6 +229,9 @@ function InsertUpdateProposal(props) {
         setValidated(true);
     }
 
+    function cancelButt(){
+        setCancel(true);
+    }
 
     return (
         <Card style={{"marginTop": "1rem", "marginBottom": "2rem"}}>
@@ -252,14 +256,14 @@ function InsertUpdateProposal(props) {
                                     value={title}
                                     isInvalid={!isValidTitle}
                                     onChange={ (ev) => {
-                                            if ((ev.target.value.trim()).length > 0 ) {
-                                                setTitle(ev.target.value);
-                                                setIsValidTitle(true);
-                                            } else {
-                                                setTitle(ev.target.value);
-                                                setIsValidTitle(false);
-                                            }
+                                        if ((ev.target.value.trim()).length > 0 ) {
+                                            setTitle(ev.target.value);
+                                            setIsValidTitle(true);
+                                        } else {
+                                            setTitle(ev.target.value);
+                                            setIsValidTitle(false);
                                         }
+                                    }
                                     }
                                 />
                                 <label htmlFor="floatingTitle" > Title </label>
@@ -315,7 +319,7 @@ function InsertUpdateProposal(props) {
                                             </Col>
                                         </Row>
                                         {typeList.length - 1 === index &&
-                                            <Button variant="info" size="sm" onClick={addType}> Add type </Button>
+                                            <Button variant="info" size="sm" onClick={addType}> <FontAwesomeIcon icon="fa-solid fa-plus" /> Add type </Button>
                                         }
                                     </>
                                 ))}
@@ -347,7 +351,7 @@ function InsertUpdateProposal(props) {
                                             </Col>
                                         </Row>
                                         {keywordsList.length - 1 === index &&
-                                            <Button variant="info" size="sm" onClick={addKeyword}> Add keyword </Button>
+                                            <Button variant="info" size="sm" onClick={addKeyword}> <FontAwesomeIcon icon="fa-solid fa-plus" /> Add keyword </Button>
                                         }
                                     </>
                                 ))}
@@ -412,14 +416,14 @@ function InsertUpdateProposal(props) {
                                 value={description}
                                 isInvalid={!isValidDescription}
                                 onChange={ (ev) => {
-                                        if ((ev.target.value.trim()).length > 0 ) {
-                                            setDescription(ev.target.value);
-                                            setIsValidDescription(true);
-                                        } else {
-                                            setDescription(ev.target.value);
-                                            setIsValidDescription(false);
-                                        }
+                                    if ((ev.target.value.trim()).length > 0 ) {
+                                        setDescription(ev.target.value);
+                                        setIsValidDescription(true);
+                                    } else {
+                                        setDescription(ev.target.value);
+                                        setIsValidDescription(false);
                                     }
+                                }
                                 }
                             />
                             <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Description </label>
@@ -441,19 +445,19 @@ function InsertUpdateProposal(props) {
                             }
                         </Form.Group>
                         <Col sm={7}>
-                        <Form.Group style={{"marginTop": "1rem"}} >
-                            <Form.Floating>
-                                <Form.Control
-                                    required
-                                    type="date"
-                                    value={date}
-                                    min={dayjs().format('YYYY-MM-DD')}
-                                    onChange={ev => setDate(ev.target.value)}
-                                />
-                                <label htmlFor="floatingDate"> Expiration date </label>
-                                <Form.Control.Feedback type="invalid"> Please choose a date </Form.Control.Feedback>
-                            </Form.Floating>
-                        </Form.Group>
+                            <Form.Group style={{"marginTop": "1rem"}} >
+                                <Form.Floating>
+                                    <Form.Control
+                                        required
+                                        type="date"
+                                        value={date}
+                                        min={dayjs().format('YYYY-MM-DD')}
+                                        onChange={ev => setDate(ev.target.value)}
+                                    />
+                                    <label htmlFor="floatingDate"> Expiration date </label>
+                                    <Form.Control.Feedback type="invalid"> Please choose a date </Form.Control.Feedback>
+                                </Form.Floating>
+                            </Form.Group>
                         </Col>
                     </Row>
                 </Card.Body>
@@ -461,19 +465,17 @@ function InsertUpdateProposal(props) {
                 <Card.Footer style={{"textAlign": "center"}}>
                     <Button variant="outline-primary" type="submit">
                         { editProposalID ?
-                            "Update thesis proposal"
+                            <><FontAwesomeIcon icon="fa-solid fa-check" /> Update thesis proposal</>
                             :
                             <><FontAwesomeIcon icon={"upload"} /> Publish thesis proposal</>
                         }
                     </Button>
 
-                    { (editProposalID || copyProposalID) ?
-                        <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => navigate('/teacher/proposals')}>
-                            Cancel
-                        </Button>
-                        :
-                        <></>
-                    }
+
+                    <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => {navigate('/teacher/proposals');}}>
+                        <FontAwesomeIcon icon="fa-solid fa-xmark" /> Cancel
+                    </Button>
+
                 </Card.Footer>
             </Form>
         </Card>

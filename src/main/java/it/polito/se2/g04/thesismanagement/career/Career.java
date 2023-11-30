@@ -8,7 +8,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -26,4 +25,13 @@ public class Career {
     private Date date;
     @ManyToOne
     private Student student;
+
+    public Career(String codCourse,String titleCourse,int CFU, Integer grade, Date date,Student student){
+        this.codCourse=codCourse;
+        this.titleCourse=titleCourse;
+        this.CFU=CFU;
+        this.grade=grade;
+        this.date=date;
+        this.student=student;
+    }
 }

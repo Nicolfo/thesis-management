@@ -99,28 +99,28 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user }) {
                             </div>
                         }
                         >
-                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-pencil" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Update </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-copy" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => {API.archiveProposal(proposal.id, user.token)}} >
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {API.archiveProposal(proposal.id, user.token)}} >
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-box-archive" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Archive </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#0B67A5"}} onClick={() => {deleteProp(proposal.id);}}>
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-trash-can" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
