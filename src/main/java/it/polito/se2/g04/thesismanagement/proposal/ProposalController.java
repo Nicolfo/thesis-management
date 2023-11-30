@@ -79,13 +79,13 @@ public class ProposalController {
 
     @PutMapping("/API/proposal/update/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public void UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
         proposalService.updateProposal(id, proposal);
 
     }
 
-    @PostMapping("/API/proposal/update/")
+    @PutMapping("/API/proposal/update")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void UpdateProposalWithNoPathVariable(){

@@ -2,8 +2,10 @@ package it.polito.se2.g04.thesismanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
+import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -19,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,16 +41,11 @@ public class CreateProposalTest {
     private ProposalRepository proposalRepository;
     @Autowired
     private TeacherRepository teacherRepository;
+    @Autowired
+    private GroupRepository groupRepository;
 
     @Autowired
     private MockMvc mockMvc;
-
-
-
-    @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
-    private DepartmentRepository departmentRepository;
 
 
     @BeforeAll
@@ -62,21 +60,25 @@ public class CreateProposalTest {
     public void CleanUp(){
         proposalRepository.deleteAll();
         teacherRepository.deleteAll();
+        groupRepository.deleteAll();
     }
 
     @Test
     @Rollback
-    public void TestCreate() throws Exception {
+    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
+    public void testInsert() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
+        Group g = new Group("Test");
+        g = groupRepository.save(g);
+        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",g,null);
         teacherRepository.save(teacher);
         Proposal proposal=new Proposal("test1",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert")
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(proposal)))
+                        .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert")
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 

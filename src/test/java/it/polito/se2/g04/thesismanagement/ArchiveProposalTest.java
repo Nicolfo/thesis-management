@@ -6,7 +6,9 @@ import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalService;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -19,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,9 +30,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.keycloak.util.JsonSerialization.mapper;
 
 
 @SpringBootTest
@@ -44,28 +49,10 @@ public class ArchiveProposalTest {
     @Autowired
     private TeacherRepository teacherRepository;
     @Autowired
-    private ApplicationRepository applicationRepository;
-    @Autowired
-    private StudentRepository studentRepository;
+    private ProposalService proposalService;
 
     @Autowired
     private MockMvc mockMvc;
-
-
-
-    @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-
-    @BeforeAll
-    public void setup() {
-        //mock logged in user
-        /*User user = new User("test@example.com", "password", "TEACHER");
-        Authentication auth = new TestingAuthenticationToken(user, "password");
-        SecurityContextHolder.getContext().setAuthentication(auth);*/
-    }
 
     @AfterAll
     public void CleanUp(){
@@ -74,6 +61,7 @@ public class ArchiveProposalTest {
     }
     @Test
     @Rollback
+    @WithMockUser(username = "test@example.it", roles = {"TEACHER"})
     public void archiveProposal() throws Exception {
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacherRepository.save(teacher);
@@ -82,34 +70,20 @@ public class ArchiveProposalTest {
         Proposal proposal2=new Proposal("test2",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
         proposalRepository.save(proposal2);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/archive/{id}",1f)
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/{id}",proposal.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        MvcResult res= mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getAll")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        String json = res.getResponse().getContentAsString();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        Proposal[] proposalOutput = mapper.readValue(json, Proposal[].class);
-        assertEquals(1, proposalOutput.length, "proposalOutput should be 1 long");
+        List<ProposalFullDTO> proposalOutput=proposalService.getAllNotArchivedProposals();
+        assertEquals(1, proposalOutput.size(), "proposalOutput should be 1 long");
 
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/archive/{id}",2f)
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/{id}",proposal2.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        res= mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getAll")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        json = res.getResponse().getContentAsString();
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        proposalOutput = mapper.readValue(json, Proposal[].class);
-        assertEquals(0, proposalOutput.length, "proposalOutput should be empty");
+        proposalOutput=proposalService.getAllNotArchivedProposals();
+        assertEquals(0, proposalOutput.size(), "proposalOutput should be empty");
 
 
 
@@ -119,6 +93,6 @@ public class ArchiveProposalTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/" + new Random().nextLong(3,100))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }
