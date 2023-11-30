@@ -12,7 +12,7 @@ RETROSPECTIVE Sprint 1 (Team 4)
 **Remember** a story is done ONLY if it fits the Definition of Done:
  
 Our Definition Of Done:
-- Unit Tests passing
+- Most Unit Tests passing
 - Code review completed
 - Code present on VCS
 - End-to-End tests performed
@@ -41,45 +41,49 @@ Our Definition Of Done:
 ## QUALITY MEASURES 
 
 - Unit Testing:
-  - Total hours estimated: **16h**
-  - Total hours spent: **14h 45m**
-  - Nr of automated unit test cases: **24**
-  - Coverage (if available): **86% of all methods, 84% of lines of code**
+  - Total hours estimated: **12h**
+  - Total hours spent: **11h**
+  - Nr of automated unit test cases: **14**
+  - Coverage (if available): **50% of all methods, 53% of lines of code**
 - E2E testing:
   - Total hours estimated: **8h**
-  - Total hours spent: **6h 30m**
+  - Total hours spent: **11h**
 - Code review 
-  - Total hours estimated: **7h**
-  - Total hours spent: **8h**
+  - Total hours estimated: **16h**
+  - Total hours spent: **20h 30m**
   
 
 ## ASSESSMENT
 
 - What caused your errors in estimation (if any)?
-We were pretty close to our estimated time, the only difference was due to some research for new features
+We underestimated how long it would take to finish the various tasks, especially the code review, merging all our branches took a lot longer than expected. We also didn't consider the individual skills when performing the time estimation.
 
 - What lessons did you learn (both positive and negative) in this sprint?
 
 **Positive:**
-1) We improved a lot our time estimation skills
-2) Scrum meetings were more precise and target-oriented
-3) We learned how to work optimally with branches and how to merge them properly
+1) Having another point of view about a certain problem can help reducing time spent solving it.
+2) Cooperation was essential and very successful, especially for bug fixing and reduced time spent on each task.
+3) We did more scrum meetings (one every three days) and it was useful for better communication.
+4) Despite having little time to do everything, we were able to complete all the stories working together as a team under pressure.
 
 **Negative:**
-1) Add better test user management in order to make the presentation smoother
-2) Streamline the test development process so that they keep working after each merge/task implementation
+1) We need to merge all our branches more often, so we can solve some conflicts in a simpler way.
+2) We can improve the way we perform scrum meetings.
+3) Our time estimation was too optimistic; we planned to complete too many stories in a single sprint, so a lot of our activites were rushed.
 
-- Which improvement goals set in the previous retrospective were you able to achieve?
-  - We were able to merge branches more frequently, avoiding big conflicts and spending less time on them
-  - We were less optimistic with our time estimation: the estimated time was pretty close to the actual one
-
+- Which improvement goals set in the previous retrospective were you able to achieve? 
+  - We were able to perform scrum meetings regularly.
+  - We created tasks dedicated to tests only.
+  - We defined most of the application's API before starting development.
+  - We were more careful about balancing the skills of team members working together on a story.
+  
 - Which ones you were not able to achieve? Why?
+  - Most of the APIs were well-defined at the beginning, but we missed some of them: we should be more careful about it next time. 
   - We were able to achieve all our other improvement goals.
 
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-  - Being more efficient in our planning process
-  - Improve the test development process
-  - Add better test user management for the demo presentation
+  - Perform more frequent branch merges to avoid big merging conflicts at the end.
+  - We will be less optimistic with our time estimation for the tasks, keeping a time buffer in case of issues.
 
 - One thing you are proud of as a Team!!
-- We constantly improved as a team since the beginning of the project, both as a team and as individuals; in this sprint, most of things went according to plan, indicating that we now have a better understanding of how to organize our work and complete it.  
+  - Despite being under pressure and with very limited time, we were able to work hard together to resolve all the issues and prepare the presentation on time; we worked very efficiently and this allowed us to complete many stories.
