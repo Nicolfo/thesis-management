@@ -99,9 +99,7 @@ public class ProposalController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         String cds = studentService.getCdS(username);
-
         proposalSearchRequest.setCdS(cds);
-        System.out.println(proposalSearchRequest.getCdS());
         return proposalService.searchProposals(proposalSearchRequest);
     }
 

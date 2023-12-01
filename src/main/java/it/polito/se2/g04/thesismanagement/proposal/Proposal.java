@@ -23,7 +23,7 @@ public class Proposal {
 
 
     //sets archived automatically to false, when object is created using this constructor
-    public Proposal(String title, Teacher supervisor, List<Teacher> coSupervisors, String keywords, String type, List<Group> groups, String description, String requiredKnowledge, String notes, Date expiration, String level, String cdS) {
+    public Proposal(String title, Teacher supervisor, List<Teacher> coSupervisors, String keywords, String type, List<Group> groups, String description, String requiredKnowledge, String notes, Date expiration, String level, String cds) {
         this.title = title;
         this.supervisor = supervisor;
         this.coSupervisors = coSupervisors;
@@ -35,7 +35,7 @@ public class Proposal {
         this.notes = notes;
         this.expiration = expiration;
         this.level = level;
-        CdS = cdS;
+        this.cds = cds;
     }
 
     @Id
@@ -57,8 +57,9 @@ public class Proposal {
     private String notes;
     private Date expiration;
     private String level;//to check
-    private String CdS;//to check
+    private String cds;//to check
     private Boolean archived = false;
+
 
 
     @Override
@@ -66,11 +67,11 @@ public class Proposal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Proposal proposal = (Proposal) o;
-        return Objects.equals(id, proposal.id) && Objects.equals(title, proposal.title) && Objects.equals(supervisor, proposal.supervisor) && Objects.equals(coSupervisors, proposal.coSupervisors) && Objects.equals(keywords, proposal.keywords) && Objects.equals(type, proposal.type) && Objects.equals(groups, proposal.groups) && Objects.equals(description, proposal.description) && Objects.equals(requiredKnowledge, proposal.requiredKnowledge) && Objects.equals(notes, proposal.notes) && Objects.equals(expiration, proposal.expiration) && Objects.equals(level, proposal.level) && Objects.equals(CdS, proposal.CdS);
+        return Objects.equals(id, proposal.id) && Objects.equals(title, proposal.title) && Objects.equals(supervisor, proposal.supervisor) && Objects.equals(coSupervisors, proposal.coSupervisors) && Objects.equals(keywords, proposal.keywords) && Objects.equals(type, proposal.type) && Objects.equals(groups, proposal.groups) && Objects.equals(description, proposal.description) && Objects.equals(requiredKnowledge, proposal.requiredKnowledge) && Objects.equals(notes, proposal.notes) && Objects.equals(expiration, proposal.expiration) && Objects.equals(level, proposal.level) && Objects.equals(cds, proposal.cds);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, supervisor, coSupervisors, keywords, type, groups, description, requiredKnowledge, notes, expiration, level, CdS);
+        return Objects.hash(id, title, supervisor, coSupervisors, keywords, type, groups, description, requiredKnowledge, notes, expiration, level, cds);
     }
 }

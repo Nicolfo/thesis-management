@@ -25,6 +25,7 @@ public class ProposalServiceImpl implements ProposalService {
     private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
+    private static String proposalIdNotExists="Proposal with this id does not exist";
 
     public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
@@ -39,8 +40,8 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public List<ProposalFullDTO> getProposalsByProf(String UserName){
-        Teacher teacher = teacherRepository.findByEmail(UserName);
+    public List<ProposalFullDTO> getProposalsByProf(String userName){
+        Teacher teacher = teacherRepository.findByEmail(userName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchivedOrderById(teacher, false);
             return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
@@ -82,7 +83,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
         if(!proposalRepository.existsById(id))
-            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+            throw(new ProposalNotFoundException(proposalIdNotExists));
 
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
@@ -97,7 +98,7 @@ public class ProposalServiceImpl implements ProposalService {
         old.setNotes(proposalDTO.getNotes());
         old.setExpiration(proposalDTO.getExpiration());
         old.setLevel(proposalDTO.getLevel());
-        old.setCdS(proposalDTO.getCds());
+        old.setCds(proposalDTO.getCds());
         old.setKeywords(proposalDTO.getKeywords());
 
         Proposal updated = proposalRepository.save(old);
@@ -108,6 +109,7 @@ public class ProposalServiceImpl implements ProposalService {
     public List<ProposalFullDTO> getAllNotArchivedProposals(){
         return proposalRepository.findAllByArchived(false).stream().map(ProposalFullDTO::fromProposal).toList();
     }
+    //SONARCLOUD: reduce if statement(move them to function like "add predicate if")
     @Query
     @Override
     public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
@@ -164,10 +166,10 @@ public class ProposalServiceImpl implements ProposalService {
         for (Proposal prop : proposalList) {
             boolean include = true;
             // Check if it has all the supervisors
-            if (proposalSearchRequest.getSupervisorIdList() != null) {
-                if (!proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId())) {
+            if (proposalSearchRequest.getSupervisorIdList() != null && !proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId())) {
+
                     include = false;
-                }
+
             }
             // Check if it has at least one of the co-supervisors
             if (proposalSearchRequest.getCoSupervisorIdList() != null) {
@@ -204,7 +206,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal archiveProposal(Long id) {
         if(!proposalRepository.existsById(id)){
-            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+            throw(new ProposalNotFoundException(proposalIdNotExists));
         }
         Proposal old= proposalRepository.getReferenceById(id);
         if (old.getArchived()){
@@ -219,7 +221,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void deleteProposal(Long id){
         if(!proposalRepository.existsById(id))
-            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+            throw(new ProposalNotFoundException(proposalIdNotExists));
 
         applicationRepository.getApplicationByProposal_Id(id).forEach(it->applicationRepository.deleteById(it.getId()));
         proposalRepository.deleteById(id);

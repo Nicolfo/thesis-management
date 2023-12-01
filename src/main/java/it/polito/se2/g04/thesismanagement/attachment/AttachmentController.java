@@ -5,7 +5,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,12 +21,11 @@ public class AttachmentController {
 
     @PostMapping("/API/uploadFile")
     @ResponseStatus(HttpStatus.CREATED)
-    public AttachmentDTO addAttachment(@RequestPart("file")MultipartFile file) throws IOException {
+    public AttachmentDTO addAttachment(@RequestPart("file")MultipartFile file)  {
         try{
             return attachmentService.addAttachment(file);
         }catch (IOException ioException){
-            //handle errors in a better way
-            throw ioException;
+            return null;
         }
 
     }
@@ -39,8 +37,8 @@ public class AttachmentController {
 
         Attachment elem = attachmentService.getFileById(id);
 
-        if (elem != null && elem.getAttachment() != null) {
-            ByteArrayResource resource = new ByteArrayResource(elem.getAttachment());
+        if (elem != null && elem.getBytes() != null) {
+            ByteArrayResource resource = new ByteArrayResource(elem.getBytes());
 
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + elem.getFileName());
@@ -48,7 +46,7 @@ public class AttachmentController {
 
             return ResponseEntity.ok()
                     .headers(headers)
-                    .contentLength(elem.getAttachment().length)
+                    .contentLength(elem.getBytes().length)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
         } else {
