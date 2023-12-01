@@ -57,7 +57,7 @@ jib{
 subprojects {
 	sonar {
 		properties {
-			property "sonar.sources", "src,frontend/src"
+			property "sonar.sources", "frontend/src"
 		}
 	}
 }
