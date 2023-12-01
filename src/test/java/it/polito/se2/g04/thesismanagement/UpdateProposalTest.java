@@ -1,11 +1,18 @@
 package it.polito.se2.g04.thesismanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.se2.g04.thesismanagement.application.Application;
+import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.application.ApplicationService;
+import it.polito.se2.g04.thesismanagement.degree.Degree;
+import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
+import it.polito.se2.g04.thesismanagement.student.Student;
+import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -44,16 +51,26 @@ public class UpdateProposalTest {
     private TeacherRepository teacherRepository;
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private ApplicationRepository applicationRepository;
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private DegreeRepository degreeRepository;
+    @Autowired
+    private ApplicationService applicationService;
 
     @Autowired
     private MockMvc mockMvc;
 
     @AfterAll
-    public void CleanUp(){
+    public void CleanUp() {
+        applicationRepository.deleteAll();
         proposalRepository.deleteAll();
         teacherRepository.deleteAll();
+        studentRepository.deleteAll();
         groupRepository.deleteAll();
-
+        degreeRepository.deleteAll();
     }
 
     @Test
@@ -63,21 +80,35 @@ public class UpdateProposalTest {
         ObjectMapper mapper = new ObjectMapper();
         Group g = new Group("TestGroup");
         g = groupRepository.save(g);
-        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",g,null);
+        Teacher teacher = new Teacher("Massimo", "Potenza", "m.potenza@example.com", g, null);
         teacher = teacherRepository.save(teacher);
-        Proposal proposal=new Proposal("test1",teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes",null,"level", "cds");
+        Proposal proposal = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
         proposal = proposalRepository.save(proposal);
 
         proposal.setDescription("nuova descrizione");
 
-        MvcResult res= mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update/{id}",proposal.getId())
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update/{id}", proposal.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        Proposal proposalOutput=proposalRepository.getReferenceById(proposal.getId());
-        assertEquals(proposalOutput,proposal,"they should be the same");
+        Proposal proposalOutput = proposalRepository.getReferenceById(proposal.getId());
+        assertEquals(proposalOutput, proposal, "they should be the same");
+
+
+        Degree degree = new Degree("ingegneria informatica");
+        degreeRepository.save(degree);
+        Student student = new Student("rossi", "marco", "male", "ita", "m.rossi@example.com", degree, 2020);
+        studentRepository.save(student);
+        Application application = new Application(student, null, null, proposal);
+        application = applicationRepository.save(application);
+        applicationService.acceptApplicationById(application.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update/{id}", proposal.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -89,7 +120,7 @@ public class UpdateProposalTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update/" + new Random().nextLong(2,100))
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update/" + new Random().nextLong(2, 100))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());

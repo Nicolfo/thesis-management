@@ -87,6 +87,10 @@ public class ProposalServiceImpl implements ProposalService {
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
 
         Proposal old = proposalRepository.getReferenceById(id);
+        if(old.getStatus()==Proposal.Status.ACCEPTED){
+            throw (new updateAfterAccepted("you can't update this proposal after an application to it is accepted"));
+        }
+
         old.setTitle(proposalDTO.getTitle());
         old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
         if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
