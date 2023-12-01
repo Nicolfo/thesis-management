@@ -208,7 +208,7 @@ public class ProposalServiceImpl implements ProposalService {
 
 
     @Override
-    public Proposal archiveProposal(Long id) {
+    public ProposalFullDTO archiveProposal(Long id) {
         if (!proposalRepository.existsById(id)) {
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
         }
@@ -218,7 +218,7 @@ public class ProposalServiceImpl implements ProposalService {
         } else {
             old.setStatus(Proposal.Status.ARCHIVED);
         }
-        return proposalRepository.save(old);
+        return ProposalFullDTO.fromProposal(proposalRepository.save(old));
     }
 
     @Override

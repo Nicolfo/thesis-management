@@ -8,9 +8,7 @@ import it.polito.se2.g04.thesismanagement.degree.Degree;
 import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
-import it.polito.se2.g04.thesismanagement.proposal.Proposal;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
+import it.polito.se2.g04.thesismanagement.proposal.*;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -59,6 +57,8 @@ public class UpdateProposalTest {
     private DegreeRepository degreeRepository;
     @Autowired
     private ApplicationService applicationService;
+    @Autowired
+    private ProposalService proposalService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -125,5 +125,21 @@ public class UpdateProposalTest {
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
+        Proposal proposalEnumTestAccepted = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
+        proposalEnumTestAccepted.setStatus(Proposal.Status.ACCEPTED);
+        proposalEnumTestAccepted=proposalRepository.save(proposalEnumTestAccepted);
+
+        Proposal proposalEnumTestDelete = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
+        proposalEnumTestDelete.setStatus(Proposal.Status.DELETE);
+        proposalEnumTestDelete=proposalRepository.save(proposalEnumTestDelete);
+
+        Proposal proposalEnumTestArchived = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
+        proposalEnumTestArchived.setStatus(Proposal.Status.ARCHIVED);
+        proposalEnumTestArchived=proposalRepository.save(proposalEnumTestArchived);
+
+
+
+        List<ProposalFullDTO> proposal3 = proposalService.getAllNotArchivedProposals();
+        assertEquals(0, proposal3.size(), "proposal3 should be empty");
     }
 }
