@@ -30,7 +30,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<ApplicationDTO> getApplicationsByProf(String profEmail) {
-        List<Application> toReturn = applicationRepository.getApplicationByProposal_Supervisor_Email(profEmail);
+        List<Application> toReturn = applicationRepository.getApplicationByProposal_Supervisor_Email(profEmail)
+                .stream().filter(it->it.getStatus()!=ApplicationStatus.DELETE).collect(Collectors.toList());
 
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
@@ -61,7 +62,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail) {
-        List<Application> toReturn = applicationRepository.getApplicationByStudentEmail(studentEmail);
+        List<Application> toReturn = applicationRepository.getApplicationByStudentEmail(studentEmail)
+                .stream().filter(it->it.getStatus()!=ApplicationStatus.DELETE).collect(Collectors.toList());
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
             dto.setId(it.getId());
@@ -96,7 +98,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         String profEmail = auth.getName();
         if (proposalRepository.getReferenceById(proposalId).getSupervisor().getEmail().compareTo(profEmail) == 0) {
 
-            List<Application> toReturn = applicationRepository.getApplicationByProposal_Id(proposalId);
+            List<Application> toReturn = applicationRepository.getApplicationByProposal_Id(proposalId)
+                    .stream().filter(it->it.getStatus()!=ApplicationStatus.DELETE).collect(Collectors.toList());
             return toReturn.stream().map(it -> {
                 ApplicationDTO dto = new ApplicationDTO();
                 dto.setId(it.getId());
