@@ -19,21 +19,21 @@ Our Definition Of Done:
 
 ### Detailed statistics
 
-| Story                        | # Tasks | Points                             | Hours est. | Hours actual |
-|------------------------------|---------|------------------------------------|------------|--------------|
-| _#0_                         | 18      |                                    | 71 h       | 70h 25m      |
-| Insert Proposal              | 3       | 0 (from previous sprint, not done) | 4h 30m     | 2h 30m       |
-| Search Proposal              | 3       | 0                                  | 3h 30m     | 4h           |
-| Accept Application           | 2       | 0                                  | 3h 30m     | 3h 30m       |
-| Browse Applications Decisions | 3       | 0                                  | 4h 30m     | 5h           |
-| Browse Proposals             | 3       | 0                                  | 3h 30m     | 2h 45m       |
-| Update Proposal              | 3       | 0                                  | 4h 30m     | 5h           |
-| Notify application decision  | 4       | 3                                  | 8h         | 6h 15m       |
-| Delete proposal              | 5       | 2                                  | 6h         | 6h           |
-| Copy proposal                | 3       | 3                                  | 5h         | 6h           |
-| Archive proposal             | 5       | 3                                  | 8h         | 8h 45m       |
-| Access applicant cv          | 5       | 5                                  | 0          | 0            |
-| Notify application   | 1       | 2                                  | 2h         | 1h 45m       |
+| Story                          | # Tasks | Points                             | Hours est. | Hours actual |
+|--------------------------------|---------|------------------------------------|------------|--------------|
+| _#0_                           | 18      |                                    | 71 h       | 70h 25m      |
+| Insert Proposal                | 3       | 0 (from previous sprint, not done) | 4h 30m     | 2h 30m       |
+| Search Proposal                | 3       | 0 (from previous sprint, not done) | 3h 30m     | 4h           |
+| Accept Application             | 2       | 0 (from previous sprint, not done) | 3h 30m     | 3h 30m       |
+| Browse Applications Decisions  | 3       | 0 (from previous sprint, not done) | 4h 30m     | 5h           |
+| Browse Proposals               | 3       | 0 (from previous sprint, not done) | 3h 30m     | 2h 45m       |
+| Update Proposal                | 3       | 0 (from previous sprint, not done) | 4h 30m     | 5h           |
+| Notify application decision    | 4       | 3                                  | 8h         | 6h 15m       |
+| Delete proposal                | 5       | 2                                  | 6h         | 6h           |
+| Copy proposal                  | 3       | 3                                  | 5h         | 6h           |
+| Archive proposal               | 5       | 3                                  | 8h         | 8h 45m       |
+| Access applicant cv            | 5       | 5                                  | 0          | 0            |
+| Notify application             | 1       | 2                                  | 2h         | 1h 45m       |
 
 
 
@@ -85,9 +85,9 @@ We were pretty close to our estimated time, the only difference was due to some 
   - We were able to achieve all our other improvement goals.
 
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-  - Being more efficient in our planning process
+  - Stick to the time budget of 8 hours/person/week for estimation
   - Improve the test development process
   - Add better test user management for the demo presentation
 
 - One thing you are proud of as a Team!!
-- We constantly improved as a team since the beginning of the project, both as a team and as individuals; in this sprint, most of things went according to plan, indicating that we now have a better understanding of how to organize our work and complete it.  
+  - We constantly improved as a team since the beginning of the project, both as a team and as individuals; in this sprint, most of the things went according to plan, indicating that we now have a better understanding of how to organize our work and complete it.  
