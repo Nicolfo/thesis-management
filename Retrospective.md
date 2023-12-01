@@ -41,8 +41,8 @@ Our Definition Of Done:
  
 - Estimated average hours per task: **2h 20m**
 - Actual average hours per task: **2h 15m**
-- Estimated average hours per task std. deviation: **1.15**
-- Actual average hours per task std. deviation: **1.98**
+- Estimated average hours per task std. deviation: **1.04**
+- Actual average hours per task std. deviation: **1.52**
 - Total task estimation error ratio (sum of total hours estimation / sum of total hours spent - 1): **-0.01**
 
   
