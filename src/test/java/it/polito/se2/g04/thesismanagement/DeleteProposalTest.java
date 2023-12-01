@@ -1,9 +1,8 @@
 package it.polito.se2.g04.thesismanagement;
 
-import it.polito.se2.g04.thesismanagement.application.Application;
-import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
-import it.polito.se2.g04.thesismanagement.application.ApplicationService;
-import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.polito.se2.g04.thesismanagement.application.*;
 import it.polito.se2.g04.thesismanagement.degree.Degree;
 import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
@@ -28,6 +27,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -103,12 +103,18 @@ public class DeleteProposalTest {
 
 
 
+        MvcResult res= mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByProf")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ApplicationDTO[] applicationOutput =mapper.readValue(json, ApplicationDTO[].class);
 
-        List<Application> applicationOutput =applicationRepository.findAll();
 
-
-        assertEquals(ApplicationStatus.DELETE, applicationOutput.get(0).getStatus(), "applicationOutput should be tagged to deletion");
-        assertEquals(ApplicationStatus.DELETE, applicationOutput.get(1).getStatus(), "applicationOutput should be tagged to deletion");
+        assertEquals(ApplicationStatus.DELETE, applicationOutput[0].getStatus(), "applicationOutput should be tagged to deletion");
+        assertEquals(ApplicationStatus.DELETE, applicationOutput[1].getStatus(), "applicationOutput should be tagged to deletion");
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete")
                         .contentType(MediaType.APPLICATION_JSON))

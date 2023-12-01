@@ -127,15 +127,17 @@ public class UpdateProposalTest {
 
         Proposal proposalEnumTestAccepted = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
         proposalEnumTestAccepted.setStatus(Proposal.Status.ACCEPTED);
-        proposalRepository.save(proposalEnumTestAccepted);
+        proposalEnumTestAccepted=proposalRepository.save(proposalEnumTestAccepted);
 
         Proposal proposalEnumTestDelete = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
         proposalEnumTestDelete.setStatus(Proposal.Status.DELETE);
-        proposalRepository.save(proposalEnumTestDelete);
+        proposalEnumTestDelete=proposalRepository.save(proposalEnumTestDelete);
 
         Proposal proposalEnumTestArchived = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
         proposalEnumTestArchived.setStatus(Proposal.Status.ARCHIVED);
-        proposalRepository.save(proposalEnumTestArchived);
+        proposalEnumTestArchived=proposalRepository.save(proposalEnumTestArchived);
+
+
 
         List<ProposalFullDTO> proposal3 = proposalService.getAllNotArchivedProposals();
         assertEquals(0, proposal3.size(), "proposal3 should be empty");
