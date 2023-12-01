@@ -221,6 +221,7 @@ public class ProposalServiceImpl implements ProposalService {
     public void deleteProposal(Long id) {
         if (!proposalRepository.existsById(id))
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
+
         applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
                     Application application = applicationRepository.getReferenceById(it.getId());
                     application.setStatus(ApplicationStatus.DELETE);

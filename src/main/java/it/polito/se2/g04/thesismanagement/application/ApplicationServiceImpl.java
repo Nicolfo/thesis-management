@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ApplicationServiceImpl implements ApplicationService{
+public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final StudentRepository studentRepository;
     private final AttachmentRepository attachmentRepository;
@@ -30,7 +30,7 @@ public class ApplicationServiceImpl implements ApplicationService{
 
     @Override
     public List<ApplicationDTO> getApplicationsByProf(String profEmail) {
-        List<Application> toReturn=applicationRepository.getApplicationByProposal_Supervisor_Email(profEmail);
+        List<Application> toReturn = applicationRepository.getApplicationByProposal_Supervisor_Email(profEmail);
 
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
@@ -39,7 +39,7 @@ public class ApplicationServiceImpl implements ApplicationService{
             dto.setStudentName(it.getStudent().getName());
             dto.setStudentSurname(it.getStudent().getSurname());
             dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(it.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP));
-            dto.setAttachmentId(it.getAttachment()!=null?it.getAttachment().getAttachmentId():null);
+            dto.setAttachmentId(it.getAttachment() != null ? it.getAttachment().getAttachmentId() : null);
             dto.setApplyDate(it.getApplyDate());
             dto.setProposalId(it.getProposal().getId());
             dto.setProposalTitle(it.getProposal().getTitle());
@@ -61,7 +61,7 @@ public class ApplicationServiceImpl implements ApplicationService{
 
     @Override
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail) {
-        List<Application> toReturn=applicationRepository.getApplicationByStudentEmail(studentEmail);
+        List<Application> toReturn = applicationRepository.getApplicationByStudentEmail(studentEmail);
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
             dto.setId(it.getId());
@@ -75,27 +75,28 @@ public class ApplicationServiceImpl implements ApplicationService{
     }
 
     @Override
-    public List<ApplicationDTO> getApplicationsByProposal(Long proposalId){
-        return getApplicationsByProposal(proposalId,true);
+    public List<ApplicationDTO> getApplicationsByProposal(Long proposalId) {
+        return getApplicationsByProposal(proposalId, true);
     }
 
     /**
      * This method returns all applications that belong to the given proposal id. If authenticationNeeded is true,
      * the applications are only returned if the logged-in user is a supervisor or co supervisor of the given proposal.
      * Otherwise, an error is thrown.
-     * @param proposalId id of the proposal, of which the applications should be returned
+     *
+     * @param proposalId           id of the proposal, of which the applications should be returned
      * @param authenticationNeeded if true, it is checked that the
      * @return List of applications to the given proposal
      */
     private List<ApplicationDTO> getApplicationsByProposal(Long proposalId, boolean authenticationNeeded) {
-        if(!proposalRepository.existsById(proposalId) ){
+        if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
         }
-        Authentication auth =SecurityContextHolder.getContext().getAuthentication();
-        String profEmail= auth.getName();
-        if(proposalRepository.getReferenceById(proposalId).getSupervisor().getEmail().compareTo(profEmail)==0){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String profEmail = auth.getName();
+        if (proposalRepository.getReferenceById(proposalId).getSupervisor().getEmail().compareTo(profEmail) == 0) {
 
-            List<Application> toReturn= applicationRepository.getApplicationByProposal_Id(proposalId);
+            List<Application> toReturn = applicationRepository.getApplicationByProposal_Id(proposalId);
             return toReturn.stream().map(it -> {
                 ApplicationDTO dto = new ApplicationDTO();
                 dto.setId(it.getId());
@@ -120,19 +121,17 @@ public class ApplicationServiceImpl implements ApplicationService{
         }
 
 
-
-        throw new ProposalOwnershipException("Specified proposal id is not belonging to user: "+profEmail);
-        }
-
+        throw new ProposalOwnershipException("Specified proposal id is not belonging to user: " + profEmail);
+    }
 
 
     @Override
-    public ApplicationDTO getApplicationById(Long applicationId){
-        Application toReturn= applicationRepository.getApplicationById(applicationId);
+    public ApplicationDTO getApplicationById(Long applicationId) {
+        Application toReturn = applicationRepository.getApplicationById(applicationId);
         ApplicationDTO dto = new ApplicationDTO();
         dto.setId(toReturn.getId());
         dto.setStudent(StudentDTO.fromStudent(toReturn.getStudent()));
-        dto.setAttachmentId(toReturn.getAttachment()!=null?toReturn.getAttachment().getAttachmentId():null);
+        dto.setAttachmentId(toReturn.getAttachment() != null ? toReturn.getAttachment().getAttachmentId() : null);
         dto.setApplyDate(toReturn.getApplyDate());
         dto.setProposal(ProposalFullDTO.fromProposal(toReturn.getProposal()));
         dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(toReturn.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -140,35 +139,40 @@ public class ApplicationServiceImpl implements ApplicationService{
         return dto;
         //return new ApplicationDTO4(toReturn.getId(),toReturn.getStudent(),toReturn.getAttachment()!=null?toReturn.getAttachment().getAttachmentId():null,toReturn.getApplyDate(),toReturn.getProposal(),BigDecimal.valueOf(studentService.getAverageMarks(toReturn.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP),toReturn.getStatus());
     }
-    public Application getApplicationByIdOriginal(Long applicationId){
-        Application toReturn= applicationRepository.getApplicationById(applicationId);
+
+    public Application getApplicationByIdOriginal(Long applicationId) {
+        Application toReturn = applicationRepository.getApplicationById(applicationId);
         return toReturn;
     }
 
     @Override
-  public boolean acceptApplicationById(Long applicationId) {
+    public boolean acceptApplicationById(Long applicationId) {
         try {
             Application application = getApplicationByIdOriginal(applicationId);
+            Proposal proposal = proposalRepository.getReferenceById(application.getProposal().getId());
             if (application.getStatus() != ApplicationStatus.PENDING)
                 return false;
             application.setStatus(ApplicationStatus.ACCEPTED);
+            proposal.setStatus(Proposal.Status.ACCEPTED);
             application = applicationRepository.save(application);
+            proposal = proposalRepository.save(proposal);
             emailService.notifyStudentOfApplicationDecision(application);
-            return rejectApplicationsByProposal(application.getProposal().getId(),applicationId);
+            return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
         } catch (Exception e) {
             return false;
-             }
+        }
     }
-  @Override
-  public void applyForProposal( ApplicationDTO applicationDTO) {
+
+    @Override
+    public void applyForProposal(ApplicationDTO applicationDTO) {
         //TODO: add parsing of logged user
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Student loggedUser = studentRepository.getStudentByEmail(auth.getName());
             Application toSave = new Application(loggedUser, attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()), applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
-            Application saved=applicationRepository.save(toSave);
+            Application saved = applicationRepository.save(toSave);
             emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
         }
 
@@ -183,7 +187,7 @@ public class ApplicationServiceImpl implements ApplicationService{
             applicationRepository.save(application);
 
             emailService.notifyStudentOfApplicationDecision(application);
-            if(newStateEnum == ApplicationStatus.ACCEPTED){
+            if (newStateEnum == ApplicationStatus.ACCEPTED) {
                 return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
             }
             return true;
@@ -192,11 +196,11 @@ public class ApplicationServiceImpl implements ApplicationService{
         }
     }
 
-      @Override
+    @Override
     public boolean rejectApplicationById(Long applicationId) {
         try {
             Application application = getApplicationByIdOriginal(applicationId);
-            if (application.getStatus()!= ApplicationStatus.PENDING)
+            if (application.getStatus() != ApplicationStatus.PENDING)
                 return false;
             application.setStatus(ApplicationStatus.REJECTED);
             applicationRepository.save(application);
@@ -204,20 +208,20 @@ public class ApplicationServiceImpl implements ApplicationService{
             return true;
         } catch (Exception e) {
             return false;
-          }
+        }
     }
 
 
     @Override
-    public boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId){
-          boolean success = true;
-          List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId, false);
+    public boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
+        boolean success = true;
+        List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId, false);
 
-          for (ApplicationDTO application: applicationList)
-              if(!Objects.equals(exceptionApplicationId, application.getId()))
-                  success = success && (this.rejectApplicationById(application.getId())|| application.getStatus() != ApplicationStatus.PENDING);
+        for (ApplicationDTO application : applicationList)
+            if (!Objects.equals(exceptionApplicationId, application.getId()))
+                success = success && (this.rejectApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
 
-          return success;
+        return success;
     }
   /*
   @Override
@@ -233,5 +237,5 @@ public class ApplicationServiceImpl implements ApplicationService{
     }
   
   */
- 
+
 }
