@@ -2,14 +2,12 @@ package it.polito.se2.g04.thesismanagement.proposal;
 
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +18,11 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Proposal {
-
+    public enum Status{
+        DELETE,
+        ARCHIVED,
+        ACCEPTED
+    }
 
     //sets archived automatically to false, when object is created using this constructor
     public Proposal(String title, Teacher supervisor, List<Teacher> coSupervisors, String keywords, String type, List<Group> groups, String description, String requiredKnowledge, String notes, Date expiration, String level, String cdS) {
@@ -46,7 +48,6 @@ public class Proposal {
     private Teacher supervisor;
     @ManyToMany
     private List<Teacher> coSupervisors;
-
     private String keywords;
     private String type;
     @ManyToMany
@@ -58,7 +59,8 @@ public class Proposal {
     private Date expiration;
     private String level;//to check
     private String CdS;//to check
-    private Boolean archived = false;
+    @Enumerated(EnumType.STRING)
+    private Status status=null;
 
 
     @Override

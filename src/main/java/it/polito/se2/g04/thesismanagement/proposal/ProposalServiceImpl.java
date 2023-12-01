@@ -1,6 +1,8 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -29,20 +31,20 @@ public class ProposalServiceImpl implements ProposalService {
     public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
-        this.applicationRepository= applicationRepository;
+        this.applicationRepository = applicationRepository;
     }
 
 
     @Override
-    public List<ProposalFullDTO> getAllProposals(){
+    public List<ProposalFullDTO> getAllProposals() {
         return proposalRepository.findAll().stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Override
-    public List<ProposalFullDTO> getProposalsByProf(String UserName){
+    public List<ProposalFullDTO> getProposalsByProf(String UserName) {
         Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
-            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndArchivedOrderById(teacher, false);
+            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, null);
             return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
         }
         return new ArrayList<>();
@@ -61,14 +63,14 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
-        Teacher teacher=teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
-        Proposal toAdd=new Proposal(
+        Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
+        Proposal toAdd = new Proposal(
                 proposalDTO.getTitle(),
                 teacher,
                 proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : null,
                 proposalDTO.getKeywords(),
                 proposalDTO.getType(),
-                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
+                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
                 proposalDTO.getDescription(),
                 proposalDTO.getRequiredKnowledge(),
                 proposalDTO.getNotes(),
@@ -81,17 +83,17 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
-        if(!proposalRepository.existsById(id))
-            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+        if (!proposalRepository.existsById(id))
+            throw (new ProposalNotFoundException("Proposal with this id does not exist"));
 
-        Proposal old= proposalRepository.getReferenceById(id);
+        Proposal old = proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
         old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
-        if(proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
+        if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
             old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()));
         }
         old.setType(proposalDTO.getType());
-        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
+        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
         old.setDescription(proposalDTO.getDescription());
         old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
         old.setNotes(proposalDTO.getNotes());
@@ -105,9 +107,10 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public List<ProposalFullDTO> getAllNotArchivedProposals(){
-        return proposalRepository.findAllByArchived(false).stream().map(ProposalFullDTO::fromProposal).toList();
+    public List<ProposalFullDTO> getAllNotArchivedProposals() {
+        return proposalRepository.findAllByStatus(null).stream().map(ProposalFullDTO::fromProposal).toList();
     }
+
     @Query
     @Override
     public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
@@ -200,28 +203,32 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
 
-
     @Override
     public Proposal archiveProposal(Long id) {
-        if(!proposalRepository.existsById(id)){
-            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
+        if (!proposalRepository.existsById(id)) {
+            throw (new ProposalNotFoundException("Proposal with this id does not exist"));
         }
-        Proposal old= proposalRepository.getReferenceById(id);
-        if (old.getArchived()){
-            throw(new ProposalNotFoundException("Proposal already archived"));
-        }else{
-            old.setArchived(true);
+        Proposal old = proposalRepository.getReferenceById(id);
+        if (old.getStatus() == Proposal.Status.ARCHIVED) {
+            throw (new ProposalNotFoundException("Proposal already archived"));
+        } else {
+            old.setStatus(Proposal.Status.ARCHIVED);
         }
-
         return proposalRepository.save(old);
     }
 
     @Override
-    public void deleteProposal(Long id){
-        if(!proposalRepository.existsById(id))
-            throw(new ProposalNotFoundException("Proposal with this id does not exist"));
-
-        applicationRepository.getApplicationByProposal_Id(id).forEach(it->applicationRepository.deleteById(it.getId()));
-        proposalRepository.deleteById(id);
+    public void deleteProposal(Long id) {
+        if (!proposalRepository.existsById(id))
+            throw (new ProposalNotFoundException("Proposal with this id does not exist"));
+        applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
+                    Application application = applicationRepository.getReferenceById(it.getId());
+                    application.setStatus(ApplicationStatus.DELETE);
+                    applicationRepository.save(application);
+                }
+        );
+        Proposal proposal = proposalRepository.getReferenceById(id);
+        proposal.setStatus(Proposal.Status.DELETE);
+        proposalRepository.save(proposal);
     }
 }
