@@ -53,3 +53,11 @@ jib{
 	}
 	to{image="nicolfo/thesis-management"}
 }
+
+subprojects {
+	sonar {
+		properties {
+			property "sonar.sources", "src,frontend/src"
+		}
+	}
+}
