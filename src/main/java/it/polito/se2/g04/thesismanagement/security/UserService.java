@@ -30,7 +30,7 @@ public class UserService {
 
     public List<String> getRoleById(String id) {
         return keycloak.realm(realm).users().get(id).roles().realmLevel().listAll()
-                .stream().map(Object::toString).collect(Collectors.toList());
+                .stream().map(Object::toString).toList();
     }
 
 

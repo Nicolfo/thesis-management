@@ -1,16 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.c1c84382.css",
-    "main.js": "/static/js/main.c8731c4f.js",
+    "main.css": "/static/css/main.0dccb83b.css",
+    "main.js": "/static/js/main.7410e078.js",
     "static/js/787.9e9f4ffd.chunk.js": "/static/js/787.9e9f4ffd.chunk.js",
+    "static/media/Poli.jpg": "/static/media/Poli.fa2266627ef168e46099.jpg",
+    "static/media/logoPolitecnico.png": "/static/media/logoPolitecnico.d40b2fa0089fd636b6cd.png",
     "static/media/thesisicon.png": "/static/media/thesisicon.4a4c6a64cb56f9ebe6df.png",
     "index.html": "/index.html",
-    "main.c1c84382.css.map": "/static/css/main.c1c84382.css.map",
-    "main.c8731c4f.js.map": "/static/js/main.c8731c4f.js.map",
+    "main.0dccb83b.css.map": "/static/css/main.0dccb83b.css.map",
+    "main.7410e078.js.map": "/static/js/main.7410e078.js.map",
     "787.9e9f4ffd.chunk.js.map": "/static/js/787.9e9f4ffd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c1c84382.css",
-    "static/js/main.c8731c4f.js"
+    "static/css/main.0dccb83b.css",
+    "static/js/main.7410e078.js"
   ]
 }

@@ -80,7 +80,7 @@ public class ProposalController {
     @PutMapping("/API/proposal/update/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
-    public void UpdateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
+    public void updateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
         proposalService.updateProposal(id, proposal);
 
     }
@@ -88,7 +88,7 @@ public class ProposalController {
     @PutMapping("/API/proposal/update")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public void UpdateProposalWithNoPathVariable(){
+    public void updateProposalWithNoPathVariable(){
         throw new createUpdateProposalWithNoPathVariable("Can't update a proposal without filling the form");
     }
 
@@ -99,9 +99,7 @@ public class ProposalController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         String cds = studentService.getCdS(username);
-
         proposalSearchRequest.setCdS(cds);
-        System.out.println(proposalSearchRequest.getCdS());
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
@@ -124,14 +122,14 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteProposalWithNoId(){
-        throw new deleteWithNoId("can't delete a proposal without his id");
+        throw new DeleteWithNoId("can't delete a proposal without his id");
     }
 
     @PostMapping("/API/proposal/archive")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void archiveProposalWithNoId(){
-        throw new archiveWithNoId("can't archive a proposal without his id");
+        throw new ArchiveWithNoId("can't archive a proposal without his id");
     }
 
 }

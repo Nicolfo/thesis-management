@@ -53,3 +53,4 @@ jib{
 	}
 	to{image="nicolfo/thesis-management"}
 }
+

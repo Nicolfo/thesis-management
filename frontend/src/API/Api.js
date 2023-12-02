@@ -161,12 +161,30 @@ const searchProposals = async(jwt, body) => {
 
 async function archiveProposal(proposalId,jwt) {
 
-    fetch(SERVER_URL + `proposal/archive/${proposalId}`, {
+
+
+    return new Promise((resolve, reject) => {
+        fetch(SERVER_URL + `proposal/archive/${proposalId}`, {
         method: 'POST',
         headers : {'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`,},
         body: JSON.stringify({"proposalId": proposalId})
     })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-successful responses
+                    reject(`Error: ${response.status} - ${response.statusText}`);
+                } else {
+                    // Resolve if the status is OK
+                    resolve();
+                }
+            })
+            .catch(error => {
+                // Handle network errors or other exceptions
+
+                reject(`Error: ${error.message}`);
+            });
+    });
 };
 
 async function deleteProposal(proposalId,jwt) {

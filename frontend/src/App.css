@@ -38,23 +38,45 @@
 }
 
 .btn-primary {
-  background-color: #0B67A5 !important;
+  background-color: #FC7A08 !important;
+  border-color: aliceblue !important;
+}
+
+.btn-primary-start {
+  background-color: #002B49 !important;
   border-color: aliceblue !important;
 }
 
 .bg-color {
-  background-color: #0B67A5;
+  background-color: #FC7A08;
+}
+
+.bg-color-start{
+  background-color: #002B49;
 }
 
 .dateForm {
-  background-color: #0B67A5  !important;
+  background-color: #FC7A08  !important;
+  color: aliceblue !important;
+  border-color: aliceblue !important;
+}
+
+.dateForm-start {
+  background-color: #002B49  !important;
   color: aliceblue !important;
   border-color: aliceblue !important;
 }
 
 .btn-primary:hover {
+  background-color: #FEA65A !important;
+}
+
+.btn-primary-start:hover {
   background-color: #3b85b7 !important;
 }
+
+
+
 
 @media (max-width: 767px) {
   .border-b {
@@ -104,7 +126,7 @@ h1 {
 }
 
 .nav-link.active {
-  background-color: #0B67A5 !important;
+  background-color: #FC7A08 !important;
   color: aliceblue;
 }
 
@@ -114,4 +136,15 @@ h1 {
 
 .dropdown-menu {
   --bs-dropdown-min-width: none !important;
+}
+
+.dropdown-item:active {
+  background-color: #FFDDC0 !important;
+}
+
+.background-with-image {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('./NavBar/Poli.jpg');
+  background-size: cover;
 }

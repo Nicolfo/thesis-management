@@ -22,7 +22,7 @@ public interface ProposalService {
      * archived proposals are not considered. If no proposals where found or the passed User is not a Teacher, an empty
      * List is returned
      */
-    List<ProposalFullDTO> getProposalsByProf(String UserName);
+    List<ProposalFullDTO> getProposalsByProf(String userName);
 
     String getTitleByProposalId(Long proposalId);
     ProposalFullDTO createProposal(ProposalDTO proposalDTO);

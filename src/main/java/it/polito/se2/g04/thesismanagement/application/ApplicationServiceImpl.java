@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +57,25 @@ public class ApplicationServiceImpl implements ApplicationService {
                 it.getProposal().getTitle(),
                 it.getStatus()
         )).collect(Collectors.toList());*/
+
+
+        return applicationRepository
+                .getApplicationByProposal_Supervisor_Email(profEmail)
+                .stream().map(it -> {
+                    ApplicationDTO dto = new ApplicationDTO();
+                    dto.setId(it.getId());
+                    dto.setStudentId(it.getStudent().getId());
+                    dto.setStudentName(it.getStudent().getName());
+                    dto.setStudentSurname(it.getStudent().getSurname());
+                    dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(it.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    dto.setAttachmentId(it.getAttachment() == null ? null : it.getAttachment().getAttachmentId());
+                    dto.setApplyDate(it.getApplyDate());
+                    dto.setProposalId(it.getProposal().getId());
+                    dto.setProposalTitle(it.getProposal().getTitle());
+                    dto.setStatus(it.getStatus());
+                    return dto;
+                }).toList();
+
     }
 
     @Override
@@ -80,6 +98,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<ApplicationDTO> getApplicationsByProposal(Long proposalId) {
         return getApplicationsByProposal(proposalId, true);
     }
+        return applicationRepository
+                .getApplicationByStudentEmail(studentEmail)
+                .stream().map(it -> {
+                    ApplicationDTO dto = new ApplicationDTO();
+                    dto.setId(it.getId());
+                    dto.setProposalId(it.getProposal().getId());
+                    dto.setProposalTitle(it.getProposal().getTitle());
+                    dto.setSupervisorName(it.getProposal().getSupervisor().getName());
+                    dto.setSupervisorSurname(it.getProposal().getSupervisor().getSurname());
+                    dto.setStatus(it.getStatus());
+                    return dto;
+                }).toList();
+    }
+
 
     /**
      * This method returns all applications that belong to the given proposal id. If authenticationNeeded is true,
@@ -91,6 +123,12 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @return List of applications to the given proposal
      */
     private List<ApplicationDTO> getApplicationsByProposal(Long proposalId, boolean authenticationNeeded) {
+
+     * @param proposalId id of the proposal, of which the applications should be returned
+     * @return List of applications to the given proposal
+     */
+    @Override
+    public List<ApplicationDTO> getApplicationsByProposal(Long proposalId) {
         if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
         }
@@ -131,6 +169,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationDTO getApplicationById(Long applicationId) {
         Application toReturn = applicationRepository.getApplicationById(applicationId);
+            return applicationRepository
+                    .getApplicationByProposal_Id(proposalId)
+                    .stream().map(it -> getApplicationDTO(it)).toList();
+        }
+        throw new ProposalOwnershipException("Specified proposal id is not belonging to user: " + profEmail);
+    }
+
+    @Override
+    public ApplicationDTO getApplicationById(Long applicationId) {
+        return getApplicationDTO(applicationRepository.getApplicationById(applicationId));
+    }
+
+    private ApplicationDTO getApplicationDTO(Application toReturn) {
         ApplicationDTO dto = new ApplicationDTO();
         dto.setId(toReturn.getId());
         dto.setStudent(StudentDTO.fromStudent(toReturn.getStudent()));
@@ -140,12 +191,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(toReturn.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP));
         dto.setStatus(toReturn.getStatus());
         return dto;
-        //return new ApplicationDTO4(toReturn.getId(),toReturn.getStudent(),toReturn.getAttachment()!=null?toReturn.getAttachment().getAttachmentId():null,toReturn.getApplyDate(),toReturn.getProposal(),BigDecimal.valueOf(studentService.getAverageMarks(toReturn.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP),toReturn.getStatus());
     }
 
     public Application getApplicationByIdOriginal(Long applicationId) {
-        Application toReturn = applicationRepository.getApplicationById(applicationId);
-        return toReturn;
+        return applicationRepository.getApplicationById(applicationId);
     }
 
     @Override
@@ -160,7 +209,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             application = applicationRepository.save(application);
             proposal = proposalRepository.save(proposal);
             emailService.notifyStudentOfApplicationDecision(application);
-            return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
+            return rejectApplicationsByProposal(application.getProposal().getId(), applicationId)
+                    && rejectApplicationsByStudent(application.getStudent().getEmail(), applicationId);
         } catch (Exception e) {
             return false;
         }
@@ -191,7 +241,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             emailService.notifyStudentOfApplicationDecision(application);
             if (newStateEnum == ApplicationStatus.ACCEPTED) {
-                return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
+                return
+                        rejectApplicationsByProposal(application.getProposal().getId(), applicationId)
+                                && rejectApplicationsByStudent(application.getStudent().getEmail(), applicationId);
             }
             return true;
         } catch (Exception e) {
@@ -214,31 +266,24 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-
     @Override
     public boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
         boolean success = true;
-        List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId, false);
-
+        List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId);
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId()))
                 success = success && (this.rejectApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
-
         return success;
     }
-  /*
-  @Override
-    public void declineApplication(Long applicationID) {
-        //TODO: add parsing of logged user in order to check if the teacher is the one that is hosting the proposal
-        try {
-            Application toAccept =applicationRepository.getReferenceById(applicationID);
-            toAccept.setStatus("DECLINED");
-            applicationRepository.save(toAccept);
-        }catch (Exception ex){
-            throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
-          }
-    }
-  
-  */
 
+    @Override
+    public boolean rejectApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
+        boolean success = true;
+        List<ApplicationDTO> applicationList = getApplicationsByStudent(studentEmail);
+        for (ApplicationDTO application : applicationList)
+            if (!Objects.equals(exceptionApplicationId, application.getId()))
+                success = success
+                        && (this.rejectApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
+        return success;
+    }
 }
