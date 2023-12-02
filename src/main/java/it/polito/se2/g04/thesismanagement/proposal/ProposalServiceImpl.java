@@ -110,16 +110,8 @@ public class ProposalServiceImpl implements ProposalService {
     public List<ProposalFullDTO> getAllNotArchivedProposals(){
         return proposalRepository.findAllByArchived(false).stream().map(ProposalFullDTO::fromProposal).toList();
     }
-    //SONARCLOUD: reduce if statement(move them to function like "add predicate if")
-    @Query
-    @Override
-    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
-        Root<Proposal> proposal = cq.from(Proposal.class);
-        List<Predicate> predicates = new ArrayList<>();
-
+    private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates) {
         predicates.add(cb.like(cb.upper(proposal.get("CdS")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
 
         if (proposalSearchRequest.getTitle() != null) {
@@ -155,6 +147,19 @@ public class ProposalServiceImpl implements ProposalService {
             }
             predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel().toUpperCase()));
         }
+    }
+
+
+    @Query
+    @Override
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
+
+        Root<Proposal> proposal = cq.from(Proposal.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        addPredicates(proposalSearchRequest, cb, proposal, predicates);
 
         cq.where(predicates.toArray(new Predicate[0]));
 
@@ -165,13 +170,8 @@ public class ProposalServiceImpl implements ProposalService {
 
         List<Proposal> filteredList = new ArrayList<>();
         for (Proposal prop : proposalList) {
-            boolean include = true;
+            boolean include = proposalSearchRequest.getSupervisorIdList() == null || proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId());
             // Check if it has all the supervisors
-            if (proposalSearchRequest.getSupervisorIdList() != null && !proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId())) {
-
-                    include = false;
-
-            }
             // Check if it has at least one of the co-supervisors
             if (proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
