@@ -39,7 +39,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     dto.setStudentName(it.getStudent().getName());
                     dto.setStudentSurname(it.getStudent().getSurname());
                     dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(it.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP));
-                    dto.setAttachmentId(it.getAttachment() == null ? null:it.getAttachment().getAttachmentId());
+                    dto.setAttachmentId(it.getAttachment() == null ? null : it.getAttachment().getAttachmentId());
                     dto.setApplyDate(it.getApplyDate());
                     dto.setProposalId(it.getProposal().getId());
                     dto.setProposalTitle(it.getProposal().getTitle());
@@ -119,7 +119,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.setStatus(ApplicationStatus.ACCEPTED);
             application = applicationRepository.save(application);
             emailService.notifyStudentOfApplicationDecision(application);
-            return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
+            return rejectApplicationsByProposal(application.getProposal().getId(), applicationId)
+                    && rejectApplicationsByStudent(application.getStudent().getEmail(), applicationId);
         } catch (Exception e) {
             return false;
         }
@@ -149,7 +150,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             emailService.notifyStudentOfApplicationDecision(application);
             if (newStateEnum == ApplicationStatus.ACCEPTED) {
-                return rejectApplicationsByProposal(application.getProposal().getId(), applicationId);
+                return
+                        rejectApplicationsByProposal(application.getProposal().getId(), applicationId)
+                                && rejectApplicationsByStudent(application.getStudent().getEmail(), applicationId);
             }
             return true;
         } catch (Exception e) {
@@ -171,6 +174,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return false;
         }
     }
+
     @Override
     public boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
         boolean success = true;
@@ -178,6 +182,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId()))
                 success = success && (this.rejectApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
+        return success;
+    }
+
+    @Override
+    public boolean rejectApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
+        boolean success = true;
+        List<ApplicationDTO> applicationList = getApplicationsByStudent(studentEmail);
+        for (ApplicationDTO application : applicationList)
+            if (!Objects.equals(exceptionApplicationId, application.getId()))
+                success = success
+                        && (this.rejectApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
         return success;
     }
 }
