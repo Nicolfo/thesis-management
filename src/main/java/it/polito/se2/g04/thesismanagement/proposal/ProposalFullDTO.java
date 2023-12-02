@@ -1,13 +1,11 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 import it.polito.se2.g04.thesismanagement.group.GroupDTO;
-import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.parameters.P;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +25,7 @@ public class ProposalFullDTO {
     private String notes;
     private Date expiration;
     private String level;//to check
-    private String CdS;//to check
+    private String cds;//to check
     private String keywords;
     private String type;
 
@@ -45,7 +43,7 @@ public class ProposalFullDTO {
                 proposal.getNotes(),
                 proposal.getExpiration(),
                 proposal.getLevel(),
-                proposal.getCdS(),
+                proposal.getCds(),
                 proposal.getKeywords(),
                 proposal.getType()
         );

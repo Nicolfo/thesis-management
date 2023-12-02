@@ -86,7 +86,7 @@ function InsertUpdateProposal(props) {
                     setKeywordsList(editORCopy.keywords.split(", "));
 
                 let CDS = [];
-                editORCopy.cdS.split(", ").forEach( (c) => {
+                editORCopy.cds.split(", ").forEach( (c) => {
                     let elem= {label: c, value: c};
                     CDS.push(elem);
                 } );

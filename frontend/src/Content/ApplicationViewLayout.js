@@ -225,7 +225,7 @@ function ApplicationViewLayout(props) {
                                         <strong>Level:</strong> {applicationData.proposal.level}
                                     </Card.Text>
                                     <Card.Text>
-                                        <strong>CdS:</strong> {applicationData.proposal.cdS}
+                                        <strong>CdS:</strong> {applicationData.proposal.cds}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>

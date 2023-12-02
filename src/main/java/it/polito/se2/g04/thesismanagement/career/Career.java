@@ -20,16 +20,16 @@ public class Career {
     //maybe we should add a course table
     private String codCourse;
     private String titleCourse;
-    private int CFU;
+    private int cfu;
     private Integer grade;
     private Date date;
     @ManyToOne
     private Student student;
 
-    public Career(String codCourse,String titleCourse,int CFU, Integer grade, Date date,Student student){
+    public Career(String codCourse, String titleCourse, int cfu, Integer grade, Date date, Student student){
         this.codCourse=codCourse;
         this.titleCourse=titleCourse;
-        this.CFU=CFU;
+        this.cfu = cfu;
         this.grade=grade;
         this.date=date;
         this.student=student;

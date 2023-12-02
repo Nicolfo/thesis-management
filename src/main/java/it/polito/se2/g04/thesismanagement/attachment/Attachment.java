@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class Attachment{
-    public Attachment(byte[] attachment, String contentType, String fileName) {
-        this.attachment = attachment;
+    public Attachment(byte[] bytes, String contentType, String fileName) {
+        this.bytes = bytes;
         this.contentType = contentType;
         this.fileName = fileName;
     }
 
     @Lob @Basic(fetch = FetchType.LAZY)
-    private byte[] attachment;
+    private byte[] bytes;
     private String contentType;
     private String fileName;
     @Id

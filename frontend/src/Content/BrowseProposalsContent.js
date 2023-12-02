@@ -141,7 +141,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArch
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
                     <Row>
-                        <Col><b>CdS</b><br/>{proposal.cdS}</Col>
+                        <Col><b>CdS</b><br/>{proposal.cds}</Col>
                         <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
                         <Col><b>Level</b><br/>{proposal.level}</Col>
                         <Col><b>Type</b><br/>{proposal.type}</Col>

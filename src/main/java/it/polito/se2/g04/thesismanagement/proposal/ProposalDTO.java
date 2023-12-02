@@ -37,7 +37,7 @@ public class ProposalDTO {
                 proposal.getNotes(),
                 proposal.getExpiration(),
                 proposal.getLevel(),
-                proposal.getCdS(),
+                proposal.getCds(),
                 proposal.getKeywords(),
                 proposal.getType()
         );
