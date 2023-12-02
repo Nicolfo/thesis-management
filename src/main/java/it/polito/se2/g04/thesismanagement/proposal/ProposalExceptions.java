@@ -17,8 +17,8 @@ public class ProposalExceptions {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
 
-    @ExceptionHandler(deleteWithNoId.class)
-    public ProblemDetail handleServiceNotFound(deleteWithNoId e){
+    @ExceptionHandler(DeleteWithNoId.class)
+    public ProblemDetail handleServiceNotFound(DeleteWithNoId e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
 
@@ -27,8 +27,8 @@ public class ProposalExceptions {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
 
-    @ExceptionHandler(archiveWithNoId.class)
-    public ProblemDetail handleServiceNotFound(archiveWithNoId e){
+    @ExceptionHandler(ArchiveWithNoId.class)
+    public ProblemDetail handleServiceNotFound(ArchiveWithNoId e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
 }
@@ -43,9 +43,9 @@ class createUpdateProposalWithNoPathVariable extends RuntimeException {
     }
 }
 
-class deleteWithNoId extends RuntimeException{
-    public deleteWithNoId(String message) {super(message);}
+class DeleteWithNoId extends RuntimeException{
+    public DeleteWithNoId(String message) {super(message);}
 }
-class archiveWithNoId extends RuntimeException{
-    public archiveWithNoId(String message) {super(message);}
+class ArchiveWithNoId extends RuntimeException{
+    public ArchiveWithNoId(String message) {super(message);}
 }

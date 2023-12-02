@@ -122,14 +122,14 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteProposalWithNoId(){
-        throw new deleteWithNoId("can't delete a proposal without his id");
+        throw new DeleteWithNoId("can't delete a proposal without his id");
     }
 
     @PostMapping("/API/proposal/archive")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void archiveProposalWithNoId(){
-        throw new archiveWithNoId("can't archive a proposal without his id");
+        throw new ArchiveWithNoId("can't archive a proposal without his id");
     }
 
 }
