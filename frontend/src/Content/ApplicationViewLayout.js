@@ -283,11 +283,12 @@ function ApplicationViewLayout(props) {
                         <Spinner animation="border" role="status"></Spinner>
                         :
                         (applicationData.status==="PENDING" ? (
-                            <Col md={9}>
-                                <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}>Accept</Button>
-                                {" "}
-                                <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}>Reject</Button>
+                            <Col style={{textAlign: "center"}}>
+                                <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
+                                <Button variant="outline-success me-2" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}><FontAwesomeIcon icon="fa-solid fa-check" /> Accept</Button>
+                                <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}><FontAwesomeIcon icon="fa-solid fa-xmark" /> Reject</Button>
                             </Col>
+
                         ) : applicationData.status==="ACCEPTED" ? (
                             <Col md={9}>
                                 <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
@@ -303,9 +304,6 @@ function ApplicationViewLayout(props) {
                         ))
                         
                     }
-                    <Col style={{textAlign: "end"}}>
-                        <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}> Go back </Button>
-                    </Col>
                     </Row>
                 </Col>
             </Row>

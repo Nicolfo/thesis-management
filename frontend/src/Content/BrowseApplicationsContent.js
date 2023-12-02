@@ -96,8 +96,7 @@ function ApplicationRow(props) {
             <td>{statusBadge()}</td>
             <td>
                 <Button classname="d-flex align-items-center" onClick={() => handleViewInfo(props.application.id)} style={{ display: 'flex', alignItems: 'center' }}>
-                    <span className="d-none d-md-table-cell"> View info </span>
-                    <p style={{visibility: "hidden"}} className="d-none d-md-table-cell">_</p>
+                    <span className="d-none d-md-table-cell">View info </span>
                     <FontAwesomeIcon icon={"chevron-right"} />
                 </Button>
             </td>
