@@ -19,7 +19,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Proposal {
     public enum Status{
-        DELETE,
+        ACTIVE,
+        DELETED,
         ARCHIVED,
         ACCEPTED
     }
@@ -60,7 +61,7 @@ public class Proposal {
     private String level;//to check
     private String CdS;//to check
     @Enumerated(EnumType.STRING)
-    private Status status=null;
+    private Status status = Status.ACTIVE;
 
 
     @Override

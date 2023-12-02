@@ -130,7 +130,7 @@ public class UpdateProposalTest {
         proposalRepository.save(proposalEnumTestAccepted);
 
         Proposal proposalEnumTestDelete = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
-        proposalEnumTestDelete.setStatus(Proposal.Status.DELETE);
+        proposalEnumTestDelete.setStatus(Proposal.Status.DELETED);
         proposalRepository.save(proposalEnumTestDelete);
 
         Proposal proposalEnumTestArchived = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");

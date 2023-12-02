@@ -99,7 +99,7 @@ public class DeleteProposalTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         List<ProposalFullDTO> proposalOutput = proposalService.getAllProposals();
-        assertEquals(Proposal.Status.DELETE, proposalRepository.getReferenceById(proposalOutput.get(0).getId()).getStatus(), "proposalOutput should be tagged to deletion");
+        assertEquals(Proposal.Status.DELETED, proposalRepository.getReferenceById(proposalOutput.get(0).getId()).getStatus(), "proposalOutput should be tagged to deletion");
 
 
 
@@ -107,8 +107,8 @@ public class DeleteProposalTest {
         List<Application> applicationOutput =applicationRepository.findAll();
 
 
-        assertEquals(ApplicationStatus.DELETE, applicationOutput.get(0).getStatus(), "applicationOutput should be tagged to deletion");
-        assertEquals(ApplicationStatus.DELETE, applicationOutput.get(1).getStatus(), "applicationOutput should be tagged to deletion");
+        assertEquals(ApplicationStatus.DELETED, applicationOutput.get(0).getStatus(), "applicationOutput should be tagged to deletion");
+        assertEquals(ApplicationStatus.DELETED, applicationOutput.get(1).getStatus(), "applicationOutput should be tagged to deletion");
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete")
                         .contentType(MediaType.APPLICATION_JSON))

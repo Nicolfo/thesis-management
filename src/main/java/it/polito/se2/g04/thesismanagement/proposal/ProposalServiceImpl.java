@@ -44,7 +44,7 @@ public class ProposalServiceImpl implements ProposalService {
     public List<ProposalFullDTO> getProposalsByProf(String UserName) {
         Teacher teacher = teacherRepository.findByEmail(UserName);
         if (teacher != null) {
-            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, null);
+            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ACTIVE);
             return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
         }
         return new ArrayList<>();
@@ -112,7 +112,7 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public List<ProposalFullDTO> getAllNotArchivedProposals() {
-        return proposalRepository.findAllByStatus(null).stream().map(ProposalFullDTO::fromProposal).toList();
+        return proposalRepository.findAllByStatus(Proposal.Status.ACTIVE).stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Query
@@ -228,12 +228,12 @@ public class ProposalServiceImpl implements ProposalService {
 
         applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
                     Application application = applicationRepository.getReferenceById(it.getId());
-                    application.setStatus(ApplicationStatus.DELETE);
+                    application.setStatus(ApplicationStatus.DELETED);
                     applicationRepository.save(application);
                 }
         );
         Proposal proposal = proposalRepository.getReferenceById(id);
-        proposal.setStatus(Proposal.Status.DELETE);
+        proposal.setStatus(Proposal.Status.DELETED);
         proposalRepository.save(proposal);
     }
 }
