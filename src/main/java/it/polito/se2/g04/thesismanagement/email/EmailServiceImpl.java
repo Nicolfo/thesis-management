@@ -27,11 +27,11 @@ public class EmailServiceImpl implements EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(student.getEmail());
         message.setSubject("One of your applications has been updated");
-        message.setText(EmailConstants.greetingFormula + " " + student.getName() + " " + student.getSurname() + ", \n" +
+        message.setText(EmailConstants.GreetingFormula + " " + student.getName() + " " + student.getSurname() + ", \n" +
                 "\n" +
                 "The status of your application from " + (new SimpleDateFormat("dd-MM-yyyy")).format(application.getApplyDate()) + " to the thesis proposal \"" + application.getProposal().getTitle() + "\" has been updated and now has the status: " + application.getStatus() + "\n" +
                 "Log in to the Thesis Management Portal to view further details.\n" +
-                "\n" + EmailConstants.footerText);
+                "\n" + EmailConstants.FooterText);
         sendEmail(message);
     }
 
@@ -41,11 +41,11 @@ public class EmailServiceImpl implements EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(teacher.getEmail());
         message.setSubject("A new application has been received.");
-        message.setText(EmailConstants.greetingFormula + " " + teacher.getName() + " " + teacher.getSurname() + ", \n" +
+        message.setText(EmailConstants.GreetingFormula + " " + teacher.getName() + " " + teacher.getSurname() + ", \n" +
                 "\n" +
                 "A new application has been received for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as supervisor.\n" +
                 "Log in to the Thesis Management Portal to see further details and to accept or reject the application.\n" +
-                "\n" + EmailConstants.footerText);
+                "\n" + EmailConstants.FooterText);
         sendEmail(message);
     }
 
@@ -57,11 +57,11 @@ public class EmailServiceImpl implements EmailService {
         String emailText = "\n" +
                 "A new application has been received for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as co-supervisor.\n" +
                 "Log in to the Thesis Management Portal to see further details and to accept or reject the application.\n" +
-                "\n" + EmailConstants.footerText;
+                "\n" + EmailConstants.FooterText;
 
         for (Teacher teacher : application.getProposal().getCoSupervisors()) {
             message.setTo(teacher.getEmail());
-            message.setText(EmailConstants.greetingFormula + " " + teacher.getName() + " " + teacher.getSurname() + ", \n" + emailText);
+            message.setText(EmailConstants.GreetingFormula + " " + teacher.getName() + " " + teacher.getSurname() + ", \n" + emailText);
             sendEmail(message);
         }
     }

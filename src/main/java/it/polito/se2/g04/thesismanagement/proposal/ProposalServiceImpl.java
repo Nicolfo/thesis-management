@@ -25,7 +25,7 @@ public class ProposalServiceImpl implements ProposalService {
     private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
-    private static final String proposalIdNotExists="Proposal with this id does not exist";
+    private static final String ProposalIdNotExists = "Proposal with this id does not exist";
     private static final String REGEX_PATTERN = "[\\s,]+";
 
     public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
@@ -84,7 +84,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
         if(!proposalRepository.existsById(id))
-            throw(new ProposalNotFoundException(proposalIdNotExists));
+            throw(new ProposalNotFoundException(ProposalIdNotExists));
 
         Proposal old= proposalRepository.getReferenceById(id);
         old.setTitle(proposalDTO.getTitle());
@@ -207,7 +207,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal archiveProposal(Long id) {
         if(!proposalRepository.existsById(id)){
-            throw(new ProposalNotFoundException(proposalIdNotExists));
+            throw(new ProposalNotFoundException(ProposalIdNotExists));
         }
         Proposal old= proposalRepository.getReferenceById(id);
         if (old.getArchived()){
@@ -222,7 +222,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void deleteProposal(Long id){
         if(!proposalRepository.existsById(id))
-            throw(new ProposalNotFoundException(proposalIdNotExists));
+            throw(new ProposalNotFoundException(ProposalIdNotExists));
 
         applicationRepository.getApplicationByProposal_Id(id).forEach(it->applicationRepository.deleteById(it.getId()));
         proposalRepository.deleteById(id);
