@@ -25,7 +25,8 @@ public class ProposalServiceImpl implements ProposalService {
     private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
-    private static String proposalIdNotExists="Proposal with this id does not exist";
+    private static final String proposalIdNotExists="Proposal with this id does not exist";
+    private static final String REGEX_PATTERN = "[\\s,]+";
 
     public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
@@ -125,13 +126,13 @@ public class ProposalServiceImpl implements ProposalService {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
         }
         if (proposalSearchRequest.getKeywords() != null) {
-            List<String> keywordList = List.of(proposalSearchRequest.getKeywords().split("[\\s,]+"));
+            List<String> keywordList = List.of(proposalSearchRequest.getKeywords().split(REGEX_PATTERN));
             for (String keyword : keywordList) {
                 predicates.add(cb.like(cb.upper(proposal.get("keywords")), "%" + keyword.toUpperCase() + "%"));
             }
         }
         if (proposalSearchRequest.getType() != null) {
-            List<String> typeList = List.of(proposalSearchRequest.getType().split("[\\s,]+"));
+            List<String> typeList = List.of(proposalSearchRequest.getType().split(REGEX_PATTERN));
             for (String type : typeList) {
                 predicates.add(cb.like(cb.upper(proposal.get("type")), "%" + type.toUpperCase() + "%"));
             }
@@ -140,7 +141,7 @@ public class ProposalServiceImpl implements ProposalService {
             predicates.add(cb.like(cb.upper(proposal.get("description")), "%" + proposalSearchRequest.getDescription().toUpperCase() + "%"));
         }
         if (proposalSearchRequest.getRequiredKnowledge() != null) {
-            List<String> requirementList = List.of(proposalSearchRequest.getRequiredKnowledge().split("[\\s,]+"));
+            List<String> requirementList = List.of(proposalSearchRequest.getRequiredKnowledge().split(REGEX_PATTERN));
             for (String requirement : requirementList) {
                 predicates.add(cb.like(cb.upper(proposal.get("requiredKnowledge")), "%" + requirement.toUpperCase() + "%"));
             }
