@@ -27,22 +27,24 @@ public class ProposalServiceImpl implements ProposalService {
     private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
+    private static final String PROPOSAL_ID_NOT_EXISTS = "Proposal with this id does not exist";
+    private static final String REGEX_PATTERN = "[\\s,]+";
 
     public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
-        this.applicationRepository = applicationRepository;
+        this.applicationRepository= applicationRepository;
     }
 
 
     @Override
-    public List<ProposalFullDTO> getAllProposals() {
+    public List<ProposalFullDTO> getAllProposals(){
         return proposalRepository.findAll().stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Override
-    public List<ProposalFullDTO> getProposalsByProf(String UserName) {
-        Teacher teacher = teacherRepository.findByEmail(UserName);
+    public List<ProposalFullDTO> getProposalsByProf(String userName){
+        Teacher teacher = teacherRepository.findByEmail(userName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ACTIVE);
             return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
@@ -63,14 +65,14 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
-        Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
-        Proposal toAdd = new Proposal(
+        Teacher teacher=teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
+        Proposal toAdd=new Proposal(
                 proposalDTO.getTitle(),
                 teacher,
                 proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : null,
                 proposalDTO.getKeywords(),
                 proposalDTO.getType(),
-                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
+                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
                 proposalDTO.getDescription(),
                 proposalDTO.getRequiredKnowledge(),
                 proposalDTO.getNotes(),
@@ -84,26 +86,25 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
         if (!proposalRepository.existsById(id))
-            throw (new ProposalNotFoundException("Proposal with this id does not exist"));
+            throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
 
         Proposal old = proposalRepository.getReferenceById(id);
         if(old.getStatus()==Proposal.Status.ACCEPTED){
             throw (new updateAfterAccepted("you can't update this proposal after an application to it is accepted"));
         }
-
         old.setTitle(proposalDTO.getTitle());
         old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
-        if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
+        if(proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
             old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()));
         }
         old.setType(proposalDTO.getType());
-        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
+        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
         old.setDescription(proposalDTO.getDescription());
         old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
         old.setNotes(proposalDTO.getNotes());
         old.setExpiration(proposalDTO.getExpiration());
         old.setLevel(proposalDTO.getLevel());
-        old.setCdS(proposalDTO.getCds());
+        old.setCds(proposalDTO.getCds());
         old.setKeywords(proposalDTO.getKeywords());
 
         Proposal updated = proposalRepository.save(old);
@@ -123,20 +124,24 @@ public class ProposalServiceImpl implements ProposalService {
 
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
-
+        return proposalRepository.findAllByStatus(Proposal.Status.ARCHIVED).stream().map(ProposalFullDTO::fromProposal).toList();
+    }
+    /*
+  
+    private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates) {
         predicates.add(cb.like(cb.upper(proposal.get("CdS")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
 
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
         }
         if (proposalSearchRequest.getKeywords() != null) {
-            List<String> keywordList = List.of(proposalSearchRequest.getKeywords().split("[\\s,]+"));
+            List<String> keywordList = List.of(proposalSearchRequest.getKeywords().split(REGEX_PATTERN));
             for (String keyword : keywordList) {
                 predicates.add(cb.like(cb.upper(proposal.get("keywords")), "%" + keyword.toUpperCase() + "%"));
             }
         }
         if (proposalSearchRequest.getType() != null) {
-            List<String> typeList = List.of(proposalSearchRequest.getType().split("[\\s,]+"));
+            List<String> typeList = List.of(proposalSearchRequest.getType().split(REGEX_PATTERN));
             for (String type : typeList) {
                 predicates.add(cb.like(cb.upper(proposal.get("type")), "%" + type.toUpperCase() + "%"));
             }
@@ -145,7 +150,7 @@ public class ProposalServiceImpl implements ProposalService {
             predicates.add(cb.like(cb.upper(proposal.get("description")), "%" + proposalSearchRequest.getDescription().toUpperCase() + "%"));
         }
         if (proposalSearchRequest.getRequiredKnowledge() != null) {
-            List<String> requirementList = List.of(proposalSearchRequest.getRequiredKnowledge().split("[\\s,]+"));
+            List<String> requirementList = List.of(proposalSearchRequest.getRequiredKnowledge().split(REGEX_PATTERN));
             for (String requirement : requirementList) {
                 predicates.add(cb.like(cb.upper(proposal.get("requiredKnowledge")), "%" + requirement.toUpperCase() + "%"));
             }
@@ -159,6 +164,19 @@ public class ProposalServiceImpl implements ProposalService {
             }
             predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel().toUpperCase()));
         }
+    }*/
+
+
+    @Query
+    @Override
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
+
+        Root<Proposal> proposal = cq.from(Proposal.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        addPredicates(proposalSearchRequest, cb, proposal, predicates);
 
         cq.where(predicates.toArray(new Predicate[0]));
 
@@ -169,13 +187,8 @@ public class ProposalServiceImpl implements ProposalService {
 
         List<Proposal> filteredList = new ArrayList<>();
         for (Proposal prop : proposalList) {
-            boolean include = true;
+            boolean include = proposalSearchRequest.getSupervisorIdList() == null || proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId());
             // Check if it has all the supervisors
-            if (proposalSearchRequest.getSupervisorIdList() != null) {
-                if (!proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId())) {
-                    include = false;
-                }
-            }
             // Check if it has at least one of the co-supervisors
             if (proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();

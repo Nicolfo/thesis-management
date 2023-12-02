@@ -12,16 +12,18 @@ public class ProposalExceptions {
     public ProblemDetail handleServiceNotFound(createUpdateProposalWithNoPathVariable e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
-
+  
     @ExceptionHandler(deleteWithNoId.class)
     public ProblemDetail handleServiceNotFound(deleteWithNoId e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+
     }
 
     @ExceptionHandler(ProposalLevelInvalidException.class)
     public ProblemDetail handleServiceNotFound(ProposalLevelInvalidException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
+
 
     @ExceptionHandler(archiveWithNoId.class)
     public ProblemDetail handleServiceNotFound(archiveWithNoId e) {

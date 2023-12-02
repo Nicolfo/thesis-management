@@ -62,6 +62,7 @@ public class AcceptApplicationTest {
 
     private Teacher teacher;
     private Student student;
+    private Student student2;
     private Proposal proposal1;
     private Proposal proposal2;
     private Application application1;
@@ -84,6 +85,8 @@ public class AcceptApplicationTest {
 
         student = new Student("Georgina","Ferrell","female","italian","georgina.ferrell@example.com",null,2020);
         studentRepository.save(student);
+        student2 = new Student("Munz","Marco","male","italian","marco.munz@example.com",null,2022);
+        studentRepository.save(student2);
 
         proposal1 = new Proposal("Patch-based discriminative learning for Iris Presentation Attack Detection",teacher,null,"Iris, PAD, Recognition, Detection, Spoofing","Bachelor Thesis",null,"Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.", "Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI",null,new Date(2024, Calendar.DECEMBER,10),null,null);
         proposal2 = new Proposal("Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS");
@@ -93,7 +96,7 @@ public class AcceptApplicationTest {
 
         application1 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal2);
         application3 = new Application(student,null,new Date(2023,Calendar.OCTOBER,26),proposal2);
-        application2 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,7),proposal1);
+        application2 = new Application(student2,null,new Date(2023,Calendar.NOVEMBER,7),proposal1);
         applicationRepository.save(application1);
         applicationRepository.save(application2);
     }
@@ -232,6 +235,25 @@ public class AcceptApplicationTest {
 
         assertEquals(json, "false");
         assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.REJECTED));
+
+        application1.setStatus(ApplicationStatus.PENDING);
+        application2.setStatus(ApplicationStatus.PENDING);
+        application3.setStatus(ApplicationStatus.PENDING);
+        application1 = applicationRepository.save(application1);
+        application2 = applicationRepository.save(application2);
+        application3 = applicationRepository.save(application3);
+
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        json = res.getResponse().getContentAsString();
+
+        assertEquals(json, "true");
+        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.ACCEPTED));
+        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));
+        assertEquals(0, applicationRepository.getApplicationById(3L).getStatus().compareTo(ApplicationStatus.REJECTED));
+
     }
 
 }

@@ -17,7 +17,7 @@ public class CareerDTO {
     //maybe we should add a course table
     private String codCourse;
     private String titleCourse;
-    private int CFU;
+    private int cfu;
     private Integer grade;
     private Date date;
     private StudentDTO student;
@@ -25,6 +25,6 @@ public class CareerDTO {
     public static CareerDTO fromCareer(Career career) {
         if (career == null)
             return null;
-        return new CareerDTO(career.getId(), career.getCodCourse(), career.getTitleCourse(), career.getCFU(), career.getGrade(), career.getDate(), StudentDTO.fromStudent(career.getStudent()));
+        return new CareerDTO(career.getId(), career.getCodCourse(), career.getTitleCourse(), career.getCfu(), career.getGrade(), career.getDate(), StudentDTO.fromStudent(career.getStudent()));
     }
 }

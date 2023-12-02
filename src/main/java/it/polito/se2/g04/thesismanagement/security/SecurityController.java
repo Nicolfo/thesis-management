@@ -15,7 +15,6 @@ public class SecurityController {
     public String testLogin(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        System.out.println(auth);
         return username;
     }
 }

@@ -19,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApplicationController {
     private final ApplicationService applicationService;
+    private static String parameterMissingError="Id must be one of the given parameter";
 
     @GetMapping("/API/application/getByProf")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
@@ -97,18 +98,18 @@ public class ApplicationController {
     @GetMapping("/API/application/rejectApplicationById/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean rejectApplicationByIdWithoutId() {
-        throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
+        throw new ApplicationBadRequestFormatException(parameterMissingError);
     }
 
     @GetMapping("/API/application/acceptApplicationById/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean acceptApplicationByIdWithoutId() {
-        throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
+        throw new ApplicationBadRequestFormatException(parameterMissingError);
     }
 
     @GetMapping("/API/application/getApplicationById/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public boolean getApplicationByIdWithoutId() {
-        throw new ApplicationBadRequestFormatException("Id must be one of the given parameter");
+        throw new ApplicationBadRequestFormatException(parameterMissingError);
     }
 }
