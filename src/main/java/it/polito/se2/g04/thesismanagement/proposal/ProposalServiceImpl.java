@@ -112,7 +112,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates) {
-        predicates.add(cb.like(cb.upper(proposal.get("CdS")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
+        predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
 
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
