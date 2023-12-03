@@ -84,10 +84,10 @@ public class BrowseDecisionsTests {
         Group group=groupRepository.save(new Group("SOFTENG"));
         Department department=departmentRepository.save(new Department("Automation and Computer Science"));
 
-        teacher = new Teacher("Bianchi","Marco","marco.bianchi@polito.it",group, department);
+        teacher = new Teacher("Bianchi","Marco","marco.bianchi@example.com",group, department);
         teacherRepository.save(teacher);
 
-        student = new Student("Ferrari","Alessia","Female","Italy","alessia.ferrari@polito.it",null,2020);
+        student = new Student("Ferrari","Alessia","Female","Italy","alessia.ferrari@example.com",null,2020);
         studentRepository.save(student);
 
         proposal1 = new Proposal("Patch-based discriminative learning for Iris Presentation Attack Detection",teacher,null,"Iris, PAD, Recognition, Detection, Spoofing","Bachelor Thesis",null,"Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.", "Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI",null,new Date(2024, Calendar.DECEMBER,10),null,null);
@@ -117,7 +117,7 @@ public class BrowseDecisionsTests {
 
     @Test
     @Rollback
-    @WithMockUser(username = "alessia.ferrari@polito.it", roles = {"STUDENT"})
+    @WithMockUser(username = "alessia.ferrari@example.com", roles = {"STUDENT"})
     public void getAllApplicationProf() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByStudent")

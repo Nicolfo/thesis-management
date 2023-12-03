@@ -80,7 +80,7 @@ public class BrowseApplicationTests {
         Group saved=groupRepository.save(new Group("Group 1"));
         Department department=departmentRepository.save(new Department("Department 1"));
 
-        teacher = new Teacher("surname_1","name","email2@email.com",saved, department);
+        teacher = new Teacher("surname_1","name","email2@example.com",saved, department);
         teacherRepository.save(teacher);
 
 
@@ -112,7 +112,7 @@ public class BrowseApplicationTests {
 
     @Test
     @Rollback
-    @WithMockUser(username = "email2@email.com", roles = {"TEACHER"})
+    @WithMockUser(username = "email2@example.com", roles = {"TEACHER"})
     public void getAllApplicationProf() throws Exception {
         ObjectMapper objectMapper=new ObjectMapper();
 

@@ -79,12 +79,12 @@ public class ApplyForProposalTest {
 
 
         // Create a Teacher object for the supervisor
-        Teacher supervisor = new Teacher("Supervisor Surname", "Supervisor Name", "supervisor@email.com", group, department);
+        Teacher supervisor = new Teacher("Supervisor Surname", "Supervisor Name", "supervisor@example.com", group, department);
         teacherRepository.save(supervisor);
         // Create a list of Teacher objects for co-supervisors
         List<Teacher> coSupervisors = new ArrayList<>();
-        coSupervisors.add(new Teacher("CoSupervisor1 Surname", "CoSupervisor1 Name", "cosupervisor1@email.com", group, department));
-        coSupervisors.add(new Teacher("CoSupervisor2 Surname", "CoSupervisor2 Name", "cosupervisor2@email.com", group, department));
+        coSupervisors.add(new Teacher("CoSupervisor1 Surname", "CoSupervisor1 Name", "cosupervisor1@example.com", group, department));
+        coSupervisors.add(new Teacher("CoSupervisor2 Surname", "CoSupervisor2 Name", "cosupervisor2@example.com", group, department));
         coSupervisors.forEach(it-> teacherRepository.save(it));
 
 
@@ -123,7 +123,7 @@ public class ApplyForProposalTest {
     }
     @Test
     @Rollback
-    @WithMockUser(username = "email@email.com", roles = {"STUDENT"})
+    @WithMockUser(username = "email@example.com", roles = {"STUDENT"})
     public void testApplyProposalAndUploadFile() throws Exception {
         Path tempFile = Files.createTempFile("test-file", ".txt");
         Files.write(tempFile, "Test file content".getBytes());
