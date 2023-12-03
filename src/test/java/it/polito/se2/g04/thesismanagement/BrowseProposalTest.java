@@ -22,10 +22,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -38,7 +34,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 
 @SpringBootTest
@@ -143,8 +138,8 @@ public class BrowseProposalTest {
         assertTrue(proposalTitles.containsAll(expectedTitles), "getAll does not return the correct values");
 
         //add one archived and one not archived proposal
-        Proposal proposal3 = new Proposal(3L, "Proposal 3", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", true);
-        Proposal proposal4 = new Proposal(4L, "Proposal 4", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", false);
+        Proposal proposal3 = new Proposal(3L, "Proposal 3", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED);
+        Proposal proposal4 = new Proposal(4L, "Proposal 4", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE);
         proposalRepository.save(proposal3);
         proposalRepository.save(proposal4);
 
@@ -159,6 +154,7 @@ public class BrowseProposalTest {
         proposals = mapper.readValue(json, ProposalFullDTO[].class);
 
         //check that number of proposals match
+
         assertEquals(3, proposals.length, "getAll should just return 3 values");
 
         //check that titles match
@@ -174,8 +170,8 @@ public class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
     public void testGetProposalsByProf() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", false);
+        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE);
+        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -201,8 +197,8 @@ public class BrowseProposalTest {
 
         Teacher otherTeacher = new Teacher("Kemp", "Denise","Kemp@example.com",null,null);
         teacherRepository.save(otherTeacher);
-        Proposal proposal3 = new Proposal(3L, "Proposal 3", otherTeacher, null, "keywords", "type", null, "Description 3", "requiredKnowledge", "notes", null, "level", "CdS", false);
-        Proposal proposal4 = new Proposal(4L, "Proposal 4", teacher, List.of(teacher), "keywords", "type", null, "Description 4", "requiredKnowledge", "notes", null, "level", "CdS", false);
+        Proposal proposal3 = new Proposal(3L, "Proposal 3", otherTeacher, null, "keywords", "type", null, "Description 3", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE);
+        Proposal proposal4 = new Proposal(4L, "Proposal 4", teacher, List.of(teacher), "keywords", "type", null, "Description 4", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE);
         proposalRepository.save(proposal3);
         proposalRepository.save(proposal4);
 
@@ -228,8 +224,8 @@ public class BrowseProposalTest {
 
 
         proposalRepository.deleteAll();
-        proposal1 = new Proposal(1L, "Proposal 1", otherTeacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", false);
-        proposal2 = new Proposal(2L, "Proposal 2", otherTeacher, List.of(otherTeacher), "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", false);
+        proposal1 = new Proposal(1L, "Proposal 1", otherTeacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE);
+        proposal2 = new Proposal(2L, "Proposal 2", otherTeacher, List.of(otherTeacher), "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 

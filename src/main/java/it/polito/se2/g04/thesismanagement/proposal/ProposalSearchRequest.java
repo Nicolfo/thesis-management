@@ -25,5 +25,5 @@ public class ProposalSearchRequest {
     private Date minExpiration;
     private Date maxExpiration;
     private String level;//to check
-    private String CdS;//to check
+    private String cds;//to check
 }

@@ -1,19 +1,12 @@
 package it.polito.se2.g04.thesismanagement;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
-import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
-import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalService;
-import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +26,6 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.keycloak.util.JsonSerialization.mapper;
 
 
 @SpringBootTest
@@ -76,7 +67,7 @@ public class ArchiveProposalTest {
 
         List<ProposalFullDTO> proposalOutput=proposalService.getAllNotArchivedProposals();
         assertEquals(1, proposalOutput.size(), "proposalOutput should be 1 long");
-
+        assertEquals(Proposal.Status.ARCHIVED, proposalRepository.getReferenceById(proposal.getId()).getStatus(), "proposalOutput should be tagged to archive");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/{id}",proposal2.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -84,8 +75,7 @@ public class ArchiveProposalTest {
 
         proposalOutput=proposalService.getAllNotArchivedProposals();
         assertEquals(0, proposalOutput.size(), "proposalOutput should be empty");
-
-
+        assertEquals(Proposal.Status.ARCHIVED, proposalRepository.getReferenceById(proposal2.getId()).getStatus(), "proposalOutput should be tagged to archive");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/a")
                     .contentType(MediaType.APPLICATION_JSON))
