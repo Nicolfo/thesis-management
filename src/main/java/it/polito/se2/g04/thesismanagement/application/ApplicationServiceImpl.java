@@ -71,16 +71,20 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String profEmail = auth.getName();
-        if (proposalRepository.getReferenceById(proposalId).getSupervisor().getEmail().compareTo(profEmail) == 0) {
+        Proposal proposal=proposalRepository.getReferenceById(proposalId);
+        if (proposal.getSupervisor().getEmail().compareTo(profEmail) == 0 &&  proposal.getStatus()!= Proposal.Status.DELETED) {
             return applicationRepository
                     .getApplicationByProposal_Id(proposalId)
-                    .stream().map(this::getApplicationDTO).toList();
+                    .stream().filter(it-> it.getStatus()!=ApplicationStatus.DELETED).map(this::getApplicationDTO).toList();
         }
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: " + profEmail);
     }
 
     @Override
     public ApplicationDTO getApplicationById(Long applicationId) {
+        if(applicationRepository.getApplicationById(applicationId).getStatus()==ApplicationStatus.DELETED){
+            throw new ApplicationDeletedException("this application is flagged to be deleted");
+        }
         return getApplicationDTO(applicationRepository.getApplicationById(applicationId));
     }
 
@@ -124,6 +128,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Student loggedUser = studentRepository.getStudentByEmail(auth.getName());
+            if(proposalRepository.getReferenceById(applicationDTO.getProposalId()).getStatus()!= Proposal.Status.ACTIVE){
+                throw new ProposalNotActiveException("this proposal is not active");
+            }
             Application toSave = new Application(loggedUser, attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()), applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
             Application saved = applicationRepository.save(toSave);
             emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
