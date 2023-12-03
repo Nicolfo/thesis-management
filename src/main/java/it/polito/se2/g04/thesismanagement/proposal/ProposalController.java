@@ -99,7 +99,7 @@ public class ProposalController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         String cds = studentService.getCdS(username);
-        proposalSearchRequest.setCdS(cds);
+        proposalSearchRequest.setCds(cds);
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
@@ -122,14 +122,14 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteProposalWithNoId(){
-        throw new DeleteWithNoId("can't delete a proposal without his id");
+        throw new deleteWithNoId("can't delete a proposal without his id");
     }
 
     @PostMapping("/API/proposal/archive")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void archiveProposalWithNoId(){
-        throw new ArchiveWithNoId("can't archive a proposal without his id");
+        throw new archiveWithNoId("can't archive a proposal without his id");
     }
 
 }

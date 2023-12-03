@@ -59,9 +59,9 @@ public class Proposal {
     private String notes;
     private Date expiration;
     private String level;//to check
+    private String cds;//to check
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
-    private String cds;//to check
 
 
 

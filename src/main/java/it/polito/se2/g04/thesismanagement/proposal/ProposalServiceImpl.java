@@ -115,7 +115,7 @@ public class ProposalServiceImpl implements ProposalService {
     public List<ProposalFullDTO> getAllNotArchivedProposals() {
         return proposalRepository.findAllByStatus(Proposal.Status.ACTIVE).stream().map(ProposalFullDTO::fromProposal).toList();
     }
-
+/*
     @Query
     @Override
     public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
@@ -126,10 +126,10 @@ public class ProposalServiceImpl implements ProposalService {
         List<Predicate> predicates = new ArrayList<>();
         return proposalRepository.findAllByStatus(Proposal.Status.ARCHIVED).stream().map(ProposalFullDTO::fromProposal).toList();
     }
-    /*
+    */
   
     private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates) {
-        predicates.add(cb.like(cb.upper(proposal.get("CdS")), "%" + proposalSearchRequest.getCdS().toUpperCase() + "%"));
+        predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCds().toUpperCase() + "%"));
 
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
@@ -164,7 +164,7 @@ public class ProposalServiceImpl implements ProposalService {
             }
             predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel().toUpperCase()));
         }
-    }*/
+    }
 
 
     @Query
