@@ -1,5 +1,4 @@
 # Thesis management
-[gradle](gradle)
 
 ## How to run the application
 
@@ -7,6 +6,16 @@
 - Navigate to the main project directory `thesis-management`
 - Run the command `docker-compose up`
 - Acces the app via `http://localhost:8081/`
+
+## Test Users Credentials
+
+- Teacher:
+  - Email: ThesisManagementTeacher1@gmail.com
+  - Password: Test.teacher
+- Student:
+  - Email: ThesisManagementStudent1@gmail.com
+  - Password: Test.student
+
 
 ## Covered stories
 
@@ -123,10 +132,3 @@ I want to update a thesis proposal
 - GET `/API/getFile/<id>`
   - response content: the file associated to the specified id
 
-## Users Credentials
-
-- Teacher:
-  - Email: nicolfo2@hotmail.it
-  - Password: Test.123456
-- Student:
-  - Password: Test.654321
