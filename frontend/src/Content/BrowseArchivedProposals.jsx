@@ -43,7 +43,7 @@ export default function BrowseArchivedProposals(props) {
 
             {deleting? <Row><Col></Col><Col><Warning setArchive={setArchive} archive={archive} user={props.user} setDeleting={setDeleting} deletingID={deletingID} getProposalList={getProposalList}> <h4>Your thesis proposals</h4></Warning></Col> <Col></Col></Row>:
                 <Accordion defaultActiveKey="0">
-                    { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ return <ProposalAccordion setArchive={setArchive} user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
+                    { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ return <ProposalAccordion setArchivedView={props.setArchivedView} setArchive={setArchive} user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
                 </Accordion>}
         </>
     );
@@ -75,7 +75,7 @@ function CustomToggle({ children, eventKey, callback }) {
     );
 }
 
-function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArchive }) {
+function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArchive , setArchivedView}) {
     const navigate = useNavigate();
 
     function deleteProp(proposalId, archiving){
@@ -106,7 +106,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArch
                         }
                         >
 
-                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => { setArchivedView(true); navigate(`/copyProposal/${proposal.id}`)}}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-copy" />
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>

@@ -30,6 +30,7 @@ import BrowseArchivedProposals from "./Content/BrowseArchivedProposals";
 function App() {
 
     const [user, setUser] = useState(null);
+    const [archivedView, setArchivedView] = useState(false);
 
 
     const [clickOnProposal, setClickOnProposal] = useState(0);
@@ -155,7 +156,7 @@ function App() {
                             <div className="row align-items-start">
                                 <NavBar user={user} setUser={setUser} realDate={realDate}
                                         applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}
-                                        searchForProposalClicked={searchForProposalClicked}/>
+                                        searchForProposalClicked={searchForProposalClicked} setArchivedView={setArchivedView}/>
                                 <div className="ps-5 pe-5 pt-3">
                                     <Outlet/>
                                 </div>
@@ -181,11 +182,11 @@ function App() {
                     <Route path="/updateProposal/:editProposalID"
                            element={<InsertUpdateProposal user={user}/>}/>
                     <Route path="/copyProposal/:copyProposalID"
-                           element={<InsertUpdateProposal user={user}/>}/>
+                           element={<InsertUpdateProposal user={user} archivedView={archivedView}/>}/>
                     <Route path="/teacher/proposals"
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/teacher/proposals/archived"
-                           element={<BrowseArchivedProposals user={user} applicationDate={applicationDate}/>}/>
+                           element={<BrowseArchivedProposals setArchivedView={setArchivedView} user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/notAuthorized"
                            element={<NotAuthorizedLayout user={user}/>}/>
                     <Route path="*"
