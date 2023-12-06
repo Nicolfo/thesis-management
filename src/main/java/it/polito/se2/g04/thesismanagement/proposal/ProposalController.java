@@ -107,7 +107,7 @@ public class ProposalController {
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
-    @PostMapping("/API/proposal/searchArchived")
+    @GetMapping("/API/proposal/searchArchived")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public List<ProposalFullDTO> searchArchivedProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
@@ -118,6 +118,19 @@ public class ProposalController {
         Long supervisorId = teacherService.getByEmail(username).getId();
         proposalSearchRequest.setSupervisorIdList(List.of(supervisorId));
         return proposalService.searchArchivedProposals(proposalSearchRequest);
+    }
+
+    @GetMapping("/API/proposal/getArchived")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalFullDTO> searchArchivedProposals() {
+        // Automatically extract the id of the logged in teacher, and filter the
+        // archived proposals by it.
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        //Long supervisorId = teacherService.getByEmail(username).getId();
+
+        return proposalService.getArchivedProposals(username);
     }
 
     @PostMapping("/API/proposal/archive/{id}")

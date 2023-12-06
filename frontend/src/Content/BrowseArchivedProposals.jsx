@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
 
 
-export default function BrowseProposalsContent(props) {
+export default function BrowseArchivedProposals(props) {
 
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
@@ -18,7 +18,7 @@ export default function BrowseProposalsContent(props) {
         navigate("/notAuthorized");
 
     const getProposalList = async () => {
-        const list = await API.getProposalsByProf(props.user.token);
+        const list = await API.getArchivedProposalsByProf(props.user.token);
         setProposalList(list);
     }
 
@@ -39,12 +39,12 @@ export default function BrowseProposalsContent(props) {
 
     return (
         <>
+            <h2>Archive</h2>
 
-            <h2>Active proposals</h2>
             {deleting? <Row><Col></Col><Col><Warning setArchive={setArchive} archive={archive} user={props.user} setDeleting={setDeleting} deletingID={deletingID} getProposalList={getProposalList}> <h4>Your thesis proposals</h4></Warning></Col> <Col></Col></Row>:
-            <Accordion defaultActiveKey="0">
-                { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ return <ProposalAccordion setArchive={setArchive} user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
-            </Accordion>}
+                <Accordion defaultActiveKey="0">
+                    { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ return <ProposalAccordion setArchive={setArchive} user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
+                </Accordion>}
         </>
     );
 
@@ -84,9 +84,9 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArch
             setArchive(true);
             setDeletingID(proposalId);
         }else{
-        setDeleting(true);
-        setDeletingID(proposalId)
-    }}
+            setDeleting(true);
+            setDeletingID(proposalId)
+        }}
 
     return (
         <Card id={proposal.id} className="m-2">
@@ -105,13 +105,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArch
                             </div>
                         }
                         >
-                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
-                                <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-pencil" />
-                                    <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-                                    <span className="d-none d-md-table-cell"> Update </span>
-                                </div>
-                            </Dropdown.Item>
+
                             <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-copy" />
@@ -119,13 +113,7 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArch
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
-                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {deleteProp(proposal.id, true);}} >
-                                <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-solid fa-box-archive" />
-                                    <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-                                    <span className="d-none d-md-table-cell"> Archive </span>
-                                </div>
-                            </Dropdown.Item>
+
                             <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {deleteProp(proposal.id, false);}}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon="fa-solid fa-trash-can" />
@@ -193,10 +181,10 @@ function Warning(props) {
                         <Button variant="danger" onClick={()=> { API.archiveProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false); props.setArchive(false); props.getProposalList() }) }}>Archive</Button>
                     </Modal.Footer>
                     :
-                <Modal.Footer>
-                    <Button variant="primary" onClick={()=>props.setDeleting(false)}>Undo</Button>
-                    <Button variant="danger" onClick={()=> { API.deleteProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false); props.getProposalList() }) }}>Delete</Button>
-                </Modal.Footer>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={()=>props.setDeleting(false)}>Undo</Button>
+                        <Button variant="danger" onClick={()=> { API.deleteProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false); props.getProposalList() }) }}>Delete</Button>
+                    </Modal.Footer>
 
                 }
             </Modal.Dialog>

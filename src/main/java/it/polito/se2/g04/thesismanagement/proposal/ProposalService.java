@@ -40,6 +40,8 @@ public interface ProposalService {
      * @return A list of ProposalDTO objects representing the search's results.
      */
     List <ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest);
+    List <ProposalFullDTO> getArchivedProposals(String userName);
+
 
     ProposalFullDTO archiveProposal(Long id);
     void deleteProposal(Long id);

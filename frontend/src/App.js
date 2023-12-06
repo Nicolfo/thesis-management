@@ -23,6 +23,7 @@ import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
 import NotAuthorizedLayout from "./Content/NotAuthorizedLayout";
 import NotFound from "./Content/NotFound";
 import API from "./API/Api";
+import BrowseArchivedProposals from "./Content/BrowseArchivedProposals";
 
 
 
@@ -183,6 +184,8 @@ function App() {
                            element={<InsertUpdateProposal user={user}/>}/>
                     <Route path="/teacher/proposals"
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
+                    <Route path="/teacher/proposals/archived"
+                           element={<BrowseArchivedProposals user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/notAuthorized"
                            element={<NotAuthorizedLayout user={user}/>}/>
                     <Route path="*"

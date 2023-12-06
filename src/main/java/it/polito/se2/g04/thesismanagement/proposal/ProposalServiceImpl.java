@@ -52,6 +52,17 @@ public class ProposalServiceImpl implements ProposalService {
         return new ArrayList<>();
     }
 
+
+    @Override
+    public List<ProposalFullDTO> getArchivedProposals(String userName){
+        Teacher teacher = teacherRepository.findByEmail(userName);
+        if (teacher != null) {
+            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ARCHIVED);
+            return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
+        }
+        return new ArrayList<>();
+    }
+
     @Override
     public String getTitleByProposalId(Long proposalId) {
         Proposal proposal = proposalRepository.findById(proposalId)
