@@ -139,6 +139,7 @@ function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
             }
             {deleting? <Row><Col></Col><Col><Warn doSearch={doSearch}  archivedProposal={true} user={user} setDeleting={setDeleting} deletingID={deletingID} ></Warn></Col> <Col></Col></Row>:
                 <>
+                    <h2>Archive</h2>
             <Row style={{"textAlign": "end"}}>
                 <Col>
                     <Button onClick={()=> setShowSearchBar(it=> !it )}> <FontAwesomeIcon icon={"magnifying-glass"} /> Show searching filters </Button>
@@ -246,6 +247,7 @@ function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
 
 function ProposalsList({ proposals, user, applicationDate, deleteProp, setArchivedView }) {
     return (
+
         <Accordion defaultActiveKey="0">
             { proposals.map(proposal => <ProposalEntry setArchivedView={setArchivedView} deleteProp={deleteProp} key={proposal.id} proposal={proposal} user={user} />) }
         </Accordion>

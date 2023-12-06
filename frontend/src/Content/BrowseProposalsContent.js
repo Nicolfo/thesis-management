@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
+import Warn from "./Warn";
 
 
 export default function BrowseProposalsContent(props) {
@@ -41,7 +42,7 @@ export default function BrowseProposalsContent(props) {
         <>
 
             <h2>Active proposals</h2>
-            {deleting? <Row><Col></Col><Col><Warning setArchive={setArchive} archive={archive} user={props.user} setDeleting={setDeleting} deletingID={deletingID} getProposalList={getProposalList}> <h4>Your thesis proposals</h4></Warning></Col> <Col></Col></Row>:
+            {deleting? <Row><Col></Col><Col><Warn archivedProposal={false} setArchive={setArchive} archive={archive} user={props.user} setDeleting={setDeleting} deletingID={deletingID} getProposalList={getProposalList}> <h4>Your thesis proposals</h4></Warn></Col> <Col></Col></Row>:
             <Accordion defaultActiveKey="0">
                 { proposalList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal =>{ return <ProposalAccordion setArchive={setArchive} user={props.user} key={proposal.id} proposal={proposal} setDeleting={setDeleting} setDeletingID={setDeletingID}  />}) }
             </Accordion>}
@@ -172,34 +173,3 @@ function ProposalAccordion({ proposal, setDeleting, setDeletingID, user, setArch
 }
 
 
-function Warning(props) {
-    return (
-        <div
-            className="modal show d-flex align-items-center justify-content-center vh-100"
-        >
-            <Modal.Dialog>
-                <Modal.Header >
-                    <Modal.Title> Warning!</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    {props.archive? <p>Do you want to archive this proposal?</p>:<p>Do you want to delete this proposal?</p>}
-
-                </Modal.Body>
-                { props.archive ?
-
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={()=>{props.setDeleting(false); props.setArchive(false)}}>Undo</Button>
-                        <Button variant="danger" onClick={()=> { API.archiveProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false); props.setArchive(false); props.getProposalList() }) }}>Archive</Button>
-                    </Modal.Footer>
-                    :
-                <Modal.Footer>
-                    <Button variant="primary" onClick={()=>props.setDeleting(false)}>Undo</Button>
-                    <Button variant="danger" onClick={()=> { API.deleteProposal(props.deletingID,props.user.token).then(()=> {props.setDeleting(false); props.getProposalList() }) }}>Delete</Button>
-                </Modal.Footer>
-
-                }
-            </Modal.Dialog>
-        </div>
-    );
-}
