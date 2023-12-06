@@ -24,6 +24,8 @@ import NotAuthorizedLayout from "./Content/NotAuthorizedLayout";
 import NotFound from "./Content/NotFound";
 import API from "./API/Api";
 import BrowseArchivedProposals from "./Content/BrowseArchivedProposals";
+import BrowseArchivedProposals2 from "./Content/BrowseArchivedProposals2";
+
 
 
 
@@ -186,7 +188,7 @@ function App() {
                     <Route path="/teacher/proposals"
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/teacher/proposals/archived"
-                           element={<BrowseArchivedProposals setArchivedView={setArchivedView} user={user} applicationDate={applicationDate}/>}/>
+                           element={<BrowseArchivedProposals2 setArchivedView={setArchivedView} user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/notAuthorized"
                            element={<NotAuthorizedLayout user={user}/>}/>
                     <Route path="*"

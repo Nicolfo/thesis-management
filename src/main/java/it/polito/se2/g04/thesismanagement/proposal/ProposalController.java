@@ -110,7 +110,7 @@ public class ProposalController {
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
-    @GetMapping("/API/proposal/searchArchived")
+    @PostMapping("/API/proposal/searchArchived")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public List<ProposalFullDTO> searchArchivedProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {

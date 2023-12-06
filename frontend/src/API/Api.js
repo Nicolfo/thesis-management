@@ -255,6 +255,17 @@ const getArchivedProposalsByProf = async (jwt) => {
     }));
 }
 
+const searchArchivedProposals = async(jwt, body) => {
+    return getJson(fetch(SERVER_URL + "proposal/searchArchived" , {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
 
-const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf };
+
+const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals };
 export default API;
