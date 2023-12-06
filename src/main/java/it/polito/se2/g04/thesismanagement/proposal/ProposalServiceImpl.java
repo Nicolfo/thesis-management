@@ -33,17 +33,17 @@ public class ProposalServiceImpl implements ProposalService {
     public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
-        this.applicationRepository= applicationRepository;
+        this.applicationRepository = applicationRepository;
     }
 
 
     @Override
-    public List<ProposalFullDTO> getAllProposals(){
+    public List<ProposalFullDTO> getAllProposals() {
         return proposalRepository.findAll().stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Override
-    public List<ProposalFullDTO> getProposalsByProf(String userName){
+    public List<ProposalFullDTO> getProposalsByProf(String userName) {
         Teacher teacher = teacherRepository.findByEmail(userName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ACTIVE);
@@ -65,14 +65,14 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
-        Teacher teacher=teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
-        Proposal toAdd=new Proposal(
+        Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
+        Proposal toAdd = new Proposal(
                 proposalDTO.getTitle(),
                 teacher,
                 proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : null,
                 proposalDTO.getKeywords(),
                 proposalDTO.getType(),
-                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
+                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
                 proposalDTO.getDescription(),
                 proposalDTO.getRequiredKnowledge(),
                 proposalDTO.getNotes(),
@@ -89,16 +89,16 @@ public class ProposalServiceImpl implements ProposalService {
             throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
 
         Proposal old = proposalRepository.getReferenceById(id);
-        if(old.getStatus()==Proposal.Status.ACCEPTED){
+        if (old.getStatus() == Proposal.Status.ACCEPTED) {
             throw (new updateAfterAccepted("you can't update this proposal after an application to it is accepted"));
         }
         old.setTitle(proposalDTO.getTitle());
         old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
-        if(proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
+        if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
             old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()));
         }
         old.setType(proposalDTO.getType());
-        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()),proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it->teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
+        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
         old.setDescription(proposalDTO.getDescription());
         old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
         old.setNotes(proposalDTO.getNotes());
@@ -127,7 +127,7 @@ public class ProposalServiceImpl implements ProposalService {
         return proposalRepository.findAllByStatus(Proposal.Status.ARCHIVED).stream().map(ProposalFullDTO::fromProposal).toList();
     }
     */
-  
+
     private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates) {
         predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCds().toUpperCase() + "%"));
 
@@ -230,6 +230,12 @@ public class ProposalServiceImpl implements ProposalService {
         if (old.getStatus() == Proposal.Status.ARCHIVED) {
             throw (new ProposalNotFoundException("Proposal already archived"));
         } else {
+            applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
+                        Application application = applicationRepository.getReferenceById(it.getId());
+                        application.setStatus(ApplicationStatus.DELETED);
+                        applicationRepository.save(application);
+                    }
+            );
             old.setStatus(Proposal.Status.ARCHIVED);
         }
         return ProposalFullDTO.fromProposal(proposalRepository.save(old));
