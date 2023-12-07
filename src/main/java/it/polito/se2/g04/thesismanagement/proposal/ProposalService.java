@@ -16,7 +16,7 @@ public interface ProposalService {
     List<ProposalFullDTO> getAllNotArchivedProposals();
 
     /**
-     * @param UserName String the username of the user of which the proposals should be returned. Should be equal
+     * @param userName String the username of the user of which the proposals should be returned. Should be equal
      *                 to the email address in Teacher table
      * @return List<Proposal> all Proposals that have the passed teacher (found by Username) as supervisor or supervisor.
      * archived proposals are not considered. If no proposals where found or the passed User is not a Teacher, an empty
