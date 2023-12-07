@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.application;
 
+import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.proposal.*;
@@ -131,7 +132,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             if(proposalRepository.getReferenceById(applicationDTO.getProposalId()).getStatus()!= Proposal.Status.ACTIVE){
                 throw new ProposalNotActiveException("this proposal is not active");
             }
-            Application toSave = new Application(loggedUser, attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()), applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
+            Attachment attachment= applicationDTO.getAttachmentId()!=null?attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()):null;
+            Application toSave = new Application(loggedUser, attachment, applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
             Application saved = applicationRepository.save(toSave);
             emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
         } catch (Exception ex) {
