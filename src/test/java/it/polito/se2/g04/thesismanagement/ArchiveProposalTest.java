@@ -78,7 +78,11 @@ public class ArchiveProposalTest {
         assertEquals(Proposal.Status.ARCHIVED, proposalRepository.getReferenceById(proposal2.getId()).getStatus(), "proposalOutput should be tagged to archive");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/a")
-                    .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/" + new Random().nextLong(3,100))
