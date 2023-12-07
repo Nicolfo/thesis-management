@@ -1,12 +1,13 @@
 package it.polito.se2.g04.thesismanagement.student;
 
+import it.polito.se2.g04.thesismanagement.career.Career;
 import it.polito.se2.g04.thesismanagement.career.CareerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final CareerRepository careerRepository;
 
@@ -24,22 +25,18 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public double getAverageMarks(Long studentId) {
-        return careerRepository.getCareersByStudent_Id(studentId).stream().mapToInt(it->it.getGrade()).average().orElse(0);
+        return careerRepository.getCareersByStudent_Id(studentId).stream().mapToInt(Career::getGrade).average().orElse(0);
     }
 
-    public StudentDTO getStudentInfo(Long id){
-       Student student= studentRepository.findById(id)
+    public StudentDTO getStudentInfo(Long id) {
+        Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found with id: " + id));
         return new StudentDTO(student.getName() + " " + student.getSurname());
-
     }
 
 
     @Override
     public String getCdS(String email) {
-
-
         return studentRepository.getStudentByEmail(email).getDegree().getTitleDegree();
-
     }
 }
