@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.teacher;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +17,7 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherRepository.findAll().stream().map(TeacherDTO::fromTeacher).toList();
     }
 
+    //TODO: check if safe to delete; redundant code. getAll==getAllTeacher
     @Override
     public List<TeacherDTO> getAll() {
         return teacherRepository.findAll().stream().map(TeacherDTO::fromTeacher).toList();
