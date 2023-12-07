@@ -237,7 +237,7 @@ async function insertApplication(cvId, proposalId, jwt) {
             'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify({
-            attachmentId: cvId.id,
+            attachmentId: cvId ? cvId.id : null,
             applyDate:dayjs(),
             proposalId: proposalId,
         }),
