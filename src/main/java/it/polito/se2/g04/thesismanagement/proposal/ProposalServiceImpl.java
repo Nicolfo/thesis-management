@@ -133,20 +133,7 @@ public class ProposalServiceImpl implements ProposalService {
             predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCds().toUpperCase() + "%"));
         }
 
-/*
-    @Query
-    @Override
-    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
-
-        Root<Proposal> proposal = cq.from(Proposal.class);
-        List<Predicate> predicates = new ArrayList<>();
-        return proposalRepository.findAllByStatus(Proposal.Status.ARCHIVED).stream().map(ProposalFullDTO::fromProposal).toList();
-    }
-    */
-
-    predicates.add(cb.like(cb.upper(proposal.get("status")), "%" + "ACTIVE" + "%"));
+        predicates.add(cb.like(cb.upper(proposal.get("status")), "%" + status + "%"));
 
 
 
