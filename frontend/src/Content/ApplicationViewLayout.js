@@ -280,7 +280,7 @@ function ApplicationViewLayout(props) {
 
                     <Row>
                     { loading ?
-                        <Spinner animation="border" role="status"></Spinner>
+                        <><Spinner animation="border" role="status" className="me-3"/> Sending the email...</>
                         :
                         (applicationData.status==="PENDING" ? (
                             <Col style={{textAlign: "center"}}>

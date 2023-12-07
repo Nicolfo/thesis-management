@@ -76,11 +76,11 @@ function ApplicationRow(props) {
 
     const statusBadge = () => {
         if (props.application.status === "PENDING")
-            return <Badge bg="primary"> ⦿ PENDING </Badge>
+            return <Badge bg="primary" className="mt-2"> ⦿ PENDING </Badge>
         else if (props.application.status === "ACCEPTED")
-            return <Badge bg="success"> ✓ ACCEPTED </Badge>
+            return <Badge bg="success" className="mt-2"> ✓ ACCEPTED </Badge>
         else if (props.application.status === "REJECTED")
-            return <Badge bg="danger"> ✕ REJECTED </Badge>
+            return <Badge bg="danger" className="mt-2"> ✕ REJECTED </Badge>
     }
 
     const handleViewInfo = (id) => {
@@ -96,8 +96,8 @@ function ApplicationRow(props) {
             <td>{statusBadge()}</td>
             <td>
                 <Button classname="d-flex align-items-center" onClick={() => handleViewInfo(props.application.id)} style={{ display: 'flex', alignItems: 'center' }}>
-                    <span className="d-none d-md-table-cell">View info </span>
-                    <FontAwesomeIcon icon={"chevron-right"} />
+                    <span className="d-none d-md-table-cell">Info </span>
+                    <FontAwesomeIcon className="ms-1" icon={"chevron-right"} />
                 </Button>
             </td>
         </tr>

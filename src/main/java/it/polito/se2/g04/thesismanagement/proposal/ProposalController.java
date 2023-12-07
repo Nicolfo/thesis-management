@@ -131,5 +131,4 @@ public class ProposalController {
     public void archiveProposalWithNoId(){
         throw new archiveWithNoId("can't archive a proposal without his id");
     }
-
 }
