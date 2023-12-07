@@ -28,11 +28,20 @@ public interface ProposalService {
     ProposalFullDTO createProposal(ProposalDTO proposalDTO);
     ProposalFullDTO updateProposal(Long id, ProposalDTO proposal);
     /**
-     * A search method that allows to filter proposals by title and supervisor id.
+     * A search method that allows to filter active proposals.
      * @param proposalSearchRequest request object containing all filters
      * @return A list of ProposalDTO objects representing the search's results.
      */
     List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest);
+
+    /**
+     * A search method that allows to filter archived proposals.
+     * @param proposalSearchRequest request object containing all filters
+     * @return A list of ProposalDTO objects representing the search's results.
+     */
+    List <ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest);
+    List <ProposalFullDTO> getArchivedProposals(String userName);
+
 
     ProposalFullDTO archiveProposal(Long id);
     void deleteProposal(Long id);

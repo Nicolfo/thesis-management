@@ -89,6 +89,7 @@ function NavBar(props) {
                                         variant={path === '/teacher/proposals' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
                                         style={path === '/teacher/proposals' ? {backgroundColor: "#FEA65A", color: "white"} : {}}
                                         onClick={() => {
+                                            props.setArchivedView(false);
                                             navigate('/teacher/proposals');
                                         }}
                                     >
@@ -111,6 +112,16 @@ function NavBar(props) {
                                         }}
                                     >
                                         My application proposals
+                                    </Button>
+
+                                    <Button
+                                        variant={path === '/teacher/proposals/archived'  ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/teacher/proposals/archived'  ? {backgroundColor: "#FEA65A", color: "white"} : {}}
+                                        onClick={() => {
+                                            navigate('/teacher/proposals/archived');
+                                        }}
+                                    >
+                                        My archive
                                     </Button>
                                 </>
                             )}

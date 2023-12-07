@@ -67,7 +67,10 @@ function InsertUpdateProposal(props) {
             const supervisor = await API.getByEmail(props.user.email,props.user.token);
             setSupervisor(supervisor);
 
-            const proposals = await API.getProposalsByProf(props.user.token);
+            let proposals = await API.getProposalsByProf(props.user.token);
+            if(props.archivedView){
+                proposals = await API.getArchivedProposalsByProf(props.user.token);
+            }
             // If edit or copy, then populate the fields
             let editORCopy = ( (editProposalID && proposals.find( (p) => p.id === parseInt(editProposalID))) || (copyProposalID && proposals.find( (p) => p.id === parseInt(copyProposalID))) );
 
