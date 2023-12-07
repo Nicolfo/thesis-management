@@ -199,7 +199,7 @@ public class ProposalServiceImpl implements ProposalService {
             boolean include = proposalSearchRequest.getSupervisorIdList() == null || proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId());
             // Check if it has all the supervisors
             // Check if it has at least one of the co-supervisors
-            if (proposalSearchRequest.getCoSupervisorIdList() != null) {
+            if (include && proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
                 include = false;
                 for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {
@@ -210,7 +210,7 @@ public class ProposalServiceImpl implements ProposalService {
                 }
             }
             // Check if it has at least one of the groups
-            if (proposalSearchRequest.getCodGroupList() != null) {
+            if (include && proposalSearchRequest.getCodGroupList() != null) {
                 List<Long> codGroupList = prop.getGroups().stream().map(Group::getCodGroup).toList();
                 include = false;
                 for (Long codGroup : proposalSearchRequest.getCodGroupList()) {
@@ -251,7 +251,7 @@ public class ProposalServiceImpl implements ProposalService {
             boolean include = proposalSearchRequest.getSupervisorIdList() == null || proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId());
             // Check if it has all the supervisors
             // Check if it has at least one of the co-supervisors
-            if (proposalSearchRequest.getCoSupervisorIdList() != null) {
+            if (include && proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
                 include = false;
                 for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {
@@ -262,7 +262,7 @@ public class ProposalServiceImpl implements ProposalService {
                 }
             }
             // Check if it has at least one of the groups
-            if (proposalSearchRequest.getCodGroupList() != null) {
+            if (include && proposalSearchRequest.getCodGroupList() != null) {
                 List<Long> codGroupList = prop.getGroups().stream().map(Group::getCodGroup).toList();
                 include = false;
                 for (Long codGroup : proposalSearchRequest.getCodGroupList()) {
