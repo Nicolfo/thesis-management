@@ -18,6 +18,10 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Proposal {
+    public boolean getNotifiedAboutExpiration() {
+        return notifiedAboutExpiration;
+    }
+
     public enum Status{
         ACTIVE,
         DELETED,
@@ -62,6 +66,7 @@ public class Proposal {
     private String cds;//to check
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
+    private boolean notifiedAboutExpiration = false;
 
 
 

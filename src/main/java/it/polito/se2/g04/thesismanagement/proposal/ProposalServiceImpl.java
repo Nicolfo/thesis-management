@@ -3,6 +3,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -31,13 +32,15 @@ public class ProposalServiceImpl implements ProposalService {
     private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
+    private final EmailService emailService;
     private static final String PROPOSAL_ID_NOT_EXISTS = "Proposal with this id does not exist";
     private static final String REGEX_PATTERN = "[\\s,]+";
 
-    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
+    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository, EmailService emailService) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
         this.applicationRepository = applicationRepository;
+        this.emailService = emailService;
     }
 
 
@@ -323,16 +326,32 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Scheduled(fixedRate = 10*60*1000)
     @Transactional
-    public void archiveExpiredProposals(){
+    public void archiveExpiredProposals() {
         Date now = Calendar.getInstance().getTime();
+
+        Calendar oneWeekFromNow = Calendar.getInstance();
+        oneWeekFromNow.setTime(now);
+        oneWeekFromNow.add(Calendar.WEEK_OF_YEAR, 1);
+
         List<ProposalFullDTO> proposals = getAllNotArchivedProposals();
+
 
         for(ProposalFullDTO proposalDTO: proposals){
             Date expiration = proposalDTO.getExpiration();
-            if (expiration != null && now.after(expiration)){
+            if(expiration != null) {
                 Proposal proposal = proposalRepository.getReferenceById(proposalDTO.getId());
-                proposal.setStatus(Proposal.Status.ARCHIVED);
-                proposalRepository.save(proposal);
+                if (now.after(expiration)) {
+                    proposal.setStatus(Proposal.Status.ARCHIVED);
+                    proposalRepository.save(proposal);
+                } else if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
+                    try {
+                        emailService.notifySupervisorOfExpiration(proposal);
+                        proposal.setNotifiedAboutExpiration(true);
+                        proposalRepository.save(proposal);
+                    } catch (Exception ignored){
+
+                    }
+                }
             }
         }
     }

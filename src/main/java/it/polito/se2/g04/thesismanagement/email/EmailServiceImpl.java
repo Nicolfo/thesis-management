@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.email;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import jakarta.mail.MessagingException;
@@ -63,6 +64,17 @@ public class EmailServiceImpl implements EmailService {
                 "Log in to the Thesis Management Portal to see further details and to accept or reject the application.";
 
         emailSendHelper(teacher.getEmail(), "A new application has been received", "A new application has been received", emailText, "new.png");
+    }
+
+    @Override
+    public void notifySupervisorOfExpiration(Proposal proposal) throws MessagingException, IOException {
+        Teacher teacher = proposal.getSupervisor();
+        String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
+                "<br>" +
+                "the proposal \"" + proposal.getTitle() + "\" for which you are assigned as supervisor will expire on " + (new SimpleDateFormat("dd-MM-yyyy")).format(proposal.getExpiration()) + ".<br>" +
+                "If you don't take any further action, the proposal will be automatically archived on that date.";
+
+        emailSendHelper(teacher.getEmail(), "One of you proposals will expire soon", "One of you proposals will expire soon", emailText, "warning.png");
     }
 
 
