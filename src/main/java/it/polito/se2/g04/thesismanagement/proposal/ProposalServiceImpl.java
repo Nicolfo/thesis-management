@@ -12,10 +12,14 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -315,5 +319,21 @@ public class ProposalServiceImpl implements ProposalService {
         Proposal proposal = proposalRepository.getReferenceById(id);
         proposal.setStatus(Proposal.Status.DELETED);
         proposalRepository.save(proposal);
+    }
+
+    @Scheduled(fixedRate = 10*60*1000)
+    @Transactional
+    public void archiveExpiredProposals(){
+        Date now = Calendar.getInstance().getTime();
+        List<ProposalFullDTO> proposals = getAllNotArchivedProposals();
+
+        for(ProposalFullDTO proposalDTO: proposals){
+            Date expiration = proposalDTO.getExpiration();
+            if (expiration != null && now.after(expiration)){
+                Proposal proposal = proposalRepository.getReferenceById(proposalDTO.getId());
+                proposal.setStatus(Proposal.Status.ARCHIVED);
+                proposalRepository.save(proposal);
+            }
+        }
     }
 }
