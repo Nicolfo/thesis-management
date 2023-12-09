@@ -49,7 +49,7 @@ export default function BrowseProposalsContent(props) {
                         <Card.Header>
                             <h1 style={{"textAlign": "center", marginTop: "0.5rem", marginBottom: "0.5rem"}}>My thesis
                                 proposals</h1>
-                            <h2>Active proposals</h2>
+                            <h2 style={{"textAlign": "center"}}>Active proposals</h2>
                         </Card.Header>
                         {proposalList.length > 0 ?
                             <Card.Body>
