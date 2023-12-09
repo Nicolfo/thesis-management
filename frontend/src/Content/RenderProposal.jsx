@@ -1,5 +1,5 @@
 import API from "../API/Api";
-import {Button, FormGroup, FormLabel, Alert, Card} from "react-bootstrap";
+import {Button, FormGroup, FormLabel, Card} from "react-bootstrap";
 import {useNavigate, useParams} from 'react-router-dom';
 import {useContext, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -39,10 +39,10 @@ function RenderProposal(props) {
                                         API.uploadFile(cv).then((id) => {
                                             API.insertApplication(id, proposalId, props.user.token)
                                         })
-                                        navigate('/search-for-proposal')
                                     } else {
                                         API.insertApplication(null, proposalId, props.user.token)
                                     }
+                                    navigate('/search-for-proposal')
                                 }}><FontAwesomeIcon icon="fa-file"/> Apply
                                 </Button>
                             </div>

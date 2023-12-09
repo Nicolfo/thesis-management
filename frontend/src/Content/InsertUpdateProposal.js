@@ -234,9 +234,9 @@ function InsertUpdateProposal(props) {
     }
 
     return (
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem"}}>
+        <Card style={{"marginTop": "0.5", "marginBottom": "2rem"}}>
             <Form validated={validated} onSubmit={handleSubmit} noValidate>
-                <Card.Header as="h3" style={{"textAlign": "center"}}>
+                <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
                     { editProposalID ?
                         "Update proposal"
                         :
@@ -295,8 +295,7 @@ function InsertUpdateProposal(props) {
                     {/* TYPE & KEYWORDS & LEVEL */}
                     <Row style={{"marginTop": "1rem"}} >
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}> - </Row>
-                            <Form.Group >
+                            <Form.Group className="ms-2">
                                 <Form.Label> Thesis types </Form.Label>
                                 {typeList.map( (singleType, index) => (
                                     <>
@@ -326,8 +325,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}> - </Row>
-                            <Form.Group >
+                            <Form.Group className="ms-2">
                                 <Form.Label> Thesis keywords </Form.Label>
                                 {keywordsList.map( (singleKeyword, index) => (
                                     <>
@@ -358,8 +356,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}> - </Row>
-                            <Form.Group>
+                            <Form.Group className="ms-2">
                                 <Form.Label> Thesis level </Form.Label>
                                 <Form.Check
                                     type="radio"

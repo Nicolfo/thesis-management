@@ -222,7 +222,7 @@ function ProposalsListContent({ user, applicationDate }) {
             </Offcanvas>
 
             <Card className="mt-3">
-                <Card.Header><b>Results</b></Card.Header>
+                <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
                 <Card.Body><ProposalsList proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
             </Card>
         </>
