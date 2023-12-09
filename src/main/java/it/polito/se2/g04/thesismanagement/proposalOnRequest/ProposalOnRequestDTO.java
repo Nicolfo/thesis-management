@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
+import it.polito.se2.g04.thesismanagement.student.Student;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 public class ProposalOnRequestDTO{
     private Long id;
+    private Student student;
     private String title;
     private String description;
+
 
     private Long supervisor;
 
