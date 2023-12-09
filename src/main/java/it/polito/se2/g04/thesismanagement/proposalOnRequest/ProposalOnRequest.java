@@ -49,7 +49,7 @@ public class ProposalOnRequest {
 
    public ProposalOnRequestDTO toDTO(){
        return new ProposalOnRequestDTO(this.id,
-               this.student,
+               this.student.getId(),
                this.title,
                this.description,
                this.supervisor.getId(),
