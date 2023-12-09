@@ -26,7 +26,7 @@ public class ProposalOnRequestController {
         return proposalOnRequestService.getAllPending();
     }
 
-    @PostMapping("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}")
+    @PutMapping("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryAccepted(@PathVariable Long id){
@@ -34,7 +34,7 @@ public class ProposalOnRequestController {
 
     }
 
-    @PostMapping("/API/proposalOnRequest/updateStatus/secretaryRejected/{id}")
+    @PutMapping("/API/proposalOnRequest/updateStatus/secretaryRejected/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryRejected(@PathVariable Long id){

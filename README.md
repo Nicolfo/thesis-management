@@ -97,6 +97,13 @@ I want to update a thesis proposal
   - response body content: an object containing information about the proposal to archive
 - DELETE `/API/proposal/delete/<id>`
   - delete proposal with specified id 
+
+### Proposal on request
+- PUT `/API/proposalOnRequest/updateStatus/secretaryAccepted/<id>`
+  - response body content: an object containing information about the proposal on request accepted by the secretary
+- PUT `/API/proposalOnRequest/updateStatus/secretaryRejected/<id>`
+  - response body content: an object containing information about the proposal on request rejected by the secretary
+
   
 ### Applications
 - GET `/API/application/getByProf`
