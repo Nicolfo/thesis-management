@@ -67,7 +67,10 @@ function InsertUpdateProposal(props) {
             const supervisor = await API.getByEmail(props.user.email,props.user.token);
             setSupervisor(supervisor);
 
-            const proposals = await API.getProposalsByProf(props.user.token);
+            let proposals = await API.getProposalsByProf(props.user.token);
+            if(props.archivedView){
+                proposals = await API.getArchivedProposalsByProf(props.user.token);
+            }
             // If edit or copy, then populate the fields
             let editORCopy = ( (editProposalID && proposals.find( (p) => p.id === parseInt(editProposalID))) || (copyProposalID && proposals.find( (p) => p.id === parseInt(copyProposalID))) );
 
@@ -234,9 +237,9 @@ function InsertUpdateProposal(props) {
     }
 
     return (
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem"}}>
+        <Card style={{"marginTop": "0.5", "marginBottom": "2rem"}}>
             <Form validated={validated} onSubmit={handleSubmit} noValidate>
-                <Card.Header as="h3" style={{"textAlign": "center"}}>
+                <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
                     { editProposalID ?
                         "Update proposal"
                         :
@@ -295,8 +298,7 @@ function InsertUpdateProposal(props) {
                     {/* TYPE & KEYWORDS & LEVEL */}
                     <Row style={{"marginTop": "1rem"}} >
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}> - </Row>
-                            <Form.Group >
+                            <Form.Group className="ms-2">
                                 <Form.Label> Thesis types </Form.Label>
                                 {typeList.map( (singleType, index) => (
                                     <>
@@ -326,8 +328,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}> - </Row>
-                            <Form.Group >
+                            <Form.Group className="ms-2">
                                 <Form.Label> Thesis keywords </Form.Label>
                                 {keywordsList.map( (singleKeyword, index) => (
                                     <>
@@ -358,8 +359,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}> - </Row>
-                            <Form.Group>
+                            <Form.Group className="ms-2">
                                 <Form.Label> Thesis level </Form.Label>
                                 <Form.Check
                                     type="radio"

@@ -23,12 +23,16 @@ import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
 import NotAuthorizedLayout from "./Content/NotAuthorizedLayout";
 import NotFound from "./Content/NotFound";
 import API from "./API/Api";
+import BrowseArchivedProposals from "./Content/BrowseArchivedProposals";
+import BrowseArchivedProposals2 from "./Content/BrowseArchivedProposals2";
+
 
 
 
 function App() {
 
     const [user, setUser] = useState(null);
+    const [archivedView, setArchivedView] = useState(false);
 
 
     const [clickOnProposal, setClickOnProposal] = useState(0);
@@ -154,7 +158,7 @@ function App() {
                             <div className="row align-items-start">
                                 <NavBar user={user} setUser={setUser} realDate={realDate}
                                         applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}
-                                        searchForProposalClicked={searchForProposalClicked}/>
+                                        searchForProposalClicked={searchForProposalClicked} setArchivedView={setArchivedView}/>
                                 <div className="ps-5 pe-5 pt-3">
                                     <Outlet/>
                                 </div>
@@ -180,9 +184,11 @@ function App() {
                     <Route path="/updateProposal/:editProposalID"
                            element={<InsertUpdateProposal user={user}/>}/>
                     <Route path="/copyProposal/:copyProposalID"
-                           element={<InsertUpdateProposal user={user}/>}/>
+                           element={<InsertUpdateProposal user={user} archivedView={archivedView}/>}/>
                     <Route path="/teacher/proposals"
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
+                    <Route path="/teacher/proposals/archived"
+                           element={<BrowseArchivedProposals2 setArchivedView={setArchivedView} user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/notAuthorized"
                            element={<NotAuthorizedLayout user={user}/>}/>
                     <Route path="*"

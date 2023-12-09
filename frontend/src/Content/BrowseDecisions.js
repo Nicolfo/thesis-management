@@ -38,7 +38,7 @@ function BrowseDecisions(props) {
 
     return (
         <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-            <Card.Header as="h3" style={{"textAlign": "center"}}>
+            <Card.Header as="h1" style={{"textAlign": "center"}}  className="py-3">
                 Your applications
             </Card.Header>
             { applications.length > 0 ?
@@ -48,8 +48,8 @@ function BrowseDecisions(props) {
                     </tbody>
                 </Table>
                 :
-                <Card.Body as="h5" style={{"textAlign": "center"}}>
-                    You have no applications yet
+                <Card.Body style={{"textAlign": "center"}}>
+                    <strong>You have no applications yet</strong>
                 </Card.Body>
             }
         </Card>
@@ -73,7 +73,7 @@ function TableRow(props) {
     return (
         <tr>
             <td>
-                <Row>
+                <Row className="my-3">
                     <Col lg={5}>
                         <b> {application.proposalTitle} </b>
                     </Col>
@@ -83,7 +83,6 @@ function TableRow(props) {
                     <Col lg={1}>
                         {statusBadge()}
                     </Col>
-                    <Row style={{"visibility": "hidden"}}> - </Row>
                 </Row>
             </td>
         </tr>

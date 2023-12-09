@@ -1,5 +1,4 @@
-version: '2'
-
+version: '3.8'
 services:
   app:
     image: 'nicolfo/thesis-management'
@@ -9,7 +8,6 @@ services:
       - "8081"
     build:
       context: src/main/java
-    container_name: app
     depends_on:
       - db
       - keycloak
@@ -22,7 +20,6 @@ services:
 
   db:
     image: 'postgres:latest'
-    container_name: db
     ports:
       - "5432:5432"
     expose:
@@ -33,11 +30,17 @@ services:
 
 
   keycloak:
-    image: 'dome015/keycloak-saml'
-    container_name: keycloak
+    image: 'quay.io/keycloak/keycloak:22.0.5'
     ports:
       - "8080:8080"
-    #    environment:
-    #      - KEYCLOAK_ADMIN_PASSWORD=admin
-    #      - KEYCLOAK_ADMIN=admin
-    command: start-dev
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    configs:
+      - source: keycloak-config
+        target: /opt/keycloak/data/import/oidcrealm-realm.json
+    command: start-dev --import-realm
+
+configs:
+  keycloak-config:
+    file: ./oidcrealm-realm.json

@@ -5,7 +5,7 @@
 - Run **Docker**
 - Navigate to the main project directory `thesis-management`
 - Run the command `docker-compose up`
-- Acces the app via `http://localhost:8081/`
+- Access the app via `http://localhost:8081/`
 
 ## Test Users Credentials
 
@@ -84,6 +84,8 @@ I want to update a thesis proposal
   - response body content: an array containing all the proposals
 - GET `/API/proposal/getByProf`
   - response body content: if logged in as a teacher, returns all proposals with the logged in teacher as supervisor
+- GET `/API/proposal/getArchived`
+  - response body content: if logged in as a teacher, returns all the archived proposal with the logged teacher as supervisor
 - POST `/API/proposal/insert`
   - request body content: an object containing information about the proposal to insert
 - PUT `/API/proposal/update`
@@ -95,6 +97,13 @@ I want to update a thesis proposal
   - response body content: an object containing information about the proposal to archive
 - DELETE `/API/proposal/delete/<id>`
   - delete proposal with specified id 
+
+### Proposal on request
+- PUT `/API/proposalOnRequest/updateStatus/secretaryAccepted/<id>`
+  - response body content: an object containing information about the proposal on request accepted by the secretary
+- PUT `/API/proposalOnRequest/updateStatus/secretaryRejected/<id>`
+  - response body content: an object containing information about the proposal on request rejected by the secretary
+
   
 ### Applications
 - GET `/API/application/getByProf`

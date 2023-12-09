@@ -3,6 +3,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -12,10 +13,14 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,13 +32,15 @@ public class ProposalServiceImpl implements ProposalService {
     private final ApplicationRepository applicationRepository;
     @PersistenceContext
     private EntityManager entityManager;
+    private final EmailService emailService;
     private static final String PROPOSAL_ID_NOT_EXISTS = "Proposal with this id does not exist";
     private static final String REGEX_PATTERN = "[\\s,]+";
 
-    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository) {
+    public ProposalServiceImpl(ProposalRepository proposalRepository, TeacherRepository teacherRepository, ApplicationRepository applicationRepository, EmailService emailService) {
         this.proposalRepository = proposalRepository;
         this.teacherRepository = teacherRepository;
         this.applicationRepository = applicationRepository;
+        this.emailService = emailService;
     }
 
 
@@ -47,6 +54,17 @@ public class ProposalServiceImpl implements ProposalService {
         Teacher teacher = teacherRepository.findByEmail(userName);
         if (teacher != null) {
             List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ACTIVE);
+            return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
+        }
+        return new ArrayList<>();
+    }
+
+
+    @Override
+    public List<ProposalFullDTO> getArchivedProposals(String userName){
+        Teacher teacher = teacherRepository.findByEmail(userName);
+        if (teacher != null) {
+            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ARCHIVED);
             return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
         }
         return new ArrayList<>();
@@ -115,21 +133,15 @@ public class ProposalServiceImpl implements ProposalService {
     public List<ProposalFullDTO> getAllNotArchivedProposals() {
         return proposalRepository.findAllByStatus(Proposal.Status.ACTIVE).stream().map(ProposalFullDTO::fromProposal).toList();
     }
-/*
-    @Query
-    @Override
-    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
-        Root<Proposal> proposal = cq.from(Proposal.class);
-        List<Predicate> predicates = new ArrayList<>();
-        return proposalRepository.findAllByStatus(Proposal.Status.ARCHIVED).stream().map(ProposalFullDTO::fromProposal).toList();
-    }
-    */
+  
+    private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates, Proposal.Status status) {
+        if (proposalSearchRequest.getCds() != null) {
+            predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCds().toUpperCase() + "%"));
+        }
 
-    private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates) {
-        predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCds().toUpperCase() + "%"));
+        predicates.add(cb.like(cb.upper(proposal.get("status")), "%" + status + "%"));
+
 
 
         if (proposalSearchRequest.getTitle() != null) {
@@ -165,6 +177,9 @@ public class ProposalServiceImpl implements ProposalService {
             }
             predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel().toUpperCase()));
         }
+        if (status != null) {
+            predicates.add(cb.equal(proposal.get("status"), status));
+        }
     }
 
 
@@ -177,7 +192,7 @@ public class ProposalServiceImpl implements ProposalService {
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        addPredicates(proposalSearchRequest, cb, proposal, predicates);
+        addPredicates(proposalSearchRequest, cb, proposal, predicates, Proposal.Status.ACTIVE);
 
         cq.where(predicates.toArray(new Predicate[0]));
 
@@ -191,7 +206,7 @@ public class ProposalServiceImpl implements ProposalService {
             boolean include = proposalSearchRequest.getSupervisorIdList() == null || proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId());
             // Check if it has all the supervisors
             // Check if it has at least one of the co-supervisors
-            if (proposalSearchRequest.getCoSupervisorIdList() != null) {
+            if (include && proposalSearchRequest.getCoSupervisorIdList() != null) {
                 List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
                 include = false;
                 for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {
@@ -202,7 +217,59 @@ public class ProposalServiceImpl implements ProposalService {
                 }
             }
             // Check if it has at least one of the groups
-            if (proposalSearchRequest.getCodGroupList() != null) {
+            if (include && proposalSearchRequest.getCodGroupList() != null) {
+                List<Long> codGroupList = prop.getGroups().stream().map(Group::getCodGroup).toList();
+                include = false;
+                for (Long codGroup : proposalSearchRequest.getCodGroupList()) {
+                    if (codGroupList.contains(codGroup)) {
+                        include = true;
+                        break;
+                    }
+                }
+            }
+            if (include) {
+                filteredList.add(prop);
+            }
+        }
+
+        return filteredList.stream().map(ProposalFullDTO::fromProposal).toList();
+    }
+
+    @Query
+    @Override
+    public List <ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
+
+        Root<Proposal> proposal = cq.from(Proposal.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        addPredicates(proposalSearchRequest, cb, proposal, predicates, Proposal.Status.ARCHIVED);
+
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        List<Proposal> proposalList = entityManager.createQuery(cq).getResultList();
+
+        // Filter proposals that don't have all the co-supervisors
+        // in the filter or all the specified groups
+
+        List<Proposal> filteredList = new ArrayList<>();
+        for (Proposal prop : proposalList) {
+            boolean include = proposalSearchRequest.getSupervisorIdList() == null || proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId());
+            // Check if it has all the supervisors
+            // Check if it has at least one of the co-supervisors
+            if (include && proposalSearchRequest.getCoSupervisorIdList() != null) {
+                List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
+                include = false;
+                for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {
+                    if (coSupervisorIdList.contains(filterId)) {
+                        include = true;
+                        break;
+                    }
+                }
+            }
+            // Check if it has at least one of the groups
+            if (include && proposalSearchRequest.getCodGroupList() != null) {
                 List<Long> codGroupList = prop.getGroups().stream().map(Group::getCodGroup).toList();
                 include = false;
                 for (Long codGroup : proposalSearchRequest.getCodGroupList()) {
@@ -255,5 +322,37 @@ public class ProposalServiceImpl implements ProposalService {
         Proposal proposal = proposalRepository.getReferenceById(id);
         proposal.setStatus(Proposal.Status.DELETED);
         proposalRepository.save(proposal);
+    }
+
+    @Scheduled(fixedRate = 10*60*1000)
+    @Transactional
+    public void archiveExpiredProposals() {
+        Date now = Calendar.getInstance().getTime();
+
+        Calendar oneWeekFromNow = Calendar.getInstance();
+        oneWeekFromNow.setTime(now);
+        oneWeekFromNow.add(Calendar.WEEK_OF_YEAR, 1);
+
+        List<ProposalFullDTO> proposals = getAllNotArchivedProposals();
+
+
+        for(ProposalFullDTO proposalDTO: proposals){
+            Date expiration = proposalDTO.getExpiration();
+            if(expiration != null) {
+                Proposal proposal = proposalRepository.getReferenceById(proposalDTO.getId());
+                if (now.after(expiration)) {
+                    proposal.setStatus(Proposal.Status.ARCHIVED);
+                    proposalRepository.save(proposal);
+                } else if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
+                    try {
+                        emailService.notifySupervisorOfExpiration(proposal);
+                        proposal.setNotifiedAboutExpiration(true);
+                        proposalRepository.save(proposal);
+                    } catch (Exception ignored){
+
+                    }
+                }
+            }
+        }
     }
 }

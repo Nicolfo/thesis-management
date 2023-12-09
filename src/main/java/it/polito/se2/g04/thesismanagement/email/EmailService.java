@@ -1,8 +1,9 @@
 package it.polito.se2.g04.thesismanagement.email;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
+import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
 import jakarta.mail.MessagingException;
-import org.springframework.mail.SimpleMailMessage;
 
 import java.io.IOException;
 
@@ -36,4 +37,6 @@ public interface EmailService {
      * @param application Application about which the supervisor and co-supervisors of the corresponding proposal should be informed
      */
     void notifySupervisorAndCoSupervisorsOfNewApplication(Application application) throws MessagingException, IOException;
+    void notifySupervisorOfExpiration(Proposal proposal) throws MessagingException, IOException;
+    void notifySupervisorOfNewThesisRequest(ProposalOnRequestDTO request) throws MessagingException, IOException;
 }

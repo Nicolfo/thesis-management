@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 
 
 import it.polito.se2.g04.thesismanagement.student.StudentService;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,9 +25,12 @@ public class ProposalController {
 
     private final StudentService studentService;
 
-    public ProposalController(ProposalService proposalService, StudentService studentService) {
+    private final TeacherService teacherService;
+
+    public ProposalController(ProposalService proposalService, StudentService studentService, TeacherService teacherService) {
         this.proposalService = proposalService;
         this.studentService = studentService;
+        this.teacherService = teacherService;
     }
 
     /**
@@ -51,6 +55,9 @@ public class ProposalController {
         String username = auth.getName();
         return proposalService.getProposalsByProf(username);
     }
+
+
+
 
     @GetMapping("/API/proposal/getTitleByProposalId/{proposalId}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
@@ -103,6 +110,32 @@ public class ProposalController {
         return proposalService.searchProposals(proposalSearchRequest);
     }
 
+    @PostMapping("/API/proposal/searchArchived")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalFullDTO> searchArchivedProposals(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+        // Automatically extract the id of the logged in teacher, and filter the
+        // archived proposals by it.
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Long supervisorId = teacherService.getByEmail(username).getId();
+        proposalSearchRequest.setSupervisorIdList(List.of(supervisorId));
+        return proposalService.searchArchivedProposals(proposalSearchRequest);
+    }
+
+    @GetMapping("/API/proposal/getArchived")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalFullDTO> searchArchivedProposals() {
+        // Automatically extract the id of the logged in teacher, and filter the
+        // archived proposals by it.
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        //Long supervisorId = teacherService.getByEmail(username).getId();
+
+        return proposalService.getArchivedProposals(username);
+    }
+
     @PostMapping("/API/proposal/archive/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
@@ -131,5 +164,4 @@ public class ProposalController {
     public void archiveProposalWithNoId(){
         throw new archiveWithNoId("can't archive a proposal without his id");
     }
-
 }

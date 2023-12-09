@@ -237,7 +237,7 @@ async function insertApplication(cvId, proposalId, jwt) {
             'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify({
-            attachmentId: cvId.id,
+            attachmentId: cvId ? cvId.id : null,
             applyDate:dayjs(),
             proposalId: proposalId,
         }),
@@ -245,5 +245,29 @@ async function insertApplication(cvId, proposalId, jwt) {
 )};
 
 
-const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal };
+const getArchivedProposalsByProf = async (jwt) => {
+    return getJson(fetch(SERVER_URL + 'proposal/getArchived',{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+const searchArchivedProposals = async(jwt, body) => {
+    return getJson(fetch(SERVER_URL + "proposal/searchArchived" , {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
+
+
+
+const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals };
 export default API;

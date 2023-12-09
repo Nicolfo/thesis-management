@@ -1,4 +1,16 @@
-import { Card, Form, Button, Row, Col, Accordion, AccordionContext, Offcanvas, useAccordionButton, Alert } from "react-bootstrap";
+import {
+    Card,
+    Form,
+    Button,
+    Row,
+    Col,
+    Accordion,
+    AccordionContext,
+    Offcanvas,
+    useAccordionButton,
+    Alert,
+    DropdownButton, Dropdown
+} from "react-bootstrap";
 import API from "../API/Api";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +18,9 @@ import { MultiSelect } from "react-multi-select-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
+import Warn from "./Warn";
 
-function ProposalsListContent({ user, applicationDate }) {
+function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
 
     const navigate = useNavigate();
 
@@ -31,6 +44,15 @@ function ProposalsListContent({ user, applicationDate }) {
     const [notes, setNotes] = useState("");
     const [proposalsList, setProposalsList] = useState([]);
     const [error, setError] = useState("");
+    const [deleting, setDeleting] = useState(false);
+    const [deletingID, setDeletingID] = useState();
+
+
+    function deleteProp(proposalId){
+
+            setDeleting(true);
+            setDeletingID(proposalId)
+        }
 
 
     const clearFields = ()=> {
@@ -48,8 +70,7 @@ function ProposalsListContent({ user, applicationDate }) {
     useEffect(() => {
         if( !token )
             navigate("/notAuthorized");
-        if(user && user.role==="TEACHER")
-            navigate("/notAuthorized");
+
         if (!user) {
             return;
         }
@@ -60,7 +81,7 @@ function ProposalsListContent({ user, applicationDate }) {
                 setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
                 const groups = await API.getAllGroups(user.token);
                 setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
-                const proposals = await API.searchProposals(user.token, {});
+                const proposals = await API.getArchivedProposalsByProf(user.token);
                 setProposalsList(proposals);
             } catch (error) {
                 handleError(error);
@@ -84,18 +105,18 @@ function ProposalsListContent({ user, applicationDate }) {
 
         // Remove properties with null values
         Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
-        
+
         try {
-            const proposals = await API.searchProposals(user.token, requestBody);
+            const proposals = await API.searchArchivedProposals(user.token, requestBody);
             setProposalsList(proposals);
         } catch (error) {
             handleError(error);
         }
-        
+
     }
 
     const handleError = error => {
-        if (error.error) 
+        if (error.error)
             setError(error.error);
         else if (error.message)
             setError(error.message);
@@ -108,14 +129,17 @@ function ProposalsListContent({ user, applicationDate }) {
     return (
         <>
             { error !== "" &&
-              <Row>
-                <Col>
-                  <Alert variant="danger" dismissible onClose={() => setError("")} >
-                    {error}
-                  </Alert>
-                </Col>
-              </Row>
+                <Row>
+                    <Col>
+                        <Alert variant="danger" dismissible onClose={() => setError("")} >
+                            {error}
+                        </Alert>
+                    </Col>
+                </Row>
             }
+            {deleting? <Row><Col></Col><Col><Warn doSearch={doSearch}  archivedProposal={true} user={user} setDeleting={setDeleting} deletingID={deletingID} ></Warn></Col> <Col></Col></Row>:
+                <>
+                    <h2>Archive</h2>
             <Row style={{"textAlign": "end"}}>
                 <Col>
                     <Button onClick={()=> setShowSearchBar(it=> !it )}> <FontAwesomeIcon icon={"magnifying-glass"} /> Show searching filters </Button>
@@ -176,15 +200,7 @@ function ProposalsListContent({ user, applicationDate }) {
                         {/*        labelledBy="Select CdS"*/}
                         {/*    />*/}
                         {/*</Form.Group>*/}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Supervisor(s)</Form.Label>
-                            <MultiSelect
-                                options={teachersList}
-                                value={selectedSupervisorIds}
-                                onChange={setSelectedSupervisorIds}
-                                labelledBy="Select Supervisors"
-                            />
-                        </Form.Group>
+
                         <Form.Group className="mb-3">
                             <Form.Label>Co-Supervisor(s)</Form.Label>
                             <MultiSelect
@@ -222,17 +238,18 @@ function ProposalsListContent({ user, applicationDate }) {
             </Offcanvas>
 
             <Card className="mt-3">
-                <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
-                <Card.Body><ProposalsList proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
+                <Card.Header><b>Results</b></Card.Header>
+                <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp} proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
             </Card>
-        </>
-    );
+                </>} </>
+);
 }
 
-function ProposalsList({ proposals, user, applicationDate }) {
+function ProposalsList({ proposals, user, applicationDate, deleteProp, setArchivedView }) {
     return (
+
         <Accordion defaultActiveKey="0">
-            { proposals.filter(proposal => dayjs(proposal.expiration).isAfter(applicationDate)).map(proposal => <ProposalEntry key={proposal.id} proposal={proposal} user={user} />) }
+            { proposals.map(proposal => <ProposalEntry setArchivedView={setArchivedView} deleteProp={deleteProp} key={proposal.id} proposal={proposal} user={user} />) }
         </Accordion>
     )
 }
@@ -246,17 +263,17 @@ function CustomToggle({ children, eventKey, callback }) {
     );
 
     const isCurrentEventKey = activeEventKey === eventKey;
-  
-    return (
-      <Button
-        onClick={decoratedOnClick}
-      >
-        <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
-      </Button>
-    );
-  }
 
-function ProposalEntry({ proposal, user }) {
+    return (
+        <Button
+            onClick={decoratedOnClick}
+        >
+            <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
+        </Button>
+    );
+}
+
+function ProposalEntry({ proposal, user, deleteProp, setArchivedView }) {
     const navigate = useNavigate();
 
     return (
@@ -265,11 +282,35 @@ function ProposalEntry({ proposal, user }) {
                 <Row className="p-2 align-items-center">
                     <Col><b>{proposal.title}</b></Col>
                     <Col className="d-flex justify-content-end">
-                        <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}><FontAwesomeIcon icon="fa-file" /> Apply</Button>
+                        <DropdownButton id="dropdown-item-button" title={
+                            <div className="d-flex align-items-center">
+                                <FontAwesomeIcon icon="fa-solid fa-list-ul" />
+                                <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                                <span className="d-none d-md-table-cell"> Options </span>
+                            </div>
+                        }
+                        >
+
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => { setArchivedView(true);  navigate(`/copyProposal/${proposal.id}`)}}>
+                                <div className="d-flex align-items-center">
+                                    <FontAwesomeIcon icon="fa-solid fa-copy" />
+                                    <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                                    <span className="d-none d-md-table-cell"> Copy </span>
+                                </div>
+                            </Dropdown.Item>
+
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
+                                <div className="d-flex align-items-center">
+                                    <FontAwesomeIcon icon="fa-solid fa-trash-can" />
+                                    <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                                    <span className="d-none d-md-table-cell"> Delete </span>
+                                </div>
+                            </Dropdown.Item>
+                        </DropdownButton>
                         <CustomToggle eventKey={proposal.id} />
                     </Col>
                 </Row>
-            
+
             </Card.Header>
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
@@ -304,4 +345,4 @@ function ProposalEntry({ proposal, user }) {
     )
 }
 
-export default ProposalsListContent;
+export default BrowseArchivedProposals2;

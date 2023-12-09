@@ -68,7 +68,7 @@ public class DeleteProposalTest {
     }
 
     @AfterAll
-    public void CleanUp(){
+    public void CleanUp() {
         applicationRepository.deleteAll();
         proposalRepository.deleteAll();
         teacherRepository.deleteAll();
@@ -76,39 +76,41 @@ public class DeleteProposalTest {
         degreeRepository.deleteAll();
 
     }
+
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
     public void deleteProposal() throws Exception {
-        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
+        Teacher teacher = new Teacher("Massimo", "Potenza", "m.potenza@example.com", null, null);
         teacherRepository.save(teacher);
-        Degree degree=new Degree("ingegneria informatica");
+        Degree degree = new Degree("ingegneria informatica");
         degreeRepository.save(degree);
-        Student student1=new Student("rossi", "marco", "male", "ita","m.rossi@example.com", degree, 2020);
-        Student student2=new Student("viola", "marta", "female", "ita", "m.viola@example.com", degree,2018);
+        Student student1 = new Student("rossi", "marco", "male", "ita", "m.rossi@example.com", degree, 2020);
+        Student student2 = new Student("viola", "marta", "female", "ita", "m.viola@example.com", degree, 2018);
         studentRepository.saveAll(List.of(student2, student1));
-        Proposal proposal=new Proposal("test1",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
+        Proposal proposal = new Proposal("test1", teacher, null, "parola", "type", null, "descrizione", "poca", "notes", null, "level", "cds");
         proposal = proposalRepository.save(proposal);
-        Application application1=new Application(student1,null, null, proposal);
+        Application application1 = new Application(student1, null, null, proposal);
         applicationRepository.save(application1);
-        Application application2=new Application(student2,null, null, proposal);
+        Application application2 = new Application(student2, null, null, proposal);
         applicationRepository.save(application2);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/{id}",proposal.getId())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/{id}", proposal.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         List<ProposalFullDTO> proposalOutput = proposalService.getAllProposals();
         assertEquals(Proposal.Status.DELETED, proposalRepository.getReferenceById(proposalOutput.get(0).getId()).getStatus(), "proposalOutput should be tagged to deletion");
 
-
-
-
-        List<Application> applicationOutput =applicationRepository.findAll();
-
-
+        List<Application> applicationOutput = applicationRepository.findAll();
         assertEquals(ApplicationStatus.DELETED, applicationOutput.get(0).getStatus(), "applicationOutput should be tagged to deletion");
         assertEquals(ApplicationStatus.DELETED, applicationOutput.get(1).getStatus(), "applicationOutput should be tagged to deletion");
+
+        proposalOutput = proposalService.getAllNotArchivedProposals();
+        assertEquals(0, proposalOutput.size(), "proposalOutput should be 0 long");
+
+        proposalOutput = proposalService.getProposalsByProf(teacher.getEmail());
+        assertEquals(0, proposalOutput.size(), "proposalOutput should be 0 long");
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -118,8 +120,7 @@ public class DeleteProposalTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/" + new Random().nextLong(2,100))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/" + new Random().nextLong(2, 100))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
