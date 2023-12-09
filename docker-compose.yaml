@@ -1,5 +1,4 @@
-version: '2'
-
+version: '3.4'
 services:
   app:
     image: 'nicolfo/thesis-management'
@@ -37,6 +36,11 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-    volumes:
-      - ./oidcrealm-realm.json:/opt/keycloak/data/import/oidcrealm-realm.json
+    configs:
+      - source: keycloak-config
+        target: /opt/keycloak/data/import/oidcrealm-realm.json
     command: start-dev --import-realm
+
+configs:
+  keycloak-config:
+    file: ./oidcrealm-realm.json
