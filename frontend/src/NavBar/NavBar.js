@@ -2,20 +2,20 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Button, Col, Form, Nav} from 'react-bootstrap';
-import {useState,useContext,useEffect} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
-import { AuthContext } from 'react-oauth2-code-pkce';
+import {AuthContext} from 'react-oauth2-code-pkce';
 import logoPolitecnico from './logoPolitecnico.png';
 
 
 function NavBar(props) {
-    const { tokenData, token, login, logOut, loginInProgress, error } = useContext(AuthContext);
+    const {tokenData, token, login, logOut, loginInProgress, error} = useContext(AuthContext);
 
     const [showVirtualClock, setShowVirtualClock] = useState(false);
 
     const path = useLocation().pathname;
     const navigate = useNavigate();
-    const handleClick= (e)=> {
+    const handleClick = (e) => {
         e.preventDefault();
 
         if (props.user === undefined || props.user === null) {
@@ -32,14 +32,34 @@ function NavBar(props) {
      * The user state is an object containing the user's email, name, surname, role and token.
      */
     useEffect(() => {
-      if (!props.user && tokenData) {
-          let role;
-          if( tokenData.realm_access.roles.includes("STUDENT"))
-          role = "STUDENT";
-          else if(tokenData.realm_access.roles.includes("TEACHER"))
-          role = "TEACHER";
-        props.setUser({ email: tokenData.preferred_username, role: role , name: tokenData.firstName, surname: tokenData.lastName, token: token });
-      }
+        if (!props.user && tokenData) {
+            let role;
+            const roles = tokenData.realm_access.roles;
+
+            switch (true) {
+                case roles.includes("STUDENT"):
+                    role = "STUDENT";
+                    break;
+                case roles.includes("TEACHER"):
+                    role = "TEACHER";
+                    break;
+                case roles.includes("SECRETARY"):
+                    role = "SECRETARY";
+                    break;
+                // Add more cases if needed
+                default:
+                    // Handle the case when no role is found
+                    break;
+
+            }
+            props.setUser({
+                email: tokenData.preferred_username,
+                role: role,
+                name: tokenData.firstName,
+                surname: tokenData.lastName,
+                token: token
+            });
+        }
     }, [tokenData]);
 
     const userIsTeacher = () => {
@@ -55,7 +75,8 @@ function NavBar(props) {
             <Navbar className={props.user ? 'bg-color ps-3' : 'bg-color-start ps-3'} expand="md" data-bs-theme="dark">
                 <Container fluid>
                     <Navbar.Brand href="/">
-                        {props.user ? <><FontAwesomeIcon icon="fa-book"/> Thesis Manager</> : <><img src={logoPolitecnico} alt="Politecnico's logo" style={{height:"5rem"}} /></>}
+                        {props.user ? <><FontAwesomeIcon icon="fa-book"/> Thesis Manager</> : <><img
+                            src={logoPolitecnico} alt="Politecnico's logo" style={{height: "5rem"}}/></>}
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarResponsive"/>
                     <Navbar.Collapse id="navbarResponsive">
@@ -64,7 +85,10 @@ function NavBar(props) {
                                 <>
                                     <Button
                                         variant={path === '/search-for-proposal' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
-                                        style={path === '/search-for-proposal' ? {backgroundColor: "#FEA65A", color: "white"} : {}}
+                                        style={path === '/search-for-proposal' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
                                         onClick={() => {
                                             navigate('/search-for-proposal');
                                             props.searchForProposalClicked();
@@ -74,7 +98,10 @@ function NavBar(props) {
                                     </Button>
                                     <Button
                                         variant={path === '/browseDecisions' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
-                                        style={path === '/browseDecisions' ? {backgroundColor: "#FEA65A", color: "white"} : {}}
+                                        style={path === '/browseDecisions' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
                                         onClick={() => {
                                             navigate('/browseDecisions');
                                         }}
@@ -87,7 +114,10 @@ function NavBar(props) {
                                 <>
                                     <Button
                                         variant={path === '/teacher/proposals' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
-                                        style={path === '/teacher/proposals' ? {backgroundColor: "#FEA65A", color: "white"} : {}}
+                                        style={path === '/teacher/proposals' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
                                         onClick={() => {
                                             props.setArchivedView(false);
                                             navigate('/teacher/proposals');
@@ -97,7 +127,10 @@ function NavBar(props) {
                                     </Button>
                                     <Button
                                         variant={path === '/insertProposal' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
-                                        style={path === '/insertProposal' ? {backgroundColor: "#FEA65A", color: "white"} : {}}
+                                        style={path === '/insertProposal' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
                                         onClick={() => {
                                             navigate('/insertProposal');
                                         }}
@@ -106,7 +139,10 @@ function NavBar(props) {
                                     </Button>
                                     <Button
                                         variant={path === '/teacher/application/browse' || path === '/teacher/application/view' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
-                                        style={path === '/teacher/application/browse' || path === '/teacher/application/view' ? {backgroundColor: "#FEA65A", color: "white"} : {}}
+                                        style={path === '/teacher/application/browse' || path === '/teacher/application/view' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
                                         onClick={() => {
                                             navigate('/teacher/application/browse');
                                         }}
@@ -115,8 +151,11 @@ function NavBar(props) {
                                     </Button>
 
                                     <Button
-                                        variant={path === '/teacher/proposals/archived'  ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
-                                        style={path === '/teacher/proposals/archived'  ? {backgroundColor: "#FEA65A", color: "white"} : {}}
+                                        variant={path === '/teacher/proposals/archived' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/teacher/proposals/archived' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
                                         onClick={() => {
                                             navigate('/teacher/proposals/archived');
                                         }}
@@ -131,7 +170,7 @@ function NavBar(props) {
                                 {showVirtualClock && (
                                     <Col xs="auto" className="me-lg-2">
                                         <Form.Control
-                                            className={props.user ? "dateForm no-border-sm" : "dateForm-start no-border-sm" }
+                                            className={props.user ? "dateForm no-border-sm" : "dateForm-start no-border-sm"}
                                             type="date"
                                             value={props.applicationDate.format('YYYY-MM-DD')}
                                             min={props.realDate.format('YYYY-MM-DD')}
@@ -139,13 +178,17 @@ function NavBar(props) {
                                         />
                                     </Col>
                                 )}
-                                <Button className={props.user ? "no-border-sm" : "no-border-sm btn-primary-start"} onClick={() => setShowVirtualClock((val) => !val)}>
-                                    <FontAwesomeIcon icon={showVirtualClock ? 'fa-xmark' : 'fa-clock'} />
+                                <Button className={props.user ? "no-border-sm" : "no-border-sm btn-primary-start"}
+                                        onClick={() => setShowVirtualClock((val) => !val)}>
+                                    <FontAwesomeIcon icon={showVirtualClock ? 'fa-xmark' : 'fa-clock'}/>
                                 </Button>
                             </div>
 
-                            <Button className={props.user ? "ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b" : "btn-primary-start ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b"} onClick={handleClick}>
-                                {props.user !== null ? <><FontAwesomeIcon icon="fa-solid fa-user"/> Logout</> : <><FontAwesomeIcon icon="fa-solid fa-user"/> Login</>}
+                            <Button
+                                className={props.user ? "ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b" : "btn-primary-start ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b"}
+                                onClick={handleClick}>
+                                {props.user !== null ? <><FontAwesomeIcon icon="fa-solid fa-user"/> Logout</> : <>
+                                    <FontAwesomeIcon icon="fa-solid fa-user"/> Login</>}
                             </Button>
                         </Nav>
                     </Navbar.Collapse>
