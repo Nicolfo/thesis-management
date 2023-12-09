@@ -2,12 +2,22 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.student.Student;
+
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProposalOnRequest {
     public enum Status{
         PENDING,
@@ -21,17 +31,25 @@ public class ProposalOnRequest {
     @Id
     @GeneratedValue
     private Long id;
+
     private String title;
     private String description;
     @ManyToOne
     private Teacher supervisor;
+    @OneToOne
+    private Student student;
    @ManyToMany
     private List<Teacher> coSupervisors;
+
    private Date approvalDate;
    @Enumerated(EnumType.STRING)
    private Status status;
+
+
+
    public ProposalOnRequestDTO toDTO(){
        return new ProposalOnRequestDTO(this.id,
+               this.student,
                this.title,
                this.description,
                this.supervisor.getId(),
