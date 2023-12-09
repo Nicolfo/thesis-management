@@ -68,13 +68,23 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService{
             throw new RuntimeException("Student not found exception");
         Student student = studentRepository.getReferenceById(proposalOnRequestDTO.getStudentId());
         //PARSE CO-SUPERVISORS
+        List<Teacher> coSupervisors;
+        if(proposalOnRequestDTO.getCoSupervisors()==null || proposalOnRequestDTO.getCoSupervisors().isEmpty())
+            coSupervisors= List.of();
+        else{
+            coSupervisors= proposalOnRequestDTO.getCoSupervisors().stream().map(it->{
+                if(!teacherRepository.existsById(it))
+                    throw new RuntimeException("Some co-supervisor has not been found");
+                return teacherRepository.getReferenceById(it);
+            }).toList();
+        }
 
         ProposalOnRequest toAdd = new ProposalOnRequest(
                 proposalOnRequestDTO.getTitle(),
                 proposalOnRequestDTO.getDescription(),
                 teacher,
                 student,
-                List.of(),
+                coSupervisors,
                 proposalOnRequestDTO.getApprovalDate(),
                 ProposalOnRequest.Status.PENDING
                 );
