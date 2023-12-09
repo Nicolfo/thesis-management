@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
+import org.jboss.resteasy.annotations.Body;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,11 @@ public class ProposalOnRequestController {
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryRejected(@PathVariable Long id){
         return proposalOnRequestService.proposalOnRequestSecretaryRejected(id);
 
+    }
+    @PostMapping("/API/proposalOnRequest/create/")
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
+    public ProposalOnRequestDTO createProposalRequest(@RequestBody ProposalOnRequestDTO proposalOnRequestDTO){
+        return proposalOnRequestService.createProposalRequest(proposalOnRequestDTO);
     }
 
 }

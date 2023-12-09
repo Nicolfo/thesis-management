@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ProposalOnRequestDTO{
     private Long id;
-    private Student student;
+    private Long studentId;
     private String title;
     private String description;
 

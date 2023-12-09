@@ -5,6 +5,11 @@ import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.student.Student;
+import it.polito.se2.g04.thesismanagement.student.StudentRepository;
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProposalOnRequestServiceImpl implements ProposalOnRequestService{
     private final ProposalOnRequestRepository proposalOnRequestRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
     @Override
     public List<ProposalOnRequestDTO> getAllPending() {
         return proposalOnRequestRepository.getProposalOnRequestByStatus(ProposalOnRequest.Status.PENDING).stream().map(it->it.toDTO()).toList();
@@ -50,8 +57,31 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService{
         return proposal.toDTO();
     }
 
+    @Override
+    public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO) {
+        //PARSE TEACHER
+        if(!teacherRepository.existsById(proposalOnRequestDTO.getSupervisor()))
+            throw new RuntimeException("Teacher not found exception");
+        Teacher teacher = teacherRepository.getReferenceById(proposalOnRequestDTO.getId());
+        //PARSE STUDENT
+        if(!studentRepository.existsById(proposalOnRequestDTO.getStudentId()))
+            throw new RuntimeException("Student not found exception");
+        Student student = studentRepository.getReferenceById(proposalOnRequestDTO.getStudentId());
+        //PARSE CO-SUPERVISORS
+
+        ProposalOnRequest toAdd = new ProposalOnRequest(
+                proposalOnRequestDTO.getTitle(),
+                proposalOnRequestDTO.getDescription(),
+                teacher,
+                student,
+                List.of(),
+                proposalOnRequestDTO.getApprovalDate(),
+                proposalOnRequestDTO.getStatus()
+                );
 
 
+        return proposalOnRequestRepository.save(toAdd).toDTO();
+    }
 
 
 }

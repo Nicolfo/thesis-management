@@ -17,8 +17,17 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ProposalOnRequest {
+    public ProposalOnRequest(String title, String description, Teacher supervisor, Student student, List<Teacher> coSupervisors, Date approvalDate, Status status) {
+        this.title = title;
+        this.description = description;
+        this.supervisor = supervisor;
+        this.student = student;
+        this.coSupervisors = coSupervisors;
+        this.approvalDate = approvalDate;
+        this.status = status;
+    }
+
     public enum Status{
         PENDING,
         SECRETARY_ACCEPTED,
@@ -48,8 +57,9 @@ public class ProposalOnRequest {
 
 
    public ProposalOnRequestDTO toDTO(){
-       return new ProposalOnRequestDTO(this.id,
-               this.student,
+       return new ProposalOnRequestDTO(
+               this.id,
+               this.student.getId(),
                this.title,
                this.description,
                this.supervisor.getId(),
