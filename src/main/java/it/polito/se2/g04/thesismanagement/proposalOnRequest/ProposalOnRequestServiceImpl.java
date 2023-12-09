@@ -76,7 +76,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService{
                 student,
                 List.of(),
                 proposalOnRequestDTO.getApprovalDate(),
-                proposalOnRequestDTO.getStatus()
+                ProposalOnRequest.Status.PENDING
                 );
 
 

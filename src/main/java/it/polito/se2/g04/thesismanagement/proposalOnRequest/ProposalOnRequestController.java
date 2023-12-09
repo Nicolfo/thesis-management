@@ -44,6 +44,7 @@ public class ProposalOnRequestController {
     }
     @PostMapping("/API/proposalOnRequest/create/")
     @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
+    @ResponseStatus(HttpStatus.CREATED)
     public ProposalOnRequestDTO createProposalRequest(@RequestBody ProposalOnRequestDTO proposalOnRequestDTO){
         return proposalOnRequestService.createProposalRequest(proposalOnRequestDTO);
     }
