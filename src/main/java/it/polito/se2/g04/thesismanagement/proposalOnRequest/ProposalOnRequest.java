@@ -1,9 +1,7 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
-import it.polito.se2.g04.thesismanagement.proposal.Proposal;
-import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.student.Student;
-
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,7 +51,7 @@ public class ProposalOnRequest {
                this.title,
                this.description,
                this.supervisor.getId(),
-               this.coSupervisors.stream().map(it->it.getId()).toList(),
+               this.coSupervisors.stream().map(Teacher::getId).toList(),
                this.approvalDate,
                this.status);
    }
