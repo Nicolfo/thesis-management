@@ -4,4 +4,8 @@ import java.util.List;
 
 public interface ProposalOnRequestService {
     public List<ProposalOnRequestDTO> getAllPending();
+
+    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id);
+    public ProposalOnRequestDTO proposalOnRequestSecretaryRejected(Long id);
+
 }

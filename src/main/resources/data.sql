@@ -183,3 +183,4 @@ INSERT INTO public.career (cfu, grade, date, id, student_id, cod_course, title_c
 INSERT INTO public.career (cfu, grade, date, id, student_id, cod_course, title_course) VALUES (8, 29, '2023-11-28 11:27:55.432109', 38, 300004, '05BIDOV', 'Ingegneria del software');
 INSERT INTO public.career (cfu, grade, date, id, student_id, cod_course, title_course) VALUES (6, 25, '2021-02-20 10:09:10.987654', 39, 300006, '02GRSOV', 'Programmazione di sistema');
 INSERT INTO public.career (cfu, grade, date, id, student_id, cod_course, title_course) VALUES (6, 30, '2020-03-15 16:42:35.543210', 40, 300008, '01URTOV', 'Machine learning and pattern recognition');
+INSERT INTO public.proposal_on_request(id, title, description, supervisor_id, student_id, status) VALUES (50000, 'Title', 'Description', 300019, 300004, 'PENDING'  )

@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
+import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalService;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import jakarta.persistence.GeneratedValue;
@@ -7,10 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +24,22 @@ public class ProposalOnRequestController {
     @PreAuthorize("hasRole('SECRETARY')")
     public List<ProposalOnRequestDTO> getAllPendingProposalRequest() {
         return proposalOnRequestService.getAllPending();
+    }
+
+    @PostMapping("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}")
+    @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
+    @ResponseStatus(HttpStatus.OK)
+    public ProposalOnRequestDTO updateProposalOnRequestSecretaryAccepted(@PathVariable Long id){
+       return proposalOnRequestService.proposalOnRequestSecretaryAccepted(id);
+
+    }
+
+    @PostMapping("/API/proposalOnRequest/updateStatus/secretaryRejected/{id}")
+    @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
+    @ResponseStatus(HttpStatus.OK)
+    public ProposalOnRequestDTO updateProposalOnRequestSecretaryRejected(@PathVariable Long id){
+        return proposalOnRequestService.proposalOnRequestSecretaryRejected(id);
+
     }
 
 }
