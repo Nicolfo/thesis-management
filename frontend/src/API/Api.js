@@ -118,6 +118,22 @@ const getApplicationsByStudent = async (jwt) => {
     }));
 }
 
+const getApplicationsByProposalId = async (jwt, proposalId) => {
+    try {
+        const response = await getJson(fetch(SERVER_URL + `application/getApplicationsByProposalId/${proposalId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`,
+            },
+        }));
+        return response;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 const getAllProposals = async (jwt) => {
     return getJson(fetch(SERVER_URL+"proposal/getAll",{
         method: 'GET',
@@ -230,19 +246,29 @@ async function uploadFile(file){
 }
 
 async function insertApplication(cvId, proposalId, jwt) {
-    fetch(SERVER_URL + 'application/insert/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`
-        },
-        body: JSON.stringify({
-            attachmentId: cvId ? cvId.id : null,
-            applyDate:dayjs(),
-            proposalId: proposalId,
-        }),
-    }
-)};
+    return new Promise((resolve, reject) => {
+        fetch(SERVER_URL + 'application/insert/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${jwt}`
+                },
+                body: JSON.stringify({
+                    attachmentId: cvId ? cvId.id : null,
+                    applyDate:dayjs(),
+                    proposalId: proposalId,
+                }),
+            }
+        )  .then(async (response) => {
+            // Check if the response status is OK (200)
+            if (response.ok) {
+                resolve(); // Assuming the response is in JSON format
+            } else {
+                reject(await response.json());
+            }
+        })
+    });
+};
 
 
 const getArchivedProposalsByProf = async (jwt) => {
@@ -267,5 +293,5 @@ const searchArchivedProposals = async(jwt, body) => {
 }
 
 
-const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf,login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals };
+const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals };
 export default API;

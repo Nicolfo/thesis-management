@@ -19,6 +19,10 @@ public class ApplicationException {
     public ProblemDetail handleBadRequest(ProposalNotActiveException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ProblemDetail handleBadRequest(DuplicateApplicationException e){
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
+    }
 }
 class ApplicationBadRequestFormatException extends RuntimeException {
     public ApplicationBadRequestFormatException(String message) {
@@ -31,4 +35,8 @@ class ApplicationDeletedException extends RuntimeException{
 }
 class ProposalNotActiveException extends RuntimeException{
     public ProposalNotActiveException(String message){super(message);}
+}
+
+class DuplicateApplicationException extends RuntimeException {
+    public DuplicateApplicationException(String message) {super(message);}
 }

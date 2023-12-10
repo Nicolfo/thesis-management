@@ -41,6 +41,12 @@ public class ApplicationController {
         return applicationService.getApplicationsByProposal(proposalId);
     }
 
+    @GetMapping("/API/application/getApplicationsByProposalId/{proposalId}")
+    @PreAuthorize("isAuthenticated()")
+    public List<ApplicationDTO> getApplicationByProposalId(@PathVariable Long proposalId) {
+        return applicationService.getApplicationsByProposalId(proposalId);
+    }
+
     @PostMapping("/API/application/insert/")
     @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
     public void insertApplication(@RequestBody ApplicationDTO applicationDTO) {
