@@ -2,8 +2,11 @@ package it.polito.se2.g04.thesismanagement.email;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,8 @@ public class EmailServiceImpl implements EmailService {
     private JavaMailSender mailSender;
     @Autowired
     private ResourceLoader resourceLoader;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Override
     public void notifyStudentOfApplicationDecision(Application application) throws MessagingException, IOException {
@@ -63,6 +68,30 @@ public class EmailServiceImpl implements EmailService {
                 "Log in to the Thesis Management Portal to see further details and to accept or reject the application.";
 
         emailSendHelper(teacher.getEmail(), "A new application has been received", "A new application has been received", emailText, "new.png");
+    }
+
+    @Override
+    public void notifySupervisorOfNewThesisRequest(ProposalOnRequestDTO request) throws MessagingException, IOException {
+        Teacher teacher = teacherRepository.getReferenceById(request.getSupervisor());
+        String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
+                "<br>" +
+                "The secretariat has approved a new thesis request with you as supervisor and the title \"" + request.getTitle() + "\".<br>" +
+                "Description of the thesis request:<br>" +
+                request.getDescription() + "<br><br>" +
+                "Please log in to the Thesis management system to accept or reject this thesis request.";
+
+        emailSendHelper(teacher.getEmail(), "A new thesis request has been received", "A new thesis request has been received", emailText, "new.png");
+    }
+
+    @Override
+    public void notifySupervisorOfExpiration(Proposal proposal) throws MessagingException, IOException {
+        Teacher teacher = proposal.getSupervisor();
+        String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
+                "<br>" +
+                "the proposal \"" + proposal.getTitle() + "\" for which you are assigned as supervisor will expire on " + (new SimpleDateFormat("dd-MM-yyyy")).format(proposal.getExpiration()) + ".<br>" +
+                "If you don't take any further action, the proposal will be automatically archived on that date.";
+
+        emailSendHelper(teacher.getEmail(), "One of you proposals will expire soon", "One of you proposals will expire soon", emailText, "warning.png");
     }
 
 

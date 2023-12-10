@@ -44,14 +44,14 @@ public class DegreeTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private List<Degree> degree=new ArrayList<Degree>();
+    private List<Degree> degree = new ArrayList<Degree>();
 
     @BeforeAll
     public void setup() {
-        degree.add(degreeRepository.save( new Degree("ingegneria informatica")));
-        degree.add(degreeRepository.save( new Degree("ingegneria elettronica")));
-        degree.add(degreeRepository.save( new Degree("ingegneria aereospaziale")));
-        degree.add(degreeRepository.save( new Degree("ingegneria gestionale")));
+        degree.add(degreeRepository.save(new Degree("ingegneria informatica")));
+        degree.add(degreeRepository.save(new Degree("ingegneria elettronica")));
+        degree.add(degreeRepository.save(new Degree("ingegneria aereospaziale")));
+        degree.add(degreeRepository.save(new Degree("ingegneria gestionale")));
 
 
         Teacher teacher = new Teacher("Massimo", "Potenza", "m.potenza@example.com", null, null);
@@ -68,7 +68,7 @@ public class DegreeTest {
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
     public void getAllNameTest() throws Exception {
-        MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/Degree/getAllNames")
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/Degree/getAllNames")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -77,11 +77,11 @@ public class DegreeTest {
         mapper.registerModule(new JavaTimeModule());
         String[] finalResult = mapper.readValue(json, String[].class);
 
-        assertEquals(4,finalResult.length,"we should have 4 names");
+        assertEquals(4, finalResult.length, "we should have 4 names");
 
-        assertEquals("ingegneria informatica",finalResult[0],"this should be ingegneria informatica");
-        assertEquals("ingegneria elettronica",finalResult[1],"this should be ingegneria elettronica");
-        assertEquals("ingegneria aereospaziale",finalResult[2],"this should be ingegneria aereospaziale");
-        assertEquals("ingegneria gestionale",finalResult[3],"this should be ingegneria gestionale");
+        assertEquals("ingegneria informatica", finalResult[0], "this should be ingegneria informatica");
+        assertEquals("ingegneria elettronica", finalResult[1], "this should be ingegneria elettronica");
+        assertEquals("ingegneria aereospaziale", finalResult[2], "this should be ingegneria aereospaziale");
+        assertEquals("ingegneria gestionale", finalResult[3], "this should be ingegneria gestionale");
     }
 }
