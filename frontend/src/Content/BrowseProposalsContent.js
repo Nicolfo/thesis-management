@@ -96,16 +96,17 @@ function CustomToggle({eventKey, callback}) {
 function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchive}) {
     const navigate = useNavigate();
 
-    function deleteProp(proposalId, archiving) {
+    function deleteProp(proposalId, archiving){
         if (archiving) {
             setDeleting(true);
             setArchive(true);
             setDeletingID(proposalId);
         } else {
             setDeleting(true);
-            setDeletingID(proposalId)
+            setDeletingID(proposalId);
         }
     }
+
 
     return (
         <>
