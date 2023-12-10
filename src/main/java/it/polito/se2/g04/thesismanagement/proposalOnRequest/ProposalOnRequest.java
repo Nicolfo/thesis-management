@@ -27,6 +27,16 @@ public class ProposalOnRequest {
         STUDENT_REVIEWED
     }
 
+    public ProposalOnRequest(String title, String description, Teacher supervisor, Student student, List<Teacher> coSupervisors, Date approvalDate){
+        this.title=title;
+        this.description=description;
+        this.supervisor=supervisor;
+        this.student=student;
+        this.coSupervisors=coSupervisors;
+        this.approvalDate=approvalDate;
+        this.status=Status.PENDING;
+    }
+
     @Id
     @GeneratedValue
     private Long id;
@@ -45,6 +55,7 @@ public class ProposalOnRequest {
     private Status status;
 
 
+
     public ProposalOnRequestDTO toDTO() {
         return new ProposalOnRequestDTO(this.id,
                 this.student.getId(),
@@ -55,4 +66,5 @@ public class ProposalOnRequest {
                 this.approvalDate,
                 this.status);
     }
+
 }

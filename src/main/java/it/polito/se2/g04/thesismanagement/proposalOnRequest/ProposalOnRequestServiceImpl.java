@@ -4,6 +4,7 @@ import it.polito.se2.g04.thesismanagement.proposal.ProposalNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -60,6 +61,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
+        proposal.setApprovalDate(new Date());
         proposalOnRequestRepository.save(proposal);
         return proposal.toDTO();
     }
@@ -71,6 +73,16 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REJECTED);
+        proposalOnRequestRepository.save(proposal);
+        return proposal.toDTO();
+    }
+    @Override
+    public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id) {
+        ProposalOnRequest proposal = checkProposalId(id);
+        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
+            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+        }
+        proposal.setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         proposalOnRequestRepository.save(proposal);
         return proposal.toDTO();
     }
