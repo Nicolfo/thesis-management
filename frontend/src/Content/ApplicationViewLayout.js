@@ -280,7 +280,7 @@ function ApplicationViewLayout(props) {
 
                     <Row>
                     { loading ?
-                        <><Spinner animation="border" role="status" className="me-3"/> Sending the email...</>
+                        <Col style={{textAlign: "center"}}><Spinner animation="border" role="status" className="me-3"/> Sending the email...</Col>
                         :
                         (applicationData.status==="PENDING" ? (
                             <Col style={{textAlign: "center"}}>
@@ -290,15 +290,13 @@ function ApplicationViewLayout(props) {
                             </Col>
 
                         ) : applicationData.status==="ACCEPTED" ? (
-                            <Col md={9}>
-                                <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
-                                {" "}
-                                <Button variant="outline-dark" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</Button>
+                            <Col style={{textAlign: "center"}}>
+                                <Button variant="outline-info me-2" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
+                                <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</Button>
                             </Col>
                         ) : (
-                            <Col md={9}>
-                                <Button variant="outline-success" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</Button>
-                                {" "}
+                            <Col style={{textAlign: "center"}}>
+                                <Button variant="outline-success me-2" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</Button>
                                 <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
                             </Col>
                         ))
