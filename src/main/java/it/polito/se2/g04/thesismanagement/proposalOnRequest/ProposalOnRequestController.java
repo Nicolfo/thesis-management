@@ -52,28 +52,28 @@ public class ProposalOnRequestController {
 
     @PutMapping("/API/proposalOnRequest/updateStatus/secretaryAccepted")
     @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryAcceptedWithNoId(){
         throw new proposalRequestWithNoId("you need to insert the id of the proposal");
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/secretaryRejected")
     @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryRejectedWithNoId(){
         throw new proposalRequestWithNoId("you need to insert the id of the proposal");
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherAccepted")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAcceptedWithNoId(){
         throw new proposalRequestWithNoId("you need to insert the id of the proposal");
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRejected")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRejectedWithNoId(){
         throw new proposalRequestWithNoId("you need to insert the id of the proposal");
     }

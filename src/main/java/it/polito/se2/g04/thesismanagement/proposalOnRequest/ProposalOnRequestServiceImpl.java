@@ -70,7 +70,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
-        proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
+        proposal.setStatus(ProposalOnRequest.Status.TEACHER_REJECTED);
         proposalOnRequestRepository.save(proposal);
         return proposal.toDTO();
     }
