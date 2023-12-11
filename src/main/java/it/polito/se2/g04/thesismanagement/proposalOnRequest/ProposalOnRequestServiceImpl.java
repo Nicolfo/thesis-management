@@ -17,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final ProposalOnRequestRepository proposalOnRequestRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
 
     private final String proposalIsNotPendingError = "Proposal On Request is not pending";
 
@@ -25,40 +27,6 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         return proposalOnRequestRepository.getProposalOnRequestByStatus(ProposalOnRequest.Status.PENDING).stream().map(ProposalOnRequest::toDTO).toList();
     }
 
-    private ProposalOnRequest checkProposalId(Long id) {
-        if (!proposalOnRequestRepository.existsById(id)) {
-            String proposalDoNotExistError = "Proposal with this id does not exist";
-            throw (new ProposalNotFoundException(proposalDoNotExistError));
-        }
-        return proposalOnRequestRepository.getReferenceById(id);
-    }
-
-    @Override
-    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) {
-        ProposalOnRequest proposal = checkProposalId(id);
-
-        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
-        }
-        proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
-        proposalOnRequestRepository.save(proposal);
-
-        return proposal.toDTO();
-    }
-
-    @Override
-    public ProposalOnRequestDTO proposalOnRequestSecretaryRejected(Long id) {
-        ProposalOnRequest proposal = checkProposalId(id);
-
-        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
-        }
-        proposal.setStatus(ProposalOnRequest.Status.SECRETARY_REJECTED);
-        proposalOnRequestRepository.save(proposal);
-
-        return proposal.toDTO();
-    }
-    
     @Override
     public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO) {
         //PARSE TEACHER
@@ -80,17 +48,61 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
                 return teacherRepository.getReferenceById(it);
             }).toList();
         }
+
+        ProposalOnRequest toAdd = new ProposalOnRequest(
+                proposalOnRequestDTO.getTitle(),
+                proposalOnRequestDTO.getDescription(),
+                teacher,
+                student,
+                coSupervisors,
+                proposalOnRequestDTO.getApprovalDate()
+        );
+
+
+        return proposalOnRequestRepository.save(toAdd).toDTO();
     }
+
+    private ProposalOnRequest checkProposalId(Long id) {
+        if (!proposalOnRequestRepository.existsById(id)) {
+            String proposalDoNotExistError = "Proposal with this id does not exist";
+            throw (new ProposalNotFoundException(proposalDoNotExistError));
+        }
+        return proposalOnRequestRepository.getReferenceById(id);
+    }
+
+    @Override
+    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) {
+        ProposalOnRequest proposal = checkProposalId(id);
+
+        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
+            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+        }
+        proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
+        return proposalOnRequestRepository.save(proposal).toDTO();
+    }
+
+    @Override
+    public ProposalOnRequestDTO proposalOnRequestSecretaryRejected(Long id) {
+        ProposalOnRequest proposal = checkProposalId(id);
+
+        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
+            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+        }
+        proposal.setStatus(ProposalOnRequest.Status.SECRETARY_REJECTED);
+        return proposalOnRequestRepository.save(proposal).toDTO();
+    }
+
+
 
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherAccepted(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
-        proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
-        proposal.setApprovalDate(new Date());
-        proposalOnRequestRepository.save(proposal);
-        return proposal.toDTO();
+        }
+            proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
+            proposal.setApprovalDate(new Date());
+            return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
     @Override
@@ -100,8 +112,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REJECTED);
-        proposalOnRequestRepository.save(proposal);
-        return proposal.toDTO();
+        return proposalOnRequestRepository.save(proposal).toDTO();
     }
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id) {
@@ -110,8 +121,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
-        proposalOnRequestRepository.save(proposal);
-        return proposal.toDTO();
+        return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
 }

@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationBadRequestFormatException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationDeletedException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.DuplicateApplicationException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ProposalNotActiveException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalOwnershipException;
