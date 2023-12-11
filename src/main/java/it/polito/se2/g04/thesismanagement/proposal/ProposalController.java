@@ -1,6 +1,9 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ArchiveWithNoId;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.CreateUpdateProposalWithNoPathVariable;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.DeleteWithNoId;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -72,7 +75,7 @@ public class ProposalController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createProposal(@RequestBody ProposalDTO proposal, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
-            throw (new createUpdateProposalWithNoPathVariable(
+            throw (new CreateUpdateProposalWithNoPathVariable(
                     String.join(bindingResult.getAllErrors()
                         .stream()
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -96,7 +99,7 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void updateProposalWithNoPathVariable(){
-        throw new createUpdateProposalWithNoPathVariable("Can't update a proposal without filling the form");
+        throw new CreateUpdateProposalWithNoPathVariable("Can't update a proposal without filling the form");
     }
 
     @PostMapping("/API/proposal/search")
@@ -155,13 +158,13 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteProposalWithNoId(){
-        throw new deleteWithNoId("can't delete a proposal without his id");
+        throw new DeleteWithNoId("can't delete a proposal without his id");
     }
 
     @PostMapping("/API/proposal/archive")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void archiveProposalWithNoId(){
-        throw new archiveWithNoId("can't archive a proposal without his id");
+        throw new ArchiveWithNoId("can't archive a proposal without his id");
     }
 }
