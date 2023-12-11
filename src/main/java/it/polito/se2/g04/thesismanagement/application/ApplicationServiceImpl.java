@@ -57,7 +57,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail) {
         List<Application> toReturn = applicationRepository.getApplicationByStudentEmail(studentEmail)
-                .stream().filter(it->it.getStatus()!=ApplicationStatus.DELETED).collect(Collectors.toList());
+                .stream().filter(it->it.getStatus()!=ApplicationStatus.DELETED).toList();
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
             dto.setId(it.getId());
@@ -67,7 +67,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             dto.setSupervisorSurname(it.getProposal().getSupervisor().getSurname());
             dto.setStatus(it.getStatus());
             return dto;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     @Override

@@ -93,7 +93,7 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : null,
                 proposalDTO.getKeywords(),
                 proposalDTO.getType(),
-                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()),
+                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).toList(),
                 proposalDTO.getDescription(),
                 proposalDTO.getRequiredKnowledge(),
                 proposalDTO.getNotes(),
@@ -334,26 +334,27 @@ public class ProposalServiceImpl implements ProposalService {
         Calendar oneWeekFromNow = Calendar.getInstance();
         oneWeekFromNow.setTime(now);
         oneWeekFromNow.add(Calendar.WEEK_OF_YEAR, 1);
+        List<Proposal> proposals = proposalRepository.findAllByStatusNotIn(List.of(Proposal.Status.ARCHIVED,Proposal.Status.DELETED));
 
-        List<ProposalFullDTO> proposals = getAllNotArchivedProposals();
-
-
-        for (ProposalFullDTO proposalDTO : proposals) {
-            Date expiration = proposalDTO.getExpiration();
+        for (Proposal proposal : proposals) {
+            Date expiration = proposal.getExpiration();
             if (expiration != null) {
-                Proposal proposal = proposalRepository.getReferenceById(proposalDTO.getId());
+                boolean edited= false;
                 if (now.after(expiration)) {
                     proposal.setStatus(Proposal.Status.ARCHIVED);
-                    proposalRepository.save(proposal);
-                } else if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
+                    edited = true;
+                }
+                if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
                     try {
                         emailService.notifySupervisorOfExpiration(proposal);
                         proposal.setNotifiedAboutExpiration(true);
-                        proposalRepository.save(proposal);
+                        edited = true;
                     } catch (Exception ignored) {
 
                     }
                 }
+                if(edited)
+                    proposalRepository.save(proposal);
             }
         }
     }
