@@ -97,9 +97,9 @@ public class ProposalOnRequestTest {
 
     @Test
     @Rollback
-    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
+    @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
     public void getAllPendingTest() throws Exception {
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/getAllPending")
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getAllPending")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -110,7 +110,7 @@ public class ProposalOnRequestTest {
         assertEquals(3, result.length, "this proposal should be 3 long");
 
         proposalOnRequestService.proposalOnRequestSecretaryRejected(proposal.get(0).getId());
-        res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/getAllPending")
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getAllPending")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -122,7 +122,7 @@ public class ProposalOnRequestTest {
 
         proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposal.get(1).getId());
         proposalOnRequestService.proposalOnRequestTeacherRejected((proposal.get(2).getId()));
-        res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/getAllPending")
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getAllPending")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
