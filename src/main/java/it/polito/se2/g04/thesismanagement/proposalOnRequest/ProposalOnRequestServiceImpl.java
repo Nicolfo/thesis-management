@@ -1,15 +1,12 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
-import it.polito.se2.g04.thesismanagement.application.Application;
-import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
-import it.polito.se2.g04.thesismanagement.proposal.Proposal;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
-import it.polito.se2.g04.thesismanagement.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Student.StudentNotFoundException;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
-import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -61,11 +58,11 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService{
     public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO) {
         //PARSE TEACHER
         if(!teacherRepository.existsById(proposalOnRequestDTO.getSupervisor()))
-            throw new RuntimeException("Teacher not found exception");
+            throw new TeacherNotFoundException("Teacher not found exception");
         Teacher teacher = teacherRepository.getReferenceById(proposalOnRequestDTO.getId());
         //PARSE STUDENT
         if(!studentRepository.existsById(proposalOnRequestDTO.getStudentId()))
-            throw new RuntimeException("Student not found exception");
+            throw new StudentNotFoundException("Student not found exception");
         Student student = studentRepository.getReferenceById(proposalOnRequestDTO.getStudentId());
         //PARSE CO-SUPERVISORS
         List<Teacher> coSupervisors;
@@ -74,7 +71,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService{
         else{
             coSupervisors= proposalOnRequestDTO.getCoSupervisors().stream().map(it->{
                 if(!teacherRepository.existsById(it))
-                    throw new RuntimeException("Some co-supervisor has not been found");
+                    throw new TeacherNotFoundException("Some co-supervisor has not been found");
                 return teacherRepository.getReferenceById(it);
             }).toList();
         }

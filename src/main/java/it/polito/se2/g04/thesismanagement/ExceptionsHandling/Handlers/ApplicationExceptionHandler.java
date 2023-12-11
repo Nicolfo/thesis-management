@@ -1,12 +1,15 @@
-package it.polito.se2.g04.thesismanagement.application;
+package it.polito.se2.g04.thesismanagement.ExceptionsHandling.Handlers;
 
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationBadRequestFormatException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationDeletedException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ProposalNotActiveException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ApplicationException {
+public class ApplicationExceptionHandler {
     @ExceptionHandler(ApplicationBadRequestFormatException.class)
     public ProblemDetail handleBadRequestFormat(ApplicationBadRequestFormatException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
@@ -19,16 +22,4 @@ public class ApplicationException {
     public ProblemDetail handleBadRequest(ProposalNotActiveException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
     }
-}
-class ApplicationBadRequestFormatException extends RuntimeException {
-    public ApplicationBadRequestFormatException(String message) {
-        super(message);
-    }
-}
-
-class ApplicationDeletedException extends RuntimeException{
-    public ApplicationDeletedException(String message){super(message);}
-}
-class ProposalNotActiveException extends RuntimeException{
-    public ProposalNotActiveException(String message){super(message);}
 }

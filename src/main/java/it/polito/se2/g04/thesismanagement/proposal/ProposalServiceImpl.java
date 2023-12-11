@@ -1,11 +1,15 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalLevelInvalidException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.UpdateAfterAcceptException;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -52,38 +56,37 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public List<ProposalFullDTO> getProposalsByProf(String userName) {
         Teacher teacher = teacherRepository.findByEmail(userName);
-        if (teacher != null) {
-            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ACTIVE);
-            return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
-        }
-        return new ArrayList<>();
+        if (teacher == null)
+            throw new TeacherNotFoundException("Can't find the specified teacher on db!");
+        List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ACTIVE);
+        return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
+
     }
 
 
     @Override
-    public List<ProposalFullDTO> getArchivedProposals(String userName){
+    public List<ProposalFullDTO> getArchivedProposals(String userName) {
         Teacher teacher = teacherRepository.findByEmail(userName);
-        if (teacher != null) {
-            List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ARCHIVED);
-            return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
-        }
-        return new ArrayList<>();
+        if (teacher == null)
+            throw new TeacherNotFoundException("Can't find the specified teacher on db!");
+
+        List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ARCHIVED);
+        return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
     @Override
     public String getTitleByProposalId(Long proposalId) {
         Proposal proposal = proposalRepository.findById(proposalId)
-                .orElseThrow(() -> new RuntimeException("Proposal not found with id: " + proposalId));
+                .orElseThrow(() -> new ProposalNotFoundException("Proposal not found with id: " + proposalId));
 
-        if (proposal == null || proposal.getTitle() == null) {
-            return null;
-        }
         return proposal.getTitle();
     }
 
     @Override
     public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
         Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
+        if(teacher==null)
+            throw new TeacherNotFoundException("Can't find the specified teacher on db!");
         Proposal toAdd = new Proposal(
                 proposalDTO.getTitle(),
                 teacher,
@@ -108,7 +111,7 @@ public class ProposalServiceImpl implements ProposalService {
 
         Proposal old = proposalRepository.getReferenceById(id);
         if (old.getStatus() == Proposal.Status.ACCEPTED) {
-            throw (new updateAfterAccepted("you can't update this proposal after an application to it is accepted"));
+            throw (new UpdateAfterAcceptException("you can't update this proposal after an application to it is accepted"));
         }
         old.setTitle(proposalDTO.getTitle());
         old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
@@ -134,14 +137,13 @@ public class ProposalServiceImpl implements ProposalService {
         return proposalRepository.findAllByStatus(Proposal.Status.ACTIVE).stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
-  
+
     private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates, Proposal.Status status) {
         if (proposalSearchRequest.getCds() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCds().toUpperCase() + "%"));
         }
 
         predicates.add(cb.like(cb.upper(proposal.get("status")), "%" + status + "%"));
-
 
 
         if (proposalSearchRequest.getTitle() != null) {
@@ -237,7 +239,7 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Query
     @Override
-    public List <ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
@@ -324,7 +326,7 @@ public class ProposalServiceImpl implements ProposalService {
         proposalRepository.save(proposal);
     }
 
-    @Scheduled(fixedRate = 10*60*1000)
+    @Scheduled(fixedRate = 10 * 60 * 1000)
     @Transactional
     public void archiveExpiredProposals() {
         Date now = Calendar.getInstance().getTime();
@@ -336,9 +338,9 @@ public class ProposalServiceImpl implements ProposalService {
         List<ProposalFullDTO> proposals = getAllNotArchivedProposals();
 
 
-        for(ProposalFullDTO proposalDTO: proposals){
+        for (ProposalFullDTO proposalDTO : proposals) {
             Date expiration = proposalDTO.getExpiration();
-            if(expiration != null) {
+            if (expiration != null) {
                 Proposal proposal = proposalRepository.getReferenceById(proposalDTO.getId());
                 if (now.after(expiration)) {
                     proposal.setStatus(Proposal.Status.ARCHIVED);
@@ -348,7 +350,7 @@ public class ProposalServiceImpl implements ProposalService {
                         emailService.notifySupervisorOfExpiration(proposal);
                         proposal.setNotifiedAboutExpiration(true);
                         proposalRepository.save(proposal);
-                    } catch (Exception ignored){
+                    } catch (Exception ignored) {
 
                     }
                 }
