@@ -69,7 +69,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             dto.setSupervisorSurname(it.getProposal().getSupervisor().getSurname());
             dto.setStatus(it.getStatus());
             return dto;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     @Override

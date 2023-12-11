@@ -56,6 +56,8 @@ public class EmailServiceImpl implements EmailService {
             icon = "edit.png";
         }
 
+
+
         emailSendHelper(student.getEmail(), "One of your applications has been updated", title, emailText, icon);
     }
 
