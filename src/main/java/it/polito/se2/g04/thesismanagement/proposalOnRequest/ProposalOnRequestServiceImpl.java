@@ -4,6 +4,7 @@ import it.polito.se2.g04.thesismanagement.proposal.ProposalNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +16,13 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final String proposalIsNotPendingError = "Proposal On Request is not pending";
 
     @Override
-    public List<ProposalOnRequestDTO> getAllPending() {
-        return proposalOnRequestRepository.getProposalOnRequestByStatus(ProposalOnRequest.Status.PENDING).stream().map(ProposalOnRequest::toDTO).toList();
+    public List<ProposalOnRequestFullDTO> getAllPending() {
+        List<ProposalOnRequest> pendingProposals = proposalOnRequestRepository.getProposalOnRequestByStatus(ProposalOnRequest.Status.PENDING);
+        List<ProposalOnRequestFullDTO> pendingProposalDTOs = new ArrayList<>();
+        for (ProposalOnRequest proposal : pendingProposals) {
+            pendingProposalDTOs.add(proposal.toFullDTO());
+        }
+        return pendingProposalDTOs;
     }
 
     private ProposalOnRequest checkProposalId(Long id) {

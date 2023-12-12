@@ -144,6 +144,16 @@ const getAllProposals = async (jwt) => {
     }));
 }
 
+const getAllProposalsOnRequest = async (jwt) => {
+    return getJson(fetch(SERVER_URL+"proposalOnRequest/getAllPending",{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
 const getAllTeachers = async (jwt) => {
     return getJson(fetch(SERVER_URL + 'teacher/getAll',{
         method: 'GET',
@@ -293,5 +303,5 @@ const searchArchivedProposals = async(jwt, body) => {
 }
 
 
-const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals };
+const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals };
 export default API;

@@ -1,7 +1,9 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.student.Student;
+import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +12,7 @@ import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -45,7 +48,7 @@ public class ProposalOnRequest {
     private String description;
     @ManyToOne
     private Teacher supervisor;
-    @OneToOne
+    @ManyToOne
     private Student student;
     @ManyToMany
     private List<Teacher> coSupervisors;
@@ -63,6 +66,16 @@ public class ProposalOnRequest {
                 this.description,
                 this.supervisor.getId(),
                 this.coSupervisors.stream().map(Teacher::getId).toList(),
+                this.approvalDate,
+                this.status);
+    }
+    public ProposalOnRequestFullDTO toFullDTO() {
+        return new ProposalOnRequestFullDTO(this.id,
+                StudentDTO.fromStudent(this.student),
+                this.title,
+                this.description,
+                TeacherDTO.fromTeacher(this.supervisor),
+                this.coSupervisors.stream().map(it-> TeacherDTO.fromTeacher(it)).toList(),
                 this.approvalDate,
                 this.status);
     }

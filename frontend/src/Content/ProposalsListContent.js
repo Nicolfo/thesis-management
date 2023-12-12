@@ -54,7 +54,7 @@ function ProposalsListContent({user, applicationDate}) {
     useEffect(() => {
         if (!token)
             navigate("/notAuthorized");
-        if (user && user.role === "TEACHER")
+        if (user && user.role !== "STUDENT")
             navigate("/notAuthorized");
         if (!user)
             return;

@@ -25,6 +25,7 @@ import NotFound from "./Content/NotFound";
 import API from "./API/Api";
 import BrowseArchivedProposals from "./Content/BrowseArchivedProposals";
 import BrowseArchivedProposals2 from "./Content/BrowseArchivedProposals2";
+import ProposalsOnRequestListContent from "./Content/ProposalsOnRequestListContent";
 
 
 
@@ -168,7 +169,8 @@ function App() {
                 }>
                     <Route index element={(user && user.role === "TEACHER" && <Navigate to={"/teacher/proposals"}/>)
                                           || (user && user.role === "STUDENT" && <Navigate to={"/search-for-proposal"}/>)
-                        || (!user && <h1 style={{textAlign: "center"}}>Welcome to thesis management!</h1> ) }/>
+                                          || (user && user.role === "SECRETARY" && <Navigate to={"/proposalOnRequest/browse"}/>)
+                                          || (!user && <h1 style={{textAlign: "center"}}>Welcome to thesis management!</h1> ) }/>
                     <Route path="/search-for-proposal"
                            element={<ProposalsListContent user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/browseDecisions"
@@ -189,6 +191,8 @@ function App() {
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/teacher/proposals/archived"
                            element={<BrowseArchivedProposals2 setArchivedView={setArchivedView} user={user} applicationDate={applicationDate}/>}/>
+                    <Route path="/proposalOnRequest/browse"
+                           element={<ProposalsOnRequestListContent user={user}/>}/>
                     <Route path="/notAuthorized"
                            element={<NotAuthorizedLayout user={user}/>}/>
                     <Route path="*"

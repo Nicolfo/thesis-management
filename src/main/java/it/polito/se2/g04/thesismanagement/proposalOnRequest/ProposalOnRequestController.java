@@ -16,7 +16,7 @@ public class ProposalOnRequestController {
     private final String updateProposalOnRequestWithNoId="you need to insert the id of the proposal";
     @GetMapping("API/proposalOnRequest/getAllPending")
     @PreAuthorize("hasRole('SECRETARY')")
-    public List<ProposalOnRequestDTO> getAllPendingProposalRequest() {
+    public List<ProposalOnRequestFullDTO> getAllPendingProposalRequest() {
         return proposalOnRequestService.getAllPending();
     }
 
