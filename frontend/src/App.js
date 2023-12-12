@@ -4,13 +4,12 @@ import {fas} from '@fortawesome/free-solid-svg-icons';
 import {far} from '@fortawesome/free-regular-svg-icons';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navigate, BrowserRouter, Outlet, Route, BrowserRouter as Router, Routes, useLocation} from "react-router-dom";
+import { Navigate, BrowserRouter, Outlet, Route, Routes} from "react-router-dom";
 
 import RenderProposal from "./Content/RenderProposal";
 import NavBar from "./NavBar/NavBar";
 
-import {LoginLayout} from "./LoginLayout/LoginLayout";
-import {useContext, useEffect, useState} from 'react';
+import { useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
@@ -18,17 +17,12 @@ import BrowseDecisions from "./Content/BrowseDecisions";
 import BrowseProposalsContent from './Content/BrowseProposalsContent';
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";
 import ProposalsListContent from './Content/ProposalsListContent';
-import { AuthContext, AuthProvider } from 'react-oauth2-code-pkce';
 
 import NotAuthorizedLayout from "./Content/NotAuthorizedLayout";
 import NotFound from "./Content/NotFound";
 import API from "./API/Api";
-import BrowseArchivedProposals from "./Content/BrowseArchivedProposals";
 import BrowseArchivedProposals2 from "./Content/BrowseArchivedProposals2";
 import ProposalsOnRequestListContent from "./Content/ProposalsOnRequestListContent";
-
-
-
 
 function App() {
 
@@ -38,10 +32,6 @@ function App() {
 
     const [clickOnProposal, setClickOnProposal] = useState(0);
 
-
-//MOCK DATA
-    const listOfFilters = ["Professor", "Type"];
-    const correspondingFields = [2, 5]
     const [listOfProposal, setListOfProposal] = useState([])
 
     const [listOfSupervisors, setListOfSupervisors] = useState([])
@@ -80,53 +70,10 @@ function App() {
     }, []);
 
 
-    // function selectFilter(el1, el2, filterType) {
-    //
-    //     switch (filterType) {
-    //         // by professor
-    //         case 0:
-    //
-    //
-    //             return (el1.supervisor.name == el2)
-    //             break;
-    //         case 1:
-    //
-    //             return (el1.level == el2)
-    //
-    //             // code block
-    //             break;
-    //         default:
-    //         // code block
-    //     }
-    //
-    //
-    // }
-
     const searchForProposalClicked = () => {
         setClickOnProposal((clickOnProposal) => clickOnProposal + 1);
     }
-    /*useEffect(() => {
-            if (user !== null) {
-                localStorage.setItem("email", user.email);
-                localStorage.setItem("token", user.token);
-                localStorage.setItem("role", user.role);
-            } else {
-                const email = localStorage.getItem("email");
-                const token = localStorage.getItem("token");
-                const role = localStorage.getItem("role");
 
-                if (email !== null && token !== null && role !== null) {
-                    setUser({email: email, token: token, role: role});
-                }
-
-            }
-
-        }
-
-
-        , [user]);
-
-*/
     useEffect(() => {
         // call the api to retrieve the list of active proposal
         // api called every time the user click on the button to search for proposal.
