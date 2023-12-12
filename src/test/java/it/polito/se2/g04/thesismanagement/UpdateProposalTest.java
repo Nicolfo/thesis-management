@@ -120,7 +120,7 @@ public class UpdateProposalTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update/" + new Random().nextLong(2, 100))
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposal/update/" + new Random().nextLong(3, 100))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());

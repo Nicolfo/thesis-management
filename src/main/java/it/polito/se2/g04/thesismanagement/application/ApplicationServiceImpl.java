@@ -74,6 +74,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Root<Application> proposal = cq.from(Application.class);
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.notEqual(proposal.get("status"), Proposal.Status.DELETED));
+        predicates.add(cb.equal(proposal.join("student").get("email"),studentEmail));
         cq.where(predicates.toArray(new Predicate[0]));
         List<Application> toReturn = entityManager.createQuery(cq).getResultList();
 

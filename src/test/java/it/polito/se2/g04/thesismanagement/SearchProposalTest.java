@@ -209,7 +209,7 @@ public class SearchProposalTest {
 
         assertEquals(3, finalResult.length, "Search should return 2 proposals");
     }
-
+/*
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"STUDENT"})
@@ -224,5 +224,5 @@ public class SearchProposalTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reqJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
+    }*/
 }

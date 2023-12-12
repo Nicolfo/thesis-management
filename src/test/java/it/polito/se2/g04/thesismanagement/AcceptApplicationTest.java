@@ -131,7 +131,7 @@ public class AcceptApplicationTest {
 
 
         //start valid tests
-        MvcResult res =  mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/1")
+        MvcResult res =  mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/"+application1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -146,7 +146,7 @@ public class AcceptApplicationTest {
         assertEquals(application1.getProposal().getId(), proposalId);
 
         //get result
-        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/"+2)
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/"+application2.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -179,10 +179,11 @@ public class AcceptApplicationTest {
         String json = res.getResponse().getContentAsString();
 
         assertEquals("true", json);
-        assertEquals(0, applicationRepository.getApplicationById(1L).getStatus().compareTo(ApplicationStatus.ACCEPTED));
-        assertEquals(0,applicationRepository.getApplicationById(1L).getProposal().getStatus().compareTo(Proposal.Status.ACCEPTED));
-        assertEquals(0, applicationRepository.getApplicationById(3L).getStatus().compareTo(ApplicationStatus.REJECTED));
-        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));
+        assertEquals(0, applicationRepository.getApplicationById(application1.getId()).getStatus().compareTo(ApplicationStatus.ACCEPTED));
+        assertEquals(0,applicationRepository.getApplicationById(application1.getId()).getProposal().getStatus().compareTo(Proposal.Status.ACCEPTED));
+        assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
+       // assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));
+        assertEquals(ApplicationStatus.PENDING,applicationRepository.getApplicationById(application2.getId()).getStatus());
 
         application2.setStatus(ApplicationStatus.REJECTED);
         application2 = applicationRepository.save(application2);
