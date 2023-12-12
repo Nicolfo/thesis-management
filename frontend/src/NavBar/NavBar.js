@@ -175,6 +175,19 @@ function NavBar(props) {
                                     >
                                         My archive
                                     </Button>
+
+                                    <Button
+                                        variant={path === '/teacher/proposalOnRequest/browse' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/teacher/proposalOnRequest/browse' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
+                                        onClick={() => {
+                                            navigate('/teacher/proposalOnRequest/browse');
+                                        }}
+                                    >
+                                        My thesis start requests
+                                    </Button>
                                 </>
                             )}
                         </Nav>

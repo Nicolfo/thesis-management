@@ -3,10 +3,17 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Student.StudentNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
+import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +30,8 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
     private final String proposalIsNotPendingError = "Proposal On Request is not pending";
+    @PersistenceContext
+    private EntityManager entityManager;
   
     @Override
     public List<ProposalOnRequestFullDTO> getAllPending() {
@@ -135,7 +144,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherAccepted(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
-        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
+        if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED) {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
             proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
@@ -146,7 +155,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherRejected(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
-        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
+        if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED) {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REJECTED);
@@ -155,7 +164,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
-        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
+        if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED) {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
@@ -165,7 +174,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherChangeStatus(Long id, ProposalOnRequest.Status status){
         ProposalOnRequest proposal= checkProposalId(id);
-        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING){
+        if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED){
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(status);

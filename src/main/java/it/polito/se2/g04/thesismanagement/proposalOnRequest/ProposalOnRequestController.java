@@ -1,9 +1,14 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.ProposalOnRequest.ProposalRequestWithNoId;
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProposalOnRequestController {
     private final ProposalOnRequestService proposalOnRequestService;
+    private final TeacherService teacherService;
 
     private final String updateProposalOnRequestWithNoId="you need to insert the id of the proposal";
     @GetMapping("API/proposalOnRequest/getAllPending")
@@ -111,16 +117,14 @@ public class ProposalOnRequestController {
     }
 
 
-    @GetMapping("/API/proposalOnRequest/getByTeacherAccepted/{id}")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher (@PathVariable Long id){
-        return proposalOnRequestService.getPendingRequestsByTeacher(id);
-    }
     @GetMapping("/API/proposalOnRequest/getByTeacherAccepted")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacherWithNoId(){
-        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        TeacherDTO t = teacherService.getByEmail(username);
+        return proposalOnRequestService.getPendingRequestsByTeacher(t.getId());
     }
+
 }

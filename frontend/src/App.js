@@ -24,6 +24,7 @@ import API from "./API/Api";
 import BrowseArchivedProposals2 from "./Content/BrowseArchivedProposals2";
 import StartRequest from "./Content/StartRequest";
 import ProposalsOnRequestListContent from "./Content/ProposalsOnRequestListContent";
+import TeacherApproveStartRequestContent from './Content/TeacherApproveStartRequest';
 
 function App() {
 
@@ -146,6 +147,8 @@ function App() {
                            element={<StartRequest user={user}/>}/>
                     <Route path="/proposalOnRequest/browse"
                            element={<ProposalsOnRequestListContent user={user}/>}/>
+                    <Route path="/teacher/proposalOnRequest/browse"
+                           element={<TeacherApproveStartRequestContent user={user}/>}/>
                     <Route path="/notAuthorized"
                            element={<NotAuthorizedLayout user={user}/>}/>
                     <Route path="*"

@@ -352,6 +352,46 @@ const secretaryReject = async(jwt, id) => {
     }));
 };
 
-const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock};
+const teacherAccept = async (jwt, id) => {
+    return getJson(fetch(SERVER_URL + "proposalOnRequest/updateStatus/teacherAccepted/" + id , {
+        method: 'PUT',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+};
+
+const teacherRequestChange = async (jwt, id) => {
+    return getJson(fetch(SERVER_URL + "proposalOnRequest/updateStatus/teacherRequestChange/" + id , {
+        method: 'PUT',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+};
+
+const teacherReject = async (jwt, id) => {
+    return getJson(fetch(SERVER_URL + "proposalOnRequest/updateStatus/teacherRejected/" + id , {
+        method: 'PUT',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+};
+
+const getAcceptedProposalOnRequestsByTeacher = async (jwt) => {
+    return getJson(fetch(SERVER_URL + "proposalOnRequest/getByTeacherAccepted", {
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+};
+
+const API = { getAcceptedProposalOnRequestsByTeacher, teacherReject, teacherRequestChange, teacherAccept, insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock};
 
 export default API;
