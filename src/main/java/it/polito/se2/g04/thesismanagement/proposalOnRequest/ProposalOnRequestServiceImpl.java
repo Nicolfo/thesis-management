@@ -2,10 +2,10 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Student.StudentNotFoundException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -162,6 +162,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
+    @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherChangeStatus(Long id, ProposalOnRequest.Status status){
         ProposalOnRequest proposal= checkProposalId(id);
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING){
@@ -172,6 +173,12 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             proposal.setApprovalDate(new Date());
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
+
+    @Override
+    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher(Long teacherId) {;
+        return proposalOnRequestRepository.getProposalOnRequestsBySupervisorIdAndStatus(teacherId,ProposalOnRequest.Status.SECRETARY_ACCEPTED).stream().map(ProposalOnRequest::toFullDTO).toList();
+    }
+
 }
 
 

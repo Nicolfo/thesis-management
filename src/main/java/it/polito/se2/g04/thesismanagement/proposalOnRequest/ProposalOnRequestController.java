@@ -2,7 +2,6 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.ProposalOnRequest.ProposalRequestWithNoId;
 import lombok.RequiredArgsConstructor;
-import org.jboss.resteasy.annotations.Body;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -108,6 +107,20 @@ public class ProposalOnRequestController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRequestChange(){
+        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+    }
+
+
+    @GetMapping("/API/proposalOnRequest/getByTeacherAccepted/{id}")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher (@PathVariable Long id){
+        return proposalOnRequestService.getPendingRequestsByTeacher(id);
+    }
+    @GetMapping("/API/proposalOnRequest/getByTeacherAccepted")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacherWithNoId(){
         throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
     }
 }

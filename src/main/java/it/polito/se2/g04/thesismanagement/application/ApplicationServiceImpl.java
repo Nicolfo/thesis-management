@@ -9,12 +9,20 @@ import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
-import it.polito.se2.g04.thesismanagement.proposal.*;
+import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,9 +30,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +43,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
     private final EmailService emailService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<ApplicationDTO> getApplicationsByProf(String profEmail) {
@@ -59,8 +69,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail) {
-        List<Application> toReturn = applicationRepository.getApplicationByStudentEmail(studentEmail)
-                .stream().filter(it -> it.getStatus() != ApplicationStatus.DELETED).collect(Collectors.toList());
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Application> cq = cb.createQuery(Application.class);
+        Root<Application> proposal = cq.from(Application.class);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.notEqual(proposal.get("status"), Proposal.Status.DELETED));
+        cq.where(predicates.toArray(new Predicate[0]));
+        List<Application> toReturn = entityManager.createQuery(cq).getResultList();
 
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
