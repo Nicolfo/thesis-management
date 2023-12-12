@@ -10,7 +10,8 @@ public interface ProposalOnRequestService {
 
     ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO);
 
+    public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO);
     public ProposalOnRequestDTO proposalOnRequestTeacherAccepted(Long id);
     public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id);
-
+    public ProposalOnRequestDTO proposalOnRequestTeacherChangeStatus(Long id, ProposalOnRequest.Status status);
 }

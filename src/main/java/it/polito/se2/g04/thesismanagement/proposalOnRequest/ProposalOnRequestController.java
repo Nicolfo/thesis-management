@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.ProposalOnRequest.ProposalRequestWithNoId;
 import lombok.RequiredArgsConstructor;
+import org.jboss.resteasy.annotations.Body;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -36,20 +37,30 @@ public class ProposalOnRequestController {
         return proposalOnRequestService.proposalOnRequestSecretaryRejected(id);
 
     }
+    @PostMapping("/API/proposalOnRequest/create/")
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProposalOnRequestDTO createProposalRequest(@RequestBody ProposalOnRequestDTO proposalOnRequestDTO){
+        return proposalOnRequestService.createProposalRequest(proposalOnRequestDTO);
+    }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherAccepted/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAccepted(@PathVariable Long id){
-        return proposalOnRequestService.proposalOnRequestTeacherAccepted(id);
-
+        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_ACCEPTED);
     }
-
+    @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest/{id}")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProposalOnRequestDTO updateProposalOnRequestteacherChangeRequest(@PathVariable Long id){
+        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_REVIEW);
+    }
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRejected/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRejected(@PathVariable Long id){
-        return proposalOnRequestService.proposalOnRequestTeacherRejected(id);
+        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_REJECTED);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/secretaryAccepted")
@@ -70,6 +81,13 @@ public class ProposalOnRequestController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAcceptedWithNoId(){
+        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+    }
+
+    @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProposalOnRequestDTO updateProposalOnRequestteacherChangeRequestWithNoId(){
         throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
     }
 

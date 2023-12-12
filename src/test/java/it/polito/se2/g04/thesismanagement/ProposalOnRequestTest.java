@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.polito.se2.g04.thesismanagement.degree.Degree;
 import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequest;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestRepository;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestService;
+import it.polito.se2.g04.thesismanagement.proposalOnRequest.*;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -106,7 +103,7 @@ public class ProposalOnRequestTest {
         String json = res.getResponse().getContentAsString();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        ProposalOnRequestDTO[] result = mapper.readValue(json, ProposalOnRequestDTO[].class);
+        ProposalOnRequestFullDTO[] result = mapper.readValue(json, ProposalOnRequestFullDTO[].class);
         assertEquals(3, result.length, "this proposal should be 3 long");
         assertEquals(result[0].getId(),proposal.get(0).getId(),"id should be the same");
         assertEquals(result[1].getId(),proposal.get(1).getId(),"id should be the same");
@@ -120,7 +117,7 @@ public class ProposalOnRequestTest {
         json = res.getResponse().getContentAsString();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        result = mapper.readValue(json, ProposalOnRequestDTO[].class);
+        result = mapper.readValue(json, ProposalOnRequestFullDTO[].class);
         assertEquals(2, result.length, "this proposal should be 2 long");
         assertEquals(result[0].getId(),proposal.get(1).getId(),"id should be the same");
         assertEquals(result[1].getId(),proposal.get(2).getId(),"id should be the same");
@@ -134,7 +131,7 @@ public class ProposalOnRequestTest {
         json = res.getResponse().getContentAsString();
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        result = mapper.readValue(json, ProposalOnRequestDTO[].class);
+        result = mapper.readValue(json, ProposalOnRequestFullDTO[].class);
         assertEquals(0, result.length, "this proposal should be empty");
     }
 

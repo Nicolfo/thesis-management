@@ -9,13 +9,13 @@ import {
     Offcanvas,
     useAccordionButton,
     Alert,
-    DropdownButton, Dropdown
+    DropdownButton, Dropdown, OverlayTrigger, Tooltip
 } from "react-bootstrap";
 import API from "../API/Api";
-import {useState, useEffect, useContext} from "react";
-import {useNavigate} from "react-router-dom";
-import {MultiSelect} from "react-multi-select-component";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { MultiSelect } from "react-multi-select-component";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
 import Warn from "./Warn";
@@ -23,6 +23,12 @@ import Warn from "./Warn";
 function BrowseArchivedProposals2({user, applicationDate, setArchivedView}) {
 
     const navigate = useNavigate();
+
+    // const levelOptions = [
+    //     "Any",
+    //     "Bachelor's",
+    //     "Master's"
+    // ];
     const {token} = useContext(AuthContext);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
@@ -292,15 +298,17 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
                                 </div>
                             </Dropdown.Item>
 
-                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
-                                deleteProp(proposal.id);
-                            }}>
-                                <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-solid fa-trash-can"/>
-                                    <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-                                    <span className="d-none d-md-table-cell"> Delete </span>
-                                </div>
-                            </Dropdown.Item>
+                            <OverlayTrigger overlay={proposal.status === "ACCEPTED" ? <Tooltip id="tooltip-disabled">Unable to delete because this proposal has been accepted!</Tooltip> : <></>} placement="left">
+                                <span className="d-inline-block">
+                                    <Dropdown.Item as="button" disabled={proposal.status === "ACCEPTED"} style={{color: proposal.status === "ACCEPTED" ? "#FBA65C" : "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon="fa-solid fa-trash-can" />
+                                            <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                                            <span className="d-none d-md-table-cell"> Delete </span>
+                                        </div>
+                                    </Dropdown.Item>
+                                </span>
+                            </OverlayTrigger>
                         </DropdownButton>
                         <CustomToggle eventKey={proposal.id}/>
                     </Col>

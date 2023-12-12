@@ -108,6 +108,18 @@ function NavBar(props) {
                                     >
                                         My applications decisions
                                     </Button>
+                                    <Button
+                                        variant={path === '/startRequest' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/startRequest' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
+                                        onClick={() => {
+                                            navigate('/startRequest');
+                                        }}
+                                    >
+                                        Start thesis request
+                                    </Button>
                                 </>
                             )}
                             {userIsTeacher() && (
