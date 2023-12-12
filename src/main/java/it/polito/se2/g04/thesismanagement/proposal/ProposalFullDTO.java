@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProposalFullDTO {
+
     private Long id;
     private String title;
     private TeacherDTO supervisor;
@@ -28,6 +29,8 @@ public class ProposalFullDTO {
     private String cds;//to check
     private String keywords;
     private String type;
+    private Proposal.Status status;
+
 
     public static ProposalFullDTO fromProposal(Proposal proposal) {
         if (proposal == null)
@@ -45,7 +48,8 @@ public class ProposalFullDTO {
                 proposal.getLevel(),
                 proposal.getCds(),
                 proposal.getKeywords(),
-                proposal.getType()
+                proposal.getType(),
+                proposal.getStatus()
         );
     }
 
