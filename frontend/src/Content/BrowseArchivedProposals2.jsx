@@ -299,9 +299,9 @@ function ProposalEntry({ proposal, user, deleteProp, setArchivedView }) {
                                 </div>
                             </Dropdown.Item>
                             
-                            <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Unable to delete because this proposal has been accepted!</Tooltip>} placement="left">
+                            <OverlayTrigger overlay={proposal.status === "ACCEPTED" ? <Tooltip id="tooltip-disabled">Unable to delete because this proposal has been accepted!</Tooltip> : <></>} placement="left">
                                 <span className="d-inline-block">
-                                    <Dropdown.Item as="button" disabled={proposal.status === "ACCEPTED"} style={{color: proposal.status === "ACCEPTED" ? "#FBA65C" : "#FC7A08", pointerEvents: 'none'}} onClick={() => {deleteProp(proposal.id);}}>
+                                    <Dropdown.Item as="button" disabled={proposal.status === "ACCEPTED"} style={{color: proposal.status === "ACCEPTED" ? "#FBA65C" : "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
                                         <div className="d-flex align-items-center">
                                             <FontAwesomeIcon icon="fa-solid fa-trash-can" />
                                             <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
