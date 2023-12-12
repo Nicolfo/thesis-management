@@ -338,8 +338,9 @@ public class ProposalServiceImpl implements ProposalService {
 
         for (Proposal proposal : proposals) {
             Date expiration = proposal.getExpiration();
-            System.out.println("expiration : "+ expiration+ " now : " +now.getTime() + " check "+now.getTime().after(expiration));
+
             if (expiration != null) {
+                System.out.println("expiration : "+ expiration+ " now : " +now.getTime() + " check "+now.getTime().after(expiration));
                 boolean edited= false;
                 if (now.getTime().after(expiration)) {
                     proposal.setStatus(Proposal.Status.ARCHIVED);

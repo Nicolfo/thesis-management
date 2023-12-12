@@ -115,7 +115,7 @@ public class EmailServiceImpl implements EmailService {
         notifyCoSupervisorsOfNewApplication(application);
     }
 
-    @Async("asyncExecutor")
+    @Async
     void emailSendHelper(String recipient, String subject, String title, String text, String icon) throws MessagingException, IOException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
