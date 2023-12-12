@@ -110,21 +110,9 @@ public class ProposalController {
         String username = auth.getName();
         String cds = studentService.getCdS(username);
         proposalSearchRequest.setCds(cds);
-        return proposalService.searchProposals(proposalSearchRequest,Proposal.Status.ACTIVE);
+        return proposalService.searchProposals(proposalSearchRequest);
     }
-    @PostMapping("/API/proposal/searchArchived")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ProposalFullDTO> searchProposalsArchived(@RequestBody ProposalSearchRequest proposalSearchRequest) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        String cds = studentService.getCdS(username);
-        proposalSearchRequest.setCds(cds);
-        List<ProposalFullDTO> result=proposalService.searchProposals(proposalSearchRequest,Proposal.Status.ACCEPTED);
-        result.addAll(proposalService.searchProposals(proposalSearchRequest,Proposal.Status.ARCHIVED));
-        return result;
-    }
-/*
+
     @PostMapping("/API/proposal/searchArchived")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
@@ -137,7 +125,7 @@ public class ProposalController {
         proposalSearchRequest.setSupervisorIdList(List.of(supervisorId));
         return proposalService.searchArchivedProposals(proposalSearchRequest);
     }
-*/
+
     @GetMapping("/API/proposal/getArchived")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
