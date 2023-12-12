@@ -20,6 +20,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -326,6 +327,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Scheduled(fixedRate = 10 * 60 * 1000)
+    @Async
     public void archiveExpiredProposals() {
         Date nowOld = Calendar.getInstance().getTime();
         Calendar now = Calendar.getInstance();
