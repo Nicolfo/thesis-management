@@ -170,44 +170,38 @@ function ProposalsListContent({user, applicationDate}) {
                     <Form>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Title" value={title}
-                                              onChange={event => setTitle(event.target.value)}/>
-                                <label htmlFor="floatingTitle"> Title </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Title" value={title} onChange={event => setTitle(event.target.value)} />
+                                <label htmlFor="floatingTitle" > Title </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Keyword(s)" value={keywords}
-                                              onChange={event => setKeywords(event.target.value)}/>
-                                <label htmlFor="floatingKeyword(s)"> Keyword(s) </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Keyword(s)" value={keywords} onChange={event => setKeywords(event.target.value)} />
+                                <label htmlFor="floatingKeyword(s)" > Keyword(s) </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Type" value={type}
-                                              onChange={event => setType(event.target.value)}/>
-                                <label htmlFor="floatingType(s)"> Type(s) </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Type" value={type} onChange={event => setType(event.target.value)} />
+                                <label htmlFor="floatingType(s)" > Type(s) </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Description" value={description}
-                                              onChange={event => setDescription(event.target.value)}/>
-                                <label htmlFor="floatingDescription"> Description </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Description" value={description} onChange={event => setDescription(event.target.value)} />
+                                <label htmlFor="floatingDescription" > Description </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Required Knowledge" value={requiredKnowledge}
-                                              onChange={event => setRequiredKnowledge(event.target.value)}/>
-                                <label htmlFor="floatingKnowledge"> Required Knowledge </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Required Knowledge" value={requiredKnowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
+                                <label htmlFor="floatingKnowledge" > Required Knowledge </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Notes" value={notes}
-                                              onChange={event => setNotes(event.target.value)}/>
-                                <label htmlFor="floatingNotes"> Notes </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Notes" value={notes} onChange={event => setNotes(event.target.value)} />
+                                <label htmlFor="floatingNotes" > Notes </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">

@@ -312,6 +312,18 @@ const secretaryAccept = async(jwt, id) => {
     }));
 }
 
+
+ const startRequest = async (request,jwt) => {
+    return fetch(SERVER_URL + 'proposalOnRequest/create/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
+        },
+        body: JSON.stringify(Object.assign({}, request))
+    })
+};
+
 const secretaryReject = async(jwt, id) => {
     return getJson(fetch(SERVER_URL + "proposalOnRequest/updateStatus/secretaryRejected/" + id , {
         method: 'PUT',
@@ -322,5 +334,6 @@ const secretaryReject = async(jwt, id) => {
     }));
 }
 
-const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject };
+const API = { insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest };
+
 export default API;

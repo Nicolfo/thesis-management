@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.ProposalOnRequest.ProposalRequestWithNoId;
 import lombok.RequiredArgsConstructor;
+import org.jboss.resteasy.annotations.Body;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,12 @@ public class ProposalOnRequestController {
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryRejected(@PathVariable Long id){
         return proposalOnRequestService.proposalOnRequestSecretaryRejected(id);
 
+    }
+    @PostMapping("/API/proposalOnRequest/create/")
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProposalOnRequestDTO createProposalRequest(@RequestBody ProposalOnRequestDTO proposalOnRequestDTO){
+        return proposalOnRequestService.createProposalRequest(proposalOnRequestDTO);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherAccepted/{id}")

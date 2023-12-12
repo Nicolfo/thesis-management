@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ProposalOnRequest {
+
     public enum Status {
         PENDING,
         SECRETARY_ACCEPTED,
@@ -79,5 +79,6 @@ public class ProposalOnRequest {
                 this.approvalDate,
                 this.status);
     }
+
 
 }

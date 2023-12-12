@@ -61,6 +61,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail) {
         List<Application> toReturn = applicationRepository.getApplicationByStudentEmail(studentEmail)
                 .stream().filter(it -> it.getStatus() != ApplicationStatus.DELETED).collect(Collectors.toList());
+
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
             dto.setId(it.getId());
