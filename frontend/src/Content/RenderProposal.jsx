@@ -21,9 +21,9 @@ function RenderProposal(props) {
 
     const [cv, setCv] = useState();
     const [applied, setApplied] = useState(false);
-    const [disabledButtons, setDisabledButtons] =useState(false);
+    const [disabledButtons, setDisabledButtons] = useState(false);
 
-    const goBack= () => {
+    const goBack = () => {
         navigate('/search-for-proposal')
         setApplied(false);
     };
@@ -36,7 +36,8 @@ function RenderProposal(props) {
                         <FormGroup>
                             {applied ? <FormLabel><Row>Application successfully executed </Row> </FormLabel>
                                 : <><FormLabel><Row>Insert your CV to apply</Row></FormLabel>
-                            <Row><input type="file" disabled={disabledButtons} onChange={(event) => setCv(event.target.files[0])}/></Row></>}
+                                    <Row><input type="file" disabled={disabledButtons}
+                                                onChange={(event) => setCv(event.target.files[0])}/></Row></>}
                             <div><Button disabled={disabledButtons} className="me-3 mt-4" onClick={goBack}>
                                 <FontAwesomeIcon icon={"chevron-left"}/> Go Back
                             </Button>
@@ -65,7 +66,8 @@ function RenderProposal(props) {
                                                 if (error && error.detail) {
                                                     return <strong>{error.detail}</strong>;
                                                 } else {
-                                                    return <strong>An error occurred while processing the application.</strong>;
+                                                    return <strong>An error occurred while processing the
+                                                        application.</strong>;
                                                 }
                                             },
                                         }

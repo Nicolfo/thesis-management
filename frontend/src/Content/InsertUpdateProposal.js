@@ -1,5 +1,5 @@
 import {Alert, Button, Card, Col, Form, Row} from "react-bootstrap";
-import { MultiSelect } from "react-multi-select-component";
+import {MultiSelect} from "react-multi-select-component";
 import {useContext, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -9,18 +9,18 @@ import {AuthContext} from "react-oauth2-code-pkce";
 
 
 function InsertUpdateProposal(props) {
-    const { editProposalID, copyProposalID } = useParams();
+    const {editProposalID, copyProposalID} = useParams();
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
-    if( !token )
+    if (!token)
         navigate("/notAuthorized");
-    if(props.user && props.user.role==="STUDENT")
+    if (props.user && props.user.role === "STUDENT")
         navigate("/notAuthorized");
 
     const [supervisor, setSupervisor] = useState({});
-    const [title, setTitle] =  useState("");
-    const [level, setLevel] =  useState("Bachelor's");
-    const [notes, setNotes] =  useState("");
+    const [title, setTitle] = useState("");
+    const [level, setLevel] = useState("Bachelor's");
+    const [notes, setNotes] = useState("");
     const [knowledge, setKnowledge] = useState("");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
@@ -47,32 +47,32 @@ function InsertUpdateProposal(props) {
             setTeacherList(teachers);
 
             let supervisors = [];
-            teachers.forEach( (t) => {
-                let elem= {label: `${t.surname} ${t.name}`, value: t.id};
+            teachers.forEach((t) => {
+                let elem = {label: `${t.surname} ${t.name}`, value: t.id};
                 supervisors.push(elem);
-            } );
+            });
             setOptionsSupervisors(supervisors);
 
             const cds = await API.getAllCds(props.user.token);
             setCdsList(cds);
 
             let CDS = [];
-            cds.forEach( (c) => {
-                let elem= {label: c, value: c};
+            cds.forEach((c) => {
+                let elem = {label: c, value: c};
                 CDS.push(elem);
 
-            } );
+            });
             setOptionsCds(CDS);
 
-            const supervisor = await API.getByEmail(props.user.email,props.user.token);
+            const supervisor = await API.getByEmail(props.user.email, props.user.token);
             setSupervisor(supervisor);
 
             let proposals = await API.getProposalsByProf(props.user.token);
-            if(props.archivedView){
+            if (props.archivedView) {
                 proposals = await API.getArchivedProposalsByProf(props.user.token);
             }
             // If edit or copy, then populate the fields
-            let editORCopy = ( (editProposalID && proposals.find( (p) => p.id === parseInt(editProposalID))) || (copyProposalID && proposals.find( (p) => p.id === parseInt(copyProposalID))) );
+            let editORCopy = ((editProposalID && proposals.find((p) => p.id === parseInt(editProposalID))) || (copyProposalID && proposals.find((p) => p.id === parseInt(copyProposalID))));
 
             if (editORCopy) {
                 setTitle(editORCopy.title);
@@ -82,24 +82,24 @@ function InsertUpdateProposal(props) {
                 setDescription(editORCopy.description);
                 setDate(dayjs(editORCopy.expiration).format("YYYY-MM-DD"));
 
-                if(editORCopy.type !== "")
+                if (editORCopy.type !== "")
                     setTypeList(editORCopy.type.split(", "));
 
-                if(editORCopy.keywords !== "")
+                if (editORCopy.keywords !== "")
                     setKeywordsList(editORCopy.keywords.split(", "));
 
                 let CDS = [];
-                editORCopy.cds.split(", ").forEach( (c) => {
-                    let elem= {label: c, value: c};
+                editORCopy.cds.split(", ").forEach((c) => {
+                    let elem = {label: c, value: c};
                     CDS.push(elem);
-                } );
+                });
                 setSelectedCds(CDS);
 
                 let supervisors = [];
-                editORCopy.coSupervisors.forEach( (t) => {
-                    let elem= {label: `${t.surname} ${t.name}`, value: t.id};
+                editORCopy.coSupervisors.forEach((t) => {
+                    let elem = {label: `${t.surname} ${t.name}`, value: t.id};
                     supervisors.push(elem);
-                } );
+                });
                 setSelectedSupervisors(supervisors);
             }
 
@@ -108,7 +108,7 @@ function InsertUpdateProposal(props) {
         }
     }
 
-    const clearFields = ()=> {
+    const clearFields = () => {
         setTitle("");
         setLevel("Bachelor's");
         setNotes("");
@@ -122,14 +122,14 @@ function InsertUpdateProposal(props) {
     }
 
     useEffect(() => {
-        if( (!editProposalID) || (!copyProposalID) )
+        if ((!editProposalID) || (!copyProposalID))
             clearFields();
         getAllTeachersGroupsCds();
     }, [editProposalID, copyProposalID])
 
 
     const addType = () => {
-        setTypeList([...typeList, ""] );
+        setTypeList([...typeList, ""]);
     }
 
     const removeType = (index) => {
@@ -139,7 +139,7 @@ function InsertUpdateProposal(props) {
     }
 
     const changeType = (ev, index) => {
-        if ((ev.target.value.trim()).length > 0 ) {
+        if ((ev.target.value.trim()).length > 0) {
             const list = [...typeList];
             list[index] = ev.target.value;
             setTypeList(list);
@@ -153,7 +153,7 @@ function InsertUpdateProposal(props) {
     }
 
     const addKeyword = () => {
-        setKeywordsList([...keywordsList, ""] );
+        setKeywordsList([...keywordsList, ""]);
     }
 
     const removeKeyword = (index) => {
@@ -163,7 +163,7 @@ function InsertUpdateProposal(props) {
     }
 
     const changeKeyword = (ev, index) => {
-        if ((ev.target.value.trim()).length > 0 ) {
+        if ((ev.target.value.trim()).length > 0) {
             const list = [...keywordsList];
             list[index] = ev.target.value;
             setKeywordsList(list);
@@ -177,16 +177,15 @@ function InsertUpdateProposal(props) {
     }
 
 
-
     const insertProposal = (proposal) => {
-        API.insertProposal(proposal,props.user.token)
+        API.insertProposal(proposal, props.user.token)
             .then(() =>
                 navigate("/teacher/proposals"))
             .catch((err) => console.log(err))
     }
 
     const updateProposal = (proposal) => {
-        API.updateProposal(proposal,props.user.token)
+        API.updateProposal(proposal, props.user.token)
             .then(() =>
                 navigate("/teacher/proposals"))
             .catch((err) => console.log(err))
@@ -203,16 +202,14 @@ function InsertUpdateProposal(props) {
                 setIsValidCds(false);
 
             ev.stopPropagation();
-        }
-        else if (selectedCds.length === 0) {
+        } else if (selectedCds.length === 0) {
             setIsValidCds(false);
             ev.stopPropagation();
-        }
-        else {
+        } else {
             let proposal = {
                 title: title,
                 supervisorId: supervisor.id,
-                coSupervisors: teacherList.filter( (t) => selectedSupervisors.some( (s) => s.value === t.id) ).map( (t) => t.id),
+                coSupervisors: teacherList.filter((t) => selectedSupervisors.some((s) => s.value === t.id)).map((t) => t.id),
                 keywords: keywordsList.join(", "),
                 type: typeList.join(", "),
                 description: description,
@@ -220,7 +217,7 @@ function InsertUpdateProposal(props) {
                 notes: notes,
                 level: level,
                 expiration: dayjs(date).format("YYYY-MM-DD"),
-                cds: (selectedCds.map( (c) => c.value)).join(", ")
+                cds: (selectedCds.map((c) => c.value)).join(", ")
             }
             if (editProposalID) {
                 proposal.id = editProposalID;
@@ -232,7 +229,7 @@ function InsertUpdateProposal(props) {
         setValidated(true);
     }
 
-    function cancelButt(){
+    function cancelButt() {
         setCancel(true);
     }
 
@@ -240,7 +237,7 @@ function InsertUpdateProposal(props) {
         <Card style={{"marginTop": "0.5", "marginBottom": "2rem"}}>
             <Form validated={validated} onSubmit={handleSubmit} noValidate>
                 <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                    { editProposalID ?
+                    {editProposalID ?
                         "Update proposal"
                         :
                         "Insert proposal"
@@ -258,8 +255,8 @@ function InsertUpdateProposal(props) {
                                     placeholder="Title"
                                     value={title}
                                     isInvalid={!isValidTitle}
-                                    onChange={ (ev) => {
-                                        if ((ev.target.value.trim()).length > 0 ) {
+                                    onChange={(ev) => {
+                                        if ((ev.target.value.trim()).length > 0) {
                                             setTitle(ev.target.value);
                                             setIsValidTitle(true);
                                         } else {
@@ -269,14 +266,14 @@ function InsertUpdateProposal(props) {
                                     }
                                     }
                                 />
-                                <label htmlFor="floatingTitle" > Title </label>
+                                <label htmlFor="floatingTitle"> Title </label>
                                 <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
                             </Form.Floating>
                         </Form.Group>
                     </Row>
                     {/* SUPERVISOR & CO-SUPERVISORS */}
-                    <Row style={{"marginTop": "1rem"}} >
-                        <Form.Group as={Col} >
+                    <Row style={{"marginTop": "1rem"}}>
+                        <Form.Group as={Col}>
                             <Form.Label> Supervisor </Form.Label>
                             <Form.Control
                                 type="text"
@@ -285,7 +282,7 @@ function InsertUpdateProposal(props) {
                                 readOnly
                             />
                         </Form.Group>
-                        <Form.Group as={Col} >
+                        <Form.Group as={Col}>
                             <Form.Label> Co-supervisors <em style={{"color": "dimgray"}}> (optional) </em> </Form.Label>
                             <MultiSelect
                                 options={optionsSupervisors}
@@ -296,11 +293,11 @@ function InsertUpdateProposal(props) {
                         </Form.Group>
                     </Row>
                     {/* TYPE & KEYWORDS & LEVEL */}
-                    <Row style={{"marginTop": "1rem"}} >
+                    <Row style={{"marginTop": "1rem"}}>
                         <Col lg={4}>
                             <Form.Group className="ms-2">
                                 <Form.Label> Thesis types </Form.Label>
-                                {typeList.map( (singleType, index) => (
+                                {typeList.map((singleType, index) => (
                                     <>
                                         <Row style={{"marginBottom": "0.5rem"}}>
                                             <Col>
@@ -310,18 +307,24 @@ function InsertUpdateProposal(props) {
                                                     placeholder="Type"
                                                     // style={{"width": "250px"}}
                                                     value={singleType}
-                                                    onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
-                                                    onChange={ (ev) => changeType(ev, index) }
+                                                    onKeyDown={(ev) => {
+                                                        if (ev.key === ',') ev.preventDefault()
+                                                    }}
+                                                    onChange={(ev) => changeType(ev, index)}
                                                 />
-                                                <Form.Control.Feedback type="invalid"> Please write the type </Form.Control.Feedback>
+                                                <Form.Control.Feedback type="invalid"> Please write the
+                                                    type </Form.Control.Feedback>
                                             </Col>
                                             <Col>
                                                 {typeList.length > 1 &&
-                                                    <Button variant="link" size="sm" onClick={() => removeType(index)}> <FontAwesomeIcon icon="fa-regular fa-circle-xmark" size="xl" style={{color: "#f50000",}} /> </Button>                                            }
+                                                    <Button variant="link" size="sm" onClick={() => removeType(index)}>
+                                                        <FontAwesomeIcon icon="fa-regular fa-circle-xmark" size="xl"
+                                                                         style={{color: "#f50000",}}/> </Button>}
                                             </Col>
                                         </Row>
                                         {typeList.length - 1 === index &&
-                                            <Button variant="info" size="sm" onClick={addType}> <FontAwesomeIcon icon="fa-solid fa-plus" /> Add type </Button>
+                                            <Button variant="info" size="sm" onClick={addType}> <FontAwesomeIcon
+                                                icon="fa-solid fa-plus"/> Add type </Button>
                                         }
                                     </>
                                 ))}
@@ -330,7 +333,7 @@ function InsertUpdateProposal(props) {
                         <Col lg={4}>
                             <Form.Group className="ms-2">
                                 <Form.Label> Thesis keywords </Form.Label>
-                                {keywordsList.map( (singleKeyword, index) => (
+                                {keywordsList.map((singleKeyword, index) => (
                                     <>
                                         <Row style={{"marginBottom": "0.5rem"}}>
                                             <Col>
@@ -340,19 +343,26 @@ function InsertUpdateProposal(props) {
                                                     placeholder="Keyword"
                                                     // style={{"width": "200px"}}
                                                     value={singleKeyword}
-                                                    onKeyDown={ (ev) => { if (ev.key === ',') ev.preventDefault() }}
-                                                    onChange={ (ev) => changeKeyword(ev, index) }
+                                                    onKeyDown={(ev) => {
+                                                        if (ev.key === ',') ev.preventDefault()
+                                                    }}
+                                                    onChange={(ev) => changeKeyword(ev, index)}
                                                 />
-                                                <Form.Control.Feedback type="invalid"> Please write the keyword </Form.Control.Feedback>
+                                                <Form.Control.Feedback type="invalid"> Please write the
+                                                    keyword </Form.Control.Feedback>
                                             </Col>
                                             <Col>
                                                 {keywordsList.length > 1 &&
-                                                    <Button variant="link" size="sm" onClick={() => removeKeyword(index)}> <FontAwesomeIcon icon="fa-regular fa-circle-xmark" size="xl" style={{color: "#f50000",}} /> </Button>
+                                                    <Button variant="link" size="sm"
+                                                            onClick={() => removeKeyword(index)}> <FontAwesomeIcon
+                                                        icon="fa-regular fa-circle-xmark" size="xl"
+                                                        style={{color: "#f50000",}}/> </Button>
                                                 }
                                             </Col>
                                         </Row>
                                         {keywordsList.length - 1 === index &&
-                                            <Button variant="info" size="sm" onClick={addKeyword}> <FontAwesomeIcon icon="fa-solid fa-plus" /> Add keyword </Button>
+                                            <Button variant="info" size="sm" onClick={addKeyword}> <FontAwesomeIcon
+                                                icon="fa-solid fa-plus"/> Add keyword </Button>
                                         }
                                     </>
                                 ))}
@@ -381,7 +391,7 @@ function InsertUpdateProposal(props) {
                         </Col>
                     </Row>
                     {/* NOTES & REQUIRED KNOWLEDGE & DESCRIPTION */}
-                    <Row style={{"marginTop": "2rem"}} >
+                    <Row style={{"marginTop": "2rem"}}>
                         <Form.Floating>
                             <Form.Control
                                 as="textarea"
@@ -390,10 +400,11 @@ function InsertUpdateProposal(props) {
                                 value={notes}
                                 onChange={ev => setNotes(ev.target.value)}
                             />
-                            <label htmlFor="floatingNotes" style={{"marginLeft": "0.5rem"}}> Notes <em style={{"color": "dimgray"}}> (optional) </em> </label>
+                            <label htmlFor="floatingNotes" style={{"marginLeft": "0.5rem"}}> Notes <em
+                                style={{"color": "dimgray"}}> (optional) </em> </label>
                         </Form.Floating>
                     </Row>
-                    <Row style={{"marginTop": "1rem"}} >
+                    <Row style={{"marginTop": "1rem"}}>
                         <Form.Floating>
                             <Form.Control
                                 as="textarea"
@@ -402,10 +413,11 @@ function InsertUpdateProposal(props) {
                                 value={knowledge}
                                 onChange={ev => setKnowledge(ev.target.value)}
                             />
-                            <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Required knowledge <em style={{"color": "dimgray"}}> (optional) </em> </label>
+                            <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Required knowledge <em
+                                style={{"color": "dimgray"}}> (optional) </em> </label>
                         </Form.Floating>
                     </Row>
-                    <Row style={{"marginTop": "1rem"}} >
+                    <Row style={{"marginTop": "1rem"}}>
                         <Form.Floating>
                             <Form.Control
                                 required
@@ -415,8 +427,8 @@ function InsertUpdateProposal(props) {
                                 placeholder="Description"
                                 value={description}
                                 isInvalid={!isValidDescription}
-                                onChange={ (ev) => {
-                                    if ((ev.target.value.trim()).length > 0 ) {
+                                onChange={(ev) => {
+                                    if ((ev.target.value.trim()).length > 0) {
                                         setDescription(ev.target.value);
                                         setIsValidDescription(true);
                                     } else {
@@ -427,25 +439,30 @@ function InsertUpdateProposal(props) {
                                 }
                             />
                             <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Description </label>
-                            <Form.Control.Feedback type="invalid"> Please provide a description for the thesis </Form.Control.Feedback>
+                            <Form.Control.Feedback type="invalid"> Please provide a description for the
+                                thesis </Form.Control.Feedback>
                         </Form.Floating>
                     </Row>
                     {/* CDS & EXPIRATION DATE */}
-                    <Row style={{"marginTop": "1rem"}} >
-                        <Form.Group as={Col} >
+                    <Row style={{"marginTop": "1rem"}}>
+                        <Form.Group as={Col}>
                             <Form.Label> CdS </Form.Label>
                             <MultiSelect
                                 options={optionsCds}
                                 value={selectedCds}
-                                onChange={ev => {setIsValidCds(true); setSelectedCds(ev)}}
+                                onChange={ev => {
+                                    setIsValidCds(true);
+                                    setSelectedCds(ev)
+                                }}
                                 labelledBy="Select CdS"
                             />
-                            { !isValidCds &&
-                                <Form.Label style={{"color": "red"}}> Please select at least one CdS <FontAwesomeIcon icon="fa-solid fa-circle-exclamation"/> </Form.Label>
+                            {!isValidCds &&
+                                <Form.Label style={{"color": "red"}}> Please select at least one CdS <FontAwesomeIcon
+                                    icon="fa-solid fa-circle-exclamation"/> </Form.Label>
                             }
                         </Form.Group>
                         <Col sm={7}>
-                            <Form.Group style={{"marginTop": "1rem"}} >
+                            <Form.Group style={{"marginTop": "1rem"}}>
                                 <Form.Floating>
                                     <Form.Control
                                         required
@@ -464,16 +481,18 @@ function InsertUpdateProposal(props) {
 
                 <Card.Footer style={{"textAlign": "center"}}>
                     <Button variant="outline-primary" type="submit">
-                        { editProposalID ?
-                            <><FontAwesomeIcon icon="fa-solid fa-check" /> Update thesis proposal</>
+                        {editProposalID ?
+                            <><FontAwesomeIcon icon="fa-solid fa-check"/> Update thesis proposal</>
                             :
-                            <><FontAwesomeIcon icon={"upload"} /> Publish thesis proposal</>
+                            <><FontAwesomeIcon icon={"upload"}/> Publish thesis proposal</>
                         }
                     </Button>
 
 
-                    <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => {navigate('/teacher/proposals');}}>
-                        <FontAwesomeIcon icon="fa-solid fa-xmark" /> Cancel
+                    <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => {
+                        navigate('/teacher/proposals');
+                    }}>
+                        <FontAwesomeIcon icon="fa-solid fa-xmark"/> Cancel
                     </Button>
 
                 </Card.Footer>

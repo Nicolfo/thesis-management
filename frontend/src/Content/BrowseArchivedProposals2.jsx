@@ -12,25 +12,19 @@ import {
     DropdownButton, Dropdown
 } from "react-bootstrap";
 import API from "../API/Api";
-import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { MultiSelect } from "react-multi-select-component";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useState, useEffect, useContext} from "react";
+import {useNavigate} from "react-router-dom";
+import {MultiSelect} from "react-multi-select-component";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
 import Warn from "./Warn";
 
-function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
+function BrowseArchivedProposals2({user, applicationDate, setArchivedView}) {
 
     const navigate = useNavigate();
-
-    // const levelOptions = [
-    //     "Any",
-    //     "Bachelor's",
-    //     "Master's"
-    // ];
     const {token} = useContext(AuthContext);
-    const [showSearchBar,setShowSearchBar] = useState(false);
+    const [showSearchBar, setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
     const [selectedSupervisorIds, setSelectedSupervisorIds] = useState([]);
     const [selectedCoSupervisorIds, setSelectedCoSupervisorIds] = useState([]);
@@ -47,15 +41,13 @@ function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
     const [deleting, setDeleting] = useState(false);
     const [deletingID, setDeletingID] = useState();
 
+    function deleteProp(proposalId) {
 
-    function deleteProp(proposalId){
+        setDeleting(true);
+        setDeletingID(proposalId)
+    }
 
-            setDeleting(true);
-            setDeletingID(proposalId)
-        }
-
-
-    const clearFields = ()=> {
+    const clearFields = () => {
         setTitle("");
         setNotes("");
         setRequiredKnowledge("");
@@ -68,7 +60,7 @@ function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
     }
 
     useEffect(() => {
-        if( !token )
+        if (!token)
             navigate("/notAuthorized");
 
         if (!user) {
@@ -78,9 +70,13 @@ function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
         const getResources = async () => {
             try {
                 const teachers = await API.getAllSupervisors(user.token);
-                setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
+                setTeachersList(teachers.map(t => {
+                    return {label: `${t.surname} ${t.name}`, value: t.id};
+                }));
                 const groups = await API.getAllGroups(user.token);
-                setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
+                setGroupsList(groups.map(g => {
+                    return {label: `${g.name}`, value: g.codGroup};
+                }));
                 const proposals = await API.getArchivedProposalsByProf(user.token);
                 setProposalsList(proposals);
             } catch (error) {
@@ -128,134 +124,128 @@ function BrowseArchivedProposals2({ user, applicationDate, setArchivedView }) {
 
     return (
         <>
-            { error !== "" &&
+            {error !== "" &&
                 <Row>
                     <Col>
-                        <Alert variant="danger" dismissible onClose={() => setError("")} >
+                        <Alert variant="danger" dismissible onClose={() => setError("")}>
                             {error}
                         </Alert>
                     </Col>
                 </Row>
             }
-            {deleting? <Row><Col></Col><Col><Warn doSearch={doSearch}  archivedProposal={true} user={user} setDeleting={setDeleting} deletingID={deletingID} ></Warn></Col> <Col></Col></Row>:
+            {deleting ? <Row><Col></Col><Col><Warn doSearch={doSearch} archivedProposal={true} user={user}
+                                                   setDeleting={setDeleting} deletingID={deletingID}></Warn></Col>
+                    <Col></Col></Row> :
                 <>
                     <h2>Archive</h2>
-            <Row style={{"textAlign": "end"}}>
-                <Col>
-                    <Button onClick={()=> setShowSearchBar(it=> !it )}> <FontAwesomeIcon icon={"magnifying-glass"} /> Show searching filters </Button>
-                </Col>
-            </Row>
-            <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true} >
-                <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>
-                        <Button variant="outline-primary" onClick={() => { doSearch(); setShowSearchBar(false); }}> <FontAwesomeIcon icon={"magnifying-glass"} /> SEARCH BY </Button>
-                        {" "}
-                        <Button variant="outline-danger" size="sm" onClick={clearFields}> <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-left" /> Reset filters </Button>
-                    </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Floating>
-                                <Form.Control type="text" placeholder="Title" value={title} onChange={event => setTitle(event.target.value)} />
-                                <label htmlFor="floatingTitle" > Title </label>
-                            </Form.Floating>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Floating>
-                                <Form.Control type="text" placeholder="Keyword(s)" value={keywords} onChange={event => setKeywords(event.target.value)} />
-                                <label htmlFor="floatingKeyword(s)" > Keyword(s) </label>
-                            </Form.Floating>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Floating>
-                                <Form.Control type="text" placeholder="Type" value={type} onChange={event => setType(event.target.value)} />
-                                <label htmlFor="floatingType(s)" > Type(s) </label>
-                            </Form.Floating>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Floating>
-                                <Form.Control type="text" placeholder="Description" value={description} onChange={event => setDescription(event.target.value)} />
-                                <label htmlFor="floatingDescription" > Description </label>
-                            </Form.Floating>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Floating>
-                                <Form.Control type="text" placeholder="Required Knowledge" value={requiredKnowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
-                                <label htmlFor="floatingKnowledge" > Required Knowledge </label>
-                            </Form.Floating>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Floating>
-                                <Form.Control type="text" placeholder="Notes" value={notes} onChange={event => setNotes(event.target.value)} />
-                                <label htmlFor="floatingNotes" > Notes </label>
-                            </Form.Floating>
-                        </Form.Group>
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label>CdS</Form.Label>*/}
-                        {/*    <MultiSelect*/}
-                        {/*        options={cdsList}*/}
-                        {/*        value={selectedCds}*/}
-                        {/*        onChange={setSelectedCds}*/}
-                        {/*        labelledBy="Select CdS"*/}
-                        {/*    />*/}
-                        {/*</Form.Group>*/}
+                    <Row style={{"textAlign": "end"}}>
+                        <Col>
+                            <Button onClick={() => setShowSearchBar(it => !it)}> <FontAwesomeIcon
+                                icon={"magnifying-glass"}/> Show searching filters </Button>
+                        </Col>
+                    </Row>
+                    <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end"
+                               scroll={true}>
+                        <Offcanvas.Header closeButton>
+                            <Offcanvas.Title>
+                                <Button variant="outline-primary" onClick={() => {
+                                    doSearch();
+                                    setShowSearchBar(false);
+                                }}> <FontAwesomeIcon icon={"magnifying-glass"}/> SEARCH BY </Button>
+                                {" "}
+                                <Button variant="outline-danger" size="sm" onClick={clearFields}> <FontAwesomeIcon
+                                    icon="fa-solid fa-arrow-rotate-left"/> Reset filters </Button>
+                            </Offcanvas.Title>
+                        </Offcanvas.Header>
+                        <Offcanvas.Body>
+                            <Form>
+                                <Form.Group className="mb-3">
+                                    <Form.Floating>
+                                        <Form.Control type="text" placeholder="Title" value={title}
+                                                      onChange={event => setTitle(event.target.value)}/>
+                                        <label htmlFor="floatingTitle"> Title </label>
+                                    </Form.Floating>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Floating>
+                                        <Form.Control type="text" placeholder="Keyword(s)" value={keywords}
+                                                      onChange={event => setKeywords(event.target.value)}/>
+                                        <label htmlFor="floatingKeyword(s)"> Keyword(s) </label>
+                                    </Form.Floating>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Floating>
+                                        <Form.Control type="text" placeholder="Type" value={type}
+                                                      onChange={event => setType(event.target.value)}/>
+                                        <label htmlFor="floatingType(s)"> Type(s) </label>
+                                    </Form.Floating>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Floating>
+                                        <Form.Control type="text" placeholder="Description" value={description}
+                                                      onChange={event => setDescription(event.target.value)}/>
+                                        <label htmlFor="floatingDescription"> Description </label>
+                                    </Form.Floating>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Floating>
+                                        <Form.Control type="text" placeholder="Required Knowledge"
+                                                      value={requiredKnowledge}
+                                                      onChange={event => setRequiredKnowledge(event.target.value)}/>
+                                        <label htmlFor="floatingKnowledge"> Required Knowledge </label>
+                                    </Form.Floating>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Floating>
+                                        <Form.Control type="text" placeholder="Notes" value={notes}
+                                                      onChange={event => setNotes(event.target.value)}/>
+                                        <label htmlFor="floatingNotes"> Notes </label>
+                                    </Form.Floating>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Co-Supervisor(s)</Form.Label>
+                                    <MultiSelect
+                                        options={teachersList}
+                                        value={selectedCoSupervisorIds}
+                                        onChange={setSelectedCoSupervisorIds}
+                                        labelledBy="Select Co-Supervisors"
+                                    />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Group(s)</Form.Label>
+                                    <MultiSelect
+                                        options={groupsList}
+                                        value={selectedGroupIds}
+                                        onChange={setSelectedGroupIds}
+                                        labelledBy="Select Groups"
+                                    />
+                                </Form.Group>
+                            </Form>
+                        </Offcanvas.Body>
+                    </Offcanvas>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Co-Supervisor(s)</Form.Label>
-                            <MultiSelect
-                                options={teachersList}
-                                value={selectedCoSupervisorIds}
-                                onChange={setSelectedCoSupervisorIds}
-                                labelledBy="Select Co-Supervisors"
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Group(s)</Form.Label>
-                            <MultiSelect
-                                options={groupsList}
-                                value={selectedGroupIds}
-                                onChange={setSelectedGroupIds}
-                                labelledBy="Select Groups"
-                            />
-                        </Form.Group>
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label> Level </Form.Label>*/}
-                        {/*    <Form.Select name="level" value={level} onChange={(e) => setLevel(e.target.value)}>*/}
-                        {/*        { levelOptions.map(levelOption => <option value={levelOption}>{levelOption}</option>) }*/}
-                        {/*    </Form.Select>*/}
-                        {/*</Form.Group>*/}
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label>Min. Expiration Date</Form.Label>*/}
-                        {/*    <Form.Control type="date" value={minExpiration} onChange={event => setMinExpiration(event.target.value)} />*/}
-                        {/*</Form.Group>*/}
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label>Max. Expiration Date</Form.Label>*/}
-                        {/*    <Form.Control type="date" value={maxExpiration} onChange={event => setMaxExpiration(event.target.value)} />*/}
-                        {/*</Form.Group>*/}
-                    </Form>
-                </Offcanvas.Body>
-            </Offcanvas>
-
-            <Card className="mt-3">
-                <Card.Header><b>Results</b></Card.Header>
-                <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp} proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
-            </Card>
+                    <Card className="mt-3">
+                        <Card.Header><strong>Results</strong></Card.Header>
+                        <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp}
+                                                  proposals={proposalsList} user={user}
+                                                  applicationDate={applicationDate}/></Card.Body>
+                    </Card>
                 </>} </>
-);
+    );
 }
 
-function ProposalsList({ proposals, user, applicationDate, deleteProp, setArchivedView }) {
+function ProposalsList({proposals, user, deleteProp, setArchivedView}) {
     return (
 
         <Accordion defaultActiveKey="0">
-            { proposals.map(proposal => <ProposalEntry setArchivedView={setArchivedView} deleteProp={deleteProp} key={proposal.id} proposal={proposal} user={user} />) }
+            {proposals.map(proposal => <ProposalEntry setArchivedView={setArchivedView} deleteProp={deleteProp}
+                                                      key={proposal.id} proposal={proposal} user={user}/>)}
         </Accordion>
     )
 }
 
-function CustomToggle({ children, eventKey, callback }) {
-    const { activeEventKey } = useContext(AccordionContext);
+function CustomToggle({eventKey, callback}) {
+    const {activeEventKey} = useContext(AccordionContext);
 
     const decoratedOnClick = useAccordionButton(
         eventKey,
@@ -268,46 +258,51 @@ function CustomToggle({ children, eventKey, callback }) {
         <Button
             onClick={decoratedOnClick}
         >
-            <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
+            <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
         </Button>
     );
 }
 
-function ProposalEntry({ proposal, user, deleteProp, setArchivedView }) {
+function ProposalEntry({proposal, deleteProp, setArchivedView}) {
     const navigate = useNavigate();
 
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
-                    <Col><b>{proposal.title}</b></Col>
+                    <Col><strong>{proposal.title}</strong></Col>
                     <Col className="d-flex justify-content-end">
                         <DropdownButton id="dropdown-item-button" title={
                             <div className="d-flex align-items-center">
-                                <FontAwesomeIcon icon="fa-solid fa-list-ul" />
+                                <FontAwesomeIcon icon="fa-solid fa-list-ul"/>
                                 <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                 <span className="d-none d-md-table-cell"> Options </span>
                             </div>
                         }
                         >
 
-                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => { setArchivedView(true);  navigate(`/copyProposal/${proposal.id}`)}}>
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
+                                setArchivedView(true);
+                                navigate(`/copyProposal/${proposal.id}`)
+                            }}>
                                 <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-solid fa-copy" />
+                                    <FontAwesomeIcon icon="fa-solid fa-copy"/>
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
 
-                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
+                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
+                                deleteProp(proposal.id);
+                            }}>
                                 <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-solid fa-trash-can" />
+                                    <FontAwesomeIcon icon="fa-solid fa-trash-can"/>
                                     <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
                                     <span className="d-none d-md-table-cell"> Delete </span>
                                 </div>
                             </Dropdown.Item>
                         </DropdownButton>
-                        <CustomToggle eventKey={proposal.id} />
+                        <CustomToggle eventKey={proposal.id}/>
                     </Col>
                 </Row>
 
@@ -315,22 +310,26 @@ function ProposalEntry({ proposal, user, deleteProp, setArchivedView }) {
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
                     <Row>
-                        <Col><b>CdS</b><br/>{proposal.cds}</Col>
-                        <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                        <Col><b>Level</b><br/>{proposal.level}</Col>
-                        <Col><b>Type</b><br/>{proposal.type}</Col>
+                        <Col><strong>CdS</strong><br/>{proposal.cds}</Col>
+                        <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
+                        <Col><strong>Level</strong><br/>{proposal.level}</Col>
+                        <Col><strong>Type</strong><br/>{proposal.type}</Col>
                     </Row>
                     <Row>
-                        <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
-                        { proposal.requiredKnowledge.length > 0 &&
-                            <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
+                        <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>
+                        {proposal.requiredKnowledge.length > 0 &&
+                            <Col><strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}</Col>
                         }
-                        <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
+                        <Col><strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
                     </Row>
                     <Row className="pt-2">
-                        <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
-                        { proposal.coSupervisors.length > 0 &&
-                            <Col md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
+                        <Col
+                            md="3"><strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
+                        </Col>
+                        {proposal.coSupervisors.length > 0 &&
+                            <Col
+                                md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                            </Col>
                         }
                     </Row>
                     <hr className="me-4"/>

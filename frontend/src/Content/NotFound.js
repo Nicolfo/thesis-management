@@ -24,7 +24,7 @@ function NotFound(props) {
                             Requested path was not found
                         </Card.Text>
                         <Button className="mt-5 mb-3" variant="primary" onClick={goHome}>
-                            <FontAwesomeIcon icon="fa-solid fa-house" /> Home
+                            <FontAwesomeIcon icon="fa-solid fa-house"/> Home
                         </Button>
                     </Card.Body>
                 </Card>

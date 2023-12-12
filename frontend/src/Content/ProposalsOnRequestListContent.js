@@ -128,17 +128,16 @@ function ProposalAccordion({proposal}) {
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
                     <Row>
-                        {console.log(proposal)}
-                        <Col><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
+                        <Col><strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
                         {proposal.coSupervisors && proposal.coSupervisors.length > 0 &&
                             <Col
-                                md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                                md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
                             </Col>
                         }
                     </Row>
                     <Row>
-                        <Col><b>Student</b><br/>{proposal.student.surname + " " + proposal.student.name}</Col>
-                        {proposal.approvalDate && <Col><b>Approval date</b><br/>{dayjs(proposal.approvalDate).format("DD/MM/YYYY")}</Col>}
+                        <Col><strong>Student</strong><br/>{proposal.student.surname + " " + proposal.student.name}</Col>
+                        {proposal.approvalDate && <Col><strong>Approval date</strong><br/>{dayjs(proposal.approvalDate).format("DD/MM/YYYY")}</Col>}
                     </Row>
                     <hr className="me-4"/>
                     <Row>

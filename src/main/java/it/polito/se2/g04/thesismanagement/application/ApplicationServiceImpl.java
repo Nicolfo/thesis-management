@@ -39,7 +39,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationDTO> getApplicationsByProf(String profEmail) {
         return applicationRepository
-                .getApplicationByProposal_Supervisor_EmailAndStatusIsNot(profEmail, ApplicationStatus.DELETED)
+                .getApplicationByProposal_Supervisor_EmailAndStatusIsNotOrderByProposalId(profEmail, ApplicationStatus.DELETED)
                 .stream().map(it -> {
                     ApplicationDTO dto = new ApplicationDTO();
                     dto.setId(it.getId());

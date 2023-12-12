@@ -10,9 +10,9 @@ function ApplicationViewLayout(props) {
 
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
-    if( !token )
+    if (!token)
         navigate("/notAuthorized");
-    if(props.user && props.user.role==="STUDENT")
+    if (props.user && props.user.role === "STUDENT")
         navigate("/notAuthorized");
 
     const applicationId = new URLSearchParams(useLocation().search).get("applicationId");
@@ -28,10 +28,10 @@ function ApplicationViewLayout(props) {
     }, [props.user]);
 
     const fetchApplicationData = () => {
-        if(props.user && props.user.token)
-            return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId,{
+        if (props.user && props.user.token)
+            return fetch(`${SERVER_URL}/API/application/getApplicationById/` + applicationId, {
                 method: 'GET',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${props.user.token}`,
                 }
@@ -46,10 +46,10 @@ function ApplicationViewLayout(props) {
     }
 
     const fetchStudentGradesData = (studentId) => {
-        if(props.user && props.user.token)
-            fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId,{
+        if (props.user && props.user.token)
+            fetch(`${SERVER_URL}/API/career/getByStudent/` + studentId, {
                 method: 'GET',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${props.user.token}`,
                 }
@@ -63,11 +63,11 @@ function ApplicationViewLayout(props) {
     }
 
     const acceptApplication = () => {
-        if(props.user && props.user.token) {
+        if (props.user && props.user.token) {
             setLoading(true);
-            fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId,{
+            fetch(`${SERVER_URL}/API/application/acceptApplicationById/` + applicationId, {
                 method: 'GET',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${props.user.token}`,
                 }
@@ -87,15 +87,15 @@ function ApplicationViewLayout(props) {
                 })
                 .finally(() => setLoading(false));
         }
-        
+
     }
 
     const changeApplicationState = (newState) => {
-        if(props.user && props.user.token) {
+        if (props.user && props.user.token) {
             setLoading(true);
-            fetch(`${SERVER_URL}/API/application/changeApplicationStateById/` + applicationId + '/' + newState,{
+            fetch(`${SERVER_URL}/API/application/changeApplicationStateById/` + applicationId + '/' + newState, {
                 method: 'GET',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${props.user.token}`,
                 }
@@ -115,15 +115,15 @@ function ApplicationViewLayout(props) {
                 })
                 .finally(() => setLoading(false));
         }
-            
+
     }
 
     const rejectApplication = () => {
-        if(props.user && props.user.token) {
+        if (props.user && props.user.token) {
             setLoading(true);
-            fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId,{
+            fetch(`${SERVER_URL}/API/application/rejectApplicationById/` + applicationId, {
                 method: 'GET',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${props.user.token}`,
                 }
@@ -143,7 +143,7 @@ function ApplicationViewLayout(props) {
                 })
                 .finally(() => setLoading(false));
         }
-        
+
     }
 
     if (!applicationData || !studentGradesData) {
@@ -166,7 +166,6 @@ function ApplicationViewLayout(props) {
                 <Col md="auto">
                     <h1>Information about Application</h1>
 
-                    
 
                     <Card style={{marginBottom: '2rem'}}>
                         <Card.Header as="h5">Application Information</Card.Header>
@@ -178,7 +177,8 @@ function ApplicationViewLayout(props) {
                                 : 'No attachment'}
                             </Card.Text>
                             <Card.Text>
-                                <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
+                                <strong>Apply
+                                    Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
                             </Card.Text>
                             <Card.Text>
                                 <strong>State:</strong> {statusBadge()}
@@ -213,10 +213,13 @@ function ApplicationViewLayout(props) {
                                         <strong>Description:</strong> {applicationData.proposal.description}
                                     </Card.Text>
                                     <Card.Text>
-                                        <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
+                                        <strong>Required
+                                            Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
                                     </Card.Text>
                                     <Card.Text>
-                                        {applicationData.proposal.notes && <><div><strong>Notes:</strong> {applicationData.proposal.notes}</div></> }
+                                        {applicationData.proposal.notes && <>
+                                            <div><strong>Notes:</strong> {applicationData.proposal.notes}</div>
+                                        </>}
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}
@@ -259,49 +262,66 @@ function ApplicationViewLayout(props) {
                                     </Card.Text>
                                     <Card.Text>
                                         <strong>Grades:</strong>
-                                        {studentGradesData.length > 0 ? (
-
-                                            <ul>
-                                                {studentGradesData.map((grade, index) => (
-                                                    <li key={index}>{grade.titleCourse}: {grade.grade}</li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            "No grades available."
-                                        )}
                                     </Card.Text>
+                                    {studentGradesData.length > 0 ? (
+                                        <ul>
+                                            {studentGradesData.map((grade, index) => (
+                                                <li key={index}>{grade.titleCourse}: {grade.grade}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <Card.Text>"No grades available."</Card.Text>
+                                    )}
+
                                 </Card.Body>
                             </Card>
                         </Col>
                     </Row>
-                    
-                    {showSuccess && <Alert variant="success" dismissible>The application was successfully updated!</Alert>}
-                    {showError && <Alert variant="danger" dismissible>There was an error updating the application.</Alert>}
+
+                    {showSuccess &&
+                        <Alert variant="success" dismissible>The application was successfully updated!</Alert>}
+                    {showError &&
+                        <Alert variant="danger" dismissible>There was an error updating the application.</Alert>}
 
                     <Row>
-                    { loading ?
-                        <Col style={{textAlign: "center"}}><Spinner animation="border" role="status" className="me-3"/> Sending the email...</Col>
-                        :
-                        (applicationData.status==="PENDING" ? (
-                            <Col style={{textAlign: "center"}}>
-                                <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
-                                <Button variant="outline-success me-2" style={{marginBottom: "1rem"}} onClick={() => acceptApplication()}><FontAwesomeIcon icon="fa-solid fa-check" /> Accept</Button>
-                                <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => rejectApplication()}><FontAwesomeIcon icon="fa-solid fa-xmark" /> Reject</Button>
-                            </Col>
+                        {loading ?
+                            <Col style={{textAlign: "center"}}><Spinner animation="border" role="status"
+                                                                        className="me-3"/> Sending the email...</Col>
+                            :
+                            (applicationData.status === "PENDING" ? (
+                                <Col style={{textAlign: "center"}}>
+                                    <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}}
+                                            onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon
+                                        icon={"chevron-left"}/> Go back </Button>
+                                    <Button variant="outline-success me-2" style={{marginBottom: "1rem"}}
+                                            onClick={() => acceptApplication()}><FontAwesomeIcon
+                                        icon="fa-solid fa-check"/> Accept</Button>
+                                    <Button variant="outline-danger" style={{marginBottom: "1rem"}}
+                                            onClick={() => rejectApplication()}><FontAwesomeIcon
+                                        icon="fa-solid fa-xmark"/> Reject</Button>
+                                </Col>
 
-                        ) : applicationData.status==="ACCEPTED" ? (
-                            <Col style={{textAlign: "center"}}>
-                                <Button variant="outline-info me-2" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
-                                <Button variant="outline-danger" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("REJECTED")}>Update State to Reject</Button>
-                            </Col>
-                        ) : (
-                            <Col style={{textAlign: "center"}}>
-                                <Button variant="outline-success me-2" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("ACCEPTED")}>Update State to Accept</Button>
-                                <Button variant="outline-info" style={{marginBottom: "1rem"}} onClick={() => changeApplicationState("PENDING")}>Update State to Pending</Button>
-                            </Col>
-                        ))
-                        
-                    }
+                            ) : applicationData.status === "ACCEPTED" ? (
+                                <Col style={{textAlign: "center"}}>
+                                    <Button variant="outline-info me-2" style={{marginBottom: "1rem"}}
+                                            onClick={() => changeApplicationState("PENDING")}>Update State to
+                                        Pending</Button>
+                                    <Button variant="outline-danger" style={{marginBottom: "1rem"}}
+                                            onClick={() => changeApplicationState("REJECTED")}>Update State to
+                                        Reject</Button>
+                                </Col>
+                            ) : (
+                                <Col style={{textAlign: "center"}}>
+                                    <Button variant="outline-success me-2" style={{marginBottom: "1rem"}}
+                                            onClick={() => changeApplicationState("ACCEPTED")}>Update State to
+                                        Accept</Button>
+                                    <Button variant="outline-info" style={{marginBottom: "1rem"}}
+                                            onClick={() => changeApplicationState("PENDING")}>Update State to
+                                        Pending</Button>
+                                </Col>
+                            ))
+
+                        }
                     </Row>
                 </Col>
             </Row>
