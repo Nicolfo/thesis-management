@@ -36,6 +36,7 @@ public class EmailServiceImpl implements EmailService {
     private TeacherRepository teacherRepository;
 
     @Override
+    @Async
     public void notifyStudentOfApplicationDecision(Application application) throws MessagingException, IOException {
         Student student = application.getStudent();
 
@@ -63,6 +64,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async
     public void notifySupervisorOfNewApplication(Application application) throws MessagingException, IOException {
         Teacher teacher = application.getProposal().getSupervisor();
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
@@ -74,6 +76,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async
     public void notifySupervisorOfNewThesisRequest(ProposalOnRequestDTO request) throws MessagingException, IOException {
         Teacher teacher = teacherRepository.getReferenceById(request.getSupervisor());
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
@@ -87,6 +90,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async
     public void notifySupervisorOfExpiration(Proposal proposal) throws MessagingException, IOException {
         Teacher teacher = proposal.getSupervisor();
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
@@ -99,6 +103,7 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
+    @Async
     public void notifyCoSupervisorsOfNewApplication(Application application) throws MessagingException, IOException {
         String emailText = "<br>" +
                 "A new application has been received for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as co-supervisor.<br>" +
@@ -110,12 +115,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async
     public void notifySupervisorAndCoSupervisorsOfNewApplication(Application application) throws MessagingException, IOException {
         notifySupervisorOfNewApplication(application);
         notifyCoSupervisorsOfNewApplication(application);
     }
 
-    @Async
+
     void emailSendHelper(String recipient, String subject, String title, String text, String icon) throws MessagingException, IOException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
