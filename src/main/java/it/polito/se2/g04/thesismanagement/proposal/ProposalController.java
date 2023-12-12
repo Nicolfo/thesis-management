@@ -110,7 +110,19 @@ public class ProposalController {
         String username = auth.getName();
         String cds = studentService.getCdS(username);
         proposalSearchRequest.setCds(cds);
-        return proposalService.searchProposals(proposalSearchRequest);
+        return proposalService.searchProposals(proposalSearchRequest,Proposal.Status.ACTIVE);
+    }
+    @PostMapping("/API/proposal/searchArchived")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalFullDTO> searchProposalsArchived(@RequestBody ProposalSearchRequest proposalSearchRequest) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        String cds = studentService.getCdS(username);
+        proposalSearchRequest.setCds(cds);
+        List<ProposalFullDTO> result=proposalService.searchProposals(proposalSearchRequest,Proposal.Status.ACCEPTED);
+        result.addAll(proposalService.searchProposals(proposalSearchRequest,Proposal.Status.ARCHIVED));
+        return result;
     }
 
     @PostMapping("/API/proposal/searchArchived")

@@ -32,7 +32,7 @@ public interface ProposalService {
      * @param proposalSearchRequest request object containing all filters
      * @return A list of ProposalDTO objects representing the search's results.
      */
-    List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest);
+    List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest, Proposal.Status status);
 
     /**
      * A search method that allows to filter archived proposals.

@@ -188,14 +188,14 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Query
     @Override
-    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest,Proposal.Status status) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        addPredicates(proposalSearchRequest, cb, proposal, predicates, Proposal.Status.ACTIVE);
+        addPredicates(proposalSearchRequest, cb, proposal, predicates, status);
 
         cq.where(predicates.toArray(new Predicate[0]));
 
