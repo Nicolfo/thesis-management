@@ -141,13 +141,10 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
 
-    private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates, Proposal.Status status) {
+    private void addPredicates(ProposalSearchRequest proposalSearchRequest, CriteriaBuilder cb, Root<Proposal> proposal, List<Predicate> predicates) {
         if (proposalSearchRequest.getCds() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("cds")), "%" + proposalSearchRequest.getCds().toUpperCase() + "%"));
         }
-
-        predicates.add(cb.like(cb.upper(proposal.get("status")), "%" + status + "%"));
-
 
         if (proposalSearchRequest.getTitle() != null) {
             predicates.add(cb.like(cb.upper(proposal.get("title")), "%" + proposalSearchRequest.getTitle().toUpperCase() + "%"));
@@ -182,9 +179,6 @@ public class ProposalServiceImpl implements ProposalService {
             }
             predicates.add(cb.equal(cb.upper(proposal.get("level")), proposalSearchRequest.getLevel().toUpperCase()));
         }
-        if (status != null) {
-            predicates.add(cb.equal(proposal.get("status"), status));
-        }
     }
 
 
@@ -197,7 +191,7 @@ public class ProposalServiceImpl implements ProposalService {
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        addPredicates(proposalSearchRequest, cb, proposal, predicates, Proposal.Status.ACTIVE);
+        predicates.add(cb.equal(proposal.get("status"), Proposal.Status.ACTIVE));
 
         cq.where(predicates.toArray(new Predicate[0]));
 
@@ -249,7 +243,9 @@ public class ProposalServiceImpl implements ProposalService {
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        addPredicates(proposalSearchRequest, cb, proposal, predicates, Proposal.Status.ARCHIVED);
+        addPredicates(proposalSearchRequest, cb, proposal, predicates);
+
+        predicates.add(cb.or(cb.equal(proposal.get("status"), Proposal.Status.ARCHIVED), cb.equal(proposal.get("status"), Proposal.Status.ACCEPTED)));
 
         cq.where(predicates.toArray(new Predicate[0]));
 

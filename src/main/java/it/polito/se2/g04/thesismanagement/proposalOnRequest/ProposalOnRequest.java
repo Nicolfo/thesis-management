@@ -43,7 +43,6 @@ public class ProposalOnRequest {
     @Id
     @GeneratedValue
     private Long id;
-
     private String title;
     private String description;
     @ManyToOne
@@ -56,8 +55,6 @@ public class ProposalOnRequest {
     private Date approvalDate;
     @Enumerated(EnumType.STRING)
     private Status status;
-
-
 
     public ProposalOnRequestDTO toDTO() {
         return new ProposalOnRequestDTO(this.id,
