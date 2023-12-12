@@ -216,4 +216,56 @@ public class ProposalOnRequestTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
+    public void secretaryAcceptedTest() throws Exception {
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}", proposal.get(0).getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
+        assertEquals(result.getStatus(), ProposalOnRequest.Status.SECRETARY_ACCEPTED, "this proposal should be accepted");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted/" + new Random().nextLong(4, 100))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted/a")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
+    public void secretaryRejectedTest() throws Exception {
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/{id}", proposal.get(0).getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
+        assertEquals(result.getStatus(), ProposalOnRequest.Status.SECRETARY_REJECTED, "this proposal should be accepted");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/" + new Random().nextLong(4, 100))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/a")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }
