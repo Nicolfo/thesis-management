@@ -108,6 +108,9 @@ public class ProposalOnRequestTest {
         mapper.registerModule(new JavaTimeModule());
         ProposalOnRequestDTO[] result = mapper.readValue(json, ProposalOnRequestDTO[].class);
         assertEquals(3, result.length, "this proposal should be 3 long");
+        assertEquals(result[0].getId(),proposal.get(0).getId(),"id should be the same");
+        assertEquals(result[1].getId(),proposal.get(1).getId(),"id should be the same");
+        assertEquals(result[2].getId(),proposal.get(2).getId(),"id should be the same");
 
         proposalOnRequestService.proposalOnRequestSecretaryRejected(proposal.get(0).getId());
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getAllPending")
@@ -119,6 +122,8 @@ public class ProposalOnRequestTest {
         mapper.registerModule(new JavaTimeModule());
         result = mapper.readValue(json, ProposalOnRequestDTO[].class);
         assertEquals(2, result.length, "this proposal should be 2 long");
+        assertEquals(result[0].getId(),proposal.get(1).getId(),"id should be the same");
+        assertEquals(result[1].getId(),proposal.get(2).getId(),"id should be the same");
 
         proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposal.get(1).getId());
         proposalOnRequestService.proposalOnRequestTeacherRejected((proposal.get(2).getId()));
@@ -131,8 +136,6 @@ public class ProposalOnRequestTest {
         mapper.registerModule(new JavaTimeModule());
         result = mapper.readValue(json, ProposalOnRequestDTO[].class);
         assertEquals(0, result.length, "this proposal should be empty");
-
-
     }
 
     @Test
