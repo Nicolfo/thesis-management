@@ -83,6 +83,12 @@ public class CreateProposalTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
     }
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
+    public void exceptionTest(){
+
+    }
 
 
 }

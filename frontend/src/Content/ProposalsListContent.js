@@ -158,7 +158,7 @@ function ProposalsListContent({user, applicationDate}) {
             <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true}>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>
-                        <Button variant="outline-primary"  className="me-2" onClick={() => {
+                        <Button variant="outline-primary" className="me-2" onClick={() => {
                             doSearch();
                             setShowSearchBar(false);
                         }}> <FontAwesomeIcon icon={"magnifying-glass"}/> SEARCH BY </Button>
@@ -170,44 +170,38 @@ function ProposalsListContent({user, applicationDate}) {
                     <Form>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Title" value={title}
-                                              onChange={event => setTitle(event.target.value)}/>
-                                <label htmlFor="floatingTitle"> Title </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Title" value={title} onChange={event => setTitle(event.target.value)} />
+                                <label htmlFor="floatingTitle" > Title </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Keyword(s)" value={keywords}
-                                              onChange={event => setKeywords(event.target.value)}/>
-                                <label htmlFor="floatingKeyword(s)"> Keyword(s) </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Keyword(s)" value={keywords} onChange={event => setKeywords(event.target.value)} />
+                                <label htmlFor="floatingKeyword(s)" > Keyword(s) </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Type" value={type}
-                                              onChange={event => setType(event.target.value)}/>
-                                <label htmlFor="floatingType(s)"> Type(s) </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Type" value={type} onChange={event => setType(event.target.value)} />
+                                <label htmlFor="floatingType(s)" > Type(s) </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Description" value={description}
-                                              onChange={event => setDescription(event.target.value)}/>
-                                <label htmlFor="floatingDescription"> Description </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Description" value={description} onChange={event => setDescription(event.target.value)} />
+                                <label htmlFor="floatingDescription" > Description </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Required Knowledge" value={requiredKnowledge}
-                                              onChange={event => setRequiredKnowledge(event.target.value)}/>
-                                <label htmlFor="floatingKnowledge"> Required Knowledge </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Required Knowledge" value={requiredKnowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
+                                <label htmlFor="floatingKnowledge" > Required Knowledge </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Floating>
-                                <Form.Control type="text" placeholder="Notes" value={notes}
-                                              onChange={event => setNotes(event.target.value)}/>
-                                <label htmlFor="floatingNotes"> Notes </label>
+                                <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Notes" value={notes} onChange={event => setNotes(event.target.value)} />
+                                <label htmlFor="floatingNotes" > Notes </label>
                             </Form.Floating>
                         </Form.Group>
                         <Form.Group className="mb-3">
@@ -285,11 +279,11 @@ function ProposalEntry({proposal}) {
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
-                    <Col><b>{proposal.title}</b></Col>
+                    <Col><strong>{proposal.title}</strong></Col>
                     <Col className="d-flex justify-content-end">
                         {proposal.hasApplication ? <Button disabled={true}>
-                                <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
-                            </Button> : <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
+                            <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
+                        </Button> : <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
                             <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
                         </Button>
                         }
@@ -301,25 +295,25 @@ function ProposalEntry({proposal}) {
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
                     <Row>
-                        <Col><b>CdS</b><br/>{proposal.cds}</Col>
-                        <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                        <Col><b>Level</b><br/>{proposal.level}</Col>
-                        <Col><b>Type</b><br/>{proposal.type}</Col>
+                        <Col><strong>CdS</strong><br/>{proposal.cds}</Col>
+                        <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
+                        <Col><strong>Level</strong><br/>{proposal.level}</Col>
+                        <Col><strong>Type</strong><br/>{proposal.type}</Col>
                     </Row>
                     <Row>
-                        <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
+                        <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>
                         {proposal.requiredKnowledge.length > 0 &&
-                            <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
+                            <Col><strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}</Col>
                         }
-                        <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
+                        <Col><strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
                     </Row>
                     <Row className="pt-2">
                         <Col
-                            md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
+                            md="3"><strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
                         </Col>
                         {proposal.coSupervisors.length > 0 &&
                             <Col
-                                md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                                md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
                             </Col>
                         }
                     </Row>

@@ -4,7 +4,6 @@ import API from "../API/Api";
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "react-oauth2-code-pkce";
 
-
 function BrowseDecisions(props) {
     const {token} = useContext(AuthContext);
 
@@ -12,15 +11,13 @@ function BrowseDecisions(props) {
 
     const navigate = useNavigate();
 
-
-
     useEffect(() => {
-        if( !token )
+        if (!token)
             navigate("/notAuthorized");
-        if(props.user && props.user.role==="TEACHER")
+        if (props.user && props.user.role === "TEACHER")
             navigate("/notAuthorized");
         const getApplicationsByStudent = async () => {
-            if(!props.user)
+            if (!props.user)
                 return;
 
             try {
@@ -38,13 +35,13 @@ function BrowseDecisions(props) {
 
     return (
         <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-            <Card.Header as="h1" style={{"textAlign": "center"}}  className="py-3">
+            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
                 Your applications
             </Card.Header>
-            { applications.length > 0 ?
+            {applications.length > 0 ?
                 <Table>
                     <tbody>
-                    { applications.map((application) => <TableRow key={application.id} application={application} /> )}
+                    {applications.map((application) => <TableRow key={application.id} application={application}/>)}
                     </tbody>
                 </Table>
                 :
@@ -58,7 +55,7 @@ function BrowseDecisions(props) {
 
 
 function TableRow(props) {
-    const { application } = props;
+    const {application} = props;
 
     const statusBadge = () => {
         if (application.status === "PENDING")
@@ -75,7 +72,7 @@ function TableRow(props) {
             <td>
                 <Row className="my-3">
                     <Col lg={5}>
-                        <b> {application.proposalTitle} </b>
+                        <strong> {application.proposalTitle} </strong>
                     </Col>
                     <Col lg={5}>
                         Supervised by: <em> {application.supervisorSurname} {application.supervisorName} </em>

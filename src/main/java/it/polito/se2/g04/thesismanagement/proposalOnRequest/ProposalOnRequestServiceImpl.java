@@ -8,6 +8,8 @@ import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,9 +22,8 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final ProposalOnRequestRepository proposalOnRequestRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
-
     private final String proposalIsNotPendingError = "Proposal On Request is not pending";
-
+  
     @Override
     public List<ProposalOnRequestFullDTO> getAllPending() {
         List<ProposalOnRequest> pendingProposals = proposalOnRequestRepository.getProposalOnRequestByStatus(ProposalOnRequest.Status.PENDING);
@@ -33,6 +34,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         return pendingProposalDTOs;
     }
 
+    /*
     @Override
     public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO) {
         //PARSE TEACHER
@@ -66,7 +68,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
 
 
         return proposalOnRequestRepository.save(toAdd).toDTO();
-    }
+    }*/
 
     private ProposalOnRequest checkProposalId(Long id) {
         if (!proposalOnRequestRepository.existsById(id)) {
@@ -98,8 +100,38 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
-
-
+    @Override
+    public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO) {
+        //PARSE TEACHER
+        if (!teacherRepository.existsById(proposalOnRequestDTO.getSupervisor()))
+            throw new TeacherNotFoundException("Teacher not found exception");
+        Teacher teacher = teacherRepository.getReferenceById(proposalOnRequestDTO.getSupervisor());
+        //PARSE STUDENT
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!studentRepository.existsByEmail(auth.getName()))
+            throw new StudentNotFoundException("Student not found exception");
+        Student student = studentRepository.getStudentByEmail(auth.getName());
+        //PARSE CO-SUPERVISORS
+        List<Teacher> coSupervisors;
+        if (proposalOnRequestDTO.getCoSupervisors() == null || proposalOnRequestDTO.getCoSupervisors().isEmpty())
+            coSupervisors = List.of();
+        else {
+            coSupervisors = proposalOnRequestDTO.getCoSupervisors().stream().map(it -> {
+                if (!teacherRepository.existsById(it))
+                    throw new TeacherNotFoundException("Some co-supervisor has not been found");
+                return teacherRepository.getReferenceById(it);
+            }).toList();
+        }
+        ProposalOnRequest toAdd = new ProposalOnRequest(
+                proposalOnRequestDTO.getTitle(),
+                proposalOnRequestDTO.getDescription(),
+                teacher,
+                student,
+                coSupervisors,
+                proposalOnRequestDTO.getApprovalDate()
+        );
+        return proposalOnRequestRepository.save(toAdd).toDTO();
+    }
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherAccepted(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
@@ -140,8 +172,6 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             proposal.setApprovalDate(new Date());
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
-
-
 }
 
 

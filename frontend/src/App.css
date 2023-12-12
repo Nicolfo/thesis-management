@@ -146,6 +146,11 @@ h2 {
   background-color: #FFDDC0 !important;
 }
 
+.rmsc .dropdown-container {
+  border-radius: 25px var(--rmsc-radius);
+  --rmsc-radius: 25px;
+}
+
 .background-with-image {
   height: 100vh;
   width: 100vw;

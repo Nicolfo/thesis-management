@@ -1,7 +1,17 @@
 import {useState} from "react";
 import {useEffect, useContext} from "react";
 import API from "../API/Api";
-import {Accordion, Button, useAccordionButton, Card, Row, Col, AccordionContext, DropdownButton, Dropdown} from "react-bootstrap";
+import {
+    Accordion,
+    Button,
+    useAccordionButton,
+    Card,
+    Row,
+    Col,
+    AccordionContext,
+    DropdownButton,
+    Dropdown
+} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
@@ -96,16 +106,17 @@ function CustomToggle({eventKey, callback}) {
 function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchive}) {
     const navigate = useNavigate();
 
-    function deleteProp(proposalId, archiving) {
+    function deleteProp(proposalId, archiving){
         if (archiving) {
             setDeleting(true);
             setArchive(true);
             setDeletingID(proposalId);
         } else {
             setDeleting(true);
-            setDeletingID(proposalId)
+            setDeletingID(proposalId);
         }
     }
+
 
     return (
         <>
@@ -160,25 +171,25 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                 <Accordion.Collapse eventKey={proposal.id} flush>
                     <Card.Body>
                         <Row>
-                            <Col><b>CdS</b><br/>{proposal.cds}</Col>
-                            <Col><b>Groups</b><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                            <Col><b>Level</b><br/>{proposal.level}</Col>
-                            <Col><b>Type</b><br/>{proposal.type}</Col>
+                            <Col><strong>CdS</strong><br/>{proposal.cds}</Col>
+                            <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
+                            <Col><strong>Level</strong><br/>{proposal.level}</Col>
+                            <Col><strong>Type</strong><br/>{proposal.type}</Col>
                         </Row>
                         <Row>
-                            <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
+                            <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>
                             {proposal.requiredKnowledge.length > 0 &&
-                                <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
+                                <Col><strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}</Col>
                             }
-                            <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
+                            <Col><strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
                         </Row>
                         <Row className="pt-2">
                             <Col md="3">
-                                <b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
+                                <strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
                             </Col>
                             {proposal.coSupervisors && proposal.coSupervisors.length > 0 &&
                                 <Col
-                                    md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                                    md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
                                 </Col>
                             }
                         </Row>
