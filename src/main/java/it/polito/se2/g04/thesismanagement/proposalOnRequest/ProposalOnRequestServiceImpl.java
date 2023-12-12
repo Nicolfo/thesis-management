@@ -1,6 +1,12 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
-import it.polito.se2.g04.thesismanagement.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Student.StudentNotFoundException;
+import it.polito.se2.g04.thesismanagement.student.Student;
+import it.polito.se2.g04.thesismanagement.student.StudentRepository;
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final ProposalOnRequestRepository proposalOnRequestRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
 
     private final String proposalIsNotPendingError = "Proposal On Request is not pending";
 
@@ -23,6 +31,41 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             pendingProposalDTOs.add(proposal.toFullDTO());
         }
         return pendingProposalDTOs;
+    }
+
+    @Override
+    public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO) {
+        //PARSE TEACHER
+        if(!teacherRepository.existsById(proposalOnRequestDTO.getSupervisor()))
+            throw new TeacherNotFoundException("Teacher not found exception");
+        Teacher teacher = teacherRepository.getReferenceById(proposalOnRequestDTO.getId());
+        //PARSE STUDENT
+        if(!studentRepository.existsById(proposalOnRequestDTO.getStudentId()))
+            throw new StudentNotFoundException("Student not found exception");
+        Student student = studentRepository.getReferenceById(proposalOnRequestDTO.getStudentId());
+        //PARSE CO-SUPERVISORS
+        List<Teacher> coSupervisors;
+        if(proposalOnRequestDTO.getCoSupervisors()==null || proposalOnRequestDTO.getCoSupervisors().isEmpty())
+            coSupervisors= List.of();
+        else{
+            coSupervisors= proposalOnRequestDTO.getCoSupervisors().stream().map(it->{
+                if(!teacherRepository.existsById(it))
+                    throw new TeacherNotFoundException("Some co-supervisor has not been found");
+                return teacherRepository.getReferenceById(it);
+            }).toList();
+        }
+
+        ProposalOnRequest toAdd = new ProposalOnRequest(
+                proposalOnRequestDTO.getTitle(),
+                proposalOnRequestDTO.getDescription(),
+                teacher,
+                student,
+                coSupervisors,
+                proposalOnRequestDTO.getApprovalDate()
+        );
+
+
+        return proposalOnRequestRepository.save(toAdd).toDTO();
     }
 
     private ProposalOnRequest checkProposalId(Long id) {
@@ -41,9 +84,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
-        proposalOnRequestRepository.save(proposal);
-
-        return proposal.toDTO();
+        return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
     @Override
@@ -54,10 +95,9 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.SECRETARY_REJECTED);
-        proposalOnRequestRepository.save(proposal);
-
-        return proposal.toDTO();
+        return proposalOnRequestRepository.save(proposal).toDTO();
     }
+
 
 
     @Override
@@ -66,10 +106,9 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
-        proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
-        proposal.setApprovalDate(new Date());
-        proposalOnRequestRepository.save(proposal);
-        return proposal.toDTO();
+            proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
+            proposal.setApprovalDate(new Date());
+            return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
     @Override
@@ -79,8 +118,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REJECTED);
-        proposalOnRequestRepository.save(proposal);
-        return proposal.toDTO();
+        return proposalOnRequestRepository.save(proposal).toDTO();
     }
     @Override
     public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id) {
@@ -89,8 +127,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
-        proposalOnRequestRepository.save(proposal);
-        return proposal.toDTO();
+        return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
 }
