@@ -124,7 +124,7 @@ public class ProposalController {
         result.addAll(proposalService.searchProposals(proposalSearchRequest,Proposal.Status.ARCHIVED));
         return result;
     }
-
+/*
     @PostMapping("/API/proposal/searchArchived")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
@@ -137,7 +137,7 @@ public class ProposalController {
         proposalSearchRequest.setSupervisorIdList(List.of(supervisorId));
         return proposalService.searchArchivedProposals(proposalSearchRequest);
     }
-
+*/
     @GetMapping("/API/proposal/getArchived")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
