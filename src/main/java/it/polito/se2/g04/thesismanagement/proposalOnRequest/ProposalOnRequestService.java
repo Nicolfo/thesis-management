@@ -7,9 +7,6 @@ public interface ProposalOnRequestService {
     public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id);
     public ProposalOnRequestDTO proposalOnRequestSecretaryRejected(Long id);
     public ProposalOnRequestDTO proposalOnRequestTeacherRejected(Long id);
-
-    ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO);
-
     public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO);
     public ProposalOnRequestDTO proposalOnRequestTeacherAccepted(Long id);
     public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id);

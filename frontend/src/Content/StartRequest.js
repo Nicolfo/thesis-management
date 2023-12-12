@@ -82,8 +82,8 @@ function StartRequest(props) {
                 description: description
             }
 
-            // startRequest(request);
-            console.log(request);
+            startRequest(request);
+            // console.log(request);
         }
 
         setValidated(true);
