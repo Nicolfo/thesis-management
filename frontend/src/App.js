@@ -60,6 +60,9 @@ function App() {
         } else {
             newOffset = date.diff(realDate, "day") + 1;
         }
+
+        API.setVirtualClock(newOffset);
+
         setOffsetDate(newOffset);
         setApplicationDate(realDate.add(newOffset, "day"));
     };

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.core.io.Resource;
@@ -114,8 +115,8 @@ public class EmailServiceImpl implements EmailService {
         notifyCoSupervisorsOfNewApplication(application);
     }
 
-
-    private void emailSendHelper(String recipient, String subject, String title, String text, String icon) throws MessagingException, IOException {
+    @Async("asyncExecutor")
+    void emailSendHelper(String recipient, String subject, String title, String text, String icon) throws MessagingException, IOException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         Resource resource = resourceLoader.getResource("classpath:/email/template.html");

@@ -11,6 +11,7 @@ import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
+import it.polito.se2.g04.thesismanagement.virtualclock.VirtualClockController;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -22,6 +23,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -328,20 +330,22 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Scheduled(fixedRate = 10 * 60 * 1000)
-    @Transactional
     public void archiveExpiredProposals() {
-        Date now = Calendar.getInstance().getTime();
+        Date nowOld = Calendar.getInstance().getTime();
+        Calendar now = Calendar.getInstance();
+        now.setTime(nowOld);
+        now.add(Calendar.DAY_OF_MONTH,VirtualClockController.offset);
+        Calendar oneWeekFromNow = (Calendar) now.clone();
 
-        Calendar oneWeekFromNow = Calendar.getInstance();
-        oneWeekFromNow.setTime(now);
         oneWeekFromNow.add(Calendar.WEEK_OF_YEAR, 1);
         List<Proposal> proposals = proposalRepository.findAllByStatusNotIn(List.of(Proposal.Status.ARCHIVED,Proposal.Status.DELETED));
 
         for (Proposal proposal : proposals) {
             Date expiration = proposal.getExpiration();
+            System.out.println("expiration : "+ expiration+ " now : " +now.getTime() + " check "+now.getTime().after(expiration));
             if (expiration != null) {
                 boolean edited= false;
-                if (now.after(expiration)) {
+                if (now.getTime().after(expiration)) {
                     proposal.setStatus(Proposal.Status.ARCHIVED);
                     edited = true;
                 }

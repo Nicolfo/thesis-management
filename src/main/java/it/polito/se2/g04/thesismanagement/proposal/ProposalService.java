@@ -46,5 +46,7 @@ public interface ProposalService {
     ProposalFullDTO archiveProposal(Long id);
     void deleteProposal(Long id);
 
+     void archiveExpiredProposals();
+
 }
 

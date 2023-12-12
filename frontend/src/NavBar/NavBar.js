@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {Button, Col, Form, Nav} from 'react-bootstrap';
+import {Button, Col, Form, Nav, Row} from 'react-bootstrap';
 import {useState, useContext, useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {AuthContext} from 'react-oauth2-code-pkce';
@@ -12,6 +12,7 @@ function NavBar(props) {
     const {tokenData, token, login, logOut, loginInProgress, error} = useContext(AuthContext);
 
     const [showVirtualClock, setShowVirtualClock] = useState(false);
+    const [date,setDate]=useState(props.applicationDate.format('YYYY-MM-DD'));
 
     const path = useLocation().pathname;
     const navigate = useNavigate();
@@ -168,14 +169,18 @@ function NavBar(props) {
                         <Nav>
                             <div className="d-flex justify-content-center border-b">
                                 {showVirtualClock && (
+
                                     <Col xs="auto" className="me-lg-2">
+                                        <Row>
                                         <Form.Control
                                             className={props.user ? "dateForm no-border-sm" : "dateForm-start no-border-sm"}
                                             type="date"
-                                            value={props.applicationDate.format('YYYY-MM-DD')}
+                                            value={date}
                                             min={props.realDate.format('YYYY-MM-DD')}
-                                            onChange={(event) => props.updateApplicationDate(event.target.value)}
+                                            onChange={(event) => setDate(event.target.value)}
                                         />
+                                        <Button onClick={(event) => props.updateApplicationDate(date)}>Set</Button>
+                                        </Row>
                                     </Col>
                                 )}
                                 <Button className={props.user ? "no-border-sm" : "no-border-sm btn-primary-start"}
