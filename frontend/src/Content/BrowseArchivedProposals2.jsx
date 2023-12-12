@@ -9,7 +9,7 @@ import {
     Offcanvas,
     useAccordionButton,
     Alert,
-    DropdownButton, Dropdown
+    DropdownButton, Dropdown, OverlayTrigger, Tooltip
 } from "react-bootstrap";
 import API from "../API/Api";
 import { useState, useEffect, useContext } from "react";
@@ -298,14 +298,18 @@ function ProposalEntry({ proposal, user, deleteProp, setArchivedView }) {
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
-
-                            <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
-                                <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-solid fa-trash-can" />
-                                    <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-                                    <span className="d-none d-md-table-cell"> Delete </span>
-                                </div>
-                            </Dropdown.Item>
+                            
+                            <OverlayTrigger overlay={proposal.status === "ACCEPTED" ? <Tooltip id="tooltip-disabled">Unable to delete because this proposal has been accepted!</Tooltip> : <></>} placement="left">
+                                <span className="d-inline-block">
+                                    <Dropdown.Item as="button" disabled={proposal.status === "ACCEPTED"} style={{color: proposal.status === "ACCEPTED" ? "#FBA65C" : "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon="fa-solid fa-trash-can" />
+                                            <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                                            <span className="d-none d-md-table-cell"> Delete </span>
+                                        </div>
+                                    </Dropdown.Item>
+                                </span>
+                            </OverlayTrigger>
                         </DropdownButton>
                         <CustomToggle eventKey={proposal.id} />
                     </Col>

@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationBadRequestFormatException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationDeletedException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.DuplicateApplicationException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ProposalNotActiveException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalOwnershipException;
@@ -13,11 +14,13 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +39,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationDTO> getApplicationsByProf(String profEmail) {
         return applicationRepository
-                .getApplicationByProposal_Supervisor_EmailAndStatusIsNot(profEmail,ApplicationStatus.DELETED)
+                .getApplicationByProposal_Supervisor_EmailAndStatusIsNotOrderByProposalId(profEmail, ApplicationStatus.DELETED)
                 .stream().map(it -> {
                     ApplicationDTO dto = new ApplicationDTO();
                     dto.setId(it.getId());
@@ -57,7 +60,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail) {
         List<Application> toReturn = applicationRepository.getApplicationByStudentEmail(studentEmail)
-                .stream().filter(it->it.getStatus()!=ApplicationStatus.DELETED).toList();
+                .stream().filter(it -> it.getStatus() != ApplicationStatus.DELETED).collect(Collectors.toList());
+
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
             dto.setId(it.getId());
@@ -77,18 +81,35 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String profEmail = auth.getName();
-        Proposal proposal=proposalRepository.getReferenceById(proposalId);
-        if (proposal.getSupervisor().getEmail().compareTo(profEmail) == 0 &&  proposal.getStatus()!= Proposal.Status.DELETED) {
+        Proposal proposal = proposalRepository.getReferenceById(proposalId);
+        if (proposal.getSupervisor().getEmail().compareTo(profEmail) == 0 && proposal.getStatus() != Proposal.Status.DELETED) {
             return applicationRepository
                     .getApplicationByProposal_Id(proposalId)
-                    .stream().filter(it-> it.getStatus()!=ApplicationStatus.DELETED).map(this::getApplicationDTO).toList();
+                    .stream().filter(it -> it.getStatus() != ApplicationStatus.DELETED).map(this::getApplicationDTO).toList();
         }
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: " + profEmail);
     }
 
     @Override
+    public List<ApplicationDTO> getApplicationsByProposalId(Long proposalId) {
+        if (!proposalRepository.existsById(proposalId)) {
+            throw new ProposalNotFoundException("Specified proposal id not found");
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studEmail = auth.getName();
+        Student student = studentRepository.getStudentByEmail(studEmail);
+        Proposal proposal = proposalRepository.getReferenceById(proposalId);
+        if (proposal.getStatus() != Proposal.Status.DELETED) {
+            return applicationRepository
+                    .getApplicationByProposalIdAndStudentId(proposalId, student.getId())
+                    .stream().filter(it -> it.getStatus() != ApplicationStatus.DELETED).map(this::getApplicationDTO).toList();
+        }
+        return null;
+    }
+
+    @Override
     public ApplicationDTO getApplicationById(Long applicationId) {
-        if(applicationRepository.getApplicationById(applicationId).getStatus()==ApplicationStatus.DELETED){
+        if (applicationRepository.getApplicationById(applicationId).getStatus() == ApplicationStatus.DELETED) {
             throw new ApplicationDeletedException("this application is flagged to be deleted");
         }
         return getApplicationDTO(applicationRepository.getApplicationById(applicationId));
@@ -131,18 +152,35 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public void applyForProposal(ApplicationDTO applicationDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!studentRepository.existsByEmail(auth.getName())) {
+            throw new ApplicationBadRequestFormatException("The student doesn't exist");
+        }
+
+        Student loggedUser = studentRepository.getStudentByEmail(auth.getName());
+
+        if (applicationDTO.getProposalId() == null || !proposalRepository.existsById(applicationDTO.getProposalId())) {
+            throw new ApplicationBadRequestFormatException("The proposal doesn't exist");
+        }
+
+        Proposal proposal = proposalRepository.getReferenceById(applicationDTO.getProposalId());
+        if (proposal.getStatus() != Proposal.Status.ACTIVE) {
+            throw new ProposalNotActiveException("This proposal is not active");
+        }
+
+        if (applicationRepository.existsByProposalAndStudent(proposal, loggedUser)) {
+            throw new DuplicateApplicationException("An application already exists for this proposal");
+        }
+
+        Attachment attachment = applicationDTO.getAttachmentId() != null ? attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()) : null;
+        Application toSave = new Application(loggedUser, attachment, applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
+        Application saved = applicationRepository.save(toSave);
         try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            Student loggedUser = studentRepository.getStudentByEmail(auth.getName());
-            if(proposalRepository.getReferenceById(applicationDTO.getProposalId()).getStatus()!= Proposal.Status.ACTIVE){
-                throw new ProposalNotActiveException("this proposal is not active");
-            }
-            Attachment attachment= applicationDTO.getAttachmentId()!=null?attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()):null;
-            Application toSave = new Application(loggedUser, attachment, applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
-            Application saved = applicationRepository.save(toSave);
             emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
-        } catch (Exception ex) {
-            throw new ApplicationBadRequestFormatException("The request field are null or the ID are not present in DB");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

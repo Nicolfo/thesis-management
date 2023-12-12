@@ -1,23 +1,29 @@
-import { Card, Form, Button, Row, Col, Accordion, AccordionContext, Offcanvas, useAccordionButton, Alert } from "react-bootstrap";
+import {
+    Card,
+    Form,
+    Button,
+    Row,
+    Col,
+    Accordion,
+    AccordionContext,
+    Offcanvas,
+    useAccordionButton,
+    Alert
+} from "react-bootstrap";
 import API from "../API/Api";
-import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { MultiSelect } from "react-multi-select-component";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useState, useEffect, useContext} from "react";
+import {useNavigate} from "react-router-dom";
+import {MultiSelect} from "react-multi-select-component";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
+import {forEach} from "react-bootstrap/ElementChildren";
 
-function ProposalsListContent({ user, applicationDate }) {
+function ProposalsListContent({user, applicationDate}) {
 
     const navigate = useNavigate();
-
-    // const levelOptions = [
-    //     "Any",
-    //     "Bachelor's",
-    //     "Master's"
-    // ];
     const {token} = useContext(AuthContext);
-    const [showSearchBar,setShowSearchBar] = useState(false);
+    const [showSearchBar, setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
     const [selectedSupervisorIds, setSelectedSupervisorIds] = useState([]);
     const [selectedCoSupervisorIds, setSelectedCoSupervisorIds] = useState([]);
@@ -33,7 +39,7 @@ function ProposalsListContent({ user, applicationDate }) {
     const [error, setError] = useState("");
 
 
-    const clearFields = ()=> {
+    const clearFields = () => {
         setTitle("");
         setNotes("");
         setRequiredKnowledge("");
@@ -46,28 +52,46 @@ function ProposalsListContent({ user, applicationDate }) {
     }
 
     useEffect(() => {
-        if( !token )
+        if (!token)
             navigate("/notAuthorized");
-        if(user && user.role==="TEACHER")
+        if (user && user.role !== "STUDENT")
             navigate("/notAuthorized");
-        if (!user) {
+        if (!user)
             return;
-        }
 
         const getResources = async () => {
             try {
                 const teachers = await API.getAllSupervisors(user.token);
-                setTeachersList(teachers.map(t => { return { label: `${t.surname} ${t.name}`, value: t.id }; }));
+                setTeachersList(teachers.map(t => ({
+                    label: `${t.surname} ${t.name}`,
+                    value: t.id
+                })));
+
                 const groups = await API.getAllGroups(user.token);
-                setGroupsList(groups.map(g => { return { label: `${g.name}`, value: g.codGroup }; }));
+                setGroupsList(groups.map(g => ({
+                    label: `${g.name}`,
+                    value: g.codGroup
+                })));
+
                 const proposals = await API.searchProposals(user.token, {});
-                setProposalsList(proposals);
+                const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
+                    const application = await API.getApplicationsByProposalId(user.token, proposal.id);
+                    const hasApplication = application.length > 0 ? 1 : 0;
+                    return {
+                        ...proposal,
+                        hasApplication: hasApplication,
+                    };
+                }));
+
+                setProposalsList(updatedProposalsList);
             } catch (error) {
                 handleError(error);
             }
         };
+
         getResources();
-    }, [user])
+    }, [user]);
+
 
     const doSearch = async () => {
         const requestBody = {
@@ -84,18 +108,27 @@ function ProposalsListContent({ user, applicationDate }) {
 
         // Remove properties with null values
         Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
-        
+
         try {
             const proposals = await API.searchProposals(user.token, requestBody);
-            setProposalsList(proposals);
+            const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
+                const application = await API.getApplicationsByProposalId(user.token, proposal.id);
+                const hasApplication = application.length > 0 ? 1 : 0;
+                return {
+                    ...proposal,
+                    hasApplication: hasApplication,
+                };
+            }));
+
+            setProposalsList(updatedProposalsList);
         } catch (error) {
             handleError(error);
         }
-        
+
     }
 
     const handleError = error => {
-        if (error.error) 
+        if (error.error)
             setError(error.error);
         else if (error.message)
             setError(error.message);
@@ -107,26 +140,30 @@ function ProposalsListContent({ user, applicationDate }) {
 
     return (
         <>
-            { error !== "" &&
-              <Row>
-                <Col>
-                  <Alert variant="danger" dismissible onClose={() => setError("")} >
-                    {error}
-                  </Alert>
-                </Col>
-              </Row>
+            {error !== "" &&
+                <Row>
+                    <Col>
+                        <Alert variant="danger" dismissible onClose={() => setError("")}>
+                            {error}
+                        </Alert>
+                    </Col>
+                </Row>
             }
             <Row style={{"textAlign": "end"}}>
                 <Col>
-                    <Button onClick={()=> setShowSearchBar(it=> !it )}> <FontAwesomeIcon icon={"magnifying-glass"} /> Show searching filters </Button>
+                    <Button onClick={() => setShowSearchBar(it => !it)}> <FontAwesomeIcon
+                        icon={"magnifying-glass"}/> Show searching filters </Button>
                 </Col>
             </Row>
-            <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true} >
+            <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true}>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>
-                        <Button variant="outline-primary" onClick={() => { doSearch(); setShowSearchBar(false); }}> <FontAwesomeIcon icon={"magnifying-glass"} /> SEARCH BY </Button>
-                        {" "}
-                        <Button variant="outline-danger" size="sm" onClick={clearFields}> <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-left" /> Reset filters </Button>
+                        <Button variant="outline-primary"  className="me-2" onClick={() => {
+                            doSearch();
+                            setShowSearchBar(false);
+                        }}> <FontAwesomeIcon icon={"magnifying-glass"}/> SEARCH BY </Button>
+                        <Button variant="outline-danger" onClick={clearFields}> <FontAwesomeIcon
+                            icon="fa-solid fa-arrow-rotate-left"/> Reset filters </Button>
                     </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
@@ -167,15 +204,6 @@ function ProposalsListContent({ user, applicationDate }) {
                                 <label htmlFor="floatingNotes" > Notes </label>
                             </Form.Floating>
                         </Form.Group>
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label>CdS</Form.Label>*/}
-                        {/*    <MultiSelect*/}
-                        {/*        options={cdsList}*/}
-                        {/*        value={selectedCds}*/}
-                        {/*        onChange={setSelectedCds}*/}
-                        {/*        labelledBy="Select CdS"*/}
-                        {/*    />*/}
-                        {/*</Form.Group>*/}
                         <Form.Group className="mb-3">
                             <Form.Label>Supervisor(s)</Form.Label>
                             <MultiSelect
@@ -203,42 +231,30 @@ function ProposalsListContent({ user, applicationDate }) {
                                 labelledBy="Select Groups"
                             />
                         </Form.Group>
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label> Level </Form.Label>*/}
-                        {/*    <Form.Select name="level" value={level} onChange={(e) => setLevel(e.target.value)}>*/}
-                        {/*        { levelOptions.map(levelOption => <option value={levelOption}>{levelOption}</option>) }*/}
-                        {/*    </Form.Select>*/}
-                        {/*</Form.Group>*/}
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label>Min. Expiration Date</Form.Label>*/}
-                        {/*    <Form.Control type="date" value={minExpiration} onChange={event => setMinExpiration(event.target.value)} />*/}
-                        {/*</Form.Group>*/}
-                        {/*<Form.Group className="mb-3">*/}
-                        {/*    <Form.Label>Max. Expiration Date</Form.Label>*/}
-                        {/*    <Form.Control type="date" value={maxExpiration} onChange={event => setMaxExpiration(event.target.value)} />*/}
-                        {/*</Form.Group>*/}
                     </Form>
                 </Offcanvas.Body>
             </Offcanvas>
 
             <Card className="mt-3">
                 <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
-                <Card.Body><ProposalsList proposals={proposalsList} user={user} applicationDate={applicationDate} /></Card.Body>
+                <Card.Body><ProposalsList proposals={proposalsList} user={user}
+                                          applicationDate={applicationDate}/></Card.Body>
             </Card>
         </>
     );
 }
 
-function ProposalsList({ proposals, user, applicationDate }) {
+function ProposalsList({proposals, user, applicationDate}) {
     return (
         <Accordion defaultActiveKey="0">
-            { proposals.filter(proposal => dayjs(proposal.expiration).isAfter(applicationDate)).map(proposal => <ProposalEntry key={proposal.id} proposal={proposal} user={user} />) }
+            {proposals.filter(proposal => dayjs(proposal.expiration).isAfter(applicationDate)).map(proposal =>
+                <ProposalEntry key={proposal.id} proposal={proposal} user={user}/>)}
         </Accordion>
     )
 }
 
-function CustomToggle({ children, eventKey, callback }) {
-    const { activeEventKey } = useContext(AccordionContext);
+function CustomToggle({eventKey, callback}) {
+    const {activeEventKey} = useContext(AccordionContext);
 
     const decoratedOnClick = useAccordionButton(
         eventKey,
@@ -246,17 +262,17 @@ function CustomToggle({ children, eventKey, callback }) {
     );
 
     const isCurrentEventKey = activeEventKey === eventKey;
-  
-    return (
-      <Button
-        onClick={decoratedOnClick}
-      >
-        <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"} />
-      </Button>
-    );
-  }
 
-function ProposalEntry({ proposal, user }) {
+    return (
+        <Button
+            onClick={decoratedOnClick}
+        >
+            <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
+        </Button>
+    );
+}
+
+function ProposalEntry({proposal}) {
     const navigate = useNavigate();
 
     return (
@@ -265,11 +281,16 @@ function ProposalEntry({ proposal, user }) {
                 <Row className="p-2 align-items-center">
                     <Col><b>{proposal.title}</b></Col>
                     <Col className="d-flex justify-content-end">
-                        <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}><FontAwesomeIcon icon="fa-file" /> Apply</Button>
-                        <CustomToggle eventKey={proposal.id} />
+                        {proposal.hasApplication ? <Button disabled={true}>
+                                <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
+                            </Button> : <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
+                            <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
+                        </Button>
+                        }
+                        <CustomToggle eventKey={proposal.id}/>
                     </Col>
                 </Row>
-            
+
             </Card.Header>
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
@@ -281,15 +302,19 @@ function ProposalEntry({ proposal, user }) {
                     </Row>
                     <Row>
                         <Col><b>Keywords</b><br/>{proposal.keywords}</Col>
-                        { proposal.requiredKnowledge.length > 0 &&
+                        {proposal.requiredKnowledge.length > 0 &&
                             <Col><b>Required Knowledge</b><br/>{proposal.requiredKnowledge}</Col>
                         }
                         <Col><b>Expiration</b><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
                     </Row>
                     <Row className="pt-2">
-                        <Col md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
-                        { proposal.coSupervisors.length > 0 &&
-                            <Col md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</Col>
+                        <Col
+                            md="3"><b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
+                        </Col>
+                        {proposal.coSupervisors.length > 0 &&
+                            <Col
+                                md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                            </Col>
                         }
                     </Row>
                     <hr className="me-4"/>

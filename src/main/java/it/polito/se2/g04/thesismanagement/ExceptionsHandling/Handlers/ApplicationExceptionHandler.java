@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.ExceptionsHandling.Handlers;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationBadRequestFormatException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ApplicationDeletedException;
+import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.DuplicateApplicationException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Application.ProposalNotActiveException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -21,5 +22,9 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(ProposalNotActiveException.class)
     public ProblemDetail handleBadRequest(ProposalNotActiveException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
+    }
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ProblemDetail handleDuplicateApplication(DuplicateApplicationException e){
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,e.getMessage());
     }
 }

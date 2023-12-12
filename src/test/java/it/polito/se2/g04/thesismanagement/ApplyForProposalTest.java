@@ -17,6 +17,7 @@ import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
+import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
@@ -76,8 +77,9 @@ public class ApplyForProposalTest {
         Group group=groupRepository.save(new Group("Group 1"));
         Department department=departmentRepository.save(new Department("Department 1"));
         Degree degree=degreeRepository.save(new Degree("Degree 1"));
-
-
+        //create a student
+        Student toAdd = new Student("test","test","male","IT","email@example.com",degree,2022);
+        studentRepository.save(toAdd);
         // Create a Teacher object for the supervisor
         Teacher supervisor = new Teacher("Supervisor Surname", "Supervisor Name", "supervisor@example.com", group, department);
         teacherRepository.save(supervisor);
@@ -161,7 +163,5 @@ public class ApplyForProposalTest {
         // Clean up: Delete the temporary file
         Files.delete(tempFile);
     }
-
-
 }
 

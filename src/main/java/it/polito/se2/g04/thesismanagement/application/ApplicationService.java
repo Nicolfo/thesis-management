@@ -11,6 +11,7 @@ public interface ApplicationService {
     public List<ApplicationDTO> getApplicationsByProf(String profEmail);
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail);
     public List<ApplicationDTO> getApplicationsByProposal(Long proposalId);
+    public List<ApplicationDTO> getApplicationsByProposalId(Long proposalId);
     public ApplicationDTO getApplicationById(Long applicationId);
   /**
      * This method changes the state of a given application to accepted, if the current state is pending.

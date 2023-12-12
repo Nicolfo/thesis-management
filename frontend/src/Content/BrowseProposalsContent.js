@@ -177,7 +177,7 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                             <Col md="3">
                                 <b>Supervisor</b><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
                             </Col>
-                            {proposal.coSupervisors.length > 0 &&
+                            {proposal.coSupervisors && proposal.coSupervisors.length > 0 &&
                                 <Col
                                     md="9"><b>Co-Supervisors</b><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
                                 </Col>
