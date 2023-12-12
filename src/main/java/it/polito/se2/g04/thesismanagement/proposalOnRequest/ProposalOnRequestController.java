@@ -41,15 +41,13 @@ public class ProposalOnRequestController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAccepted(@PathVariable Long id){
-        return proposalOnRequestService.proposalOnRequestTeacherAccepted(id);
-
+        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_ACCEPTED);
     }
-
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRejected/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRejected(@PathVariable Long id){
-        return proposalOnRequestService.proposalOnRequestTeacherRejected(id);
+        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_REJECTED);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/secretaryAccepted")

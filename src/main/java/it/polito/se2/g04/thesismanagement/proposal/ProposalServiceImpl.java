@@ -71,6 +71,7 @@ public class ProposalServiceImpl implements ProposalService {
             throw new TeacherNotFoundException("Can't find the specified teacher on db!");
 
         List<Proposal> supervisorProposals = proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ARCHIVED);
+        supervisorProposals.addAll(proposalRepository.findAllBySupervisorAndStatusOrderById(teacher, Proposal.Status.ACCEPTED));
         return supervisorProposals.stream().map(ProposalFullDTO::fromProposal).toList();
     }
 

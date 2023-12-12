@@ -130,6 +130,18 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
+    public ProposalOnRequestDTO proposalOnRequestTeacherChangeStatus(Long id, ProposalOnRequest.Status status){
+        ProposalOnRequest proposal= checkProposalId(id);
+        if (proposal.getStatus() != ProposalOnRequest.Status.PENDING){
+            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+        }
+        proposal.setStatus(status);
+        if (status == ProposalOnRequest.Status.TEACHER_ACCEPTED)
+            proposal.setApprovalDate(new Date());
+        return proposalOnRequestRepository.save(proposal).toDTO();
+    }
+
+
 }
 
 
