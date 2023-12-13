@@ -50,6 +50,7 @@ function StartRequest(props) {
 
 
     const clearFields = () => {
+        setValidated(false);
         setTitle("");
         setDescription("");
         setSelectedSupervisor({});
