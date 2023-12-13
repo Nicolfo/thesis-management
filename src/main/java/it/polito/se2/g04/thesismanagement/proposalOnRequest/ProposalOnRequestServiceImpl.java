@@ -188,6 +188,11 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         return proposalOnRequestRepository.getProposalOnRequestsBySupervisorIdAndStatus(teacherId,ProposalOnRequest.Status.SECRETARY_ACCEPTED).stream().map(ProposalOnRequest::toFullDTO).toList();
     }
 
+    @Override
+    public List<ProposalOnRequestFullDTO> getProposalOnRequestByStudent(String studentId) {
+        return proposalOnRequestRepository.getProposalOnRequestsByStudentEmail(studentId).stream().map(ProposalOnRequest::toFullDTO).toList();
+    }
+
 }
 
 
