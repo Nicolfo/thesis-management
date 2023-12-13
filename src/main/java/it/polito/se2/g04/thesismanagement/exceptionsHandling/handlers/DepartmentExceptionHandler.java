@@ -1,4 +1,4 @@
-package it.polito.se2.g04.thesismanagement.exceptionsHandling.Handlers;
+package it.polito.se2.g04.thesismanagement.exceptionsHandling.handlers;
 
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.degree.DegreeNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.department.DepartmentNotFoundException;

@@ -1,4 +1,4 @@
-package it.polito.se2.g04.thesismanagement.exceptionsHandling.Handlers;
+package it.polito.se2.g04.thesismanagement.exceptionsHandling.handlers;
 
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposalOnRequest.ProposalRequestWithNoId;
 import org.springframework.http.HttpStatus;

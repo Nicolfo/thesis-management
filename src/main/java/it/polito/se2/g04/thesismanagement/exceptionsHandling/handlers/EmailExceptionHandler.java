@@ -1,7 +1,5 @@
-package it.polito.se2.g04.thesismanagement.exceptionsHandling.Handlers;
+package it.polito.se2.g04.thesismanagement.exceptionsHandling.handlers;
 
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.degree.DegreeNotFoundException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.department.DepartmentNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.email.EmailFailedSendException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
