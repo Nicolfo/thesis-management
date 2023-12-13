@@ -59,12 +59,14 @@
   background-color: #FC7A08  !important;
   color: aliceblue !important;
   border-color: aliceblue !important;
+  margin: 0 !important;
 }
 
 .dateForm-start {
   background-color: #002B49  !important;
   color: aliceblue !important;
   border-color: aliceblue !important;
+  margin: 0 !important;
 }
 
 .btn-primary:hover {
@@ -156,4 +158,8 @@ h2 {
   width: 100vw;
   background-image: url('./NavBar/Poli.jpg');
   background-size: cover;
+}
+
+.card{
+  --bs-card-spacer-y: 0.3rem !important;
 }

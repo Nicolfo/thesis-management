@@ -1,6 +1,8 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 import it.polito.se2.g04.thesismanagement.group.Group;
+import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequest;
+import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +21,24 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Proposal {
+
+    public Proposal(ProposalOnRequest proposalOnRequest){
+        this.title = proposalOnRequest.getTitle();
+        this.supervisor = proposalOnRequest.getSupervisor();
+        List<Teacher> coSupervisors= new ArrayList<>();
+        coSupervisors.addAll(proposalOnRequest.getCoSupervisors());
+        this.coSupervisors = coSupervisors;
+        this.keywords = "";
+        this.type = "";
+        this.groups = null;
+        this.description = proposalOnRequest.getDescription();
+        this.requiredKnowledge = "";
+        this.notes = "";
+        this.expiration = proposalOnRequest.getApprovalDate();
+        this.level = "";
+        this.cds = proposalOnRequest.getStudent().getDegree().getTitleDegree();
+    }
+
     public boolean getNotifiedAboutExpiration() {
         return notifiedAboutExpiration;
     }

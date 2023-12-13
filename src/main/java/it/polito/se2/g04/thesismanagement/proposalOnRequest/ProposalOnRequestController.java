@@ -1,6 +1,7 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.ProposalOnRequest.ProposalRequestWithNoId;
+import it.polito.se2.g04.thesismanagement.application.ApplicationDTO;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
@@ -55,7 +56,7 @@ public class ProposalOnRequestController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAccepted(@PathVariable Long id){
-        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_ACCEPTED);
+        return proposalOnRequestService.proposalOnRequestTeacherAccepted(id);
     }
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
@@ -128,5 +129,13 @@ public class ProposalOnRequestController {
         TeacherDTO t = teacherService.getByEmail(username);
         return proposalOnRequestService.getPendingRequestsByTeacher(t.getId());
     }
+
+    @GetMapping("/API/proposalOnRequest/getByStudent")
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
+    public List<ProposalOnRequestFullDTO> getAllByStudent() {
+        Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
+        return proposalOnRequestService.getProposalOnRequestByStudent(auth.getName());
+    }
+
 
 }

@@ -21,7 +21,9 @@ function BrowseDecisions(props) {
                 return;
 
             try {
-                const applications = await API.getApplicationsByStudent(props.user.token);
+                let applications = await API.getApplicationsByStudent(props.user.token);
+                let applicationsOnReq = await API.getProposalOnRequestByStudent(props.user.token);
+                applications = applications.concat(applicationsOnReq);
                 setApplications(applications);
 
             } catch (err) {
@@ -45,7 +47,7 @@ function BrowseDecisions(props) {
                     </tbody>
                 </Table>
                 :
-                <Card.Body style={{"textAlign": "center"}}>
+                <Card.Body style={{"textAlign": "center"}} className="mt-4">
                     <strong>You have no applications yet</strong>
                 </Card.Body>
             }
@@ -58,11 +60,11 @@ function TableRow(props) {
     const {application} = props;
 
     const statusBadge = () => {
-        if (application.status === "PENDING")
+        if (application.status === "PENDING" || application.status === "SECRETARY_ACCEPTED")
             return <Badge bg="primary"> ⦿ PENDING </Badge>
-        else if (application.status === "ACCEPTED")
+        else if (application.status === "ACCEPTED" || application.status === "TEACHER_ACCEPTED" )
             return <Badge bg="success"> ✓ ACCEPTED </Badge>
-        else if (application.status === "REJECTED")
+        else if (application.status === "REJECTED" || application.status === "TEACHER_ACCEPTED" || application.status === "SECRETARY_REJECTED")
             return <Badge bg="danger"> ✕ REJECTED </Badge>
     }
 
@@ -72,10 +74,10 @@ function TableRow(props) {
             <td>
                 <Row className="my-3">
                     <Col lg={5}>
-                        <strong> {application.proposalTitle} </strong>
+                        <strong> {application.proposalTitle || application.title} </strong>
                     </Col>
                     <Col lg={5}>
-                        Supervised by: <em> {application.supervisorSurname} {application.supervisorName} </em>
+                        Supervised by: <em> {application.supervisorSurname || application.supervisor.surname} {application.supervisorName || application.supervisor.name} </em>
                     </Col>
                     <Col lg={1}>
                         {statusBadge()}

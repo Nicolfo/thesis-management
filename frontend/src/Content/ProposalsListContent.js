@@ -237,8 +237,11 @@ function ProposalsListContent({user, applicationDate}) {
 
             <Card className="mt-3">
                 <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
-                <Card.Body><ProposalsList proposals={proposalsList} user={user}
+                { proposalsList.length > 0 ? <Card.Body><ProposalsList proposals={proposalsList} user={user}
                                           applicationDate={applicationDate}/></Card.Body>
+                    : <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                        <strong>You have no proposals yet</strong>
+                    </Card.Body>}
             </Card>
         </>
     );
