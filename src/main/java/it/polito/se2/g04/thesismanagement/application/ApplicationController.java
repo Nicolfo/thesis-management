@@ -1,6 +1,6 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.ApplicationBadRequestFormatException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationBadRequestFormatException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

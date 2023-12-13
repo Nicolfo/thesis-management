@@ -1,12 +1,12 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.ApplicationBadRequestFormatException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.ApplicationDeletedException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.DuplicateApplicationException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.ProposalNotActiveException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.email.EmailFailedSendException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalNotFoundException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalOwnershipException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationBadRequestFormatException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationDeletedException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.DuplicateApplicationException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ProposalNotActiveException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.email.EmailFailedSendException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalOwnershipException;
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
 import it.polito.se2.g04.thesismanagement.email.EmailService;

@@ -1,15 +1,15 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalLevelInvalidException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalNotFoundException;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.UpdateAfterAcceptException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalLevelInvalidException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.UpdateAfterAcceptException;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
-import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.teacher.TeacherNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import it.polito.se2.g04.thesismanagement.virtualclock.VirtualClockController;
 import jakarta.persistence.EntityManager;
