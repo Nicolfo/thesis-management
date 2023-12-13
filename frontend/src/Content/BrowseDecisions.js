@@ -8,6 +8,8 @@ function BrowseDecisions(props) {
     const {token} = useContext(AuthContext);
 
     const [applications, setApplications] = useState([]);
+    const [proposalOnRequest, setproposalOnRequest] = useState([]);
+
 
     const navigate = useNavigate();
 
@@ -22,8 +24,9 @@ function BrowseDecisions(props) {
 
             try {
                 let applications = await API.getApplicationsByStudent(props.user.token);
-                //let applicationsOnReq = await API.getProposalOnRequestByStudent(props.user.token);
+                let applicationsOnReq = await API.getProposalOnRequestByStudent(props.user.token);
                 //applications = applications.concat(applicationsOnReq);
+                setproposalOnRequest(applicationsOnReq);
                 setApplications(applications);
 
             } catch (err) {
@@ -36,23 +39,54 @@ function BrowseDecisions(props) {
 
 
     return (
+        <>
         <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
             <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
                 Your applications
             </Card.Header>
-            {applications.length > 0 ?
+            {applications.length > 0 || proposalOnRequest.length > 0 ?
+
                 <Table>
                     <tbody>
                     {applications.map((application) => <TableRow key={application.id} application={application}/>)}
                     </tbody>
                 </Table>
+
                 :
                 <Card.Body style={{"textAlign": "center"}} className="mt-4">
                     <strong>You have no applications yet</strong>
                 </Card.Body>
             }
+
+
         </Card>
-    );
+
+
+
+        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
+            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
+                Your proposals on request
+            </Card.Header>
+
+            {proposalOnRequest.length > 0 ?
+
+
+                    <Table>
+                        <tbody>
+                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application}/>)}
+                        </tbody>
+                    </Table>
+
+                :
+                <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                    <strong>You have no applications yet</strong>
+                </Card.Body>
+            }
+
+
+
+        </Card>
+        </>);
 }
 
 
@@ -64,7 +98,7 @@ function TableRow(props) {
             return <Badge bg="primary"> ⦿ PENDING </Badge>
         else if (application.status === "ACCEPTED" || application.status === "TEACHER_ACCEPTED" )
             return <Badge bg="success"> ✓ ACCEPTED </Badge>
-        else if (application.status === "REJECTED" || application.status === "TEACHER_ACCEPTED" || application.status === "SECRETARY_REJECTED")
+        else if (application.status === "REJECTED" || application.status === "TEACHER_REJECTED" || application.status === "SECRETARY_REJECTED")
             return <Badge bg="danger"> ✕ REJECTED </Badge>
     }
 
