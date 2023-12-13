@@ -1,11 +1,12 @@
-import {Button, Card, Col, Form, Row} from "react-bootstrap";
+import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import API from "../API/Api";
 import {AuthContext} from "react-oauth2-code-pkce";
+import toast, {Toaster} from 'react-hot-toast';
 
 
 function StartRequest(props) {
@@ -27,6 +28,7 @@ function StartRequest(props) {
     const [isValidDescription, setIsValidDescription] = useState(true);
     const [isValidSupervisor, setIsValidSupervisor] = useState(true);
     const [validated, setValidated] = useState(false);
+    const [sentFirst, setSentFirst] = useState(false);
 
 
     const getAllTeachers = async () => {
@@ -46,6 +48,15 @@ function StartRequest(props) {
         }
     }
 
+
+    const clearFields = () => {
+        setTitle("");
+        setDescription("");
+        setSelectedSupervisor({});
+        setSelectedSupervisors([]);
+    }
+
+
     useEffect(() => {
         getAllTeachers();
     }, [])
@@ -53,10 +64,26 @@ function StartRequest(props) {
 
 
     const startRequest = (request) => {
-        API.startRequest(request, props.user.token)
-            .then(() =>
-                navigate("/browseDecisions"))
-            .catch((err) => console.log(err))
+        toast.promise(
+            (async () => {
+                await API.startRequest(request, props.user.token);
+                setSentFirst(true);
+                clearFields();
+                return "Thesis request successfully sent";
+            })(),
+            {
+                loading: 'Sending...',
+                success: () => {
+                    return <strong>Thesis request successfully sent</strong>
+                },
+                error: (error) => {
+                    if (error && error.detail) {
+                        return <strong>{error.detail}</strong>;
+                    } else {
+                        return <strong>An error occurred while sending the request.</strong>;
+                    }
+                }
+            });
     }
 
     const handleSubmit = (ev) => {
@@ -91,120 +118,137 @@ function StartRequest(props) {
 
 
     return (
-        <Card style={{"marginTop": "0.5", "marginBottom": "2rem"}}>
-            <Form validated={validated} onSubmit={handleSubmit} noValidate>
-                <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                    Insert thesis request fields
-                </Card.Header>
+        <>
+            <Card style={{"marginTop": "0.5", "marginBottom": "2rem"}}>
+                <Form validated={validated} onSubmit={handleSubmit} noValidate>
+                    <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
+                        Insert thesis request fields
+                    </Card.Header>
 
-                <Card.Body>
-                    {/* TITLE */}
-                    <Row>
-                        <Form.Group>
+                    <Card.Body>
+                        {/* TITLE */}
+                        <Row>
+                            <Form.Group>
+                                <Form.Floating>
+                                    <Form.Control
+                                        style={{borderRadius: "25px"}}
+                                        required
+                                        type="text"
+                                        placeholder="Title"
+                                        value={title}
+                                        isInvalid={!isValidTitle}
+                                        onChange={ (ev) => {
+                                            if ((ev.target.value.trim()).length > 0 ) {
+                                                setTitle(ev.target.value);
+                                                setIsValidTitle(true);
+                                            } else {
+                                                setTitle(ev.target.value);
+                                                setIsValidTitle(false);
+                                            }
+                                        }
+                                        }
+                                    />
+                                    <label htmlFor="floatingTitle" > Title </label>
+                                    <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
+                                </Form.Floating>
+                            </Form.Group>
+                        </Row>
+                        {/* DESCRIPTION */}
+                        <Row style={{"marginTop": "1rem"}} >
                             <Form.Floating>
                                 <Form.Control
-                                    style={{borderRadius: "25px"}}
                                     required
+                                    as="textarea"
                                     type="text"
-                                    placeholder="Title"
-                                    value={title}
-                                    isInvalid={!isValidTitle}
+                                    style={{"height": "100px", borderRadius: "20px"}}
+                                    placeholder="Description"
+                                    value={description}
+                                    isInvalid={!isValidDescription}
                                     onChange={ (ev) => {
                                         if ((ev.target.value.trim()).length > 0 ) {
-                                            setTitle(ev.target.value);
-                                            setIsValidTitle(true);
+                                            setDescription(ev.target.value);
+                                            setIsValidDescription(true);
                                         } else {
-                                            setTitle(ev.target.value);
-                                            setIsValidTitle(false);
+                                            setDescription(ev.target.value);
+                                            setIsValidDescription(false);
                                         }
                                     }
                                     }
                                 />
-                                <label htmlFor="floatingTitle" > Title </label>
-                                <Form.Control.Feedback type="invalid"> Please choose a title </Form.Control.Feedback>
+                                <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Description </label>
+                                <Form.Control.Feedback type="invalid"> Please provide a description for the thesis request </Form.Control.Feedback>
                             </Form.Floating>
-                        </Form.Group>
-                    </Row>
-                    {/* DESCRIPTION */}
-                    <Row style={{"marginTop": "1rem"}} >
-                        <Form.Floating>
-                            <Form.Control
-                                required
-                                as="textarea"
-                                type="text"
-                                style={{"height": "100px", borderRadius: "20px"}}
-                                placeholder="Description"
-                                value={description}
-                                isInvalid={!isValidDescription}
-                                onChange={ (ev) => {
-                                    if ((ev.target.value.trim()).length > 0 ) {
-                                        setDescription(ev.target.value);
-                                        setIsValidDescription(true);
-                                    } else {
-                                        setDescription(ev.target.value);
-                                        setIsValidDescription(false);
-                                    }
+                        </Row>
+                        {/* SUPERVISOR & CO-SUPERVISORS */}
+                        <Row style={{"marginTop": "1rem"}} >
+                            <Form.Group as={Col} >
+                                <Form.Label style={{marginLeft: "0.3rem"}}> Supervisor </Form.Label>
+                                <Select
+                                    options={optionsSupervisors}
+                                    value={selectedSupervisor}
+                                    onChange={ev => {setIsValidSupervisor(true); setSelectedSupervisor(ev)}}
+                                    theme={(theme) => ({
+                                        ...theme,
+                                        borderRadius: 25,
+                                        colors: {
+                                            ...theme.colors,
+                                            primary25: '#FED8B1',
+                                            primary: '#FC7A08',
+                                        },
+                                    })}
+                                />
+                                { !isValidSupervisor &&
+                                    <Form.Label style={{"color": "red"}}> Please select the supervisor <FontAwesomeIcon icon="fa-solid fa-circle-exclamation"/> </Form.Label>
                                 }
-                                }
-                            />
-                            <label htmlFor="floatingKnowledge" style={{"marginLeft": "0.5rem"}}> Description </label>
-                            <Form.Control.Feedback type="invalid"> Please provide a description for the thesis request </Form.Control.Feedback>
-                        </Form.Floating>
-                    </Row>
-                    {/* SUPERVISOR & CO-SUPERVISORS */}
-                    <Row style={{"marginTop": "1rem"}} >
-                        <Form.Group as={Col} >
-                            <Form.Label style={{marginLeft: "0.3rem"}}> Supervisor </Form.Label>
-                            <Select
-                                options={optionsSupervisors}
-                                value={selectedSupervisor}
-                                onChange={ev => {setIsValidSupervisor(true); setSelectedSupervisor(ev)}}
-                                theme={(theme) => ({
-                                    ...theme,
-                                    borderRadius: 25,
-                                    colors: {
-                                        ...theme.colors,
-                                        primary25: '#FED8B1',
-                                        primary: '#FC7A08',
-                                    },
-                                })}
-                            />
-                            { !isValidSupervisor &&
-                                <Form.Label style={{"color": "red"}}> Please select the supervisor <FontAwesomeIcon icon="fa-solid fa-circle-exclamation"/> </Form.Label>
-                            }
-                            <Form.Control.Feedback type="invalid"> Please select the supervisor </Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group as={Col} >
-                            <Form.Label style={{marginLeft: "0.3rem"}}> Co-supervisors <em style={{"color": "dimgray"}}> (optional) </em> </Form.Label>
-                            <Select
-                                options={optionsSupervisors}
-                                value={selectedSupervisors}
-                                onChange={setSelectedSupervisors}
-                                theme={(theme) => ({
-                                    ...theme,
-                                    borderRadius: 25,
-                                    colors: {
-                                        ...theme.colors,
-                                        primary25: '#FED8B1',
-                                        primary: '#FC7A08',
-                                    },
-                                })}
-                                isMulti
-                                closeMenuOnSelect={false}
-                                components={animatedComponents}
-                            />
-                        </Form.Group>
-                    </Row>
-                </Card.Body>
+                                <Form.Control.Feedback type="invalid"> Please select the supervisor </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} >
+                                <Form.Label style={{marginLeft: "0.3rem"}}> Co-supervisors <em style={{"color": "dimgray"}}> (optional) </em> </Form.Label>
+                                <Select
+                                    options={optionsSupervisors}
+                                    value={selectedSupervisors}
+                                    onChange={setSelectedSupervisors}
+                                    theme={(theme) => ({
+                                        ...theme,
+                                        borderRadius: 25,
+                                        colors: {
+                                            ...theme.colors,
+                                            primary25: '#FED8B1',
+                                            primary: '#FC7A08',
+                                        },
+                                    })}
+                                    isMulti
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                />
+                            </Form.Group>
+                        </Row>
+                    </Card.Body>
 
-                <Card.Footer style={{"textAlign": "center"}}>
-                    <Button variant="outline-primary" type="submit">
-                            <><FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request</>
-                    </Button>
-
-                </Card.Footer>
-            </Form>
-        </Card>
+                    <Card.Footer style={{"textAlign": "center"}}>
+                        { !sentFirst ?
+                            <Button variant="outline-primary" type="submit">
+                                <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request
+                            </Button>
+                            :
+                            <>
+                                <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                    <FontAwesomeIcon icon={"chevron-left"}/> Go back
+                                </Button>
+                                <Button style={{marginLeft: "1rem"}} variant="outline-primary" type="submit">
+                                    <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send another thesis request
+                                </Button>
+                            </>
+                        }
+                    </Card.Footer>
+                </Form>
+            </Card>
+            <Toaster
+                position="top-right"
+                containerClassName="mt-5"
+                reverseOrder={false}
+            />
+        </>
     );
 }
 
