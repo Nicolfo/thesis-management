@@ -47,7 +47,7 @@ function BrowseDecisions(props) {
                     </tbody>
                 </Table>
                 :
-                <Card.Body style={{"textAlign": "center"}}>
+                <Card.Body style={{"textAlign": "center"}} className="mt-4">
                     <strong>You have no applications yet</strong>
                 </Card.Body>
             }

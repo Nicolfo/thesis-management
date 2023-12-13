@@ -48,18 +48,20 @@ function BrowseApplicationsContent(props) {
 
     return (
         <>
-            <div className="bordered-box">
-                <h1 style={{"textAlign": "center"}}>My application proposals</h1>
-                <hr className="separator"/>
+            <Card>
+                <Card.Header className="mb-2">
+                    <h1 className="my-3" style={{"textAlign": "center"}}>My application proposals</h1>
+                </Card.Header>
 
-
+                {!applications.length > 0 && <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                    <strong>You have no application proposals yet</strong>
+                </Card.Body>}
                 {
                     groupedApplications && Object.values(groupedApplications).map((e) => {
                         return <>
-
                             <Card.Body key={e[0].id}>
                                 <Accordion defaultActiveKey="0">
-                                    <Card className="mb-2 mx-md-5">
+                                    <Card className="mx-md-5">
                                         <Card.Header>
                                             <Row className="p-2 align-items-center ">
                                                 <Col
@@ -80,7 +82,7 @@ function BrowseApplicationsContent(props) {
                         </>
                     })
                 }
-            </div>
+            </Card>
         </>
     );
 }
