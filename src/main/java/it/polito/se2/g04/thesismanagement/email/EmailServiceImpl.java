@@ -3,6 +3,7 @@ package it.polito.se2.g04.thesismanagement.email;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequest;
 import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -77,8 +78,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void notifySupervisorOfNewThesisRequest(ProposalOnRequestDTO request) throws MessagingException, IOException {
-        Teacher teacher = teacherRepository.getReferenceById(request.getSupervisor());
+    public void notifySupervisorOfNewThesisRequest(ProposalOnRequest request) throws MessagingException, IOException {
+        Teacher teacher = request.getSupervisor();
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
                 "<br>" +
                 "The secretariat has approved a new thesis request with you as supervisor and the title \"" + request.getTitle() + "\".<br>" +

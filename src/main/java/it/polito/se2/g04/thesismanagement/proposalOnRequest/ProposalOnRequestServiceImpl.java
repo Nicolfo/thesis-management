@@ -3,11 +3,13 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Student.StudentNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
+import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -19,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +32,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final ProposalOnRequestRepository proposalOnRequestRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final EmailService emailService;
     private final String proposalIsNotPendingError = "Proposal On Request is not pending";
     @PersistenceContext
     private EntityManager entityManager;
@@ -88,13 +92,14 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     }
 
     @Override
-    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) {
+    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) throws MessagingException, IOException {
         ProposalOnRequest proposal = checkProposalId(id);
 
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
             throw (new ProposalNotFoundException(proposalIsNotPendingError));
         }
         proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
+        emailService.notifySupervisorOfNewThesisRequest(proposal);
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
