@@ -73,7 +73,7 @@ function NavBar(props) {
     return (
 
         <>
-            <Navbar className={props.user ? 'bg-color ps-3' : 'bg-color-start ps-3'} expand="md" data-bs-theme="dark">
+            <Navbar className={props.user ? 'bg-color ps-3' : 'bg-color-start ps-3'} expand="lg" data-bs-theme="dark">
                 <Container fluid>
                     <Navbar.Brand href="/">
                         {props.user ? <><FontAwesomeIcon icon="fa-book"/> Thesis Manager</> : <><img
@@ -197,15 +197,18 @@ function NavBar(props) {
 
                                     <Col xs="auto" className="me-lg-2">
                                         <Row>
-                                        <Form.Control
-                                            className={props.user ? "dateForm no-border-sm" : "dateForm-start no-border-sm"}
-                                            type="date"
-                                            value={date}
-                                            min={props.realDate.format('YYYY-MM-DD')}
-                                            onChange={(event) => setDate(event.target.value)}
-                                        />
-                                        <Button onClick={(event) => props.updateApplicationDate(date)}>Set</Button>
-                                        </Row>
+                                            <Col><Form.Control
+                                                className={props.user ? "dateForm no-border-sm" : "dateForm-start no-border-sm"}
+                                                type="date"
+                                                value={date}
+                                                min={props.realDate.format('YYYY-MM-DD')}
+                                                onChange={(event) => setDate(event.target.value)}
+                                            />
+                                            </Col>
+                                            <Col>
+                                                <Button
+                                                        onClick={(event) => props.updateApplicationDate(date)}>Set</Button>
+                                            </Col></Row>
                                     </Col>
                                 )}
                                 <Button className={props.user ? "no-border-sm" : "no-border-sm btn-primary-start"}
