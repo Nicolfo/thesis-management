@@ -239,6 +239,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             ApplicationStatus newStateEnum = ApplicationStatus.valueOf(newState);
             Application application = getApplicationByIdOriginal(applicationId);
             application.setStatus(newStateEnum);
+            if(application.getProposal().getStatus()!= Proposal.Status.ACTIVE){
+                Proposal proposalToChange=application.getProposal();
+                proposalToChange.setStatus(Proposal.Status.ACTIVE);
+                proposalRepository.save(proposalToChange);
+            }
             applicationRepository.save(application);
 
             emailService.notifyStudentOfApplicationDecision(application);

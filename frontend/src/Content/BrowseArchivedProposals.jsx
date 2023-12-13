@@ -20,15 +20,10 @@ import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
 import Warn from "./Warn";
 
-function BrowseArchivedProposals2({user, applicationDate, setArchivedView}) {
+function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
 
     const navigate = useNavigate();
 
-    // const levelOptions = [
-    //     "Any",
-    //     "Bachelor's",
-    //     "Master's"
-    // ];
     const {token} = useContext(AuthContext);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
@@ -143,7 +138,6 @@ function BrowseArchivedProposals2({user, applicationDate, setArchivedView}) {
                                                    setDeleting={setDeleting} deletingID={deletingID}></Warn></Col>
                     <Col></Col></Row> :
                 <>
-                    <h2>Archive</h2>
                     <Row style={{"textAlign": "end"}}>
                         <Col>
                             <Button onClick={() => setShowSearchBar(it => !it)}> <FontAwesomeIcon
@@ -231,10 +225,14 @@ function BrowseArchivedProposals2({user, applicationDate, setArchivedView}) {
                     </Offcanvas>
 
                     <Card className="mt-3">
-                        <Card.Header><strong>Results</strong></Card.Header>
-                        <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp}
+                        <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
+                        {proposalsList.length > 0 ? <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp}
                                                   proposals={proposalsList} user={user}
                                                   applicationDate={applicationDate}/></Card.Body>
+                        : <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                                <strong>You have no archived proposals yet</strong>
+                        </Card.Body>
+                        }
                     </Card>
                 </>} </>
     );
@@ -352,4 +350,4 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
     )
 }
 
-export default BrowseArchivedProposals2;
+export default BrowseArchivedProposals;

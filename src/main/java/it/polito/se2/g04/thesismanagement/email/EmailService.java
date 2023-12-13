@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.email;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequest;
 import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
 import jakarta.mail.MessagingException;
 
@@ -38,5 +39,5 @@ public interface EmailService {
      */
     void notifySupervisorAndCoSupervisorsOfNewApplication(Application application) throws MessagingException, IOException;
     void notifySupervisorOfExpiration(Proposal proposal) throws MessagingException, IOException;
-    void notifySupervisorOfNewThesisRequest(ProposalOnRequestDTO request) throws MessagingException, IOException;
+    void notifySupervisorOfNewThesisRequest(ProposalOnRequest request) throws MessagingException, IOException;
 }

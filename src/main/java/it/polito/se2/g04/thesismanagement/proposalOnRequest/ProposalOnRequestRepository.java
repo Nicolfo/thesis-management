@@ -9,4 +9,6 @@ public interface ProposalOnRequestRepository extends JpaRepository<ProposalOnReq
     public List<ProposalOnRequest> getProposalOnRequestByStatus(ProposalOnRequest.Status status);
     public List<ProposalOnRequest> getProposalOnRequestsBySupervisorIdAndStatus(Long id,ProposalOnRequest.Status status);
 
+    public List<ProposalOnRequest> getProposalOnRequestsByStudentEmail(String email);
+
 }
