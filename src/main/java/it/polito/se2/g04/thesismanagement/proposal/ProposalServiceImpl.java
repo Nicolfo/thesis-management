@@ -1,15 +1,15 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalLevelInvalidException;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.UpdateAfterAcceptException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalLevelInvalidException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.UpdateAfterAcceptException;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import it.polito.se2.g04.thesismanagement.virtualclock.VirtualClockController;
 import jakarta.persistence.EntityManager;
@@ -18,13 +18,11 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;

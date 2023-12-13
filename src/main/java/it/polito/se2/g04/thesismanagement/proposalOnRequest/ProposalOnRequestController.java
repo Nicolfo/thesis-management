@@ -1,8 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.ProposalOnRequest.ProposalRequestWithNoId;
-import it.polito.se2.g04.thesismanagement.application.ApplicationDTO;
-import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposalOnRequest.ProposalRequestWithNoId;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import jakarta.mail.MessagingException;

@@ -1,8 +1,8 @@
 package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Student.StudentNotFoundException;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.student.StudentNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
@@ -16,10 +16,6 @@ import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

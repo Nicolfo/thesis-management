@@ -1,9 +1,9 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ArchiveWithNoId;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.CreateUpdateProposalWithNoPathVariable;
-import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.DeleteWithNoId;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ArchiveWithNoId;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.CreateUpdateProposalWithNoPathVariable;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.DeleteWithNoId;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
