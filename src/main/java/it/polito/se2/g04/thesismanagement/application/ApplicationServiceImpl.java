@@ -4,6 +4,7 @@ import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.applicat
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.ApplicationDeletedException;
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.DuplicateApplicationException;
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.application.ProposalNotActiveException;
+import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.email.EmailFailedSendException;
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptionsHandling.exceptions.proposal.ProposalOwnershipException;
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
@@ -43,6 +44,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
     private final EmailService emailService;
+    private final String MAIL_ERROR="Error in sending mail";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -175,29 +177,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         Student loggedUser = studentRepository.getStudentByEmail(auth.getName());
 
-        if (applicationDTO.getProposalId() == null || !proposalRepository.existsById(applicationDTO.getProposalId())) {
-            throw new ApplicationBadRequestFormatException("The proposal doesn't exist");
-        }
-
-        Proposal proposal = proposalRepository.getReferenceById(applicationDTO.getProposalId());
-        if (proposal.getStatus() != Proposal.Status.ACTIVE) {
-            throw new ProposalNotActiveException("This proposal is not active");
-        }
-
-        if (applicationRepository.existsByProposalAndStudent(proposal, loggedUser)) {
-            throw new DuplicateApplicationException("An application already exists for this proposal");
-        }
-
-        Attachment attachment = applicationDTO.getAttachmentId() != null ? attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()) : null;
-        Application toSave = new Application(loggedUser, attachment, applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
-        Application saved = applicationRepository.save(toSave);
-        try {
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        applyForProposalHelper(applicationDTO, loggedUser);
     }
 
     @Override
@@ -209,6 +189,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         Student loggedUser = studentRepository.getStudentByEmail(studentEmail);
 
+        applyForProposalHelper(applicationDTO, loggedUser);
+    }
+
+    private void applyForProposalHelper(ApplicationDTO applicationDTO, Student loggedUser) {
         if (applicationDTO.getProposalId() == null || !proposalRepository.existsById(applicationDTO.getProposalId())) {
             throw new ApplicationBadRequestFormatException("The proposal doesn't exist");
         }
@@ -227,12 +211,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application saved = applicationRepository.save(toSave);
         try {
             emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (MessagingException | IOException e) {
+            throw new EmailFailedSendException(MAIL_ERROR);
         }
     }
+
     @Override
     public boolean changeApplicationStateById(Long applicationId, String newState) {
         try {
