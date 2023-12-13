@@ -15,4 +15,6 @@ public interface ProposalOnRequestService {
     public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id);
     public ProposalOnRequestDTO proposalOnRequestTeacherChangeStatus(Long id, ProposalOnRequest.Status status);
     public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher(Long teacherId);
+
+    public List<ProposalOnRequestFullDTO> getProposalOnRequestByStudent(String studentId);
 }

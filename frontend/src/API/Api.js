@@ -118,6 +118,16 @@ const getApplicationsByStudent = async (jwt) => {
     }));
 }
 
+const getProposalOnRequestByStudent = async (jwt) => {
+    return getJson(fetch(SERVER_URL + "proposalOnRequest/getByStudent", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+}
+
 const getApplicationsByProposalId = async (jwt, proposalId) => {
     try {
         const response = await getJson(fetch(SERVER_URL + `application/getApplicationsByProposalId/${proposalId}`, {
@@ -392,6 +402,6 @@ const getAcceptedProposalOnRequestsByTeacher = async (jwt) => {
     }));
 };
 
-const API = { getAcceptedProposalOnRequestsByTeacher, teacherReject, teacherRequestChange, teacherAccept, insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock};
+const API = { getProposalOnRequestByStudent, getAcceptedProposalOnRequestsByTeacher, teacherReject, teacherRequestChange, teacherAccept, insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock};
 
 export default API;

@@ -201,6 +201,39 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public void applyForProposal(ApplicationDTO applicationDTO,String studentEmail) {
+
+        if (!studentRepository.existsByEmail(studentEmail)) {
+            throw new ApplicationBadRequestFormatException("The student doesn't exist");
+        }
+
+        Student loggedUser = studentRepository.getStudentByEmail(studentEmail);
+
+        if (applicationDTO.getProposalId() == null || !proposalRepository.existsById(applicationDTO.getProposalId())) {
+            throw new ApplicationBadRequestFormatException("The proposal doesn't exist");
+        }
+
+        Proposal proposal = proposalRepository.getReferenceById(applicationDTO.getProposalId());
+        if (proposal.getStatus() != Proposal.Status.ACTIVE) {
+            throw new ProposalNotActiveException("This proposal is not active");
+        }
+
+        if (applicationRepository.existsByProposalAndStudent(proposal, loggedUser)) {
+            throw new DuplicateApplicationException("An application already exists for this proposal");
+        }
+
+        Attachment attachment = applicationDTO.getAttachmentId() != null ? attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()) : null;
+        Application toSave = new Application(loggedUser, attachment, applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
+        Application saved = applicationRepository.save(toSave);
+        try {
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
     public boolean changeApplicationStateById(Long applicationId, String newState) {
         try {
             ApplicationStatus newStateEnum = ApplicationStatus.valueOf(newState);
