@@ -22,8 +22,8 @@ function BrowseDecisions(props) {
 
             try {
                 let applications = await API.getApplicationsByStudent(props.user.token);
-                let applicationsOnReq = await API.getProposalOnRequestByStudent(props.user.token);
-                applications = applications.concat(applicationsOnReq);
+                //let applicationsOnReq = await API.getProposalOnRequestByStudent(props.user.token);
+                //applications = applications.concat(applicationsOnReq);
                 setApplications(applications);
 
             } catch (err) {
