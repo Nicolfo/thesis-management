@@ -11,7 +11,7 @@
 
 - Teacher:
   - Email: ThesisManagementTeacher1@gmail.com
-  - Password: Test.teacher
+  - Password: Test.teacher1
 - Student:
   - Email: ThesisManagementStudent1@gmail.com
   - Password: Test.student
