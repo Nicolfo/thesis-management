@@ -49,11 +49,19 @@ function TeacherApproveStartRequestContent({ user }) {
     }, []);
 
     return (
-        <Container>
-            <h2>Student thesis start requests</h2>
+        <Card>
+            <Card.Header>
+                <h1 className="my-3" style={{"textAlign": "center"}}>Student thesis start requests</h1>
+            </Card.Header>
+            { requestList.length > 0 ?
+            <Card.Body>
             { requestList.map(r => <RequestEntry key={r.id} request={r} setSelectedRequest={setSelectedRequest} setOperation={setOperation} setShowModal={setShowModal} />) }
             { selectedRequest && <OperationModal show={showModal} setShow={setShowModal} selectedRequest={selectedRequest} setSelectedRequest={setSelectedRequest} operation={operation} onConfirm={onConfirm} /> }
-        </Container>
+            </Card.Body>
+            : <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                    <strong>You have no student thesis start requests yet</strong>
+                </Card.Body>}
+        </Card>
     );
 }
 

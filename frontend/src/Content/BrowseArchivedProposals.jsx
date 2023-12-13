@@ -24,11 +24,6 @@ function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
 
     const navigate = useNavigate();
 
-    // const levelOptions = [
-    //     "Any",
-    //     "Bachelor's",
-    //     "Master's"
-    // ];
     const {token} = useContext(AuthContext);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [teachersList, setTeachersList] = useState([]);
@@ -230,10 +225,14 @@ function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
                     </Offcanvas>
 
                     <Card className="mt-3">
-                        <Card.Header><strong>Results</strong></Card.Header>
-                        <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp}
+                        <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
+                        {proposalsList.length > 0 ? <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp}
                                                   proposals={proposalsList} user={user}
                                                   applicationDate={applicationDate}/></Card.Body>
+                        : <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                                <strong>You have no archived proposals yet</strong>
+                        </Card.Body>
+                        }
                     </Card>
                 </>} </>
     );

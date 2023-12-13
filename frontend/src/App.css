@@ -157,3 +157,7 @@ h2 {
   background-image: url('./NavBar/Poli.jpg');
   background-size: cover;
 }
+
+.card{
+  --bs-card-spacer-y: 0.3rem !important;
+}
