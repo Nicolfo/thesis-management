@@ -3,7 +3,11 @@ package it.polito.se2.g04.thesismanagement.proposalOnRequest;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Student.StudentNotFoundException;
 import it.polito.se2.g04.thesismanagement.ExceptionsHandling.Exceptions.Teacher.TeacherNotFoundException;
+import it.polito.se2.g04.thesismanagement.application.Application;
+import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -29,6 +33,8 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final ProposalOnRequestRepository proposalOnRequestRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final ProposalRepository proposalRepository;
+    private final ApplicationRepository applcationRepository;
     private final String proposalIsNotPendingError = "Proposal On Request is not pending";
     @PersistenceContext
     private EntityManager entityManager;
@@ -149,6 +155,17 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         }
             proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
             proposal.setApprovalDate(new Date());
+            Proposal proposal1=new Proposal(proposal);
+            proposal1.setStatus(Proposal.Status.ACCEPTED);
+            Application application = new Application(
+                    proposal.getStudent(),
+                    null,
+                    proposal.getApprovalDate(),
+                    proposal1
+            );
+            application.setStatus(ApplicationStatus.ACCEPTED);
+            proposalRepository.save(proposal1);
+            applcationRepository.save(application);
             return proposalOnRequestRepository.save(proposal).toDTO();
     }
 

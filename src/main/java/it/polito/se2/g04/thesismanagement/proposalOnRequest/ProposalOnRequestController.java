@@ -53,7 +53,7 @@ public class ProposalOnRequestController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAccepted(@PathVariable Long id){
-        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_ACCEPTED);
+        return proposalOnRequestService.proposalOnRequestTeacherAccepted(id);
     }
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
