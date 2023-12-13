@@ -44,7 +44,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
     private final EmailService emailService;
-    private final static String MAIL_ERROR="Error in sending mail";
+    private static final String MAIL_ERROR="Error in sending mail";
     @PersistenceContext
     private EntityManager entityManager;
 
