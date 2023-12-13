@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
 import Warn from "./Warn";
 
-function BrowseArchivedProposals2({user, applicationDate, setArchivedView}) {
+function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
 
     const navigate = useNavigate();
 
@@ -143,7 +143,6 @@ function BrowseArchivedProposals2({user, applicationDate, setArchivedView}) {
                                                    setDeleting={setDeleting} deletingID={deletingID}></Warn></Col>
                     <Col></Col></Row> :
                 <>
-                    <h2>Archive</h2>
                     <Row style={{"textAlign": "end"}}>
                         <Col>
                             <Button onClick={() => setShowSearchBar(it => !it)}> <FontAwesomeIcon
@@ -352,4 +351,4 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
     )
 }
 
-export default BrowseArchivedProposals2;
+export default BrowseArchivedProposals;
