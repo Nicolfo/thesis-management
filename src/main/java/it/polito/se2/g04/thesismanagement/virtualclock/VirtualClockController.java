@@ -18,10 +18,13 @@ public class VirtualClockController {
     public static int getOffset(){
         return offset;
     }
+
+    private static void setOffset(int offset){
+        VirtualClockController.offset=offset;
+    }
     @PostMapping("/API/virtualTimer/changeOffset/")
-    public int setOffset(@RequestBody VirtualClockRequest virtualClockRequest){
-        System.out.println("time changed");
-        offset= virtualClockRequest.getOffset();
+    public int changeTime(@RequestBody VirtualClockRequest virtualClockRequest){
+        VirtualClockController.setOffset(virtualClockRequest.getOffset());
         proposalService.archiveExpiredProposals();
         return offset;
     }
