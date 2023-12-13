@@ -316,13 +316,12 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
                     <Row>
-                        <Col><strong>CdS</strong><br/>{proposal.cds}</Col>
-                        <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                        <Col><strong>Level</strong><br/>{proposal.level}</Col>
-                        <Col><strong>Type</strong><br/>{proposal.type}</Col>
-                    </Row>
-                    <Row>
-                        <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>
+                        {proposal.cds && <Col><strong>CdS</strong><br/>{proposal.cds}</Col>}
+                        {proposal.groups && proposal.groups.length > 0 && <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>}
+                        {proposal.level && <Col><strong>Level</strong><br/>{proposal.level}</Col>}
+                        {proposal.type && <Col><strong>Type</strong><br/>{proposal.type}</Col>}
+                    
+                        {proposal.keywords && <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>}
                         {proposal.requiredKnowledge.length > 0 &&
                             <Col><strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}</Col>
                         }
