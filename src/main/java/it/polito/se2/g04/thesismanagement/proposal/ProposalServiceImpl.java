@@ -351,7 +351,7 @@ public class ProposalServiceImpl implements ProposalService {
 
                     }
                     //proposal.setStatus(Proposal.Status.ARCHIVED);
-                    edited = true;
+                    //edited = true;
                 }
                 if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
                     try {
