@@ -2,8 +2,7 @@ package it.polito.se2.g04.thesismanagement.email;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequest;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
+import it.polito.se2.g04.thesismanagement.proposal_on_request.ProposalOnRequest;
 import jakarta.mail.MessagingException;
 
 import java.io.IOException;

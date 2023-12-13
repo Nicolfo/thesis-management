@@ -1,4 +1,4 @@
-package it.polito.se2.g04.thesismanagement.proposalOnRequest;
+package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
 import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;

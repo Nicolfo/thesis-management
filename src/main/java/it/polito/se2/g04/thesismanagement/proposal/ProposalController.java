@@ -134,7 +134,6 @@ public class ProposalController {
         // archived proposals by it.
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        //Long supervisorId = teacherService.getByEmail(username).getId();
 
         return proposalService.getArchivedProposals(username);
     }

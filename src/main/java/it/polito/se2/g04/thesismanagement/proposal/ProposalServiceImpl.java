@@ -330,7 +330,7 @@ public class ProposalServiceImpl implements ProposalService {
         Date nowOld = Calendar.getInstance().getTime();
         Calendar now = Calendar.getInstance();
         now.setTime(nowOld);
-        now.add(Calendar.DAY_OF_MONTH,VirtualClockController.offset);
+        now.add(Calendar.DAY_OF_MONTH,VirtualClockController.getOffset());
         Calendar oneWeekFromNow = (Calendar) now.clone();
 
         oneWeekFromNow.add(Calendar.WEEK_OF_YEAR, 1);
@@ -340,7 +340,6 @@ public class ProposalServiceImpl implements ProposalService {
             Date expiration = proposal.getExpiration();
 
             if (expiration != null) {
-                System.out.println("expiration : "+ expiration+ " now : " +now.getTime() + " check "+now.getTime().after(expiration));
                 boolean edited= false;
                 if (now.getTime().after(expiration)) {
                     try {
@@ -348,8 +347,6 @@ public class ProposalServiceImpl implements ProposalService {
                     } catch (Error ignore){
 
                     }
-                    //proposal.setStatus(Proposal.Status.ARCHIVED);
-                    //edited = true;
                 }
                 if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
                     try {

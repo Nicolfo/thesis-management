@@ -1,4 +1,4 @@
-package it.polito.se2.g04.thesismanagement.proposalOnRequest;
+package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
 import jakarta.mail.MessagingException;
 

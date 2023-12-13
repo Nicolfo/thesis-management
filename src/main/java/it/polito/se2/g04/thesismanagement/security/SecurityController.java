@@ -13,8 +13,6 @@ public class SecurityController {
     @GetMapping("/API/testLogin")
     @PreAuthorize("hasRole('TEACHER')")
     public String testLogin(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        return username;
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

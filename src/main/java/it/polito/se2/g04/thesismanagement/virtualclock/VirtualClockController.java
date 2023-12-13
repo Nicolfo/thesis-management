@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class VirtualClockController {
     private final ProposalService proposalService;
 
-    public static int offset= 0;
+    private static int offset= 0;
+    public static int getOffset(){
+        return offset;
+    }
     @PostMapping("/API/virtualTimer/changeOffset/")
     public int setOffset(@RequestBody VirtualClockRequest virtualClockRequest){
         System.out.println("time changed");

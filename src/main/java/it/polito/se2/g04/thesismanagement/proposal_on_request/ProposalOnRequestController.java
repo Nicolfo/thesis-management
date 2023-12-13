@@ -1,4 +1,4 @@
-package it.polito.se2.g04.thesismanagement.proposalOnRequest;
+package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.ProposalRequestWithNoId;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
@@ -21,7 +21,7 @@ public class ProposalOnRequestController {
     private final ProposalOnRequestService proposalOnRequestService;
     private final TeacherService teacherService;
 
-    private final String updateProposalOnRequestWithNoId="you need to insert the id of the proposal";
+    private static final String UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID ="you need to insert the id of the proposal";
     @GetMapping("API/proposalOnRequest/getAllPending")
     @PreAuthorize("hasRole('SECRETARY')")
     public List<ProposalOnRequestFullDTO> getAllPendingProposalRequest() {
@@ -73,35 +73,35 @@ public class ProposalOnRequestController {
     @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryAcceptedWithNoId(){
-        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+        throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/secretaryRejected")
     @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestSecretaryRejectedWithNoId(){
-        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+        throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherAccepted")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAcceptedWithNoId(){
-        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+        throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestteacherChangeRequestWithNoId(){
-        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+        throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRejected")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRejectedWithNoId(){
-        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+        throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRequestChange/{id}")
@@ -114,7 +114,7 @@ public class ProposalOnRequestController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRequestChange(){
-        throw new ProposalRequestWithNoId(updateProposalOnRequestWithNoId);
+        throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
 

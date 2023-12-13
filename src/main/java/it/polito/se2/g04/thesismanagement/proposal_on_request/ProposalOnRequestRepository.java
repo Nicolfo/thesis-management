@@ -1,7 +1,6 @@
-package it.polito.se2.g04.thesismanagement.proposalOnRequest;
+package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

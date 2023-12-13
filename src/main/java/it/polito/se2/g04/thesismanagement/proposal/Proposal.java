@@ -1,8 +1,7 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
 import it.polito.se2.g04.thesismanagement.group.Group;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequest;
-import it.polito.se2.g04.thesismanagement.proposalOnRequest.ProposalOnRequestDTO;
+import it.polito.se2.g04.thesismanagement.proposal_on_request.ProposalOnRequest;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,9 +24,9 @@ public class Proposal {
     public Proposal(ProposalOnRequest proposalOnRequest){
         this.title = proposalOnRequest.getTitle();
         this.supervisor = proposalOnRequest.getSupervisor();
-        List<Teacher> coSupervisors= new ArrayList<>();
-        coSupervisors.addAll(proposalOnRequest.getCoSupervisors());
-        this.coSupervisors = coSupervisors;
+        List<Teacher> coSupervisorsToAdd= new ArrayList<>();
+        coSupervisorsToAdd.addAll(proposalOnRequest.getCoSupervisors());
+        this.coSupervisors = coSupervisorsToAdd;
         this.keywords = "";
         this.type = "";
         this.groups = null;

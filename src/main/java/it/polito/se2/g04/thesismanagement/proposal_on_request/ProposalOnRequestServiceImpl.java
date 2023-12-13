@@ -1,4 +1,4 @@
-package it.polito.se2.g04.thesismanagement.proposalOnRequest;
+package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.student.StudentNotFoundException;
@@ -48,42 +48,6 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         }
         return pendingProposalDTOs;
     }
-
-    /*
-    @Override
-    public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO) {
-        //PARSE TEACHER
-        if(!teacherRepository.existsById(proposalOnRequestDTO.getSupervisor()))
-            throw new TeacherNotFoundException("Teacher not found exception");
-        Teacher teacher = teacherRepository.getReferenceById(proposalOnRequestDTO.getId());
-        //PARSE STUDENT
-        if(!studentRepository.existsById(proposalOnRequestDTO.getStudentId()))
-            throw new StudentNotFoundException("Student not found exception");
-        Student student = studentRepository.getReferenceById(proposalOnRequestDTO.getStudentId());
-        //PARSE CO-SUPERVISORS
-        List<Teacher> coSupervisors;
-        if(proposalOnRequestDTO.getCoSupervisors()==null || proposalOnRequestDTO.getCoSupervisors().isEmpty())
-            coSupervisors= List.of();
-        else{
-            coSupervisors= proposalOnRequestDTO.getCoSupervisors().stream().map(it->{
-                if(!teacherRepository.existsById(it))
-                    throw new TeacherNotFoundException("Some co-supervisor has not been found");
-                return teacherRepository.getReferenceById(it);
-            }).toList();
-        }
-
-        ProposalOnRequest toAdd = new ProposalOnRequest(
-                proposalOnRequestDTO.getTitle(),
-                proposalOnRequestDTO.getDescription(),
-                teacher,
-                student,
-                coSupervisors,
-                proposalOnRequestDTO.getApprovalDate()
-        );
-
-
-        return proposalOnRequestRepository.save(toAdd).toDTO();
-    }*/
 
     private ProposalOnRequest checkProposalId(Long id) {
         if (!proposalOnRequestRepository.existsById(id)) {
@@ -202,7 +166,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     }
 
     @Override
-    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher(Long teacherId) {;
+    public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher(Long teacherId) {
         return proposalOnRequestRepository.getProposalOnRequestsBySupervisorIdAndStatus(teacherId,ProposalOnRequest.Status.SECRETARY_ACCEPTED).stream().map(ProposalOnRequest::toFullDTO).toList();
     }
 
