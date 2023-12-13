@@ -35,7 +35,8 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final ProposalRepository proposalRepository;
     private final ApplicationRepository applcationRepository;
     private final EmailService emailService;
-    private final String proposalIsNotPendingError = "Proposal On Request is not pending";
+    private static final String PROPOSAL_ON_REQUEST_IS_NOT_PENDING = "Proposal On Request is not pending";
+
     @PersistenceContext
     private EntityManager entityManager;
   
@@ -62,7 +63,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         ProposalOnRequest proposal = checkProposalId(id);
 
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+            throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
         proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
         emailService.notifySupervisorOfNewThesisRequest(proposal);
@@ -74,7 +75,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         ProposalOnRequest proposal = checkProposalId(id);
 
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+            throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
         proposal.setStatus(ProposalOnRequest.Status.SECRETARY_REJECTED);
         return proposalOnRequestRepository.save(proposal).toDTO();
@@ -116,7 +117,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     public ProposalOnRequestDTO proposalOnRequestTeacherAccepted(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
         if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED) {
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+            throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
             proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
             proposal.setApprovalDate(new Date());
@@ -138,7 +139,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     public ProposalOnRequestDTO proposalOnRequestTeacherRejected(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
         if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED) {
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+            throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REJECTED);
         return proposalOnRequestRepository.save(proposal).toDTO();
@@ -147,7 +148,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
         if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED) {
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+            throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         return proposalOnRequestRepository.save(proposal).toDTO();
@@ -157,7 +158,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     public ProposalOnRequestDTO proposalOnRequestTeacherChangeStatus(Long id, ProposalOnRequest.Status status){
         ProposalOnRequest proposal= checkProposalId(id);
         if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED){
-            throw (new ProposalNotFoundException(proposalIsNotPendingError));
+            throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
         proposal.setStatus(status);
         if (status == ProposalOnRequest.Status.TEACHER_ACCEPTED)
