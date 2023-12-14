@@ -51,7 +51,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<ApplicationDTO> getApplicationsByProf(String profEmail) {
         return applicationRepository
-                .getApplicationByProposal_Supervisor_EmailAndStatusIsNotOrderByProposalId(profEmail, ApplicationStatus.DELETED)
+                .getApplicationByProposal_Supervisor_EmailAndStatusIsNotOrderByProposalId(profEmail, ApplicationStatus.CANCELLED)
                 .stream().map(it -> {
                     ApplicationDTO dto = new ApplicationDTO();
                     dto.setId(it.getId());
@@ -105,7 +105,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (proposal.getSupervisor().getEmail().compareTo(profEmail) == 0 && proposal.getStatus() != Proposal.Status.DELETED) {
             return applicationRepository
                     .getApplicationByProposal_Id(proposalId)
-                    .stream().filter(it -> it.getStatus() != ApplicationStatus.DELETED).map(this::getApplicationDTO).toList();
+                    .stream().filter(it -> it.getStatus() != ApplicationStatus.CANCELLED).map(this::getApplicationDTO).toList();
         }
         throw new ProposalOwnershipException("Specified proposal id is not belonging to user: " + profEmail);
     }
@@ -122,14 +122,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (proposal.getStatus() != Proposal.Status.DELETED) {
             return applicationRepository
                     .getApplicationByProposalIdAndStudentId(proposalId, student.getId())
-                    .stream().filter(it -> it.getStatus() != ApplicationStatus.DELETED).map(this::getApplicationDTO).toList();
+                    .stream().filter(it -> it.getStatus() != ApplicationStatus.CANCELLED).map(this::getApplicationDTO).toList();
         }
         return null;
     }
 
     @Override
     public ApplicationDTO getApplicationById(Long applicationId) {
-        if (applicationRepository.getApplicationById(applicationId).getStatus() == ApplicationStatus.DELETED) {
+        if (applicationRepository.getApplicationById(applicationId).getStatus() == ApplicationStatus.CANCELLED) {
             throw new ApplicationDeletedException("this application is flagged to be deleted");
         }
         return getApplicationDTO(applicationRepository.getApplicationById(applicationId));
@@ -163,8 +163,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             application = applicationRepository.save(application);
             proposalRepository.save(proposal);
             emailService.notifyStudentOfApplicationDecision(application);
-            return rejectApplicationsByProposal(application.getProposal().getId(), applicationId)
-                    && rejectApplicationsByStudent(application.getStudent().getEmail(), applicationId);
+            return cancelApplicationsByProposal(application.getProposal().getId(), applicationId)
+                    && cancelApplicationsByStudent(application.getStudent().getEmail(), applicationId);
         } catch (Exception e) {
             return false;
         }
@@ -223,9 +223,23 @@ public class ApplicationServiceImpl implements ApplicationService {
             emailService.notifyStudentOfApplicationDecision(application);
             if (newStateEnum == ApplicationStatus.ACCEPTED) {
                 return
-                        rejectApplicationsByProposal(application.getProposal().getId(), applicationId)
-                                && rejectApplicationsByStudent(application.getStudent().getEmail(), applicationId);
+                        cancelApplicationsByProposal(application.getProposal().getId(), applicationId)
+                                && cancelApplicationsByStudent(application.getStudent().getEmail(), applicationId);
             }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean cancelApplicationById(Long applicationId) {
+        try {
+            Application application = getApplicationByIdOriginal(applicationId);
+            if (application.getStatus() != ApplicationStatus.PENDING)
+                return false;
+            application.setStatus(ApplicationStatus.CANCELLED);
+            applicationRepository.save(application);
+            emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
             return false;
@@ -248,23 +262,23 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
+    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId);
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId()))
-                success = success && (this.rejectApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
+                success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
         return success;
     }
 
     @Override
-    public boolean rejectApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
+    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByStudent(studentEmail);
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId()))
                 success = success
-                        && (this.rejectApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
+                        && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
         return success;
     }
 }

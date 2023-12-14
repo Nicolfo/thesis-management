@@ -49,7 +49,7 @@ public interface ApplicationService {
      * @param exceptionApplicationId id of the application of which the status should not be updated (can be set to -1 to not exclude any application)
      * @return true if all pending applications could be changed to rejected. Otherwise, false is returned.
      */
-    boolean rejectApplicationsByProposal(Long proposalId, Long exceptionApplicationId);
+    boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId);
 
     /**
      * This method updates the status all pending Applications of the user with the passed Email-Adress to rejected.
@@ -58,7 +58,7 @@ public interface ApplicationService {
      * @param exceptionApplicationId id of the application of which the status should not be updated (can be set to -1 to not exclude any application)
      * @return true if all pending applications could be changed to rejected. Otherwise, false is returned.
      */
-    boolean rejectApplicationsByStudent(String studentEmail, Long exceptionApplicationId);
+    boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId);
    
 
 }

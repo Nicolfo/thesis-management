@@ -47,15 +47,23 @@ public class EmailServiceImpl implements EmailService {
                 "Log in to the Thesis Management Portal to view further details.";
         String title = "Your application has been ";
         String icon = "";
-        if (application.getStatus() == ApplicationStatus.ACCEPTED) {
-            title += "accepted";
-            icon = "hook.png";
-        } else if (application.getStatus() == ApplicationStatus.REJECTED) {
-            title += "rejected";
-            icon = "cross.png";
-        } else if (application.getStatus() == ApplicationStatus.PENDING) {
-            title += "set to pending";
-            icon = "edit.png";
+        switch (application.getStatus()) {
+            case ACCEPTED -> {
+                title += "accepted";
+                icon = "hook.png";
+            }
+            case REJECTED -> {
+                title += "rejected";
+                icon = "cross.png";
+            }
+            case PENDING -> {
+                title += "set to pending";
+                icon = "edit.png";
+            }
+            case CANCELLED -> {
+                title += "set to cancelled, because another application has been accepted for this proposal";
+                icon = "cancelled.png";
+            }
         }
 
 

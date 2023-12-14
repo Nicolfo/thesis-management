@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalLevelInvalidException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.UpdateAfterAcceptException;
 import it.polito.se2.g04.thesismanagement.application.Application;
@@ -296,7 +295,7 @@ public class ProposalServiceImpl implements ProposalService {
         } else {
             applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
                         Application application = applicationRepository.getReferenceById(it.getId());
-                        application.setStatus(ApplicationStatus.DELETED);
+                        application.setStatus(ApplicationStatus.CANCELLED);
                         applicationRepository.save(application);
                     }
             );
@@ -312,7 +311,7 @@ public class ProposalServiceImpl implements ProposalService {
 
         applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
                     Application application = applicationRepository.getReferenceById(it.getId());
-                    application.setStatus(ApplicationStatus.DELETED);
+                    application.setStatus(ApplicationStatus.CANCELLED);
                     applicationRepository.save(application);
                 }
         );

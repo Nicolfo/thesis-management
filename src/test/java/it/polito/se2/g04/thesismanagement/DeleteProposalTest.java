@@ -103,8 +103,8 @@ public class DeleteProposalTest {
         assertEquals(Proposal.Status.DELETED, proposalRepository.getReferenceById(proposalOutput.get(0).getId()).getStatus(), "proposalOutput should be tagged to deletion");
 
         List<Application> applicationOutput = applicationRepository.findAll();
-        assertEquals(ApplicationStatus.DELETED, applicationOutput.get(0).getStatus(), "applicationOutput should be tagged to deletion");
-        assertEquals(ApplicationStatus.DELETED, applicationOutput.get(1).getStatus(), "applicationOutput should be tagged to deletion");
+        assertEquals(ApplicationStatus.CANCELLED, applicationOutput.get(0).getStatus(), "applicationOutput should be tagged to deletion");
+        assertEquals(ApplicationStatus.CANCELLED, applicationOutput.get(1).getStatus(), "applicationOutput should be tagged to deletion");
 
         proposalOutput = proposalService.getAllNotArchivedProposals();
         assertEquals(0, proposalOutput.size(), "proposalOutput should be 0 long");
