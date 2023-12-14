@@ -103,7 +103,7 @@ public class ProposalOnRequestController {
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRejectedWithNoId(){
         throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
-
+//TODO check if used, duplicate of line 59
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRequestChange/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)

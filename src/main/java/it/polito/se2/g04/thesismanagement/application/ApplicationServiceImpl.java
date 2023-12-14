@@ -80,6 +80,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         cq.where(predicates.toArray(new Predicate[0]));
         List<Application> toReturn = entityManager.createQuery(cq).getResultList();
 
+
+
         return toReturn.stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
             dto.setId(it.getId());
