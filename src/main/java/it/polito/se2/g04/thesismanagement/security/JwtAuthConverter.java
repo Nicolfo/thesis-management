@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,15 +28,10 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        Collection authorityCollection = jwtGrantedAuthoritiesConverter.convert(jwt);
-        Collection<GrantedAuthority> authorities;
-        if (authorityCollection == null)
-            authorities = extractResourceRoles(jwt).stream().collect(Collectors.toSet());
-        else
-            authorities = Stream.concat(
-                    jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
-                    extractResourceRoles(jwt).stream()
-            ).collect(Collectors.toSet());
+        Collection<GrantedAuthority> authorities = Stream.concat(
+                Optional.of(jwtGrantedAuthoritiesConverter.convert(jwt)).stream().flatMap(Collection::stream),
+                extractResourceRoles(jwt).stream()
+        ).collect(Collectors.toSet());
         return new JwtAuthenticationToken(jwt, authorities, getPrincipalClaimName(jwt));
     }
 
