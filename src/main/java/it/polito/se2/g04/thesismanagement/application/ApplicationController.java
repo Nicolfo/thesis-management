@@ -36,14 +36,8 @@ public class ApplicationController {
         return applicationService.getApplicationsByStudent(auth.getName());
     }
 
-    @GetMapping("/API/application/getApplicationsByProposal")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public List<ApplicationDTO> getApplicationByProposal(Long proposalId) {
-        return applicationService.getApplicationsByProposal(proposalId);
-    }
-
     @GetMapping("/API/application/getApplicationsByProposalId/{proposalId}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
     public List<ApplicationDTO> getApplicationByProposalId(@PathVariable Long proposalId) {
         return applicationService.getApplicationsByProposalId(proposalId);
     }
