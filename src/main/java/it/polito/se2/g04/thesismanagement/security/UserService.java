@@ -20,18 +20,4 @@ public class UserService {
         this.realm = realm;
     }
 
-    public List<UserRepresentation> findByUsername(String username) {
-        return keycloak.realm(realm).users().search(username);
-    }
-
-    public RoleRepresentation findRoleByName(String roleName) {
-        return keycloak.realm(realm).roles().get(roleName).toRepresentation();
-    }
-
-    public List<String> getRoleById(String id) {
-        return keycloak.realm(realm).users().get(id).roles().realmLevel().listAll()
-                .stream().map(Object::toString).toList();
-    }
-
-
 }

@@ -3,8 +3,14 @@ package it.polito.se2.g04.thesismanagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.polito.se2.g04.thesismanagement.application.Application;
+import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.degree.Degree;
 import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
+import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.proposal_on_request.*;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
@@ -28,13 +34,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.keycloak.util.JsonSerialization.mapper;
 
 @SpringBootTest
 @Transactional
@@ -53,32 +58,38 @@ public class ProposalOnRequestTest {
     private StudentRepository studentRepository;
     @Autowired
     private ProposalOnRequestService proposalOnRequestService;
+    @Autowired
+    private ProposalRepository proposalRepository;
+    @Autowired
+    private ApplicationRepository applicationRepository;
 
     @Autowired
     private MockMvc mockMvc;
 
-    private List<ProposalOnRequest> proposal = new ArrayList<ProposalOnRequest>();
+    private List<ProposalOnRequest> proposalOnRequests = new ArrayList<ProposalOnRequest>();
+    private Student student1;
+    private Teacher teacher;
 
     @BeforeAll
     public void setup() {
         Degree degree = new Degree("ingegneria informatica");
         degreeRepository.save(degree);
-        Student student1 = new Student("rossi", "marco", "male", "ita", "m.rossi@example.com", degree, 2020);
+        student1 = new Student("rossi", "marco", "male", "ita", "m.rossi@example.com", degree, 2020);
         student1 = studentRepository.save(student1);
         Student student2 = new Student("viola", "marta", "female", "ita", "m.viola@example.com", degree, 2018);
         student2 = studentRepository.save(student2);
         Student student3 = new Student("verde", "antonio", "male", "ita", "a.verde@example.com", degree, 2019);
         student3 = studentRepository.save(student3);
-        Teacher teacher = new Teacher("Massimo", "Potenza", "m.potenza@example.com", null, null);
+        teacher = new Teacher("Massimo", "Potenza", "m.potenza@example.com", null, null);
         teacher = teacherRepository.save(teacher);
 
-        proposal.add(proposalOnRequestRepository.save(new ProposalOnRequest(
+        proposalOnRequests.add(proposalOnRequestRepository.save(new ProposalOnRequest(
                 "titolo", "descrizione", teacher, student1, null, null
         )));
-        proposal.add(proposalOnRequestRepository.save(new ProposalOnRequest(
+        proposalOnRequests.add(proposalOnRequestRepository.save(new ProposalOnRequest(
                 "titolo2", "descrizione2", teacher, student2, null, null
         )));
-        proposal.add(proposalOnRequestRepository.save(new ProposalOnRequest(
+        proposalOnRequests.add(proposalOnRequestRepository.save(new ProposalOnRequest(
                 "titolo3", "descrizione3", teacher, student3, null, null
         )));
 
@@ -105,11 +116,11 @@ public class ProposalOnRequestTest {
         mapper.registerModule(new JavaTimeModule());
         ProposalOnRequestFullDTO[] result = mapper.readValue(json, ProposalOnRequestFullDTO[].class);
         assertEquals(3, result.length, "this proposal should be 3 long");
-        assertEquals(result[0].getId(),proposal.get(0).getId(),"id should be the same");
-        assertEquals(result[1].getId(),proposal.get(1).getId(),"id should be the same");
-        assertEquals(result[2].getId(),proposal.get(2).getId(),"id should be the same");
+        assertEquals(result[0].getId(), proposalOnRequests.get(0).getId(),"id should be the same");
+        assertEquals(result[1].getId(), proposalOnRequests.get(1).getId(),"id should be the same");
+        assertEquals(result[2].getId(), proposalOnRequests.get(2).getId(),"id should be the same");
 
-        proposalOnRequestService.proposalOnRequestSecretaryRejected(proposal.get(0).getId());
+        proposalOnRequestService.proposalOnRequestSecretaryRejected(proposalOnRequests.get(0).getId());
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getAllPending")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -119,11 +130,11 @@ public class ProposalOnRequestTest {
         mapper.registerModule(new JavaTimeModule());
         result = mapper.readValue(json, ProposalOnRequestFullDTO[].class);
         assertEquals(2, result.length, "this proposal should be 2 long");
-        assertEquals(result[0].getId(),proposal.get(1).getId(),"id should be the same");
-        assertEquals(result[1].getId(),proposal.get(2).getId(),"id should be the same");
+        assertEquals(result[0].getId(), proposalOnRequests.get(1).getId(),"id should be the same");
+        assertEquals(result[1].getId(), proposalOnRequests.get(2).getId(),"id should be the same");
 
-        proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposal.get(1).getId());
-        proposalOnRequestService.proposalOnRequestTeacherRejected((proposal.get(2).getId()));
+        proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(1).getId());
+        proposalOnRequestService.proposalOnRequestSecretaryRejected((proposalOnRequests.get(2).getId()));
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getAllPending")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -139,7 +150,8 @@ public class ProposalOnRequestTest {
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
     public void teacherAcceptedTest() throws Exception {
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherAccepted/{id}", proposal.get(0).getId())
+        proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(0).getId());
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherAccepted/{id}", proposalOnRequests.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -151,6 +163,13 @@ public class ProposalOnRequestTest {
         LocalDate localDate1 = result.getApprovalDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
         LocalDate localDate2 = new Date().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
         assertEquals(localDate1, localDate2, "this date should be equal");
+        Optional<Proposal> proposal=proposalRepository.findAllByStatus(Proposal.Status.ACCEPTED).stream().filter(it->it.getTitle().compareTo(proposalOnRequests.get(0).getTitle())==0).findFirst();
+        assertEquals(proposal.isPresent(),true,"Proposal Request is not getting added to proposal table");
+
+        Optional<Application> application=applicationRepository.getApplicationByProposal_Id(proposal.get().getId()).stream().findFirst();
+        assertEquals(application.isPresent(),true,"Proposal Request is not getting added to application table");
+        assertEquals(application.get().getStudent().getId(), proposalOnRequests.get(0).getStudent().getId(),"Student of the application is mismatching");
+        assertEquals(application.get().getStatus(), ApplicationStatus.ACCEPTED,"Application is not being accepted");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherAccepted/" + new Random().nextLong(4, 100))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -168,7 +187,8 @@ public class ProposalOnRequestTest {
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
     public void teacherRejectTest() throws Exception {
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRejected/{id}", proposal.get(1).getId())
+        proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(1).getId());
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRejected/{id}", proposalOnRequests.get(1).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -193,7 +213,8 @@ public class ProposalOnRequestTest {
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
     public void teacherChangeTest() throws Exception {
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/{id}", proposal.get(2).getId())
+        proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(2).getId());
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/{id}", proposalOnRequests.get(2).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -220,7 +241,7 @@ public class ProposalOnRequestTest {
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
     public void secretaryAcceptedTest() throws Exception {
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}", proposal.get(0).getId())
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}", proposalOnRequests.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -245,7 +266,7 @@ public class ProposalOnRequestTest {
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
     public void secretaryRejectedTest() throws Exception {
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/{id}", proposal.get(0).getId())
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/{id}", proposalOnRequests.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -264,5 +285,39 @@ public class ProposalOnRequestTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/a")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
+    public void createProposalOnRequest() throws Exception{
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(null, student1.getId(), "test","test", teacher.getId(), new ArrayList<>(),new Date(),null);
+        MvcResult res=mockMvc.perform(MockMvcRequestBuilders.post("/API/proposalOnRequest/create/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(proposalOnRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andReturn();
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
+
+        ProposalOnRequest proposalOnRequest=proposalOnRequestRepository.getReferenceById(result.getId());
+        assertEquals(proposalOnRequest.getTitle(),proposalOnRequestDTO.getTitle(),"Title not matching");
+        assertEquals(proposalOnRequest.getStatus(), ProposalOnRequest.Status.PENDING,"status is not PENDING");
+        //randomTeacherID
+        proposalOnRequestDTO.setSupervisor(444l);
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposalOnRequest/create/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(proposalOnRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        //random cosupervisor
+        proposalOnRequestDTO.setSupervisor(teacher.getId());
+        proposalOnRequestDTO.getCoSupervisors().add(444l);
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposalOnRequest/create/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(proposalOnRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
     }
 }

@@ -1,5 +1,5 @@
 # Stage 1: Build React App
-FROM node:14 AS builder
+FROM node:16 AS builder
 WORKDIR /app
 # Copy package.json and package-lock.json to leverage Docker cache
 COPY package*.json ./

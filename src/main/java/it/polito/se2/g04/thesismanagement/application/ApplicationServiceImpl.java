@@ -180,17 +180,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         applyForProposalHelper(applicationDTO, loggedUser);
     }
 
-    @Override
-    public void applyForProposal(ApplicationDTO applicationDTO,String studentEmail) {
-
-        if (!studentRepository.existsByEmail(studentEmail)) {
-            throw new ApplicationBadRequestFormatException("The student doesn't exist");
-        }
-
-        Student loggedUser = studentRepository.getStudentByEmail(studentEmail);
-
-        applyForProposalHelper(applicationDTO, loggedUser);
-    }
 
     private void applyForProposalHelper(ApplicationDTO applicationDTO, Student loggedUser) {
         if (applicationDTO.getProposalId() == null || !proposalRepository.existsById(applicationDTO.getProposalId())) {

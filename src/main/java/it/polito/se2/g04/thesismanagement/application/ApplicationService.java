@@ -31,7 +31,6 @@ public interface ApplicationService {
      */
     public boolean rejectApplicationById(Long applicationId);
     public void applyForProposal(ApplicationDTO applicationDTO);
-    public void applyForProposal(ApplicationDTO applicationDTO,String studentEmail);
     /**
      * This method changes the state of a given application to the given string. This is done regardless
      * the current state of the application. After the state was changed, the student who handed in the application

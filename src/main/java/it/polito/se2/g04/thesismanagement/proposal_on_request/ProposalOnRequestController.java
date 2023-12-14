@@ -58,8 +58,8 @@ public class ProposalOnRequestController {
     }
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ProposalOnRequestDTO updateProposalOnRequestteacherChangeRequest(@PathVariable Long id){
+    @ResponseStatus(HttpStatus.OK)
+    public ProposalOnRequestDTO updateProposalOnRequestTeacherChangeRequest(@PathVariable Long id){
         return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_REVIEW);
     }
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRejected/{id}")
@@ -93,7 +93,7 @@ public class ProposalOnRequestController {
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ProposalOnRequestDTO updateProposalOnRequestteacherChangeRequestWithNoId(){
+    public ProposalOnRequestDTO updateProposalOnRequestTeacherChangeRequestWithNoId(){
         throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
