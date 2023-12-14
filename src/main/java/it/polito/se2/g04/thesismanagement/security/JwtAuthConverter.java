@@ -27,10 +27,15 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        Collection<GrantedAuthority> authorities = Stream.concat(
-                jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
-                extractResourceRoles(jwt).stream()
-        ).collect(Collectors.toSet());
+        Collection authorityCollection = jwtGrantedAuthoritiesConverter.convert(jwt);
+        Collection<GrantedAuthority> authorities;
+        if (authorityCollection == null)
+            authorities = extractResourceRoles(jwt).stream().collect(Collectors.toSet());
+        else
+            authorities = Stream.concat(
+                    jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
+                    extractResourceRoles(jwt).stream()
+            ).collect(Collectors.toSet());
         return new JwtAuthenticationToken(jwt, authorities, getPrincipalClaimName(jwt));
     }
 
