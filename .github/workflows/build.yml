@@ -9,9 +9,6 @@ jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./  # Set the working directory for all run steps
     steps:
       - uses: actions/checkout@v3
         with:
