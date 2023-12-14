@@ -84,9 +84,9 @@ public class AcceptApplicationTest {
         teacherRepository.save(teacher);
 
         student = new Student("Georgina","Ferrell","female","italian","georgina.ferrell@example.com",null,2020);
-        studentRepository.save(student);
+        student=studentRepository.save(student);
         student2 = new Student("Munz","Marco","male","italian","marco.munz@example.com",null,2022);
-        studentRepository.save(student2);
+        student2 = studentRepository.save(student2);
 
         proposal1 = new Proposal("Patch-based discriminative learning for Iris Presentation Attack Detection",teacher,null,"Iris, PAD, Recognition, Detection, Spoofing","Bachelor Thesis",null,"Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.", "Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI",null,new Date(2024, Calendar.DECEMBER,10),null,null);
         proposal2 = new Proposal("Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS");
@@ -256,5 +256,31 @@ public class AcceptApplicationTest {
         assertEquals(0, applicationRepository.getApplicationById(3L).getStatus().compareTo(ApplicationStatus.REJECTED));
 
     }
+    @Test
+    @Rollback
+    @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
+    public void getApplicationByProposal() throws Exception {
+         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationsByProposalId/"+proposal2.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+    // /API/application/changeApplicationStateById/{applicationId}/{newState}
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
+    public void changeApplicationState() throws Exception {
+        application1.setStatus(ApplicationStatus.ACCEPTED);
+        application1 = applicationRepository.save(application1);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/application/changeApplicationStateById/{applicationId}/{newState}",application1.getId(),ApplicationStatus.REJECTED)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        application1=applicationRepository.getReferenceById(application1.getId());
+        assertEquals(application1.getStatus(),ApplicationStatus.REJECTED,"the status didn't change");
+
+    }
+
 
 }
