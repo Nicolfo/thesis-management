@@ -53,7 +53,7 @@ jib{
 	container{
 		ports=["8080"]
 	}
-	to{image="nicolfo/thesis-management:sprint2"}
+	to{image="nicolfo/thesis-management:sprint2.1"}
 }
 
 jacoco {

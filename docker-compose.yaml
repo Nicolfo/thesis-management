@@ -9,7 +9,7 @@ services:
     restart: always
 
   backend:
-    image: 'nicolfo/thesis-management:sprint2'
+    image: 'nicolfo/thesis-management:sprint2.1'
     ports:
       - "8081:8081"
     expose:

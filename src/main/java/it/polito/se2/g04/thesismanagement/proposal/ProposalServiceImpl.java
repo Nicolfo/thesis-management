@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -326,6 +327,7 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Scheduled(fixedRate = 10 * 60 * 1000)
     @Async
+    @Transactional
     public void archiveExpiredProposals() {
         Date nowOld = Calendar.getInstance().getTime();
         Calendar now = Calendar.getInstance();
