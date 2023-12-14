@@ -190,14 +190,14 @@ public class AcceptApplicationTest {
 
 
         //get result
-        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/2")
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/"+application2.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
         assertEquals(json, "false");
-        assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.REJECTED));
+        assertEquals(0, applicationRepository.getApplicationById(application2.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/acceptApplicationById/3")
