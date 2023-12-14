@@ -15,11 +15,12 @@ import {
 } from "react-bootstrap";
 import dayjs from "dayjs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import toast, {Toaster} from 'react-hot-toast';
+
 
 export default function ProposalsOnRequestListContent({user}) {
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
-
     const [proposals, setProposals] = useState([]);
     const [error, setError] = useState("");
     const [showWarning, setShowWarning] = useState(false);
@@ -61,6 +62,71 @@ export default function ProposalsOnRequestListContent({user}) {
             setError("Error");
     }
 
+    const accepted = (token, updateId, getProposals, setAccept, setShowWarning) => {
+        toast.promise(
+            (async () => {
+                await API.secretaryAccept(token, updateId);
+                await getProposals();
+                setAccept(false);
+                setShowWarning(false);
+                return "Thesis request successfully forwarded to the supervisor";
+            })(),
+            {
+                loading: 'Loading...',
+                success: () => {
+                    return <strong>Thesis request successfully forwarded to the supervisor</strong>
+                },
+                error: (error) => {
+                    if (error && error.detail) {
+                        return <strong>{error.detail}</strong>;
+                    } else {
+                        return <strong>An error occurred while forwarding the request</strong>;
+                    }
+                }
+            });
+
+        // API.secretaryAccept(props.user.token, props.updateId)
+        //     .then(()=> {
+        //         props.getProposals()
+        //             .then(() => {
+        //                 props.setAccept(false);
+        //                 props.setShowWarning(false);
+        //             })
+        //     })
+    }
+
+    const rejected = (token, updateId, getProposals, setShowWarning) => {
+        toast.promise(
+            (async () => {
+                await API.secretaryReject(token, updateId);
+                await getProposals();
+                setShowWarning(false);
+                return "Thesis request successfully rejected";
+            })(),
+            {
+                loading: 'Loading...',
+                success: () => {
+                    return <strong>Thesis request successfully rejected</strong>
+                },
+                error: (error) => {
+                    if (error && error.detail) {
+                        return <strong>{error.detail}</strong>;
+                    } else {
+                        return <strong>An error occurred while rejecting the request</strong>;
+                    }
+                }
+            });
+
+        // API.secretaryReject(props.user.token, props.updateId)
+        //     .then(()=> {
+        //         props.getProposals()
+        //             .then(() => {
+        //                 props.setShowWarning(false)}
+        //         )})
+    }
+
+
+
     return (
         <>
             {error !== "" &&
@@ -74,7 +140,7 @@ export default function ProposalsOnRequestListContent({user}) {
             }
 
             { showWarning ?
-                <Warn user={user} accept={accept} setShowWarning={setShowWarning} setAccept={setAccept} updateId={updateId} getProposals={getProposals}></Warn>
+                <Warn user={user} accept={accept} setShowWarning={setShowWarning} setAccept={setAccept} updateId={updateId} getProposals={getProposals} accepted={accepted} rejected={rejected}></Warn>
                 :
                 <Card>
                     <Card.Header>
@@ -92,7 +158,8 @@ export default function ProposalsOnRequestListContent({user}) {
                                                               setAccept={setAccept}
                                                               setReject={setReject}
                                                               setShowWarning={setShowWarning}
-                                                              setUpdateId={setUpdateId}/>
+                                                              setUpdateId={setUpdateId}
+                                                              />
                                 })}
                             </Accordion>
                         </Card.Body> :
@@ -103,6 +170,11 @@ export default function ProposalsOnRequestListContent({user}) {
                 </Card>
             }
 
+            <Toaster
+                position="top-right"
+                containerClassName="mt-5"
+                reverseOrder={false}
+            />
         </>
     );
 }
@@ -179,21 +251,23 @@ function Warn(props) {
                 </Modal.Header>
 
                 <Modal.Body>
-                    { props.accept? <p>Do you want to accept this student request?</p>:<p>Do you want to reject this student request?</p>}
-
+                    { props.accept?
+                        <p>Do you want to accept this student request?</p>
+                        :
+                        <p>Do you want to reject this student request?</p>
+                    }
                 </Modal.Body>
-                { props.accept ?
 
+                { props.accept ?
                     <Modal.Footer>
-                        <Button variant="primary" onClick={()=>{props.setAccept(false); props.setShowWarning(false)}}>Undo</Button>
-                        <Button variant="success" onClick={()=> { API.secretaryAccept(props.user.token, props.updateId).then(()=> {props.getProposals().then(() => {props.setAccept(false); props.setShowWarning(false); })})}}>Accept</Button>
+                        <Button variant="primary" onClick={()=> {props.setAccept(false); props.setShowWarning(false)}}>Undo</Button>
+                        <Button variant="success" onClick={() => {props.accepted(props.user.token, props.updateId, props.getProposals, props.setAccept, props.setShowWarning)}}>Accept</Button>
                     </Modal.Footer>
                     :
                     <Modal.Footer>
-                        <Button variant="primary" onClick={()=>props.setShowWarning(false)}>Undo</Button>
-                        <Button variant="danger" onClick={()=> { API.secretaryReject(props.user.token, props.updateId).then(()=> {props.getProposals().then(() => {props.setShowWarning(false)})})}}>Reject</Button>
+                        <Button variant="primary" onClick={() => props.setShowWarning(false)}>Undo</Button>
+                        <Button variant="danger" onClick={() => {props.rejected(props.user.token, props.updateId, props.getProposals, props.setShowWarning)}}>Reject</Button>
                     </Modal.Footer>
-
                 }
             </Modal.Dialog>
         </div>

@@ -186,7 +186,7 @@ function NavBar(props) {
                                             navigate('/teacher/proposalOnRequest/browse');
                                         }}
                                     >
-                                        My thesis start requests
+                                        My thesis requests
                                     </Button>
                                 </>
                             )}

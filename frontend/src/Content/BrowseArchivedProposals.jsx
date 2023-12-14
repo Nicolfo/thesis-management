@@ -112,6 +112,31 @@ function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
 
     }
 
+    const doSearchReset = async () => {
+        const requestBody = {
+            title: null,
+            supervisorIdList: null,
+            coSupervisorIdList: null,
+            keywords: null,
+            type: null,
+            codGroupList: null,
+            description: null,
+            requiredKnowledge: null,
+            notes: null
+        };
+
+        // Remove properties with null values
+        Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
+
+        try {
+            const proposals = await API.searchArchivedProposals(user.token, requestBody);
+            setProposalsList(proposals);
+        } catch (error) {
+            handleError(error);
+        }
+
+    }
+
     const handleError = error => {
         if (error.error)
             setError(error.error);
@@ -153,43 +178,44 @@ function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
                                     setShowSearchBar(false);
                                 }}> <FontAwesomeIcon icon={"magnifying-glass"}/> SEARCH BY </Button>
                                 {" "}
-                                <Button variant="outline-danger" size="sm" onClick={clearFields}> <FontAwesomeIcon
-                                    icon="fa-solid fa-arrow-rotate-left"/> Reset filters </Button>
+                                <Button variant="outline-danger" onClick={() => {clearFields(); doSearchReset();}}>
+                                    <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-left"/> Reset filters
+                                </Button>
                             </Offcanvas.Title>
                         </Offcanvas.Header>
                         <Offcanvas.Body>
                             <Form>
                                 <Form.Group className="mb-3">
                                     <Form.Floating>
-                                        <Form.Control type="text" placeholder="Title" value={title}
+                                        <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Title" value={title}
                                                       onChange={event => setTitle(event.target.value)}/>
                                         <label htmlFor="floatingTitle"> Title </label>
                                     </Form.Floating>
                                 </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Floating>
-                                        <Form.Control type="text" placeholder="Keyword(s)" value={keywords}
+                                        <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Keyword(s)" value={keywords}
                                                       onChange={event => setKeywords(event.target.value)}/>
                                         <label htmlFor="floatingKeyword(s)"> Keyword(s) </label>
                                     </Form.Floating>
                                 </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Floating>
-                                        <Form.Control type="text" placeholder="Type" value={type}
+                                        <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Type" value={type}
                                                       onChange={event => setType(event.target.value)}/>
                                         <label htmlFor="floatingType(s)"> Type(s) </label>
                                     </Form.Floating>
                                 </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Floating>
-                                        <Form.Control type="text" placeholder="Description" value={description}
+                                        <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Description" value={description}
                                                       onChange={event => setDescription(event.target.value)}/>
                                         <label htmlFor="floatingDescription"> Description </label>
                                     </Form.Floating>
                                 </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Floating>
-                                        <Form.Control type="text" placeholder="Required Knowledge"
+                                        <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Required Knowledge"
                                                       value={requiredKnowledge}
                                                       onChange={event => setRequiredKnowledge(event.target.value)}/>
                                         <label htmlFor="floatingKnowledge"> Required Knowledge </label>
@@ -197,7 +223,7 @@ function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
                                 </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Floating>
-                                        <Form.Control type="text" placeholder="Notes" value={notes}
+                                        <Form.Control style={{borderRadius: "25px"}} type="text" placeholder="Notes" value={notes}
                                                       onChange={event => setNotes(event.target.value)}/>
                                         <label htmlFor="floatingNotes"> Notes </label>
                                     </Form.Floating>

@@ -81,7 +81,7 @@ function StartRequest(props) {
                     if (error && error.detail) {
                         return <strong>{error.detail}</strong>;
                     } else {
-                        return <strong>An error occurred while sending the request.</strong>;
+                        return <strong>An error occurred while sending the request</strong>;
                     }
                 }
             });
