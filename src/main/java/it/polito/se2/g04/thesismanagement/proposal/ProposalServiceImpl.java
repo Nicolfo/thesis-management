@@ -21,6 +21,8 @@ import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,9 +89,10 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
+        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
-        if(teacher==null)
-            throw new TeacherNotFoundException("Can't find the specified teacher on db!");
+        if(teacher==null || teacher.getEmail().compareTo(auth.getName())!=0)
+            throw new TeacherNotFoundException("Defined teacher is invalid!");
         Proposal toAdd = new Proposal(
                 proposalDTO.getTitle(),
                 teacher,

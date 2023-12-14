@@ -73,15 +73,7 @@ public class ProposalController {
     @PostMapping("/API/proposal/insert/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProposal(@RequestBody ProposalDTO proposal, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            throw (new CreateUpdateProposalWithNoPathVariable(
-                    String.join(bindingResult.getAllErrors()
-                        .stream()
-                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .toString()))
-            );
-        }
+    public void createProposal(@RequestBody ProposalDTO proposal){
         proposalService.createProposal(proposal);
     }
 

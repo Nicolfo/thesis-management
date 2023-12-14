@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
@@ -85,9 +86,18 @@ public class CreateProposalTest {
     }
     @Test
     @Rollback
-    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void exceptionTest(){
-
+    @WithMockUser(username = "nonexistinguser@no.it", roles = {"TEACHER"})
+    public void exceptionTest() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        Group g = new Group("Test");
+        g = groupRepository.save(g);
+        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",g,null);
+        teacherRepository.save(teacher);
+        Proposal proposal=new Proposal("test1",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 
