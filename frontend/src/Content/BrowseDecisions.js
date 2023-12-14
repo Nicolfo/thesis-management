@@ -79,7 +79,7 @@ function BrowseDecisions(props) {
 
                 :
                 <Card.Body style={{"textAlign": "center"}} className="mt-4">
-                    <strong>You have no applications yet</strong>
+                    <strong>You have no proposals on request yet</strong>
                 </Card.Body>
             }
 

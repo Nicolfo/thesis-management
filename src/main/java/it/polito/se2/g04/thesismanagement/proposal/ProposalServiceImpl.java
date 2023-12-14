@@ -191,6 +191,8 @@ public class ProposalServiceImpl implements ProposalService {
         Root<Proposal> proposal = cq.from(Proposal.class);
         List<Predicate> predicates = new ArrayList<>();
 
+        addPredicates(proposalSearchRequest, cb, proposal, predicates);
+
         predicates.add(cb.equal(proposal.get("status"), Proposal.Status.ACTIVE));
 
         cq.where(predicates.toArray(new Predicate[0]));
