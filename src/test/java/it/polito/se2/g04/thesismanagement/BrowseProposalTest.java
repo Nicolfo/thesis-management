@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -255,5 +256,96 @@ public class BrowseProposalTest {
         //check that number of proposals match
         assertEquals(0, proposals.length, "getAll should return 0 values");
     }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
+    public void getProposalsByProfWithoutTeacher() throws Exception {
+        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        proposalRepository.save(proposal1);
+        proposalRepository.save(proposal2);
+
+        // This should throw an exception
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getByProf")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
+    public void testGetArchived() throws Exception {
+        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        proposalRepository.save(proposal1);
+        proposalRepository.save(proposal2);
+
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getArchived")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ProposalFullDTO[] proposals = mapper.readValue(json, ProposalFullDTO[].class);
+
+        //check that number of proposals match
+        assertEquals(2, proposals.length, "getAll should return 0 values");
+        assertTrue(Stream.of(proposals).anyMatch(p -> p.getTitle().equals(proposal1.getTitle())));
+        assertTrue(Stream.of(proposals).anyMatch(p -> p.getTitle().equals(proposal2.getTitle())));
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
+    public void testGetArchivedWithoutTeacher() throws Exception {
+        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        proposalRepository.save(proposal1);
+        proposalRepository.save(proposal2);
+
+        // This should throw an exception
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getArchived")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
+    public void testGetTitleByProposalId() throws Exception {
+        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        proposalRepository.save(proposal1);
+        proposalRepository.save(proposal2);
+
+        // This should throw an exception
+        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getTitleByProposalId/" + proposal1.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String title = res.getResponse().getContentAsString();
+
+        //check that number of proposals match
+        assertEquals(proposal1.getTitle(), title, "Title should be proposal 1");
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
+    public void testGetTitleByProposalIdWithoutProposal() throws Exception {
+        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        proposalRepository.save(proposal1);
+        proposalRepository.save(proposal2);
+
+        // This should throw an exception
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getTitleByProposalId/" + 4000)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
 }
+
+
 
