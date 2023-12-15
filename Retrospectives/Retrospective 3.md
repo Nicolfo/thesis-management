@@ -90,4 +90,5 @@ sections:
  - Read the FAQ document made by the product owner more frequently in order to adapt to the changes.
  - We want to improve the way we manage technical debt.
 
-- One thing you are proud of as a Team!! 
+- One thing you are proud of as a Team!!
+ -We are proud to have achieved all our goals and demonstrated effective collaboration.
