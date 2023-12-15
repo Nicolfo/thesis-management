@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 TEMPLATE FOR RETROSPECTIVE (Team 4)
+=======
+RETROSPECTIVE (Team 04)
+>>>>>>> Stashed changes
 =====================================
 
 The retrospective should include _at least_ the following
