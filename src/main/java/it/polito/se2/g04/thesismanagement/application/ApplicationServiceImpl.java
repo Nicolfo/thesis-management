@@ -45,7 +45,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
     private final EmailService emailService;
-    private static final String MAIL_ERROR="Error in sending mail";
+    private static final String MAIL_ERROR = "Error in sending mail";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -77,10 +77,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         Root<Application> proposal = cq.from(Application.class);
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.notEqual(proposal.get("status"), Proposal.Status.DELETED));
-        predicates.add(cb.equal(proposal.join("student").get("email"),studentEmail));
+        predicates.add(cb.equal(proposal.join("student").get("email"), studentEmail));
         cq.where(predicates.toArray(new Predicate[0]));
         List<Application> toReturn = entityManager.createQuery(cq).getResultList();
-
 
 
         return toReturn.stream().map(it -> {
@@ -214,8 +213,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             ApplicationStatus newStateEnum = ApplicationStatus.valueOf(newState);
             Application application = getApplicationByIdOriginal(applicationId);
             application.setStatus(newStateEnum);
-            if(application.getProposal().getStatus()!= Proposal.Status.ACTIVE){
-                Proposal proposalToChange=application.getProposal();
+            if (application.getProposal().getStatus() != Proposal.Status.ACTIVE) {
+                Proposal proposalToChange = application.getProposal();
                 proposalToChange.setStatus(Proposal.Status.ACTIVE);
                 proposalRepository.save(proposalToChange);
             }
@@ -239,7 +238,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (application.getStatus() != ApplicationStatus.PENDING)
                 return false;
             application.setStatus(ApplicationStatus.CANCELLED);
-            applicationRepository.save(application);
+            application = applicationRepository.save(application);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -254,7 +254,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (application.getStatus() != ApplicationStatus.PENDING)
                 return false;
             application.setStatus(ApplicationStatus.REJECTED);
-            applicationRepository.save(application);
+            application = applicationRepository.save(application);
+            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -263,23 +264,27 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
+    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) throws MessagingException, IOException {
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId);
-        for (ApplicationDTO application : applicationList)
-            if (!Objects.equals(exceptionApplicationId, application.getId()))
-                success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
-        return success;
+        return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);
     }
 
     @Override
-    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
+    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) throws MessagingException, IOException {
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByStudent(studentEmail);
+        return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);
+    }
+
+    //TODO: check if it works properly
+    private boolean cancelApplicationsHelper(Long exceptionApplicationId, boolean success, List<ApplicationDTO> applicationList) throws MessagingException, IOException {
         for (ApplicationDTO application : applicationList)
-            if (!Objects.equals(exceptionApplicationId, application.getId()))
-                success = success
-                        && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
+            if (!Objects.equals(exceptionApplicationId, application.getId())) {
+                success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
+                if (success)
+                    emailService.notifySupervisorAndCoSupervisorsOfNewApplication(applicationRepository.findById(application.getId()).get());
+            }
         return success;
     }
 }
