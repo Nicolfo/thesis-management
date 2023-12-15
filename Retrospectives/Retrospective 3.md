@@ -1,4 +1,4 @@
-TEMPLATE FOR RETROSPECTIVE (Team ##)
+TEMPLATE FOR RETROSPECTIVE (Team 4)
 =====================================
 
 The retrospective should include _at least_ the following
@@ -91,4 +91,4 @@ sections:
  - We want to improve the way we manage technical debt.
 
 - One thing you are proud of as a Team!!
- -We are proud to have achieved all our goals and demonstrated effective collaboration.
+  - We are proud to have achieved all our goals and demonstrated effective collaboration.
