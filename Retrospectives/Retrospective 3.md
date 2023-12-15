@@ -1,4 +1,4 @@
-TEMPLATE FOR RETROSPECTIVE (Team ##)
+TEMPLATE FOR RETROSPECTIVE (Team 4)
 =====================================
 
 The retrospective should include _at least_ the following
@@ -52,7 +52,7 @@ sections:
   - Total hours estimated: 5h
   - Total hours spent: 5h
   - Nr of automated unit test cases: 45
-  - Coverage (if available): 81 %
+  - Coverage (if available): 81.9 %
 - E2E testing:
   - Total hours estimated: 4h
   - Total hours spent: 4h
@@ -90,4 +90,5 @@ sections:
  - Read the FAQ document made by the product owner more frequently in order to adapt to the changes.
  - We want to improve the way we manage technical debt.
 
-- One thing you are proud of as a Team!! 
+- One thing you are proud of as a Team!!
+  - We are proud to have achieved all our goals and demonstrated effective collaboration.

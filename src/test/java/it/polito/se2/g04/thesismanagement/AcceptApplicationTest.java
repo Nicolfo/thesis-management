@@ -94,11 +94,13 @@ public class AcceptApplicationTest {
         proposal1 = proposalRepository.save(proposal1);
         proposal2 = proposalRepository.save(proposal2);
 
-        application1 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal2);
-        application3 = new Application(student,null,new Date(2023,Calendar.OCTOBER,26),proposal2);
+        application1 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal1);
         application2 = new Application(student2,null,new Date(2023,Calendar.NOVEMBER,7),proposal1);
+        application3 = new Application(student,null,new Date(2023,Calendar.OCTOBER,26),proposal2);
+
         applicationRepository.save(application1);
         applicationRepository.save(application2);
+        applicationRepository.save(application3);
     }
 
     @AfterAll
@@ -183,7 +185,7 @@ public class AcceptApplicationTest {
         assertEquals(0,applicationRepository.getApplicationById(application1.getId()).getProposal().getStatus().compareTo(Proposal.Status.ACCEPTED));
         assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
        // assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));
-        assertEquals(ApplicationStatus.PENDING,applicationRepository.getApplicationById(application2.getId()).getStatus());
+        assertEquals(ApplicationStatus.REJECTED,applicationRepository.getApplicationById(application2.getId()).getStatus());
 
         application2.setStatus(ApplicationStatus.REJECTED);
         application2 = applicationRepository.save(application2);
@@ -252,7 +254,7 @@ public class AcceptApplicationTest {
 
         assertEquals(json, "true");
         assertEquals(0, applicationRepository.getApplicationById(application1.getId()).getStatus().compareTo(ApplicationStatus.ACCEPTED));
-        assertEquals(0, applicationRepository.getApplicationById(application2.getId()).getStatus().compareTo(ApplicationStatus.PENDING));
+        assertEquals(0, applicationRepository.getApplicationById(application2.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
         assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
 
     }
@@ -280,6 +282,16 @@ public class AcceptApplicationTest {
         application1=applicationRepository.getReferenceById(application1.getId());
         assertEquals(application1.getStatus(),ApplicationStatus.REJECTED,"the status didn't change");
 
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "marco.munz@example.com", roles = {"STUDENT"})
+    public void checkExceptions() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationsByProposalId/{proposalId}",222)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 
