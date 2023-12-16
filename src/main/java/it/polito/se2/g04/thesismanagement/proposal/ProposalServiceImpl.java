@@ -98,7 +98,7 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : null,
                 proposalDTO.getKeywords(),
                 proposalDTO.getType(),
-                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).toList(),
+                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).distinct().toList(),
                 proposalDTO.getDescription(),
                 proposalDTO.getRequiredKnowledge(),
                 proposalDTO.getNotes(),
@@ -124,7 +124,7 @@ public class ProposalServiceImpl implements ProposalService {
             old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()));
         }
         old.setType(proposalDTO.getType());
-        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).collect(Collectors.toList()));
+        old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).distinct().collect(Collectors.toList()));
         old.setDescription(proposalDTO.getDescription());
         old.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
         old.setNotes(proposalDTO.getNotes());

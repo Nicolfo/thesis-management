@@ -183,9 +183,9 @@ public class AcceptApplicationTest {
         assertEquals("true", json);
         assertEquals(0, applicationRepository.getApplicationById(application1.getId()).getStatus().compareTo(ApplicationStatus.ACCEPTED));
         assertEquals(0,applicationRepository.getApplicationById(application1.getId()).getProposal().getStatus().compareTo(Proposal.Status.ACCEPTED));
-        assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
+        assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.CANCELLED));
        // assertEquals(0, applicationRepository.getApplicationById(2L).getStatus().compareTo(ApplicationStatus.PENDING));
-        assertEquals(ApplicationStatus.REJECTED,applicationRepository.getApplicationById(application2.getId()).getStatus());
+        assertEquals(ApplicationStatus.CANCELLED,applicationRepository.getApplicationById(application2.getId()).getStatus());
 
         application2.setStatus(ApplicationStatus.REJECTED);
         application2 = applicationRepository.save(application2);
@@ -254,8 +254,8 @@ public class AcceptApplicationTest {
 
         assertEquals(json, "true");
         assertEquals(0, applicationRepository.getApplicationById(application1.getId()).getStatus().compareTo(ApplicationStatus.ACCEPTED));
-        assertEquals(0, applicationRepository.getApplicationById(application2.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
-        assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
+        assertEquals(0, applicationRepository.getApplicationById(application2.getId()).getStatus().compareTo(ApplicationStatus.CANCELLED));
+        assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.CANCELLED));
 
     }
     @Test
