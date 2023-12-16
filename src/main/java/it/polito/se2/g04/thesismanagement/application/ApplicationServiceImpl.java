@@ -10,7 +10,6 @@ import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposa
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.student.StudentNotFoundException;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
