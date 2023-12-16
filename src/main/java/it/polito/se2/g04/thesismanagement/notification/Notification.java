@@ -3,7 +3,6 @@ package it.polito.se2.g04.thesismanagement.notification;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -21,7 +20,7 @@ public class Notification {
     @Column(columnDefinition = "TEXT")
     private String text;
     private String icon;
-    private boolean sent = false;
+    private boolean sent;
     private int sendTriedCounter = 0;
     private Date timestamp;
 
@@ -32,5 +31,6 @@ public class Notification {
     this.text = text;
     this.icon = icon;
     this.timestamp = timestamp;
+    this.sent = false;
     }
 }
