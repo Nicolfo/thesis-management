@@ -4,7 +4,6 @@ import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.applica
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationDeletedException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.DuplicateApplicationException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ProposalNotActiveException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.email.EmailFailedSendException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalOwnershipException;
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
@@ -28,7 +27,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

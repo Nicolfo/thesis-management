@@ -24,4 +24,11 @@ public class NotificationServiceImpl implements NotificationService{
     public List<Notification> getAllNotificationsByEmail(String email){
         return notificationRepository.findByRecipient(email);
     }
+
+    @Override
+    public Notification markNotificationAsRead(Long id) {
+        Notification notification = notificationRepository.getReferenceById(id);
+        notification.setRead(true);
+        return notificationRepository.save(notification);
+    }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,5 +18,11 @@ public class NotificationController {
     @PreAuthorize("isAuthenticated()")
     public List<Notification> getAllNotificationsOfCurrentUser() {
         return notificationService.getAllNotificationsForLoggedInUser();
+    }
+
+    @GetMapping("/API/notification/getSingleNotifications/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public Notification getSingleNotifications(@PathVariable Long id) {
+        return notificationService.markNotificationAsRead(id);
     }
 }

@@ -21,6 +21,7 @@ public class Notification {
     private String text;
     private String icon;
     private boolean sent;
+    private boolean read;
     private int sendTriedCounter = 0;
     private Date timestamp;
 
@@ -32,5 +33,6 @@ public class Notification {
     this.icon = icon;
     this.timestamp = timestamp;
     this.sent = false;
+    this.read = false;
     }
 }
