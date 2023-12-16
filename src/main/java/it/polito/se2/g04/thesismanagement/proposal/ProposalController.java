@@ -6,16 +6,11 @@ import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposa
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.DeleteWithNoId;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 
@@ -157,5 +152,19 @@ public class ProposalController {
     @ResponseStatus(HttpStatus.OK)
     public void archiveProposalWithNoId(){
         throw new ArchiveWithNoId("can't archive a proposal without his id");
+    }
+
+    @GetMapping("/API/proposal/getAllProposalByCoSupervisor/{email}")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalFullDTO> getAllProposalByCoSupervisor(@PathVariable String email){
+        return proposalService.getAllProposalByCoSupervisor(email);
+    }
+
+    @GetMapping("/API/proposal/getAllProposalByCoSupervisor")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public void getAllProposalByCoSupervisorWithNoId(){
+        //TODO error handler
     }
 }

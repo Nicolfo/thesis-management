@@ -1,14 +1,14 @@
 package it.polito.se2.g04.thesismanagement.proposal;
 
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.UpdateAfterAcceptException;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.UpdateAfterAcceptException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import it.polito.se2.g04.thesismanagement.virtualclock.VirtualClockController;
 import jakarta.persistence.EntityManager;
@@ -87,7 +87,7 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public ProposalFullDTO createProposal(ProposalDTO proposalDTO) {
+    public void createProposal(ProposalDTO proposalDTO) {
         Authentication auth= SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
         if(teacher==null || teacher.getEmail().compareTo(auth.getName())!=0)
@@ -106,11 +106,11 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getLevel(),
                 proposalDTO.getCds()
         );
-        return ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
+        ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
     }
 
     @Override
-    public ProposalFullDTO updateProposal(Long id, ProposalDTO proposalDTO) {
+    public void updateProposal(Long id, ProposalDTO proposalDTO) {
         if (!proposalRepository.existsById(id))
             throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
 
@@ -134,7 +134,7 @@ public class ProposalServiceImpl implements ProposalService {
         old.setKeywords(proposalDTO.getKeywords());
 
         Proposal updated = proposalRepository.save(old);
-        return ProposalFullDTO.fromProposal(updated);
+        ProposalFullDTO.fromProposal(updated);
     }
 
     @Override
@@ -288,7 +288,7 @@ public class ProposalServiceImpl implements ProposalService {
 
 
     @Override
-    public ProposalFullDTO archiveProposal(Long id) {
+    public void archiveProposal(Long id) {
         if (!proposalRepository.existsById(id)) {
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
         }
@@ -304,7 +304,7 @@ public class ProposalServiceImpl implements ProposalService {
             );
             old.setStatus(Proposal.Status.ARCHIVED);
         }
-        return ProposalFullDTO.fromProposal(proposalRepository.save(old));
+        ProposalFullDTO.fromProposal(proposalRepository.save(old));
     }
 
     @Override
@@ -361,5 +361,8 @@ public class ProposalServiceImpl implements ProposalService {
                     proposalRepository.save(proposal);
             }
         }
+    }
+    public List<ProposalFullDTO> getAllProposalByCoSupervisor(String email){
+        return proposalRepository.findProposalsByCoSupervisorsContaining(teacherRepository.findByEmail(email)).stream().map(ProposalFullDTO::fromProposal).toList();
     }
 }

@@ -32,6 +32,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public TeacherDTO getByEmail(String email){
-        return teacherRepository.findAll().stream().filter(it-> email.equals(it.getEmail())).map(TeacherDTO::fromTeacher).findAny().orElseThrow(()-> new RuntimeException("email not found"));
+        return TeacherDTO.fromTeacher(teacherRepository.findByEmail(email));
     }
 }

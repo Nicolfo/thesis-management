@@ -10,7 +10,6 @@ public interface ProposalService {
     List<ProposalFullDTO> getAllProposals();
 
     /**
-     *
      * @return List<Proposal> all proposals that are not archived
      */
     List<ProposalFullDTO> getAllNotArchivedProposals();
@@ -25,10 +24,14 @@ public interface ProposalService {
     List<ProposalFullDTO> getProposalsByProf(String userName);
 
     String getTitleByProposalId(Long proposalId);
-    ProposalFullDTO createProposal(ProposalDTO proposalDTO);
-    ProposalFullDTO updateProposal(Long id, ProposalDTO proposal);
+
+    void createProposal(ProposalDTO proposalDTO);
+
+    void updateProposal(Long id, ProposalDTO proposal);
+
     /**
      * A search method that allows to filter active proposals.
+     *
      * @param proposalSearchRequest request object containing all filters
      * @return A list of ProposalDTO objects representing the search's results.
      */
@@ -36,17 +39,22 @@ public interface ProposalService {
 
     /**
      * A search method that allows to filter archived proposals.
+     *
      * @param proposalSearchRequest request object containing all filters
      * @return A list of ProposalDTO objects representing the search's results.
      */
-    List <ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest);
-    List <ProposalFullDTO> getArchivedProposals(String userName);
+    List<ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest);
+
+    List<ProposalFullDTO> getArchivedProposals(String userName);
 
 
-    ProposalFullDTO archiveProposal(Long id);
+    void archiveProposal(Long id);
+
     void deleteProposal(Long id);
 
-     void archiveExpiredProposals();
+    void archiveExpiredProposals();
+
+    List<ProposalFullDTO> getAllProposalByCoSupervisor(String email);
 
 }
 
