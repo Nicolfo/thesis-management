@@ -6,14 +6,13 @@ import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
-import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +58,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     }
 
     @Override
-    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) throws MessagingException, IOException {
+    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
 
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {

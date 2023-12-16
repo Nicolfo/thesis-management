@@ -9,7 +9,7 @@ import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposa
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalOwnershipException;
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
-import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
@@ -17,7 +17,6 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -199,11 +198,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         Attachment attachment = applicationDTO.getAttachmentId() != null ? attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()) : null;
         Application toSave = new Application(loggedUser, attachment, applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
         Application saved = applicationRepository.save(toSave);
-        try {
+        //try {
             emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
-        } catch (MessagingException | IOException e) {
+        /*} catch (MessagingException | IOException e) {
             throw new EmailFailedSendException(MAIL_ERROR);
-        }
+        }*/
     }
 
     @Override
@@ -263,21 +262,21 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) throws MessagingException, IOException {
+    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId);
         return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);
     }
 
     @Override
-    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) throws MessagingException, IOException {
+    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByStudent(studentEmail);
         return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);
     }
 
     //TODO: check if it works properly
-    private boolean cancelApplicationsHelper(Long exceptionApplicationId, boolean success, List<ApplicationDTO> applicationList) throws MessagingException, IOException {
+    private boolean cancelApplicationsHelper(Long exceptionApplicationId, boolean success, List<ApplicationDTO> applicationList) {
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId())) {
                 success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
