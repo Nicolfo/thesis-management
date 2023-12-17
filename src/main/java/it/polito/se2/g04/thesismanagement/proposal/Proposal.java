@@ -16,7 +16,6 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class Proposal {
 
     public boolean getNotifiedAboutExpiration() {
