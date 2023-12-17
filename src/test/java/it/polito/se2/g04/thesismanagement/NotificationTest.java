@@ -9,7 +9,9 @@ import it.polito.se2.g04.thesismanagement.department.Department;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.group.GroupRepository;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.notification.Notification;
+import it.polito.se2.g04.thesismanagement.notification.NotificationRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
@@ -49,7 +51,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class NotificationTest {
     @Autowired
     private ProposalRepository proposalRepository;
-
     @Autowired
     private TeacherRepository teacherRepository;
     @Autowired
@@ -64,12 +65,14 @@ public class NotificationTest {
     private GroupRepository groupRepository;
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    EmailService emailService;
+    @Autowired
+    NotificationRepository notificationRepository;
 
     private Application application1;
     private Application application2;
     private Application application3;
-    private static boolean isTest1Done = false;
-    private static boolean isTest2Done = false;
 
 
     @BeforeAll
@@ -132,35 +135,16 @@ public class NotificationTest {
 
         assertEquals("[]", json);
 
-        isTest1Done = true;
-    }
+        notificationRepository.save(new Notification("test@example.com","Application status changed","Application status changed","\"Application status changed\"","new.png", new Date()));
+        notificationRepository.save(new Notification("georgina.ferrell@example.com","Application status changed","Application status changed","\"Application status changed\"","new.png", new Date()));
+        notificationRepository.save(new Notification("georgina.ferrell@example.com","Application status changed","Application status changed","\"Application status changed\"","new.png", new Date()));
 
-
-    @Test
-    @Order(2)
-    @WithMockUser(username = "test@example.com", roles = {"PROFESSOR"})
-    public void acceptApplication1() throws InterruptedException {
-        while(!isTest1Done) {
-            sleep(100);
-        }
-        applicationService.acceptApplicationById(application1.getId());
-        isTest2Done = true;
-    }
-
-    @Test
-    @Order(3)
-    @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
-    public void testNotification() throws Exception {
-        while(!isTest2Done) {
-            sleep(100);
-        }
-        sleep(5000);
         //get result
-        MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/notification/getAllNotificationsOfCurrentUser/")
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/notification/getAllNotificationsOfCurrentUser/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
-        String json = res.getResponse().getContentAsString();
+        json = res.getResponse().getContentAsString();
 
         ObjectMapper objectMapper = new ObjectMapper();
         List<Notification> notifications = objectMapper.readValue(json, new TypeReference<>() {});
@@ -183,7 +167,6 @@ public class NotificationTest {
         Notification notification = objectMapper.readValue(json, new TypeReference<>() {});
         assertEquals(notification.getId(),referenceNotification.getId());
         assertTrue(notification.isRead());
-
     }
 
 }
