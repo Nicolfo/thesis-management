@@ -1,8 +1,7 @@
 package it.polito.se2.g04.thesismanagement;
 
-import it.polito.se2.g04.thesismanagement.application.Application;
-import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
-import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.se2.g04.thesismanagement.application.*;
 import it.polito.se2.g04.thesismanagement.department.Department;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
@@ -55,11 +54,14 @@ public class ErrorsTests {
     private GroupRepository groupRepository;
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private ApplicationService applicationService;
 
     private Teacher teacher;
     private Student student;
     private Proposal proposal1;
     private Application application1;
+    private Application application2;
     @BeforeAll
     public void setup() {
         Group saved=groupRepository.save(new Group("Group 1"));
@@ -78,6 +80,8 @@ public class ErrorsTests {
         application1 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal1);
         application1.setStatus(ApplicationStatus.CANCELLED);
         application1 =applicationRepository.save(application1);
+        application2 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal1);
+
 
     }
 
@@ -97,6 +101,20 @@ public class ErrorsTests {
     public void ApplicationDeletedExceptionTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/{applicationId}",application1.getId())
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+// TODO capire perche restiduisce 405
+    @Test
+    @Rollback
+    @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
+    public void DuplicateApplicationException() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        application1.setStatus(ApplicationStatus.PENDING);
+        application1=applicationRepository.save(application1);
+        ApplicationDTO applicationDTO=applicationService.getApplicationDTO(application2);
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/application/insert/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(applicationDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
