@@ -62,5 +62,5 @@ public interface ApplicationService {
      */
     boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) throws MessagingException, IOException;
    
-
+    ApplicationDTO getApplicationDTO(Application toReturn);
 }

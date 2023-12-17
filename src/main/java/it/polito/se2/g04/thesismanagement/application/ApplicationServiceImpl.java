@@ -1,15 +1,12 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationBadRequestFormatException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationDeletedException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.DuplicateApplicationException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ProposalNotActiveException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.email.EmailFailedSendException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalOwnershipException;
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.*;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.email.EmailFailedSendException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalOwnershipException;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
@@ -20,10 +17,6 @@ import it.polito.se2.g04.thesismanagement.student.StudentService;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,22 +58,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                     dto.setStatus(it.getStatus());
                     return dto;
                 }).toList();
-
     }
 
     @Override
     public List<ApplicationDTO> getApplicationsByStudent(String studentEmail) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Application> cq = cb.createQuery(Application.class);
-        Root<Application> proposal = cq.from(Application.class);
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.notEqual(proposal.get("status"), Proposal.Status.DELETED));
-        predicates.add(cb.equal(proposal.join("student").get("email"), studentEmail));
-        cq.where(predicates.toArray(new Predicate[0]));
-        List<Application> toReturn = entityManager.createQuery(cq).getResultList();
+        if (!applicationRepository.existsApplicationByStudentEmail(studentEmail))
+            throw new ApplicationDoNotExistException("doesn't exist a application associated to the email " + studentEmail);
 
-
-        return toReturn.stream().map(it -> {
+        return applicationRepository.getApplicationByStudentEmail(studentEmail).stream().map(it -> {
             ApplicationDTO dto = new ApplicationDTO();
             dto.setId(it.getId());
             dto.setProposalId(it.getProposal().getId());
@@ -92,11 +76,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             return dto;
         }).toList();
     }
-
+//TODO questa funzione e la prossima apparentemente fanno la stessa cosa, controllare se rindondanti
     @Override
     public List<ApplicationDTO> getApplicationsByProposal(Long proposalId) {
         if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
+        }
+        if (!applicationRepository.existsApplicationByProposalId(proposalId)){
+            throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String profEmail = auth.getName();
@@ -114,6 +101,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
         }
+        if (!applicationRepository.existsApplicationByProposalId(proposalId)){
+            throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
+        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studEmail = auth.getName();
         Student student = studentRepository.getStudentByEmail(studEmail);
@@ -128,13 +118,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationDTO getApplicationById(Long applicationId) {
+        if(!applicationRepository.existsById(applicationId)){
+            throw new ApplicationDoNotExistException("doesn't exist a application associated to the id " + applicationId);
+        }
         if (applicationRepository.getApplicationById(applicationId).getStatus() == ApplicationStatus.CANCELLED) {
             throw new ApplicationDeletedException("this application is flagged to be deleted");
         }
         return getApplicationDTO(applicationRepository.getApplicationById(applicationId));
     }
-
-    private ApplicationDTO getApplicationDTO(Application toReturn) {
+    // la funzione era private ma a me serve public per dei test//
+    @Override
+    public ApplicationDTO getApplicationDTO(Application toReturn) {
         ApplicationDTO dto = new ApplicationDTO();
         dto.setId(toReturn.getId());
         dto.setStudent(StudentDTO.fromStudent(toReturn.getStudent()));
@@ -146,7 +140,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         return dto;
     }
 
-    public Application getApplicationByIdOriginal(Long applicationId) {
+    private Application getApplicationByIdOriginal(Long applicationId) {
+        if (!applicationRepository.existsById(applicationId)) {
+            throw new ApplicationDoNotExistException("doesn't exist a application associated to the id "+ applicationId);
+        }
         return applicationRepository.getApplicationById(applicationId);
     }
 
@@ -264,6 +261,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) throws MessagingException, IOException {
+        if(!applicationRepository.existsApplicationByProposalId(proposalId)){
+            throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
+        }
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId);
         return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);
@@ -271,6 +271,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) throws MessagingException, IOException {
+        if (!applicationRepository.existsApplicationByStudentEmail(studentEmail)){
+            throw new ApplicationDoNotExistException("doesn't exist a application associated to the student email " + studentEmail);
+        }
         boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByStudent(studentEmail);
         return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);

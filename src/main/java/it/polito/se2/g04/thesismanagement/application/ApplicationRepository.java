@@ -13,5 +13,8 @@ public interface ApplicationRepository extends JpaRepository<Application,Long> {
     public Application getApplicationById(Long id);
     public List<Application> getApplicationByStudentEmail(String email);
     boolean existsByProposalAndStudent(Proposal proposal, Student student);
+    boolean existsApplicationByStudentEmail(String email);
+    boolean existsApplicationByProposalId(Long id);
+
 
 }

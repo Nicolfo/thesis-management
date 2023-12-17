@@ -1,9 +1,6 @@
 package it.polito.se2.g04.thesismanagement.exceptions_handling.handlers;
 
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationBadRequestFormatException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ApplicationDeletedException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.DuplicateApplicationException;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.ProposalNotActiveException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,5 +23,9 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(DuplicateApplicationException.class)
     public ProblemDetail handleDuplicateApplication(DuplicateApplicationException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,e.getMessage());
+    }
+    @ExceptionHandler(ApplicationDoNotExistException.class)
+    public ProblemDetail handleNotFound(ApplicationDoNotExistException e){
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());
     }
 }

@@ -363,6 +363,10 @@ public class ProposalServiceImpl implements ProposalService {
         }
     }
     public List<ProposalFullDTO> getAllProposalByCoSupervisor(String email){
+        if (teacherRepository.existsTeacherByEmail(email)){
+            return null;
+            //TODO throw error
+        }
         return proposalRepository.findProposalsByCoSupervisorsContaining(teacherRepository.findByEmail(email)).stream().map(ProposalFullDTO::fromProposal).toList();
     }
 }
