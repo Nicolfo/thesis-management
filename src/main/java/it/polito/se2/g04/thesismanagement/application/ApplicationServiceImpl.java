@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -281,8 +282,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId())) {
                 success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
-                if (success)
-                    emailService.notifySupervisorAndCoSupervisorsOfNewApplication(applicationRepository.findById(application.getId()).get());
+                if (success){
+                    Optional<Application> applicationOptional =applicationRepository.findById(application.getId());
+                    if(applicationOptional.isPresent())
+                        emailService.notifySupervisorAndCoSupervisorsOfNewApplication(applicationOptional.get());
+
+                }
             }
         return success;
     }
