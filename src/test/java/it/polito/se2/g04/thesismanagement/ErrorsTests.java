@@ -1,9 +1,7 @@
 package it.polito.se2.g04.thesismanagement;
 
-import it.polito.se2.g04.thesismanagement.application.Application;
-import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
-import it.polito.se2.g04.thesismanagement.application.ApplicationService;
-import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.se2.g04.thesismanagement.application.*;
 import it.polito.se2.g04.thesismanagement.department.Department;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
@@ -106,18 +104,17 @@ public class ErrorsTests {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 // TODO capire perche restituisce 405
-    /*
     @Test
     @Rollback
     @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
-    public void DuplicateApplicationException() throws Exception {
+    public void DuplicateApplicationExceptionTest() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         application1.setStatus(ApplicationStatus.PENDING);
         application1=applicationRepository.save(application1);
         ApplicationDTO applicationDTO=applicationService.getApplicationDTO(application2);
-        mockMvc.perform(MockMvcRequestBuilders.get("/API/application/insert/")
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/application/insert/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(applicationDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }*/
+    }
 }
