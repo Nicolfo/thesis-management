@@ -41,7 +41,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
     private final EmailService emailService;
-    private static final String MAIL_ERROR = "Error in sending mail";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -159,6 +158,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             application = applicationRepository.save(application);
             proposalRepository.save(proposal);
             emailService.notifyStudentOfApplicationDecision(application);
+            emailService.notifyCoSupervisorsOfDecisionOnApplication(application);
             return cancelApplicationsByProposal(application.getProposal().getId(), applicationId)
                     && cancelApplicationsByStudent(application.getStudent().getEmail(), applicationId);
         } catch (Exception e) {
@@ -235,7 +235,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return false;
             application.setStatus(ApplicationStatus.CANCELLED);
             application = applicationRepository.save(application);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
+            emailService.notifyCoSupervisorsOfDecisionOnApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -251,7 +251,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return false;
             application.setStatus(ApplicationStatus.REJECTED);
             application = applicationRepository.save(application);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
+            emailService.notifyCoSupervisorsOfDecisionOnApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -279,7 +279,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!Objects.equals(exceptionApplicationId, application.getId())) {
                 success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
                 if (success)
-                    emailService.notifySupervisorAndCoSupervisorsOfNewApplication(applicationRepository.findById(application.getId()).get());
+                    emailService.notifyCoSupervisorsOfDecisionOnApplication(applicationRepository.findById(application.getId()).get());
             }
         return success;
     }

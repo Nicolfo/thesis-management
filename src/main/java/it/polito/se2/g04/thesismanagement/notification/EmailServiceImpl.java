@@ -131,6 +131,40 @@ public class EmailServiceImpl implements EmailService {
         notifyCoSupervisorsOfNewApplication(application);
     }
 
+    @Override
+    @Async
+    public void notifyCoSupervisorsOfDecisionOnApplication(Application application) {
+        String status = "";
+        String icon="";
+        switch (application.getStatus()) {
+            case ACCEPTED -> {
+                status = "accepted";
+                icon = "hook.png";
+            }
+            case REJECTED -> {
+                status = "rejected";
+                icon = "cross.png";
+            }
+            case PENDING -> {
+                status = "set to pending";
+                icon = "edit.png";
+            }
+            case CANCELLED -> {
+                status = "set to cancelled";
+                icon = "cancelled.png";
+            }
+        }
+
+        String emailText = "<br>" +
+                "A new decision was made on an application for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as co-supervisor.<br>" +
+                "The application is submitted by " + application.getStudent().getSurname() + " " + application.getStudent().getName() + " and was " + status +
+                "Log in to the Thesis Management Portal to take further action.";
+
+        for (Teacher teacher : application.getProposal().getCoSupervisors()) {
+            createNewNotification(teacher.getEmail(), "A decision on an application was taken", "A decision on an application was taken", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" + emailText, icon);
+        }
+    }
+
 
     void createNewNotification(String recipient, String subject, String title, String text, String icon) {
         Notification newNotification = new Notification(recipient,subject,title,text,icon, new Date());

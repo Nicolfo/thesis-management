@@ -36,6 +36,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Thread.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NotificationTest {
     @Autowired
     private ProposalRepository proposalRepository;
@@ -66,6 +68,8 @@ public class NotificationTest {
     private Application application1;
     private Application application2;
     private Application application3;
+    private static boolean isTest1Done = false;
+    private static boolean isTest2Done = false;
 
 
     @BeforeAll
@@ -127,22 +131,30 @@ public class NotificationTest {
         String json = res.getResponse().getContentAsString();
 
         assertEquals("[]", json);
+
+        isTest1Done = true;
     }
 
 
     @Test
     @Order(2)
     @WithMockUser(username = "test@example.com", roles = {"PROFESSOR"})
-    public void acceptApplication1(){
+    public void acceptApplication1() throws InterruptedException {
+        while(!isTest1Done) {
+            sleep(100);
+        }
         applicationService.acceptApplicationById(application1.getId());
+        isTest2Done = true;
     }
 
     @Test
     @Order(3)
     @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
     public void testNotification() throws Exception {
-        //Make sure, that acceptApplication1 is done
-        Thread.sleep(1500);
+        while(!isTest2Done) {
+            sleep(100);
+        }
+        sleep(5000);
         //get result
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/notification/getAllNotificationsOfCurrentUser/")
                         .contentType(MediaType.APPLICATION_JSON))

@@ -37,4 +37,5 @@ public interface EmailService {
     void notifySupervisorOfExpiration(Proposal proposal);
     void notifySupervisorOfNewThesisRequest(ProposalOnRequest request);
     void sendQueuedEmails();
+    void notifyCoSupervisorsOfDecisionOnApplication(Application application);
 }
