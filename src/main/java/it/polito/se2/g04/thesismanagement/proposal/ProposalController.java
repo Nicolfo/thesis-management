@@ -79,7 +79,6 @@ public class ProposalController {
     @ResponseStatus(HttpStatus.OK)
     public void updateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
         proposalService.updateProposal(id, proposal);
-
     }
 
     @PutMapping("/API/proposal/update")

@@ -83,9 +83,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
         }
-        if (!applicationRepository.existsApplicationByProposalId(proposalId)){
-            throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
-        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String profEmail = auth.getName();
         Proposal proposal = proposalRepository.getReferenceById(proposalId);
@@ -101,9 +98,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<ApplicationDTO> getApplicationsByProposalId(Long proposalId) {
         if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
-        }
-        if (!applicationRepository.existsApplicationByProposalId(proposalId)){
-            throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studEmail = auth.getName();
@@ -181,17 +175,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     private void applyForProposalHelper(ApplicationDTO applicationDTO, Student loggedUser) {
+        if(applicationRepository.existsApplicationByStudentIdAndStatusIn(loggedUser.getId(),List.of(ApplicationStatus.ACCEPTED,ApplicationStatus.PENDING))){
+            throw new DuplicateApplicationException("The Student has already a pending or accepted application!");
+        }
         if (applicationDTO.getProposalId() == null || !proposalRepository.existsById(applicationDTO.getProposalId())) {
             throw new ApplicationBadRequestFormatException("The proposal doesn't exist");
         }
-
         Proposal proposal = proposalRepository.getReferenceById(applicationDTO.getProposalId());
         if (proposal.getStatus() != Proposal.Status.ACTIVE) {
             throw new ProposalNotActiveException("This proposal is not active");
-        }
-
-        if (applicationRepository.existsByProposalAndStudent(proposal, loggedUser)) {
-            throw new DuplicateApplicationException("An application already exists for this proposal");
         }
 
         Attachment attachment = applicationDTO.getAttachmentId() != null ? attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()) : null;

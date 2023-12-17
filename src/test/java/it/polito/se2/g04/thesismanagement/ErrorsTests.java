@@ -103,7 +103,6 @@ public class ErrorsTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-// TODO capire perche restituisce 405
     @Test
     @Rollback
     @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
@@ -115,6 +114,6 @@ public class ErrorsTests {
         mockMvc.perform(MockMvcRequestBuilders.post("/API/application/insert/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(applicationDTO)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 }

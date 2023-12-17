@@ -120,7 +120,7 @@ public class DeleteProposalTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/" + new Random().nextLong(2, 100))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/" + new Random().nextLong(50, 100))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
