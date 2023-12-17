@@ -38,4 +38,6 @@ public interface EmailService {
     void notifySupervisorOfNewThesisRequest(ProposalOnRequest request);
     void sendQueuedEmails();
     void notifyCoSupervisorsOfDecisionOnApplication(Application application);
+    void notifyCoSupervisorsOfNewThesisRequest(ProposalOnRequest request);
+    void notifySupervisorAndCoSupervisorsOfNewThesisRequest(ProposalOnRequest request);
 }

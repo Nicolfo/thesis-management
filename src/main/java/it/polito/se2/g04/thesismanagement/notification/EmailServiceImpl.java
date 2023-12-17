@@ -85,6 +85,26 @@ public class EmailServiceImpl implements EmailService {
         createNewNotification(teacher.getEmail(), "A new application has been received", "A new application has been received", emailText, "new.png");
     }
 
+
+    @Override
+    @Async
+    public void notifySupervisorAndCoSupervisorsOfNewThesisRequest(ProposalOnRequest request) {
+        notifySupervisorOfNewThesisRequest(request);
+        notifyCoSupervisorsOfNewThesisRequest(request);
+    }
+
+    @Override
+    @Async
+    public void notifyCoSupervisorsOfNewThesisRequest(ProposalOnRequest request) {
+        String emailText = "<br>" +
+                "A new proposal on request has been received with the title \"" + request.getTitle() + "\" for which you are assigned as co-supervisor.<br>" +
+                "Log in to the Thesis Management Portal to see further details and to accept or reject the proposal on request.";
+
+        for (Teacher teacher : request.getCoSupervisors()) {
+            createNewNotification(teacher.getEmail(), "A new proposal on request has been received", "A new proposal on request has been received", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" + emailText, "new.png");
+        }
+    }
+
     @Override
     @Async
     public void notifySupervisorOfNewThesisRequest(ProposalOnRequest request) {
@@ -123,6 +143,7 @@ public class EmailServiceImpl implements EmailService {
             createNewNotification(teacher.getEmail(), "A new application has been received", "A new application has been received", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" + emailText, "new.png");
         }
     }
+
 
     @Override
     @Async

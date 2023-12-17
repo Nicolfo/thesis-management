@@ -64,7 +64,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
             throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
         proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
-        emailService.notifySupervisorOfNewThesisRequest(proposal);
+        emailService.notifySupervisorAndCoSupervisorsOfNewThesisRequest(proposal);
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
