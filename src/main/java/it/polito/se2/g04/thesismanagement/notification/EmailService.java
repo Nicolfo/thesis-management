@@ -2,7 +2,11 @@ package it.polito.se2.g04.thesismanagement.notification;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
 import it.polito.se2.g04.thesismanagement.proposal_on_request.ProposalOnRequest;
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+
+import java.util.List;
 
 public interface EmailService {
 
@@ -40,4 +44,5 @@ public interface EmailService {
     void notifyCoSupervisorsOfDecisionOnApplication(Application application);
     void notifyCoSupervisorsOfNewThesisRequest(ProposalOnRequest request);
     void notifySupervisorAndCoSupervisorsOfNewThesisRequest(ProposalOnRequest request);
+    void notifyCoSupervisorsOfNewProposal(ProposalDTO proposalDTO, List<Teacher> oldSupervisors);
 }

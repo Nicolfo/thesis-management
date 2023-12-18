@@ -2,9 +2,11 @@ package it.polito.se2.g04.thesismanagement.notification;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
+import it.polito.se2.g04.thesismanagement.proposal.ProposalDTO;
 import it.polito.se2.g04.thesismanagement.proposal_on_request.ProposalOnRequest;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
@@ -36,6 +38,8 @@ public class EmailServiceImpl implements EmailService {
     private ResourceLoader resourceLoader;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Override
     @Async
@@ -91,6 +95,20 @@ public class EmailServiceImpl implements EmailService {
     public void notifySupervisorAndCoSupervisorsOfNewThesisRequest(ProposalOnRequest request) {
         notifySupervisorOfNewThesisRequest(request);
         notifyCoSupervisorsOfNewThesisRequest(request);
+    }
+
+    @Override
+    public void notifyCoSupervisorsOfNewProposal(ProposalDTO proposalDTO, List<Teacher> oldSupervisors) {
+        String emailText = "<br>" +
+                "You have been assigned to the proposal \"" + proposalDTO.getTitle() + "\" as co supervisor.<br>" +
+                "Log in to the Thesis Management Portal to see further details.";
+
+        for (Long teacherId : proposalDTO.getCoSupervisors()) {
+            if (oldSupervisors == null || oldSupervisors.stream().noneMatch(t -> t.getId().equals(teacherId))) {
+                Teacher teacher = teacherRepository.getReferenceById(teacherId);
+                createNewNotification(teacher.getEmail(), "You have been assigned to a proposal", "You have been assigned to a proposal", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" + emailText, "new.png");
+            }
+        }
     }
 
     @Override

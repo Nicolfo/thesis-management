@@ -107,6 +107,7 @@ public class ProposalServiceImpl implements ProposalService {
                 proposalDTO.getCds()
         );
         ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
+        emailService.notifyCoSupervisorsOfNewProposal(proposalDTO, null);
     }
 
     @Override
@@ -118,6 +119,9 @@ public class ProposalServiceImpl implements ProposalService {
         if (old.getStatus() == Proposal.Status.ACCEPTED) {
             throw (new UpdateAfterAcceptException("you can't update this proposal after an application to it is accepted"));
         }
+
+        emailService.notifyCoSupervisorsOfNewProposal(proposalDTO, old.getCoSupervisors());
+
         old.setTitle(proposalDTO.getTitle());
         old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
         if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
