@@ -6,6 +6,7 @@ import {useState, useContext, useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {AuthContext} from 'react-oauth2-code-pkce';
 import logoPolitecnico from './logoPolitecnico.png';
+import API from '../API/Api';
 
 
 function NavBar(props) {
@@ -13,6 +14,7 @@ function NavBar(props) {
 
     const [showVirtualClock, setShowVirtualClock] = useState(false);
     const [date,setDate]=useState(props.applicationDate.format('YYYY-MM-DD'));
+    const [unreadNotifications, setUnreadNotifications] = useState(0);
 
     const path = useLocation().pathname;
     const navigate = useNavigate();
@@ -26,6 +28,25 @@ function NavBar(props) {
             logOut();
         }
     }
+
+    /**
+     * Every time the component is loaded, fetch the notification list
+     * for the current user, and keep track of the number of unread ones
+     */
+    useEffect(() => {
+        const getNotifications = async () => {
+            let notificationList = [];
+            try {
+                notificationList = await API.getAllNotificationsOfCurrentUser(token);
+                console.log(notificationList);
+                notificationList = notificationList.filter(n => !n.read);
+                setUnreadNotifications(notificationList.length);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        getNotifications();
+    });
 
     /**
      * Every time tokenData (the decoded token for the logged-in user on the browser) changes, we update the
@@ -192,9 +213,24 @@ function NavBar(props) {
                             )}
                         </Nav>
                         <Nav>
-                            <div className="d-flex justify-content-center border-b">
-                                {showVirtualClock && (
+                            {/*{props.user && <div className="d-flex justify-content-center border-b">
+                                <Button className="ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b"
+                                        onClick={() => console.log("hello")}>
+                                    <FontAwesomeIcon icon="fa-bell"/>
+                                </Button>
+                                    </div>} */}
 
+                            <div className="d-flex justify-content-center border-b">
+                                {props.user && 
+                                <Button className="no-border-sm me-3"
+                                        onClick={() => navigate("/notifications")}>
+                                    <FontAwesomeIcon icon="fa-bell"/>
+                                    {unreadNotifications > 0 && <span className="badge text-bg-light text-danger ms-2 ">
+                                        {unreadNotifications}
+                                    </span>}
+                                </Button>}
+                                {showVirtualClock && (
+  
                                     <Col xs="auto" className="me-lg-2">
                                         <Row>
                                             <Col><Form.Control
