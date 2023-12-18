@@ -33,17 +33,19 @@ public interface ProposalService {
      * A search method that allows to filter active proposals.
      *
      * @param proposalSearchRequest request object containing all filters
+     * @param statuses filter proposal if status field of the proposal is not in this list
      * @return A list of ProposalDTO objects representing the search's results.
      */
-    List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest);
+    List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest,List<Proposal.Status> statuses);
 
     /**
-     * A search method that allows to filter archived proposals.
+     * A search method that allows to filter active proposals.
      *
      * @param proposalSearchRequest request object containing all filters
+     * @param status filter based on the status value
      * @return A list of ProposalDTO objects representing the search's results.
      */
-    List<ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest);
+    List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest,Proposal.Status status);
 
     List<ProposalFullDTO> getArchivedProposals(String userName);
 

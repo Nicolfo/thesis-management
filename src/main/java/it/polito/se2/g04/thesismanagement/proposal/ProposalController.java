@@ -97,7 +97,7 @@ public class ProposalController {
         String username = auth.getName();
         String cds = studentService.getCdS(username);
         proposalSearchRequest.setCds(cds);
-        return proposalService.searchProposals(proposalSearchRequest);
+        return proposalService.searchProposals(proposalSearchRequest, Proposal.Status.ACTIVE);
     }
 
     @PostMapping("/API/proposal/searchArchived")
@@ -110,7 +110,7 @@ public class ProposalController {
         String username = auth.getName();
         Long supervisorId = teacherService.getByEmail(username).getId();
         proposalSearchRequest.setSupervisorIdList(List.of(supervisorId));
-        return proposalService.searchArchivedProposals(proposalSearchRequest);
+        return proposalService.searchProposals(proposalSearchRequest, List.of(Proposal.Status.ARCHIVED, Proposal.Status.ACCEPTED));
     }
 
     @GetMapping("/API/proposal/getArchived")

@@ -12,7 +12,7 @@ public class TeacherServiceImpl implements TeacherService {
     public TeacherServiceImpl(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
     }
-    
+
     @Override
     public List<TeacherDTO> getAll() {
         return teacherRepository.findAll().stream().map(TeacherDTO::fromTeacher).toList();

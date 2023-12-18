@@ -178,9 +178,11 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
 
+
+
     @Query
     @Override
-    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest) {
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest,List<Proposal.Status> statuses) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
@@ -189,7 +191,7 @@ public class ProposalServiceImpl implements ProposalService {
 
         addPredicates(proposalSearchRequest, cb, proposal, predicates);
 
-        predicates.add(cb.equal(proposal.get("status"), Proposal.Status.ACTIVE));
+        predicates.add(proposal.get("status").in(statuses));
 
         cq.where(predicates.toArray(new Predicate[0]));
 
@@ -232,58 +234,9 @@ public class ProposalServiceImpl implements ProposalService {
         return filteredList.stream().map(ProposalFullDTO::fromProposal).toList();
     }
 
-    @Query
     @Override
-    public List<ProposalFullDTO> searchArchivedProposals(ProposalSearchRequest proposalSearchRequest) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
-
-        Root<Proposal> proposal = cq.from(Proposal.class);
-        List<Predicate> predicates = new ArrayList<>();
-
-        addPredicates(proposalSearchRequest, cb, proposal, predicates);
-
-        predicates.add(cb.or(cb.equal(proposal.get("status"), Proposal.Status.ARCHIVED), cb.equal(proposal.get("status"), Proposal.Status.ACCEPTED)));
-
-        cq.where(predicates.toArray(new Predicate[0]));
-
-        List<Proposal> proposalList = entityManager.createQuery(cq).getResultList();
-
-        // Filter proposals that don't have all the co-supervisors
-        // in the filter or all the specified groups
-
-        List<Proposal> filteredList = new ArrayList<>();
-        for (Proposal prop : proposalList) {
-            boolean include = proposalSearchRequest.getSupervisorIdList() == null || proposalSearchRequest.getSupervisorIdList().contains(prop.getSupervisor().getId());
-            // Check if it has all the supervisors
-            // Check if it has at least one of the co-supervisors
-            if (include && proposalSearchRequest.getCoSupervisorIdList() != null) {
-                List<Long> coSupervisorIdList = prop.getCoSupervisors().stream().map(Teacher::getId).toList();
-                include = false;
-                for (Long filterId : proposalSearchRequest.getCoSupervisorIdList()) {
-                    if (coSupervisorIdList.contains(filterId)) {
-                        include = true;
-                        break;
-                    }
-                }
-            }
-            // Check if it has at least one of the groups
-            if (include && proposalSearchRequest.getCodGroupList() != null) {
-                List<Long> codGroupList = prop.getGroups().stream().map(Group::getCodGroup).toList();
-                include = false;
-                for (Long codGroup : proposalSearchRequest.getCodGroupList()) {
-                    if (codGroupList.contains(codGroup)) {
-                        include = true;
-                        break;
-                    }
-                }
-            }
-            if (include) {
-                filteredList.add(prop);
-            }
-        }
-
-        return filteredList.stream().map(ProposalFullDTO::fromProposal).toList();
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest, Proposal.Status status) {
+        return searchProposals(proposalSearchRequest,List.of(status));
     }
 
 
