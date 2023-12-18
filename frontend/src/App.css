@@ -153,6 +153,15 @@ h2 {
   --rmsc-radius: 25px;
 }
 
+.tooltip {
+  --bs-tooltip-bg: #FBA65C !important;
+}
+
+.tooltip-inner {
+  background-color: #FBA65C !important;
+
+}
+
 .background-with-image {
   height: 100vh;
   width: 100vw;
