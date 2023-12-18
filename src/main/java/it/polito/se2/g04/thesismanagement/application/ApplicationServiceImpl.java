@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     dto.setStudentId(it.getStudent().getId());
                     dto.setStudentName(it.getStudent().getName());
                     dto.setStudentSurname(it.getStudent().getSurname());
-                    dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(it.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(it.getStudent().getId())).setScale(2, RoundingMode.HALF_UP));
                     dto.setAttachmentId(it.getAttachment() == null ? null : it.getAttachment().getAttachmentId());
                     dto.setApplyDate(it.getApplyDate());
                     dto.setProposalId(it.getProposal().getId());
@@ -130,7 +131,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         dto.setAttachmentId(toReturn.getAttachment() != null ? toReturn.getAttachment().getAttachmentId() : null);
         dto.setApplyDate(toReturn.getApplyDate());
         dto.setProposal(ProposalFullDTO.fromProposal(toReturn.getProposal()));
-        dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(toReturn.getStudent().getId())).setScale(2, BigDecimal.ROUND_HALF_UP));
+        dto.setStudentAverageGrades(BigDecimal.valueOf(studentService.getAverageMarks(toReturn.getStudent().getId())).setScale(2, RoundingMode.HALF_UP));
         dto.setStatus(toReturn.getStatus());
         return dto;
     }
