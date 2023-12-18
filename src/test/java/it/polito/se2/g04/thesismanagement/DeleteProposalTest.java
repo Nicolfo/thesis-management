@@ -88,7 +88,19 @@ public class DeleteProposalTest {
         Student student1 = new Student("rossi", "marco", "male", "ita", "m.rossi@example.com", degree, 2020);
         Student student2 = new Student("viola", "marta", "female", "ita", "m.viola@example.com", degree, 2018);
         studentRepository.saveAll(List.of(student2, student1));
-        Proposal proposal = new Proposal("test1", teacher, null, "parola", "type", null, "descrizione", "poca", "notes", null, "level", "cds");
+        Proposal proposal = new Proposal();
+        proposal.setTitle("test1");
+        proposal.setSupervisor(teacher);
+        proposal.setCoSupervisors(null);
+        proposal.setKeywords("parola");
+        proposal.setType("type");
+        proposal.setGroups(null);
+        proposal.setDescription("descrizione");
+        proposal.setRequiredKnowledge("poca");
+        proposal.setNotes("notes");
+        proposal.setExpiration(null); // Assuming that the date is nullable
+        proposal.setLevel("level");
+        proposal.setCds("cds");
         proposal = proposalRepository.save(proposal);
         Application application1 = new Application(student1, null, null, proposal);
         applicationRepository.save(application1);

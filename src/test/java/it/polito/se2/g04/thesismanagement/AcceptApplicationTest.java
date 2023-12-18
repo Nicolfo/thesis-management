@@ -88,9 +88,33 @@ public class AcceptApplicationTest {
         student2 = new Student("Munz","Marco","male","italian","marco.munz@example.com",null,2022);
         student2 = studentRepository.save(student2);
 
-        proposal1 = new Proposal("Patch-based discriminative learning for Iris Presentation Attack Detection",teacher,null,"Iris, PAD, Recognition, Detection, Spoofing","Bachelor Thesis",null,"Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.", "Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI",null,new Date(2024, Calendar.DECEMBER,10),null,null);
-        proposal2 = new Proposal("Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS");
+        proposal1 = new Proposal();
+        proposal1.setTitle("Patch-based discriminative learning for Iris Presentation Attack Detection");
+        proposal1.setSupervisor(teacher);
+        proposal1.setCoSupervisors(null);
+        proposal1.setKeywords("Iris, PAD, Recognition, Detection, Spoofing");
+        proposal1.setType("Bachelor Thesis");
+        proposal1.setGroups(null);
+        proposal1.setDescription("Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.");
+        proposal1.setRequiredKnowledge("Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI");
+        proposal1.setNotes(null);
+        proposal1.setExpiration(new Date(2024, Calendar.DECEMBER, 10));
+        proposal1.setLevel(null);
+        proposal1.setCds(null);
 
+        proposal2 = new Proposal();
+        proposal2.setTitle("Proposal 2");
+        proposal2.setSupervisor(teacher);
+        proposal2.setCoSupervisors(null);
+        proposal2.setKeywords("keywords");
+        proposal2.setType("type");
+        proposal2.setGroups(null);
+        proposal2.setDescription("Description 2");
+        proposal2.setRequiredKnowledge("requiredKnowledge");
+        proposal2.setNotes("notes");
+        proposal2.setExpiration(null);
+        proposal2.setLevel("level");
+        proposal2.setCds("CdS");
         proposal1 = proposalRepository.save(proposal1);
         proposal2 = proposalRepository.save(proposal2);
 

@@ -13,7 +13,7 @@ public interface ApplicationRepository extends JpaRepository<Application,Long> {
     public List<Application> getApplicationByProposalIdAndStudentId(Long proposalId, Long studentId);
     public Application getApplicationById(Long id);
     public List<Application> getApplicationByStudentEmail(String email);
-    public boolean existsApplicationByStudentIdAndStatusIn(Long student_id, Collection<ApplicationStatus> status);
+    public boolean existsApplicationByStudentIdAndStatusIn(Long studentId, Collection<ApplicationStatus> status);
     boolean existsByProposalAndStudent(Proposal proposal, Student student);
     boolean existsApplicationByStudentEmail(String email);
     boolean existsApplicationByProposalId(Long id);

@@ -88,24 +88,24 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public void createProposal(ProposalDTO proposalDTO) {
-        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
-        if(teacher==null || teacher.getEmail().compareTo(auth.getName())!=0)
+        if (teacher == null || teacher.getEmail().compareTo(auth.getName()) != 0)
             throw new TeacherNotFoundException("Defined teacher is invalid!");
-        Proposal toAdd = new Proposal(
-                proposalDTO.getTitle(),
-                teacher,
-                proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : null,
-                proposalDTO.getKeywords(),
-                proposalDTO.getType(),
-                Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).distinct().toList(),
-                proposalDTO.getDescription(),
-                proposalDTO.getRequiredKnowledge(),
-                proposalDTO.getNotes(),
-                proposalDTO.getExpiration(),
-                proposalDTO.getLevel(),
-                proposalDTO.getCds()
-        );
+        Proposal toAdd = new Proposal();
+        toAdd.setTitle(proposalDTO.getTitle());
+        toAdd.setSupervisor(teacher);
+        toAdd.setCoSupervisors(proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()) : List.of());
+        toAdd.setKeywords(proposalDTO.getKeywords());
+        toAdd.setType(proposalDTO.getType());
+        toAdd.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).distinct().toList());
+        toAdd.setDescription(proposalDTO.getDescription());
+        toAdd.setRequiredKnowledge(proposalDTO.getRequiredKnowledge());
+        toAdd.setNotes(proposalDTO.getNotes());
+        toAdd.setExpiration(proposalDTO.getExpiration());
+        toAdd.setLevel(proposalDTO.getLevel());
+        toAdd.setCds(proposalDTO.getCds());
+
         ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
     }
 
@@ -330,21 +330,21 @@ public class ProposalServiceImpl implements ProposalService {
         Date nowOld = Calendar.getInstance().getTime();
         Calendar now = Calendar.getInstance();
         now.setTime(nowOld);
-        now.add(Calendar.DAY_OF_MONTH,VirtualClockController.getOffset());
+        now.add(Calendar.DAY_OF_MONTH, VirtualClockController.getOffset());
         Calendar oneWeekFromNow = (Calendar) now.clone();
 
         oneWeekFromNow.add(Calendar.WEEK_OF_YEAR, 1);
-        List<Proposal> proposals = proposalRepository.findAllByStatusNotIn(List.of(Proposal.Status.ARCHIVED,Proposal.Status.DELETED));
+        List<Proposal> proposals = proposalRepository.findAllByStatusNotIn(List.of(Proposal.Status.ARCHIVED, Proposal.Status.DELETED));
 
         for (Proposal proposal : proposals) {
             Date expiration = proposal.getExpiration();
 
             if (expiration != null) {
-                boolean edited= false;
+                boolean edited = false;
                 if (now.getTime().after(expiration)) {
                     try {
                         archiveProposal(proposal.getId());
-                    } catch (Error ignore){
+                    } catch (Error ignore) {
 
                     }
                 }
@@ -357,13 +357,14 @@ public class ProposalServiceImpl implements ProposalService {
 
                     }
                 }
-                if(edited)
+                if (edited)
                     proposalRepository.save(proposal);
             }
         }
     }
-    public List<ProposalFullDTO> getAllProposalByCoSupervisor(String email){
-        if (teacherRepository.existsTeacherByEmail(email)){
+
+    public List<ProposalFullDTO> getAllProposalByCoSupervisor(String email) {
+        if (teacherRepository.existsTeacherByEmail(email)) {
             return null;
             //TODO throw error
         }

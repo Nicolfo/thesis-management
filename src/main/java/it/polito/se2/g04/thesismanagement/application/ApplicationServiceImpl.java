@@ -108,7 +108,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .getApplicationByProposalIdAndStudentId(proposalId, student.getId())
                     .stream().filter(it -> it.getStatus() != ApplicationStatus.CANCELLED).map(this::getApplicationDTO).toList();
         }
-        return null;
+        return List.of();
     }
 
     @Override

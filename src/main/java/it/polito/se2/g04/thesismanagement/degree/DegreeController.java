@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.degree;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,14 +11,10 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class DegreeController {
 
-    @Autowired
     private final DegreeService degreeService;
-
-    public DegreeController(DegreeService degreeService){
-        this.degreeService=degreeService;
-    }
 
     @GetMapping("/API/Degree/getAllNames")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")

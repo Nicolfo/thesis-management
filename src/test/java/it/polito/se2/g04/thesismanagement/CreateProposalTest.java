@@ -73,7 +73,19 @@ public class CreateProposalTest {
         g = groupRepository.save(g);
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",g,null);
         teacherRepository.save(teacher);
-        Proposal proposal=new Proposal("test1",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
+        Proposal proposal = new Proposal();
+        proposal.setTitle("test1");
+        proposal.setSupervisor(teacher);
+        proposal.setCoSupervisors(null);
+        proposal.setKeywords("parola");
+        proposal.setType("type");
+        proposal.setGroups(null);
+        proposal.setDescription("descrizione");
+        proposal.setRequiredKnowledge("poca");
+        proposal.setNotes("notes");
+        proposal.setExpiration(null); // Assuming that the date is nullable
+        proposal.setLevel("level");
+        proposal.setCds("cds");
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
@@ -93,7 +105,19 @@ public class CreateProposalTest {
         g = groupRepository.save(g);
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",g,null);
         teacherRepository.save(teacher);
-        Proposal proposal=new Proposal("test1",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
+        Proposal proposal = new Proposal();
+        proposal.setTitle("test1");
+        proposal.setSupervisor(teacher);
+        proposal.setCoSupervisors(null);
+        proposal.setKeywords("parola");
+        proposal.setType("type");
+        proposal.setGroups(null);
+        proposal.setDescription("descrizione");
+        proposal.setRequiredKnowledge("poca");
+        proposal.setNotes("notes");
+        proposal.setExpiration(null); // Assuming that the date is nullable
+        proposal.setLevel("level");
+        proposal.setCds("cds");
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))

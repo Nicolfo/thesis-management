@@ -1,7 +1,6 @@
 package it.polito.se2.g04.thesismanagement.email;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
-import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal_on_request.ProposalOnRequest;
 import it.polito.se2.g04.thesismanagement.student.Student;
@@ -9,7 +8,7 @@ import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -26,14 +25,14 @@ import java.nio.charset.StandardCharsets;
 
 
 @Service
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
-    @Autowired
-    private ResourceLoader resourceLoader;
-    @Autowired
-    private TeacherRepository teacherRepository;
+    private final JavaMailSender mailSender;
+
+    private final ResourceLoader resourceLoader;
+
+    private final TeacherRepository teacherRepository;
 
     @Override
     @Async

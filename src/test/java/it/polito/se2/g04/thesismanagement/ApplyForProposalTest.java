@@ -94,20 +94,19 @@ public class ApplyForProposalTest {
         Date expirationDate = new Date();
 
         // Create a Proposal object using the constructor
-         proposal = new Proposal(
-                "Proposal Title",
-                supervisor,
-                coSupervisors,
-                "Keywords",
-                "Proposal Type",
-                new ArrayList<>(),
-                "Description",
-                "Required Knowledge",
-                "Notes",
-                expirationDate,
-                "Proposal Level",
-                "CdS Value"
-        );
+        proposal = new Proposal();
+        proposal.setTitle("Proposal Title");
+        proposal.setSupervisor(supervisor);
+        proposal.setCoSupervisors(coSupervisors);
+        proposal.setKeywords("Keywords");
+        proposal.setType("Proposal Type");
+        proposal.setGroups(new ArrayList<>());
+        proposal.setDescription("Description");
+        proposal.setRequiredKnowledge("Required Knowledge");
+        proposal.setNotes("Notes");
+        proposal.setExpiration(expirationDate);
+        proposal.setLevel("Proposal Level");
+        proposal.setCds("CdS Value");
         proposal.getGroups().add(group);
         proposalRepository.save(proposal);
     }
