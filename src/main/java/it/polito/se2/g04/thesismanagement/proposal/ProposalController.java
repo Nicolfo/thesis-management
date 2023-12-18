@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.BadRequestException;
 import java.util.List;
 
 
@@ -153,17 +154,12 @@ public class ProposalController {
         throw new ArchiveWithNoId("can't archive a proposal without his id");
     }
 
-    @GetMapping("/API/proposal/getAllProposalByCoSupervisor/{email}")
+    @GetMapping("/API/proposal/getAllProposalByCoSupervisor/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProposalFullDTO> getAllProposalByCoSupervisor(@PathVariable String email){
-        return proposalService.getAllProposalByCoSupervisor(email);
+    public List<ProposalFullDTO> getAllProposalByCoSupervisor(){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        return proposalService.getAllProposalByCoSupervisor(auth.getName());
     }
 
-    @GetMapping("/API/proposal/getAllProposalByCoSupervisor")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.OK)
-    public void getAllProposalByCoSupervisorWithNoId(){
-        //TODO error handler
-    }
 }

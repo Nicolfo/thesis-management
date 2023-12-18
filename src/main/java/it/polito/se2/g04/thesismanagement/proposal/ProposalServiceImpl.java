@@ -364,9 +364,8 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     public List<ProposalFullDTO> getAllProposalByCoSupervisor(String email) {
-        if (teacherRepository.existsTeacherByEmail(email)) {
-            return null;
-            //TODO throw error
+        if (!teacherRepository.existsTeacherByEmail(email)) {
+            throw new TeacherNotFoundException("Logged teacher cannot be found on the DB");
         }
         return proposalRepository.findProposalsByCoSupervisorsContaining(teacherRepository.findByEmail(email)).stream().map(ProposalFullDTO::fromProposal).toList();
     }

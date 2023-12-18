@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.email;
 
-import lombok.NoArgsConstructor;
 
 public class EmailConstants {
     private EmailConstants() {

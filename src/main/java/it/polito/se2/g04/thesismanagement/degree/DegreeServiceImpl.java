@@ -1,10 +1,7 @@
 package it.polito.se2.g04.thesismanagement.degree;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +15,6 @@ public class DegreeServiceImpl implements DegreeService{
 
     @Override
     public List<String> getAllName(){
-        return degreeRepository.findAll().stream().map(it->it.getTitleDegree()).toList();
+        return degreeRepository.findAll().stream().map(Degree::getTitleDegree).toList();
     }
 }
