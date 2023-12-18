@@ -332,4 +332,62 @@ public class ProposalOnRequestTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     }
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
+    public void changeProposalOnRequestValid() throws Exception{
+        //set the proposal to TEACHER_REVIEW
+        proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
+        proposalOnRequestRepository.save(proposalOnRequests.get(0));
+        //change the proposal on request
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null);
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(proposalOnRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
+    public void changeProposalOnRequestInvalidStatus() throws Exception{
+        //change the proposal on request
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null);
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(proposalOnRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
+    public void changeProposalOnRequestTeacherNotFound() throws Exception{
+        //set the proposal to TEACHER_REVIEW
+        proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
+        proposalOnRequestRepository.save(proposalOnRequests.get(0));
+        //change the proposal on request
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(1112332L),new Date(),null);
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(proposalOnRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.viola@example.com", roles = {"STUDENT"})
+    public void changeProposalOnRequestWithUnAuthorizedUser() throws Exception{
+        //set the proposal to TEACHER_REVIEW
+        proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
+        proposalOnRequestRepository.save(proposalOnRequests.get(0));
+        //change the proposal on request
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null);
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(proposalOnRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+
 }
