@@ -266,8 +266,8 @@ public class AcceptApplicationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
-    // /API/application/changeApplicationStateById/{applicationId}/{newState}
 
+    /*
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
@@ -282,7 +282,7 @@ public class AcceptApplicationTest {
         application1=applicationRepository.getReferenceById(application1.getId());
         assertEquals(application1.getStatus(),ApplicationStatus.REJECTED,"the status didn't change");
 
-    }
+    } */
 
     @Test
     @Rollback

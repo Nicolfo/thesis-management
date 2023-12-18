@@ -81,20 +81,6 @@ public class ApplicationController {
     }
 
 
-    /**
-     * This method changes the state of the Application with the passed id to the passed state. This is done regardless
-     * the current state of the application. If the change was succesfull, true ist returned. If an error occurs, false
-     * is returned.
-     *
-     * @param applicationId id of application of which the state should be changed
-     * @param newState String describing the state, to which the application should be changed to
-     * @return true if changing the state was successful, false if changing the state was not successful
-     */
-    @GetMapping("/API/application/changeApplicationStateById/{applicationId}/{newState}")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    public boolean changeApplicationStateById(@PathVariable Long applicationId, @PathVariable String newState) {
-        return applicationService.changeApplicationStateById(applicationId, newState);
-    }
 
     @GetMapping("/API/application/rejectApplicationById/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")

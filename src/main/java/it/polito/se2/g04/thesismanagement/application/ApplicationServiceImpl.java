@@ -196,30 +196,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    @Override
-    public boolean changeApplicationStateById(Long applicationId, String newState) {
-        try {
-            ApplicationStatus newStateEnum = ApplicationStatus.valueOf(newState);
-            Application application = getApplicationByIdOriginal(applicationId);
-            application.setStatus(newStateEnum);
-            if (application.getProposal().getStatus() != Proposal.Status.ACTIVE) {
-                Proposal proposalToChange = application.getProposal();
-                proposalToChange.setStatus(Proposal.Status.ACTIVE);
-                proposalRepository.save(proposalToChange);
-            }
-            applicationRepository.save(application);
-
-            emailService.notifyStudentOfApplicationDecision(application);
-            if (newStateEnum == ApplicationStatus.ACCEPTED) {
-                return
-                        cancelApplicationsByProposal(application.getProposal().getId(), applicationId)
-                                && cancelApplicationsByStudent(application.getStudent().getEmail(), applicationId);
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     private boolean cancelApplicationById(Long applicationId) {
         try {

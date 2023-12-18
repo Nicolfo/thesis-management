@@ -33,16 +33,6 @@ public interface ApplicationService {
      */
     public boolean rejectApplicationById(Long applicationId);
     public void applyForProposal(ApplicationDTO applicationDTO);
-    /**
-     * This method changes the state of a given application to the given string. This is done regardless
-     * the current state of the application. After the state was changed, the student who handed in the application
-     * is notified via E-Mail. If a state is changed to accepted, all applications to the applied proposal and of the
-     * user that handed in the application
-     * @param applicationId id of the application of which the state should be changed
-     * @param newState state to which the application should be set
-     * @return true if changing the state of the given application was successful (and all applications that should be rejected were succesfully rejected), false if it wasn't.
-     */
-    boolean changeApplicationStateById(Long applicationId, String newState);
 
     /**
      * This method updates the status all pending Applications to the proposal with the passed id to rejected.
