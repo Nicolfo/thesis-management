@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class BrowseApplicationTests {
+class BrowseApplicationTests {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -137,7 +137,7 @@ public class BrowseApplicationTests {
     @Test
     @Rollback
     @WithMockUser(username = "email2@example.com", roles = {"TEACHER"})
-    public void getAllApplicationProf() throws Exception {
+    void getAllApplicationProf() throws Exception {
         ObjectMapper objectMapper=new ObjectMapper();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByProf")

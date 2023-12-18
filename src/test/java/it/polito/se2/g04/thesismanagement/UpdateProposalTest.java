@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UpdateProposalTest {
+class UpdateProposalTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -76,7 +76,7 @@ public class UpdateProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void TestCreate() throws Exception {
+    void TestCreate() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Group g = new Group("TestGroup");
         g = groupRepository.save(g);

@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class CareerTest {
+class CareerTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -84,7 +84,7 @@ public class CareerTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void getGradesForStudentTest() throws Exception{
+    void getGradesForStudentTest() throws Exception{
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacherRepository.save(teacher);
 

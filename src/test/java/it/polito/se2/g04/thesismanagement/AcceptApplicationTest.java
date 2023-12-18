@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class AcceptApplicationTest {
+class AcceptApplicationTest {
     @Autowired
     private ProposalRepository proposalRepository;
 
@@ -141,7 +141,7 @@ public class AcceptApplicationTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void testAcceptApplication() throws Exception {
+    void testAcceptApplication() throws Exception {
         //create error result
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -189,7 +189,7 @@ public class AcceptApplicationTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void acceptApplication() throws Exception {
+    void acceptApplication() throws Exception {
         application1.setStatus(ApplicationStatus.PENDING);
         application2.setStatus(ApplicationStatus.PENDING);
         application3.setStatus(ApplicationStatus.PENDING);
@@ -222,7 +222,7 @@ public class AcceptApplicationTest {
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
-        assertEquals(json, "false");
+        assertEquals( "false",json);
         assertEquals(0, applicationRepository.getApplicationById(application2.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         //get result
@@ -232,7 +232,7 @@ public class AcceptApplicationTest {
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
-        assertEquals(json, "false");
+        assertEquals( "false",json);
 
         //get result
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/"+application3.getId())
@@ -240,7 +240,7 @@ public class AcceptApplicationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         json = res.getResponse().getContentAsString();
-        assertEquals(json, "false");
+        assertEquals( "false",json);
 
         application1.setStatus(ApplicationStatus.PENDING);
         application1 = applicationRepository.save(application1);
@@ -251,7 +251,7 @@ public class AcceptApplicationTest {
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
-        assertEquals(json, "true");
+        assertEquals( "true",json);
         assertEquals(0, applicationRepository.getApplicationById(application1.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/application/rejectApplicationById/1")
@@ -260,7 +260,7 @@ public class AcceptApplicationTest {
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
-        assertEquals(json, "false");
+        assertEquals( "false",json);
         assertEquals(0, applicationRepository.getApplicationById(application1.getId()).getStatus().compareTo(ApplicationStatus.REJECTED));
 
         application1.setStatus(ApplicationStatus.PENDING);
@@ -276,7 +276,7 @@ public class AcceptApplicationTest {
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
-        assertEquals(json, "true");
+        assertEquals( "true",json);
         assertEquals(0, applicationRepository.getApplicationById(application1.getId()).getStatus().compareTo(ApplicationStatus.ACCEPTED));
         assertEquals(0, applicationRepository.getApplicationById(application2.getId()).getStatus().compareTo(ApplicationStatus.CANCELLED));
         assertEquals(0, applicationRepository.getApplicationById(application3.getId()).getStatus().compareTo(ApplicationStatus.CANCELLED));
@@ -285,7 +285,7 @@ public class AcceptApplicationTest {
     @Test
     @Rollback
     @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
-    public void getApplicationByProposal() throws Exception {
+    void getApplicationByProposal() throws Exception {
          mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationsByProposalId/"+proposal2.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -311,7 +311,7 @@ public class AcceptApplicationTest {
     @Test
     @Rollback
     @WithMockUser(username = "marco.munz@example.com", roles = {"STUDENT"})
-    public void checkExceptions() throws Exception {
+    void checkExceptions() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationsByProposalId/{proposalId}",222)
                         .contentType(MediaType.APPLICATION_JSON))

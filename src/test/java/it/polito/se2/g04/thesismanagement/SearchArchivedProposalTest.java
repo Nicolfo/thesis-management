@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class SearchArchivedProposalTest {
+class SearchArchivedProposalTest {
     @Autowired
     private ProposalRepository proposalRepository;
     @Autowired
@@ -142,7 +142,7 @@ public class SearchArchivedProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "rossi.mario@polito.it", roles = {"TEACHER"})
-    public void searchWithAllFields() throws Exception {
+    void searchWithAllFields() throws Exception {
         ProposalSearchRequest req = new ProposalSearchRequest();
         req.setTitle(p1.getTitle());
         req.setCoSupervisorIdList(List.of(t2.getId()));
@@ -176,7 +176,7 @@ public class SearchArchivedProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "rossi.mario@polito.it", roles = {"TEACHER"})
-    public void searchOnlyByGroups() throws Exception {
+    void searchOnlyByGroups() throws Exception {
         ProposalSearchRequest req = new ProposalSearchRequest();
         req.setCodGroupList(List.of(g2.getCodGroup()));
 

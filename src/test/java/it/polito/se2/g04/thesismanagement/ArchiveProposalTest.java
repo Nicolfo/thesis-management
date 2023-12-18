@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ArchiveProposalTest {
+class ArchiveProposalTest {
     @Autowired
     private ProposalRepository proposalRepository;
     @Autowired
@@ -53,7 +53,7 @@ public class ArchiveProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.it", roles = {"TEACHER"})
-    public void archiveProposal() throws Exception {
+    void archiveProposal() throws Exception {
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacherRepository.save(teacher);
         Proposal proposal = new Proposal();

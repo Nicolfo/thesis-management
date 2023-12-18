@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class StudentTest {
+class StudentTest {
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
@@ -82,14 +82,14 @@ public class StudentTest {
 
     @Test
     @Rollback
-    public void getCdsTest() {
+    void getCdsTest() {
         assertEquals(degree.getTitleDegree(),studentService.getCdS(students.get(0).getEmail()),"student1 degree is correct");
         assertEquals(degree.getTitleDegree(),studentService.getCdS(students.get(1).getEmail()),"student2 degree is correct");
     }
 
     @Test
     @Rollback
-    public void getAverageMarksTest() throws Exception {
+    void getAverageMarksTest() throws Exception {
         MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/student/getAverageMarks/{studentId}", students.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -107,7 +107,7 @@ public class StudentTest {
 
     @Test
     @Rollback
-    public void getNameByIdTest() throws Exception {
+    void getNameByIdTest() throws Exception {
         MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/student/getNameById/{studentId}", students.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())

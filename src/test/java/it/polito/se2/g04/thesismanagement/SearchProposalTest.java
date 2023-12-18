@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class SearchProposalTest {
+class SearchProposalTest {
     @Autowired
     private ProposalRepository proposalRepository;
     @Autowired
@@ -138,7 +138,7 @@ public class SearchProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"STUDENT"})
-    public void searchWithAllFields() throws Exception {
+    void searchWithAllFields() throws Exception {
         ProposalSearchRequest req = new ProposalSearchRequest();
         req.setTitle(p1.getTitle());
         req.setSupervisorIdList(List.of(t1.getId()));
@@ -173,7 +173,7 @@ public class SearchProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"STUDENT"})
-    public void searchOnlyByGroups() throws Exception {
+    void searchOnlyByGroups() throws Exception {
         ProposalSearchRequest req = new ProposalSearchRequest();
         req.setCodGroupList(List.of(g2.getCodGroup()));
 
@@ -199,7 +199,7 @@ public class SearchProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"STUDENT"})
-    public void searchOnlyByCoSupervisors() throws Exception {
+    void searchOnlyByCoSupervisors() throws Exception {
         ProposalSearchRequest req = new ProposalSearchRequest();
         req.setCoSupervisorIdList(List.of(t2.getId()));
 
@@ -225,7 +225,7 @@ public class SearchProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"STUDENT"})
-    public void searchWithNoFields() throws Exception {
+    void searchWithNoFields() throws Exception {
         ProposalSearchRequest req = new ProposalSearchRequest();
 
         ObjectMapper objectMapper = new ObjectMapper();

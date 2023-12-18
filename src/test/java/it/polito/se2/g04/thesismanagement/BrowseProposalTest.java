@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class BrowseProposalTest {
+class BrowseProposalTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -83,7 +83,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void createProposal() throws Exception {
+    void createProposal() throws Exception {
         ProposalDTO proposal = new ProposalDTO("Proposal 1", teacher.getId(), new ArrayList<>(), "Description 1", "req knowledge", "notes", new Date(2024, Calendar.DECEMBER, 10), "level", "CdS", "keywords", "type");
 
 
@@ -99,7 +99,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void getAllProposals() throws Exception {
+    void getAllProposals() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
 
     ProposalDTO proposal1 = new ProposalDTO("Proposal 1", teacher.getId(), new ArrayList<>(),"Description 1","req knowledge","notes",new Date(2023, Calendar.DECEMBER,10),"level","CdS", "keywords","type");
@@ -170,7 +170,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void testGetProposalsByProf() throws Exception {
+    void testGetProposalsByProf() throws Exception {
         Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         proposalRepository.save(proposal1);
@@ -260,7 +260,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
-    public void getProposalsByProfWithoutTeacher() throws Exception {
+    void getProposalsByProfWithoutTeacher() throws Exception {
         Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         proposalRepository.save(proposal1);
@@ -275,7 +275,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void testGetArchived() throws Exception {
+    void testGetArchived() throws Exception {
         Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
         Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
@@ -299,7 +299,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
-    public void testGetArchivedWithoutTeacher() throws Exception {
+    void testGetArchivedWithoutTeacher() throws Exception {
         Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
         Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
@@ -314,7 +314,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
-    public void testGetTitleByProposalId() throws Exception {
+    void testGetTitleByProposalId() throws Exception {
         Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
         Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
@@ -334,7 +334,7 @@ public class BrowseProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
-    public void testGetTitleByProposalIdWithoutProposal() throws Exception {
+    void testGetTitleByProposalIdWithoutProposal() throws Exception {
         Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
         Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);

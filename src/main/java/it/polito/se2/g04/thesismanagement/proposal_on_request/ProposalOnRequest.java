@@ -70,7 +70,7 @@ public class ProposalOnRequest {
                 this.title,
                 this.description,
                 TeacherDTO.fromTeacher(this.supervisor),
-                this.coSupervisors.stream().map(it-> TeacherDTO.fromTeacher(it)).toList(),
+                this.coSupervisors.stream().map(TeacherDTO::fromTeacher).toList(),
                 this.approvalDate,
                 this.status);
     }

@@ -47,7 +47,7 @@ import static org.keycloak.util.JsonSerialization.mapper;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class ProposalOnRequestTest {
+class ProposalOnRequestTest {
     @Autowired
     private DegreeRepository degreeRepository;
     @Autowired
@@ -106,7 +106,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
-    public void getAllPendingTest() throws Exception {
+    void getAllPendingTest() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getAllPending")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -149,7 +149,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void teacherAcceptedTest() throws Exception {
+    void teacherAcceptedTest() throws Exception {
         proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(0).getId());
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherAccepted/{id}", proposalOnRequests.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -159,7 +159,7 @@ public class ProposalOnRequestTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
-        assertEquals(result.getStatus(), ProposalOnRequest.Status.TEACHER_ACCEPTED, "this proposal should be accepted");
+        assertEquals(ProposalOnRequest.Status.TEACHER_ACCEPTED, result.getStatus(),  "this proposal should be accepted");
         LocalDate localDate1 = result.getApprovalDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
         LocalDate localDate2 = new Date().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
         assertEquals(localDate1, localDate2, "this date should be equal");
@@ -186,7 +186,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void teacherRejectTest() throws Exception {
+    void teacherRejectTest() throws Exception {
         proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(1).getId());
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRejected/{id}", proposalOnRequests.get(1).getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -196,7 +196,7 @@ public class ProposalOnRequestTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
-        assertEquals(result.getStatus(), ProposalOnRequest.Status.TEACHER_REJECTED, "this proposal should be rejected");
+        assertEquals( ProposalOnRequest.Status.TEACHER_REJECTED,result.getStatus(), "this proposal should be rejected");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRejected/" + new Random().nextLong(4, 100))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -212,7 +212,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void teacherChangeTest() throws Exception {
+    void teacherChangeTest() throws Exception {
         proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(2).getId());
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/{id}", proposalOnRequests.get(2).getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -222,7 +222,7 @@ public class ProposalOnRequestTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
-        assertEquals(result.getStatus(), ProposalOnRequest.Status.TEACHER_REVIEW, "this proposal should be rejected");
+        assertEquals(ProposalOnRequest.Status.TEACHER_REVIEW,result.getStatus(),  "this proposal should be rejected");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/" + new Random().nextLong(4, 100))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -240,7 +240,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
-    public void secretaryAcceptedTest() throws Exception {
+    void secretaryAcceptedTest() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}", proposalOnRequests.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -249,7 +249,7 @@ public class ProposalOnRequestTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
-        assertEquals(result.getStatus(), ProposalOnRequest.Status.SECRETARY_ACCEPTED, "this proposal should be accepted");
+        assertEquals(ProposalOnRequest.Status.SECRETARY_ACCEPTED,result.getStatus(),  "this proposal should be accepted");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryAccepted/" + new Random().nextLong(4, 100))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -265,7 +265,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"SECRETARY"})
-    public void secretaryRejectedTest() throws Exception {
+    void secretaryRejectedTest() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/{id}", proposalOnRequests.get(0).getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -274,7 +274,7 @@ public class ProposalOnRequestTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         ProposalOnRequestDTO result = mapper.readValue(json, ProposalOnRequestDTO.class);
-        assertEquals(result.getStatus(), ProposalOnRequest.Status.SECRETARY_REJECTED, "this proposal should be accepted");
+        assertEquals(ProposalOnRequest.Status.SECRETARY_REJECTED,result.getStatus(),  "this proposal should be accepted");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/secretaryRejected/" + new Random().nextLong(4, 100))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -290,7 +290,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
-    public void createProposalOnRequest() throws Exception{
+    void createProposalOnRequest() throws Exception{
         ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(null, student1.getId(), "test","test", teacher.getId(), new ArrayList<>(),new Date(),null);
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.SECRETARY_REJECTED);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));
@@ -306,7 +306,7 @@ public class ProposalOnRequestTest {
 
         ProposalOnRequest proposalOnRequest=proposalOnRequestRepository.getReferenceById(result.getId());
         assertEquals(proposalOnRequest.getTitle(),proposalOnRequestDTO.getTitle(),"Title not matching");
-        assertEquals(proposalOnRequest.getStatus(), ProposalOnRequest.Status.PENDING,"status is not PENDING");
+        assertEquals(ProposalOnRequest.Status.PENDING,proposalOnRequest.getStatus(), "status is not PENDING");
         //Try to start a second proposalOnRequest (should get conflict)
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposalOnRequest/create/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -335,7 +335,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
-    public void changeProposalOnRequestValid() throws Exception{
+    void changeProposalOnRequestValid() throws Exception{
         //set the proposal to TEACHER_REVIEW
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));
@@ -350,7 +350,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
-    public void changeProposalOnRequestInvalidStatus() throws Exception{
+    void changeProposalOnRequestInvalidStatus() throws Exception{
         //change the proposal on request
         ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null);
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
@@ -362,7 +362,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
-    public void changeProposalOnRequestTeacherNotFound() throws Exception{
+    void changeProposalOnRequestTeacherNotFound() throws Exception{
         //set the proposal to TEACHER_REVIEW
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));
@@ -377,7 +377,7 @@ public class ProposalOnRequestTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.viola@example.com", roles = {"STUDENT"})
-    public void changeProposalOnRequestWithUnAuthorizedUser() throws Exception{
+    void changeProposalOnRequestWithUnAuthorizedUser() throws Exception{
         //set the proposal to TEACHER_REVIEW
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));

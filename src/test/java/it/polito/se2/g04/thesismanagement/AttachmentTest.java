@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc(addFilters = false)
-public class AttachmentTest {
+class AttachmentTest {
     @Autowired
     private ProposalRepository proposalRepository;
 
@@ -75,7 +75,7 @@ public class AttachmentTest {
 
     @BeforeAll
     @Test
-    public void testUploadFile() throws Exception {
+    void testUploadFile() throws Exception {
         Path tempFile = Files.createTempFile("test-file", ".txt");
         Files.write(tempFile, "Test file content".getBytes());
          file = new MockMultipartFile("file", "test-file.txt", MediaType.TEXT_PLAIN_VALUE, Files.readAllBytes(tempFile));
@@ -103,7 +103,7 @@ public class AttachmentTest {
 
     @Test
     @Rollback
-    public void testDownlaodFile() throws Exception {
+    void testDownlaodFile() throws Exception {
 // Perform the GET request
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/API/getFile/{id}", attachmentDTO.getId()))
                 .andExpect(status().isOk())

@@ -38,7 +38,7 @@ import java.util.Date;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ErrorsTests {
+class ErrorsTests {
     @Autowired
     private ProposalRepository proposalRepository;
 
@@ -110,7 +110,7 @@ public class ErrorsTests {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void ApplicationDeletedExceptionTest() throws Exception {
+    void ApplicationDeletedExceptionTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/{applicationId}",application1.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -118,7 +118,7 @@ public class ErrorsTests {
     @Test
     @Rollback
     @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
-    public void DuplicateApplicationExceptionTest() throws Exception {
+    void DuplicateApplicationExceptionTest() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         application1.setStatus(ApplicationStatus.PENDING);
         application1=applicationRepository.save(application1);

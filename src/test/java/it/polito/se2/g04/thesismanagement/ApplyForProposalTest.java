@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ApplyForProposalTest {
+class ApplyForProposalTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -125,7 +125,7 @@ public class ApplyForProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "email@example.com", roles = {"STUDENT"})
-    public void testApplyProposalAndUploadFile() throws Exception {
+    void testApplyProposalAndUploadFile() throws Exception {
         Path tempFile = Files.createTempFile("test-file", ".txt");
         Files.write(tempFile, "Test file content".getBytes());
         MockMultipartFile file = new MockMultipartFile("file", "test-file.txt", MediaType.TEXT_PLAIN_VALUE, Files.readAllBytes(tempFile));

@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class CreateProposalTest {
+class CreateProposalTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -67,7 +67,7 @@ public class CreateProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void testInsert() throws Exception {
+    void testInsert() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Group g = new Group("Test");
         g = groupRepository.save(g);
@@ -99,7 +99,7 @@ public class CreateProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "nonexistinguser@no.it", roles = {"TEACHER"})
-    public void exceptionTest() throws Exception {
+    void exceptionTest() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Group g = new Group("Test");
         g = groupRepository.save(g);

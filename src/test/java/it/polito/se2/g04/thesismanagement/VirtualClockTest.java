@@ -26,13 +26,13 @@ import static org.keycloak.util.JsonSerialization.mapper;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class VirtualClockTest {
+class VirtualClockTest {
     @Autowired
     private MockMvc mockMvc;
     @Test
     @Rollback
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
-    public void virtualClockTest() throws Exception{
+    void virtualClockTest() throws Exception{
         VirtualClockRequest virtualClockRequest= new VirtualClockRequest(3);
         mockMvc.perform(MockMvcRequestBuilders.post("/API/virtualTimer/changeOffset/")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -42,7 +42,7 @@ import java.util.Date;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 
-public class BrowseDecisionsTests {
+class BrowseDecisionsTests {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -142,7 +142,7 @@ public class BrowseDecisionsTests {
     @Test
     @Rollback
     @WithMockUser(username = "alessia.ferrari@example.com", roles = {"STUDENT"})
-    public void getAllApplicationProf() throws Exception {
+     void getAllApplicationProf() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByStudent")
                         .contentType(MediaType.APPLICATION_JSON))
