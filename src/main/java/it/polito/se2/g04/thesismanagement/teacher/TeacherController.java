@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.teacher;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,19 +13,15 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 public class TeacherController {
 
     private final TeacherService teacherService;
 
-    public TeacherController(TeacherService teacherService) {
-        this.teacherService = teacherService;
-    }
-
-
     @GetMapping("API/teacher/getAll")
     @ResponseStatus(HttpStatus.OK)
     public List<TeacherDTO> getAll(){
-        return teacherService.getAllTeachers();
+        return teacherService.getAll();
     }
 
     @GetMapping("API/teacher/getById/{id}")

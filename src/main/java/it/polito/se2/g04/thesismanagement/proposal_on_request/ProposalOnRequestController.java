@@ -56,12 +56,7 @@ public class ProposalOnRequestController {
     public ProposalOnRequestDTO updateProposalOnRequestTeacherAccepted(@PathVariable Long id){
         return proposalOnRequestService.proposalOnRequestTeacherAccepted(id);
     }
-    @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest/{id}")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.OK)
-    public ProposalOnRequestDTO updateProposalOnRequestTeacherChangeRequest(@PathVariable Long id){
-        return proposalOnRequestService.proposalOnRequestTeacherChangeStatus(id, ProposalOnRequest.Status.TEACHER_REVIEW);
-    }
+
     @PutMapping("/API/proposalOnRequest/makeChanges/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
     @ResponseStatus(HttpStatus.OK)
@@ -97,20 +92,12 @@ public class ProposalOnRequestController {
         throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
 
-    @PutMapping("/API/proposalOnRequest/updateStatus/teacherChangeRequest")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ProposalOnRequestDTO updateProposalOnRequestTeacherChangeRequestWithNoId(){
-        throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
-    }
-
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRejected")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalOnRequestDTO updateProposalOnRequestTeacherRejectedWithNoId(){
         throw new ProposalRequestWithNoId(UPDATE_PROPOSAL_ON_REQUEST_WITH_NO_ID);
     }
-//TODO check if used, duplicate of line 59
     @PutMapping("/API/proposalOnRequest/updateStatus/teacherRequestChange/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
