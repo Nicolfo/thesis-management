@@ -52,7 +52,7 @@ class ArchiveProposalTest {
     }
     @Test
     @Rollback
-    @WithMockUser(username = "test@example.it", roles = {"TEACHER"})
+    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
     void archiveProposal() throws Exception {
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacherRepository.save(teacher);

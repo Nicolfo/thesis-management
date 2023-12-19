@@ -49,7 +49,6 @@ public interface ProposalService {
 
     List<ProposalFullDTO> getArchivedProposals(String userName);
 
-
     void archiveProposal(Long id);
 
     void deleteProposal(Long id);

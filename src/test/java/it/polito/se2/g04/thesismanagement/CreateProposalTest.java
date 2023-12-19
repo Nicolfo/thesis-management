@@ -98,8 +98,8 @@ class CreateProposalTest {
     }
     @Test
     @Rollback
-    @WithMockUser(username = "nonexistinguser@no.it", roles = {"TEACHER"})
-    void exceptionTest() throws Exception {
+    @WithMockUser(username = "mismatching@no.it", roles = {"TEACHER"})
+    void invalidTeacherException() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Group g = new Group("Test");
         g = groupRepository.save(g);
@@ -121,6 +121,34 @@ class CreateProposalTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
+    void teacherNotFoundException() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        Group g = new Group("Test");
+        g = groupRepository.save(g);
+        Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",g,null);
+        Proposal proposal = new Proposal();
+        proposal.setTitle("test1");
+        proposal.setSupervisor(teacher);
+        proposal.setCoSupervisors(null);
+        proposal.setKeywords("parola");
+        proposal.setType("type");
+        proposal.setGroups(null);
+        proposal.setDescription("descrizione");
+        proposal.setRequiredKnowledge("poca");
+        proposal.setNotes("notes");
+        proposal.setExpiration(null); // Assuming that the date is nullable
+        proposal.setLevel("level");
+        proposal.setCds("cds");
+        ProposalDTO failedProposalDTO= ProposalDTO.fromProposal(proposal);
+        failedProposalDTO.setSupervisorId(222L);
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/insert/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(failedProposalDTO)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 

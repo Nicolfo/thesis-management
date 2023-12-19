@@ -6,6 +6,7 @@ import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
 import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.UpdateAfterAcceptException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.InvalidTeacherException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
@@ -25,10 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,9 +87,11 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void createProposal(ProposalDTO proposalDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
-        if (teacher == null || teacher.getEmail().compareTo(auth.getName()) != 0)
+        if(!teacherRepository.existsById(proposalDTO.getSupervisorId()))
             throw new TeacherNotFoundException("Defined teacher is invalid!");
+        Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
+        if (teacher.getEmail().compareTo(auth.getName()) != 0)
+            throw new InvalidTeacherException("Cannot create a proposal for another teacher.");
         Proposal toAdd = new Proposal();
         toAdd.setTitle(proposalDTO.getTitle());
         toAdd.setSupervisor(teacher);
@@ -113,13 +113,15 @@ public class ProposalServiceImpl implements ProposalService {
     public void updateProposal(Long id, ProposalDTO proposalDTO) {
         if (!proposalRepository.existsById(id))
             throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
-
         Proposal old = proposalRepository.getReferenceById(id);
-        if (old.getStatus() == Proposal.Status.ACCEPTED) {
-            throw (new UpdateAfterAcceptException("you can't update this proposal after an application to it is accepted"));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().compareTo(old.getSupervisor().getEmail())!=0)
+            throw new InvalidTeacherException("Cannot update a proposal for another teacher");
+        if (old.getStatus() == Proposal.Status.ACCEPTED || old.getStatus() == Proposal.Status.ARCHIVED) {
+            throw (new UpdateAfterAcceptException("you can't update this proposal after an application to it is accepted or archived"));
         }
+
         old.setTitle(proposalDTO.getTitle());
-        old.setSupervisor(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()));
         if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
             old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()));
         }
@@ -238,18 +240,23 @@ public class ProposalServiceImpl implements ProposalService {
     public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest, Proposal.Status status) {
         return searchProposals(proposalSearchRequest,List.of(status));
     }
-
-
     @Override
-    public void archiveProposal(Long id) {
+    public void archiveProposal(Long id){
         if (!proposalRepository.existsById(id)) {
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
         }
         Proposal old = proposalRepository.getReferenceById(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().compareTo(old.getSupervisor().getEmail())!=0)
+            throw new InvalidTeacherException("Cannot archive a proposal for another teacher");
+        archiveProposalHelper(old);
+    }
+
+    private void archiveProposalHelper(Proposal old) {
         if (old.getStatus() == Proposal.Status.ARCHIVED) {
             throw (new ProposalNotFoundException("Proposal already archived"));
         } else {
-            applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
+            applicationRepository.getApplicationByProposal_Id(old.getId()).forEach(it -> {
                         Application application = applicationRepository.getReferenceById(it.getId());
                         application.setStatus(ApplicationStatus.CANCELLED);
                         applicationRepository.save(application);
@@ -264,6 +271,10 @@ public class ProposalServiceImpl implements ProposalService {
     public void deleteProposal(Long id) {
         if (!proposalRepository.existsById(id))
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
+        Proposal old = proposalRepository.getReferenceById(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().compareTo(old.getSupervisor().getEmail())!=0)
+            throw new InvalidTeacherException("Cannot delete a proposal for another teacher");
 
         applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
                     Application application = applicationRepository.getReferenceById(it.getId());
@@ -271,9 +282,8 @@ public class ProposalServiceImpl implements ProposalService {
                     applicationRepository.save(application);
                 }
         );
-        Proposal proposal = proposalRepository.getReferenceById(id);
-        proposal.setStatus(Proposal.Status.DELETED);
-        proposalRepository.save(proposal);
+        old.setStatus(Proposal.Status.DELETED);
+        proposalRepository.save(old);
     }
 
     @Scheduled(fixedRate = 10 * 60 * 1000)
@@ -296,7 +306,7 @@ public class ProposalServiceImpl implements ProposalService {
                 boolean edited = false;
                 if (now.getTime().after(expiration)) {
                     try {
-                        archiveProposal(proposal.getId());
+                        archiveProposalHelper(proposal);
                     } catch (Error ignore) {
 
                     }
