@@ -12,6 +12,7 @@ import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import it.polito.se2.g04.thesismanagement.virtualclock.VirtualClockController;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -26,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,7 +89,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void createProposal(ProposalDTO proposalDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(!teacherRepository.existsById(proposalDTO.getSupervisorId()))
+        if (!teacherRepository.existsById(proposalDTO.getSupervisorId()))
             throw new TeacherNotFoundException("Defined teacher is invalid!");
         Teacher teacher = teacherRepository.getReferenceById(proposalDTO.getSupervisorId());
         if (teacher.getEmail().compareTo(auth.getName()) != 0)
@@ -115,7 +117,7 @@ public class ProposalServiceImpl implements ProposalService {
             throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
         Proposal old = proposalRepository.getReferenceById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth.getName().compareTo(old.getSupervisor().getEmail())!=0)
+        if (auth.getName().compareTo(old.getSupervisor().getEmail()) != 0)
             throw new InvalidTeacherException("Cannot update a proposal for another teacher");
         if (old.getStatus() == Proposal.Status.ACCEPTED || old.getStatus() == Proposal.Status.ARCHIVED) {
             throw (new UpdateAfterAcceptException("you can't update this proposal after an application to it is accepted or archived"));
@@ -180,11 +182,9 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
 
-
-
     @Query
     @Override
-    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest,List<Proposal.Status> statuses) {
+    public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest, List<Proposal.Status> statuses) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Proposal> cq = cb.createQuery(Proposal.class);
 
@@ -238,16 +238,17 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     public List<ProposalFullDTO> searchProposals(ProposalSearchRequest proposalSearchRequest, Proposal.Status status) {
-        return searchProposals(proposalSearchRequest,List.of(status));
+        return searchProposals(proposalSearchRequest, List.of(status));
     }
+
     @Override
-    public void archiveProposal(Long id){
+    public void archiveProposal(Long id) {
         if (!proposalRepository.existsById(id)) {
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
         }
         Proposal old = proposalRepository.getReferenceById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth.getName().compareTo(old.getSupervisor().getEmail())!=0)
+        if (auth.getName().compareTo(old.getSupervisor().getEmail()) != 0)
             throw new InvalidTeacherException("Cannot archive a proposal for another teacher");
         archiveProposalHelper(old);
     }
@@ -273,7 +274,7 @@ public class ProposalServiceImpl implements ProposalService {
             throw (new ProposalNotFoundException("Proposal with this id does not exist"));
         Proposal old = proposalRepository.getReferenceById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth.getName().compareTo(old.getSupervisor().getEmail())!=0)
+        if (auth.getName().compareTo(old.getSupervisor().getEmail()) != 0)
             throw new InvalidTeacherException("Cannot delete a proposal for another teacher");
 
         applicationRepository.getApplicationByProposal_Id(id).forEach(it -> {
@@ -301,28 +302,23 @@ public class ProposalServiceImpl implements ProposalService {
 
         for (Proposal proposal : proposals) {
             Date expiration = proposal.getExpiration();
-
-            if (expiration != null) {
-                boolean edited = false;
-                if (now.getTime().after(expiration)) {
-                    try {
-                        archiveProposalHelper(proposal);
-                    } catch (Error ignore) {
-
-                    }
-                }
-                if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
-                    try {
-                        emailService.notifySupervisorOfExpiration(proposal);
-                        proposal.setNotifiedAboutExpiration(true);
-                        edited = true;
-                    } catch (Exception ignored) {
-
-                    }
-                }
-                if (edited)
-                    proposalRepository.save(proposal);
+            if (expiration == null)
+                continue;
+            boolean edited = false;
+            if (now.getTime().after(expiration)) {
+                    archiveProposalHelper(proposal);
             }
+            if (!proposal.getNotifiedAboutExpiration() && expiration.before(oneWeekFromNow.getTime())) {
+                try {
+                    emailService.notifySupervisorOfExpiration(proposal);
+                } catch (Exception ignored){
+
+                }
+                proposal.setNotifiedAboutExpiration(true);
+                    edited = true;
+            }
+            if (edited)
+                proposalRepository.save(proposal);
         }
     }
 
