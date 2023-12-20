@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
 import BrowseDecisions from "./Content/BrowseDecisions";
+import BrowseDecisionsOnRequest from "./Content/BrowseDecisionsOnRequest";
 import BrowseProposalsContent from './Content/BrowseProposalsContent';
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";
 import ProposalsListContent from './Content/ProposalsListContent';
@@ -128,6 +129,8 @@ function App() {
                            element={<ProposalsListContent user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/browseDecisions"
                            element={<BrowseDecisions user={user}/>}/>
+                    <Route path="/browseDecisionsOnRequest"
+                           element={<BrowseDecisionsOnRequest user={user}/>}/>
                     <Route path="/proposal/apply/:proposalId"
                            element={<RenderProposal user={user}/>}/>
                     <Route path="/teacher/application/browse"

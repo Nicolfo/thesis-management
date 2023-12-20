@@ -4,10 +4,10 @@ import API from "../API/Api";
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "react-oauth2-code-pkce";
 
-function BrowseDecisions(props) {
+function BrowseDecisionsOnRequest(props) {
     const {token} = useContext(AuthContext);
 
-    const [applications, setApplications] = useState([]);
+    const [proposalOnRequest, setproposalOnRequest] = useState([]);
 
 
     const navigate = useNavigate();
@@ -22,8 +22,8 @@ function BrowseDecisions(props) {
                 return;
 
             try {
-                let applications = await API.getApplicationsByStudent(props.user.token);
-                setApplications(applications);
+                let applicationsOnReq = await API.getProposalOnRequestByStudent(props.user.token);
+                setproposalOnRequest(applicationsOnReq);
 
             } catch (err) {
                 console.error("Error fetching applications:", err);
@@ -36,30 +36,29 @@ function BrowseDecisions(props) {
 
     return (
         <>
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                Your applications
-            </Card.Header>
-            {applications.length > 0  ?
+            <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
+                <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
+                    Your proposals on request
+                </Card.Header>
 
-                <Table>
-                    <tbody>
-                    {applications.map((application) => <TableRow key={application.id} application={application}/>)}
-                    </tbody>
-                </Table>
-
-                :
-                <Card.Body style={{"textAlign": "center"}} className="mt-4">
-                    <strong>You have no applications yet</strong>
-                </Card.Body>
-            }
+                {proposalOnRequest.length > 0 ?
 
 
-        </Card>
+                    <Table>
+                        <tbody>
+                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application}/>)}
+                        </tbody>
+                    </Table>
 
+                    :
+                    <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                        <strong>You have no proposals on request yet</strong>
+                    </Card.Body>
+                }
 
 
 
+            </Card>
         </>);
 }
 
@@ -97,4 +96,4 @@ function TableRow(props) {
 }
 
 
-export default BrowseDecisions;
+export default BrowseDecisionsOnRequest;

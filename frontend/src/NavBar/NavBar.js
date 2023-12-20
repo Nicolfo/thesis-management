@@ -124,6 +124,19 @@ function NavBar(props) {
                                     >
                                         My applications decisions
                                     </Button>
+
+                                    <Button
+                                        variant={path === '/browseDecisionsOnRequest' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
+                                        style={path === '/browseDecisionsOnRequest' ? {
+                                            backgroundColor: "#FEA65A",
+                                            color: "white"
+                                        } : {}}
+                                        onClick={() => {
+                                            navigate('/browseDecisionsOnRequest');
+                                        }}
+                                    >
+                                        My proposal on request
+                                    </Button>
                                     <div style={{textAlign: "center"}} className="border-b no-border-lg margin-end-lg">
                                         <OverlayTrigger overlay={(proposalsOnRequest.length > 0 || props.sent) ? <Tooltip id="tooltip-disabled">Unable to start a new thesis request because you already have a pending one!</Tooltip> : <></>} placement="bottom">
                                             <span className="d-inline-block">
