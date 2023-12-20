@@ -13,7 +13,7 @@ import { useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import ApplicationViewLayout from "./Content/ApplicationViewLayout";
 import BrowseApplicationsContent from "./Content/BrowseApplicationsContent";
-import BrowseDecisions from "./Content/BrowseDecisions";
+import {BrowseDecisions} from "./Content/BrowseDecisions";
 import BrowseDecisionsOnRequest from "./Content/BrowseDecisionsOnRequest";
 import BrowseProposalsContent from './Content/BrowseProposalsContent';
 import InsertUpdateProposal from "./Content/InsertUpdateProposal";

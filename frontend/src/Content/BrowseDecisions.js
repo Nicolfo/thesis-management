@@ -4,7 +4,7 @@ import API from "../API/Api";
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "react-oauth2-code-pkce";
 
-function BrowseDecisions(props) {
+export function BrowseDecisions(props) {
     const {token} = useContext(AuthContext);
 
     const [applications, setApplications] = useState([]);
@@ -64,7 +64,7 @@ function BrowseDecisions(props) {
 }
 
 
-function TableRow(props) {
+export function TableRow(props) {
     const {application} = props;
 
     const statusBadge = () => {
@@ -97,4 +97,3 @@ function TableRow(props) {
 }
 
 
-export default BrowseDecisions;

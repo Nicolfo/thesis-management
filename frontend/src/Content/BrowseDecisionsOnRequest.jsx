@@ -3,6 +3,7 @@ import {Badge, Card, Col, Row, Table} from "react-bootstrap";
 import API from "../API/Api";
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "react-oauth2-code-pkce";
+import {TableRow} from "./BrowseDecisions"
 
 function BrowseDecisionsOnRequest(props) {
     const {token} = useContext(AuthContext);
@@ -63,37 +64,6 @@ function BrowseDecisionsOnRequest(props) {
 }
 
 
-function TableRow(props) {
-    const {application} = props;
-
-    const statusBadge = () => {
-        if (application.status === "PENDING" || application.status === "SECRETARY_ACCEPTED")
-            return <Badge bg="primary"> ⦿ PENDING </Badge>
-        else if (application.status === "ACCEPTED" || application.status === "TEACHER_ACCEPTED" )
-            return <Badge bg="success"> ✓ ACCEPTED </Badge>
-        else if (application.status === "REJECTED" || application.status === "TEACHER_REJECTED" || application.status === "SECRETARY_REJECTED")
-            return <Badge bg="danger"> ✕ REJECTED </Badge>
-    }
-
-
-    return (
-        <tr>
-            <td>
-                <Row className="my-3">
-                    <Col lg={5}>
-                        <strong> {application.proposalTitle || application.title} </strong>
-                    </Col>
-                    <Col lg={5}>
-                        Supervised by: <em> {application.supervisorSurname || application.supervisor.surname} {application.supervisorName || application.supervisor.name} </em>
-                    </Col>
-                    <Col lg={1}>
-                        {statusBadge()}
-                    </Col>
-                </Row>
-            </td>
-        </tr>
-    );
-}
 
 
 export default BrowseDecisionsOnRequest;
