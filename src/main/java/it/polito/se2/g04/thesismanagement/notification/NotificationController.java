@@ -2,10 +2,7 @@ package it.polito.se2.g04.thesismanagement.notification;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,7 +23,7 @@ public class NotificationController {
         return notificationService.markNotificationAsRead(id);
     }
 
-    @GetMapping("/API/notification/markNotificationAsRead/{id}")
+    @PutMapping("/API/notification/markNotificationAsRead/{id}")
     @PreAuthorize("isAuthenticated()")
     public void markNotificationAsRead(@PathVariable Long id) {
         notificationService.markNotificationAsRead(id);

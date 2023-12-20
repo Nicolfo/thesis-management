@@ -14,22 +14,22 @@ public class NotificationServiceImpl implements NotificationService{
 
 
     @Override
-    public List<Notification> getAllNotificationsForLoggedInUser() {
+    public List<NotificationDTO> getAllNotificationsForLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
         return getAllNotificationsByEmail(email);
     }
 
     @Override
-    public List<Notification> getAllNotificationsByEmail(String email){
-        return notificationRepository.findByRecipient(email);
+    public List<NotificationDTO> getAllNotificationsByEmail(String email){
+        return notificationRepository.findByRecipient(email).stream().map(NotificationDTO::fromNotification).toList();
     }
 
     @Override
-    public Notification markNotificationAsRead(Long id) {
+    public NotificationDTO markNotificationAsRead(Long id) {
         Notification notification = notificationRepository.getReferenceById(id);
         notification.setRead(true);
-        return notificationRepository.save(notification);
+        return NotificationDTO.fromNotification(notificationRepository.save(notification));
     }
 
     @Override
