@@ -41,15 +41,13 @@ function NotificationRow({ id, notification, expandedId, setExpandedId, setNotif
                 const newList = l.map(n => ({...n}));
                 for (const n of newList) {
                     if (n.id === id) {
-                        console.log("set");
                         n.read = true;
                     }
                 }
-                console.log(newList);
                 return newList;
             });
             try {
-                await API.getSingleNotification(token, id);
+                await API.markNotificationAsRead(token, id);
             } catch (e) {
                 console.log(e);
             }

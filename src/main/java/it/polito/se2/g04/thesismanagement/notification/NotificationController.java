@@ -13,13 +13,13 @@ public class NotificationController {
     private final NotificationService notificationService;
     @GetMapping("/API/notification/getAllNotificationsOfCurrentUser/")
     @PreAuthorize("isAuthenticated()")
-    public List<Notification> getAllNotificationsOfCurrentUser() {
+    public List<NotificationDTO> getAllNotificationsOfCurrentUser() {
         return notificationService.getAllNotificationsForLoggedInUser();
     }
 
     @GetMapping("/API/notification/getSingleNotifications/{id}")
     @PreAuthorize("isAuthenticated()")
-    public Notification getSingleNotifications(@PathVariable Long id) {
+    public NotificationDTO getSingleNotifications(@PathVariable Long id) {
         return notificationService.markNotificationAsRead(id);
     }
 
