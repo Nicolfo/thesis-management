@@ -156,7 +156,22 @@ public class NotificationTest {
             assertFalse(notification.isRead());
         }
 
+        res = mockMvc.perform(MockMvcRequestBuilders.get("/API/notification/getUnreadNotificationsCount/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        json = res.getResponse().getContentAsString();
+
+        assertEquals(json,"2");
+
+
         Notification referenceNotification = notifications.get(0);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/notification/markNotificationAsRead/"+referenceNotification.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
 
         res = mockMvc.perform(MockMvcRequestBuilders.get("/API/notification/getSingleNotifications/"+referenceNotification.getId())
                         .contentType(MediaType.APPLICATION_JSON))
