@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
-import {Alert, Button, Card, Container, Row, Col, Badge, Spinner} from "react-bootstrap";
+import {Alert, Button, Card, Container, Row, Col, Badge, Spinner, Modal} from "react-bootstrap";
 import {AuthContext} from "react-oauth2-code-pkce";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import API from "../API/Api";
 
 const SERVER_URL = "http://localhost:8081";
 
@@ -21,6 +22,8 @@ function ApplicationViewLayout(props) {
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [accepting, setAccepting] = useState(false);
+    const [adding, setAdding] = useState(false);
 
     useEffect(() => {
 
@@ -133,158 +136,252 @@ function ApplicationViewLayout(props) {
 
 
     return (
-        <Container>
-            <Row className="justify-content-md-center">
-                <Col md="auto">
-                    <h1>Information about Application</h1>
+ <>
+        { accepting?
+            <Warn setUpdateBefore={props.setUpdateBefore} setAccepting={setAccepting} setAdding={setAdding} proposalId={applicationData.proposal.id}></Warn>
+            :
+             adding ?
+                    <Warn2 acceptApplication={acceptApplication} setAdding={setAdding} setAccepting={setAccepting} title={applicationData.proposal.title} student={applicationData.student.surname + " " + applicationData.student.name}></Warn2>
+                    :
+                    <Container>
+                        <Row className="justify-content-md-center">
+                            <Col md="auto">
+                                <h1>Information about Application</h1>
 
-                    
 
-                    <Card style={{marginBottom: '2rem'}}>
-                        <Card.Header as="h5">Application Information</Card.Header>
-                        <Card.Body>
-                            <Card.Text>
-                                <strong>Attachment:</strong> {applicationData.attachmentId ?
-                                <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
-                                   download>Download</a>
-                                : 'No attachment'}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
-                            </Card.Text>
-                            <Card.Text>
-                                <strong>State:</strong> {statusBadge()}
-                            </Card.Text>
-                        </Card.Body>
-                    </Card>
 
-                    <Row>
-                        <Col md={6}>
-                            <Card style={{marginBottom: '2rem'}}>
-                                <Card.Header as="h5">Proposal Information</Card.Header>
-                                <Card.Body>
-                                    <Card.Text>
-                                        <strong>Title:</strong> {applicationData.proposal.title}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Supervisor:</strong> {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Co-Supervisors:</strong> {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Keywords:</strong> {applicationData.proposal.keywords}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Type:</strong> {applicationData.proposal.type}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Description:</strong> {applicationData.proposal.description}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        {applicationData.proposal.notes && <><div><strong>Notes:</strong> {applicationData.proposal.notes}</div></> }
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Level:</strong> {applicationData.proposal.level}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>CdS:</strong> {applicationData.proposal.cds}
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col md={6}>
-                            <Card style={{marginBottom: '2rem'}}>
-                                <Card.Header as="h5">Student Information</Card.Header>
-                                <Card.Body>
-                                    <Card.Text>
-                                        <strong>Surname:</strong> {applicationData.student.surname}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Name:</strong> {applicationData.student.name}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Gender:</strong> {applicationData.student.gender}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Nationality:</strong> {applicationData.student.nationality}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Email:</strong> {applicationData.student.email}
-                                    </Card.Text>
-                                    <Card.Text>
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Enrollment Year:</strong> {applicationData.student.enrollmentYear}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Average grades:</strong> {applicationData.studentAverageGrades}
-                                    </Card.Text>
-                                    <Card.Text>
-                                        <strong>Grades:</strong>
-                                    </Card.Text>
-                                    {studentGradesData.length > 0 ? (
-                                        <ul>
-                                            {studentGradesData.map((grade, index) => (
-                                                <li key={index}>{grade.titleCourse}: {grade.grade}</li>
-                                            ))}
-                                        </ul>
+                                <Card style={{marginBottom: '2rem'}}>
+                                    <Card.Header as="h5">Application Information</Card.Header>
+                                    <Card.Body>
+                                        <Card.Text>
+                                            <strong>Attachment:</strong> {applicationData.attachmentId ?
+                                            <a href={`${SERVER_URL}/API/getFile/${applicationData.attachmentId}`}
+                                               download>Download</a>
+                                            : 'No attachment'}
+                                        </Card.Text>
+                                        <Card.Text>
+                                            <strong>Apply Date:</strong> {new Date(applicationData.applyDate).toLocaleString('it-IT')}
+                                        </Card.Text>
+                                        <Card.Text>
+                                            <strong>State:</strong> {statusBadge()}
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Card>
+
+                                <Row>
+                                    <Col md={6}>
+                                        <Card style={{marginBottom: '2rem'}}>
+                                            <Card.Header as="h5">Proposal Information</Card.Header>
+                                            <Card.Body>
+                                                <Card.Text>
+                                                    <strong>Title:</strong> {applicationData.proposal.title}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Supervisor:</strong> {applicationData.proposal.supervisor.name + " " + applicationData.proposal.supervisor.surname}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Co-Supervisors:</strong> {applicationData.proposal.coSupervisors.map(supervisor => supervisor.name + " " + supervisor.surname).join(', ')}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Keywords:</strong> {applicationData.proposal.keywords}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Type:</strong> {applicationData.proposal.type}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Groups:</strong> {applicationData.proposal.groups.map(group => group.name).join(', ')}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Description:</strong> {applicationData.proposal.description}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Required Knowledge:</strong> {applicationData.proposal.requiredKnowledge}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    {applicationData.proposal.notes && <><div><strong>Notes:</strong> {applicationData.proposal.notes}</div></> }
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Expiration:</strong> {new Date(applicationData.proposal.expiration).toLocaleString('it-IT')}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Level:</strong> {applicationData.proposal.level}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>CdS:</strong> {applicationData.proposal.cds}
+                                                </Card.Text>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Card style={{marginBottom: '2rem'}}>
+                                            <Card.Header as="h5">Student Information</Card.Header>
+                                            <Card.Body>
+                                                <Card.Text>
+                                                    <strong>Surname:</strong> {applicationData.student.surname}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Name:</strong> {applicationData.student.name}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Gender:</strong> {applicationData.student.gender}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Nationality:</strong> {applicationData.student.nationality}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Email:</strong> {applicationData.student.email}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Enrollment Year:</strong> {applicationData.student.enrollmentYear}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Average grades:</strong> {applicationData.studentAverageGrades}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    <strong>Grades:</strong>
+                                                </Card.Text>
+                                                {studentGradesData.length > 0 ? (
+                                                    <ul>
+                                                        {studentGradesData.map((grade, index) => (
+                                                            <li key={index}>{grade.titleCourse}: {grade.grade}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <Card.Text>"No grades available."</Card.Text>
+                                                )}
+
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                </Row>
+
+                                {showSuccess &&
+                                    <Alert variant="success" dismissible>The application was successfully updated!</Alert>}
+                                {showError &&
+                                    <Alert variant="danger" dismissible>There was an error updating the application.</Alert>}
+
+                                <Row>
+                                    {loading ?
+                                        <Col style={{textAlign: "center"}}><Spinner animation="border" role="status"
+                                                                                    className="me-3"/> Sending the email...</Col>
+                                        :
+                                        (applicationData.status === "PENDING" ? (
+                                            <Col style={{textAlign: "center"}}>
+                                                <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}}
+                                                        onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon
+                                                    icon={"chevron-left"}/> Go back </Button>
+                                                <Button variant="outline-success me-2" style={{marginBottom: "1rem"}}
+                                                        onClick={() => setAccepting(true)}><FontAwesomeIcon
+                                                    icon="fa-solid fa-check"/> Accept</Button>
+                                                <Button variant="outline-danger me-2" style={{marginBottom: "1rem"}}
+                                                        onClick={() => rejectApplication()}><FontAwesomeIcon
+                                                    icon="fa-solid fa-xmark"/> Reject</Button>
+                                            </Col>
+
+                                    ) : applicationData.status==="ACCEPTED" ? (
+                                        <Col style={{textAlign: "center"}}>
+                                            <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
+                                        </Col>
                                     ) : (
-                                        <Card.Text>"No grades available."</Card.Text>
-                                    )}
+                                        <Col style={{textAlign: "center"}}>
+                                            <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
+                                        </Col>
+                                    ))
 
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-
-                    {showSuccess &&
-                        <Alert variant="success" dismissible>The application was successfully updated!</Alert>}
-                    {showError &&
-                        <Alert variant="danger" dismissible>There was an error updating the application.</Alert>}
-
-                    <Row>
-                        {loading ?
-                            <Col style={{textAlign: "center"}}><Spinner animation="border" role="status"
-                                                                        className="me-3"/> Sending the email...</Col>
-                            :
-                            (applicationData.status === "PENDING" ? (
-                                <Col style={{textAlign: "center"}}>
-                                    <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}}
-                                            onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon
-                                        icon={"chevron-left"}/> Go back </Button>
-                                    <Button variant="outline-success me-2" style={{marginBottom: "1rem"}}
-                                            onClick={() => acceptApplication()}><FontAwesomeIcon
-                                        icon="fa-solid fa-check"/> Accept</Button>
-                                    <Button variant="outline-danger" style={{marginBottom: "1rem"}}
-                                            onClick={() => rejectApplication()}><FontAwesomeIcon
-                                        icon="fa-solid fa-xmark"/> Reject</Button>
-                                </Col>
-
-                        ) : applicationData.status==="ACCEPTED" ? (
-                            <Col style={{textAlign: "center"}}>
-                                <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
+                                }
+                                </Row>
                             </Col>
-                        ) : (
-                            <Col style={{textAlign: "center"}}>
-                                <Button variant="outline-dark me-2" style={{marginBottom: "1rem"}} onClick={() => navigate('/teacher/application/browse')}><FontAwesomeIcon icon={"chevron-left"}/> Go back </Button>
-                            </Col>
-                        ))
+                        </Row>
+                    </Container>}
+ </>
+    );
+}
 
-                    }
-                    </Row>
-                </Col>
-            </Row>
-        </Container>
+
+function Warn(props) {
+    const navigate = useNavigate();
+
+    const [wantToAdd, setWantToAdd] = useState(undefined);
+    return (
+        <div
+            className="modal show d-flex align-items-center justify-content-center vh-100"
+        >
+            <Modal.Dialog>
+                <Modal.Header>
+                    <Modal.Title> Warning!</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+
+                        <p>Do you want to update this proposal in order to add a co-supervisor before accepting this application?</p>
+
+                </Modal.Body>
+
+
+
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => props.setAccepting(false)}>Undo</Button>
+
+                    <Button variant="primary" onClick={() => {
+                        props.setUpdateBefore(true);
+                        navigate(`/updateProposal/${props.proposalId}`)
+                    }}>Yes</Button>
+
+                    <Button variant="primary" onClick={() => {
+                        props.setAccepting(false);
+                        props.setAdding(true);
+                    }}>No</Button>
+
+                    </Modal.Footer>
+
+
+
+            </Modal.Dialog>
+        </div>
+    );
+}
+
+
+function Warn2(props) {
+
+    const [wantToAdd, setWantToAdd] = useState(undefined);
+    return (
+        <div
+            className="modal show d-flex align-items-center justify-content-center vh-100"
+        >
+            <Modal.Dialog>
+                <Modal.Header>
+                    <Modal.Title> Warning!</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+
+                    <p>Do you want to assign this proposal: "{props.title}" to the student: "{props.student}"</p>
+
+                </Modal.Body>
+
+
+
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => {
+                        props.setAdding(false);
+                        props.setAccepting(false)
+                    }}>Undo</Button>
+
+                    <Button variant="primary" onClick={() => {
+                        props.setAccepting(false);
+                        props.setAdding(false);
+                        props.acceptApplication();
+                    }}>Assign</Button>
+
+                </Modal.Footer>
+
+
+
+            </Modal.Dialog>
+        </div>
     );
 }
 

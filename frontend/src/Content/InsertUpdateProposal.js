@@ -186,8 +186,12 @@ function InsertUpdateProposal(props) {
 
     const updateProposal = (proposal) => {
         API.updateProposal(proposal, props.user.token)
-            .then(() =>
-                navigate("/teacher/proposals"))
+            .then(() =>{
+                if(props.updateBefore){
+                    props.setUpdateBefore(false);
+                    navigate("/teacher/application/view?applicationId=" + props.updateBeforeApplicationId);
+                }else{
+                navigate("/teacher/proposals")}})
             .catch((err) => console.log(err))
     }
 
@@ -225,6 +229,8 @@ function InsertUpdateProposal(props) {
             } else
                 insertProposal(proposal);
         }
+
+
 
         setValidated(true);
     }
@@ -482,7 +488,9 @@ function InsertUpdateProposal(props) {
                 </Card.Body>
 
                 <Card.Footer style={{"textAlign": "center"}}>
-                    <Button variant="outline-primary" type="submit">
+                    <Button variant="outline-primary" type="submit"
+
+                        >
                         {editProposalID ?
                             <><FontAwesomeIcon icon="fa-solid fa-check"/> Update thesis proposal</>
                             :
@@ -492,7 +500,12 @@ function InsertUpdateProposal(props) {
 
 
                     <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => {
-                        navigate('/teacher/proposals');
+                        if(props.updateBefore){
+                            props.setUpdateBefore(false);
+                            navigate("/teacher/application/view?applicationId=" + props.updateBeforeApplicationId);
+                        }else{
+
+                        navigate('/teacher/proposals');}
                     }}>
                         <FontAwesomeIcon icon="fa-solid fa-xmark"/> Cancel
                     </Button>

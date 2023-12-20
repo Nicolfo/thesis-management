@@ -72,7 +72,7 @@ function BrowseApplicationsContent(props) {
                                         </Card.Header>
                                         <Accordion.Collapse eventKey={e[0].id} flush>
                                             <Card.Body>
-                                                <ApplicationsTable applications={e}/>
+                                                <ApplicationsTable setUpdateBeforeApplicationId={props.setUpdateBeforeApplicationId} applications={e}/>
 
                                             </Card.Body>
                                         </Accordion.Collapse>
@@ -106,7 +106,7 @@ function CustomToggle({eventKey, callback}) {
     );
 }
 
-function ApplicationsTable({applications, user}) {
+function ApplicationsTable({applications, user, setUpdateBeforeApplicationId}) {
 
     return (
         <Table responsive striped hover className="mb-4">
@@ -129,7 +129,7 @@ function ApplicationsTable({applications, user}) {
             </thead>
             <tbody>
             {applications.map((application) => (
-                <ApplicationRow key={application.id} application={application} user={user}/>
+                <ApplicationRow key={application.id} application={application} user={user} setUpdateBeforeApplicationId={setUpdateBeforeApplicationId}/>
             ))}
             </tbody>
         </Table>
@@ -149,6 +149,7 @@ function ApplicationRow(props) {
     }
 
     const handleViewInfo = (id) => {
+        props.setUpdateBeforeApplicationId(props.application.id);
         navigate("/teacher/application/view?applicationId=" + props.application.id);
     };
 

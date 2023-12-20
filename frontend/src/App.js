@@ -31,6 +31,9 @@ function App() {
 
     const [user, setUser] = useState(null);
     const [archivedView, setArchivedView] = useState(false);
+    const [updateBefore, setUpdateBefore] = useState(false);
+    const [updateBeforeApplicationId, setUpdateBeforeApplicationId] = useState(undefined);
+
 
 
     const [clickOnProposal, setClickOnProposal] = useState(0);
@@ -134,13 +137,13 @@ function App() {
                     <Route path="/proposal/apply/:proposalId"
                            element={<RenderProposal user={user}/>}/>
                     <Route path="/teacher/application/browse"
-                           element={<BrowseApplicationsContent user={user}/>}/>
+                           element={<BrowseApplicationsContent setUpdateBeforeApplicationId={setUpdateBeforeApplicationId} user={user}/>}/>
                     <Route path="/teacher/application/view"
-                           element={<ApplicationViewLayout user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}/>}/>
+                           element={<ApplicationViewLayout updateBeforeApplicationId={updateBeforeApplicationId} setUpdateBeforeApplicationId={setUpdateBeforeApplicationId} setUpdateBefore={setUpdateBefore} user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}/>}/>
                     <Route path="/insertProposal"
-                           element={<InsertUpdateProposal user={user}/>}/>
+                           element={<InsertUpdateProposal updateBeforeApplicationId={updateBeforeApplicationId} setUpdateBefore={setUpdateBefore} updateBefore={updateBefore}  user={user}/>}/>
                     <Route path="/updateProposal/:editProposalID"
-                           element={<InsertUpdateProposal user={user}/>}/>
+                           element={<InsertUpdateProposal updateBeforeApplicationId={updateBeforeApplicationId} setUpdateBefore={setUpdateBefore} updateBefore={updateBefore}  user={user}/>}/>
                     <Route path="/copyProposal/:copyProposalID"
                            element={<InsertUpdateProposal user={user} archivedView={archivedView}/>}/>
                     <Route path="/teacher/proposals"
