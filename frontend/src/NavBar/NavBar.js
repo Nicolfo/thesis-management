@@ -16,6 +16,8 @@ function NavBar(props) {
     const [date,setDate]=useState(props.applicationDate.format('YYYY-MM-DD'));
     const [unreadNotifications, setUnreadNotifications] = useState(0);
 
+    const getNotificationsIntervalMs = 30000;
+
     const path = useLocation().pathname;
     const navigate = useNavigate();
     const handleClick = (e) => {
@@ -30,23 +32,21 @@ function NavBar(props) {
     }
 
     /**
-     * Every time the component is loaded, fetch the notification list
+     * Every 30 seconds, fetch the notification list
      * for the current user, and keep track of the number of unread ones
      */
     useEffect(() => {
         const getNotifications = async () => {
-            let notificationList = [];
             try {
-                notificationList = await API.getAllNotificationsOfCurrentUser(token);
-                console.log(notificationList);
-                notificationList = notificationList.filter(n => !n.read);
-                setUnreadNotifications(notificationList.length);
+                const unread = await API.getUnreadNotificationsCount(token);
+                setUnreadNotifications(unread);
             } catch (e) {
                 console.log(e);
             }
+            setTimeout(getNotifications, getNotificationsIntervalMs);
         }
         getNotifications();
-    });
+    }, []);
 
     /**
      * Every time tokenData (the decoded token for the logged-in user on the browser) changes, we update the
@@ -225,7 +225,7 @@ function NavBar(props) {
                                 <Button className="no-border-sm me-3"
                                         onClick={() => navigate("/notifications")}>
                                     <FontAwesomeIcon icon="fa-bell"/>
-                                    {unreadNotifications > 0 && <span className="badge text-bg-light text-danger ms-2 ">
+                                    {path !== "/notifications" && unreadNotifications > 0 && <span className="badge text-bg-light text-danger ms-2 ">
                                         {unreadNotifications}
                                     </span>}
                                 </Button>}
