@@ -31,4 +31,11 @@ public class NotificationServiceImpl implements NotificationService{
         notification.setRead(true);
         return notificationRepository.save(notification);
     }
+
+    @Override
+    public int unreadNotificationsForLoggedInUserCount() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        return notificationRepository.countByRecipientAndReadFalse(email);
+    }
 }

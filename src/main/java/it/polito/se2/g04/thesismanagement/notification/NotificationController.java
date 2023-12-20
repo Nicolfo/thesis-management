@@ -25,4 +25,10 @@ public class NotificationController {
     public Notification getSingleNotifications(@PathVariable Long id) {
         return notificationService.markNotificationAsRead(id);
     }
+
+    @GetMapping("/API/notification/getUnreadNotificationsCount/")
+    @PreAuthorize("isAuthenticated()")
+    public int getUnreadNotificationsCount() {
+        return notificationService.unreadNotificationsForLoggedInUserCount();
+    }
 }

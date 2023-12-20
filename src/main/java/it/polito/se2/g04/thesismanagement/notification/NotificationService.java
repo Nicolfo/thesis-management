@@ -6,4 +6,5 @@ public interface NotificationService {
     List<Notification> getAllNotificationsForLoggedInUser();
     List<Notification> getAllNotificationsByEmail(String email);
     Notification markNotificationAsRead(Long id);
+    int unreadNotificationsForLoggedInUserCount();
 }
