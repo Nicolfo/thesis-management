@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Card, Col, Collapse, Row } from "react-bootstrap";
+import { Card, Col, Collapse, Image, Row } from "react-bootstrap";
 import API from "../API/Api";
 import { AuthContext } from "react-oauth2-code-pkce";
 import parse from 'html-react-parser';
@@ -57,8 +57,8 @@ function NotificationRow({ id, notification, expandedId, setExpandedId, setNotif
         <Card className="mb-2">
             <Card.Header className="list-elem-title" onClick={toggleOpen}>
                 <Row>
-                <Col xs={6}>{ !notification.read ? <b>{notification.title}</b> : <>{notification.title}</> }</Col>
-                <Col xs={6} className="text-end">{dayjs(notification.timestamp).format("MMM D, YYYY h:mm A")}</Col>
+                <Col md={6} xs={12}><Image className="me-2 d-none d-sm-inline" src={`notification_images/${notification.icon}`} width={25} height={25} />{ !notification.read ? <b>{notification.title}</b> : <>{notification.title}</> }</Col>
+                <Col md={6} className="text-end d-none d-sm-block">{dayjs(notification.timestamp).format("MMM D, YYYY h:mm A")}</Col>
                 </Row>
                 
             </Card.Header>

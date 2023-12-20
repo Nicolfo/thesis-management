@@ -38,7 +38,7 @@ function NavBar(props) {
     useEffect(() => {
         const getNotifications = async () => {
             try {
-                const unread = await API.getUnreadNotificationsCount(token);
+                const unread = await API.getUnreadNotificationsCount(props.user.token);
                 setUnreadNotifications(unread);
             } catch (e) {
                 console.log(e);
