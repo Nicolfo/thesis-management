@@ -10,6 +10,7 @@ import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
@@ -30,16 +31,15 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
-    @Autowired
-    private ResourceLoader resourceLoader;
-    @Autowired
-    private NotificationRepository notificationRepository;
-    @Autowired
-    private TeacherRepository teacherRepository;
+    private final JavaMailSender mailSender;
+
+    private final ResourceLoader resourceLoader;
+
+    private final TeacherRepository teacherRepository;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Async

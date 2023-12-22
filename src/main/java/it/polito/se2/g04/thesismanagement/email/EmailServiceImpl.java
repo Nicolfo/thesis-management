@@ -1,4 +1,4 @@
-package it.polito.se2.g04.thesismanagement.email;
+/*package it.polito.se2.g04.thesismanagement.email;
 
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService {
+public class EmailServiceImpl {
 
     private final JavaMailSender mailSender;
 
@@ -144,4 +144,4 @@ public class EmailServiceImpl implements EmailService {
         helper.addInline("icon1", new ClassPathResource("/email/images/" + icon));
         mailSender.send(message);
     }
-}
+}*/

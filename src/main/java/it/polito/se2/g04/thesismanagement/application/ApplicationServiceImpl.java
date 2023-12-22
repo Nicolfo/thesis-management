@@ -2,7 +2,7 @@ package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
-import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.*;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.email.EmailFailedSendException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
@@ -14,6 +14,7 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -228,7 +230,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) throws MessagingException, IOException {
+    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
         if(!applicationRepository.existsApplicationByProposalId(proposalId)){
             throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
         }
@@ -238,7 +240,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) throws MessagingException, IOException {
+    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
         if (!applicationRepository.existsApplicationByStudentEmail(studentEmail)){
             throw new ApplicationDoNotExistException("doesn't exist a application associated to the student email " + studentEmail);
         }
@@ -254,8 +256,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
                 if (success){
                     Optional<Application> applicationOptional =applicationRepository.findById(application.getId());
-                    if(applicationOptional.isPresent())
-                        emailService.notifySupervisorAndCoSupervisorsOfNewApplication(applicationOptional.get());
+                    applicationOptional.ifPresent(emailService::notifySupervisorAndCoSupervisorsOfNewApplication);
 
                 }
             }
