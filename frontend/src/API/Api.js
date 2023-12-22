@@ -375,13 +375,15 @@ const teacherAccept = async (jwt, id) => {
     }));
 };
 
-const teacherRequestChange = async (jwt, id) => {
+const teacherRequestChange = async (jwt, id, description) => {
+    const requestChangeDTO = { requestedChange: description };
     return getJson(fetch(SERVER_URL + "proposalOnRequest/updateStatus/teacherRequestChange/" + id , {
         method: 'PUT',
         headers:{
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`,
-        }
+        },
+        body: JSON.stringify(Object.assign({}, requestChangeDTO))
     }));
 };
 

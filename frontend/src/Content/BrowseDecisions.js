@@ -1,11 +1,11 @@
-import {useContext, useEffect, useState} from "react";
-import {Badge, Card, Col, Row, Table} from "react-bootstrap";
+import { useContext, useEffect, useState } from "react";
+import { Badge, Card, Col, Row, Table } from "react-bootstrap";
 import API from "../API/Api";
-import {useNavigate} from "react-router-dom";
-import {AuthContext} from "react-oauth2-code-pkce";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "react-oauth2-code-pkce";
 
 function BrowseDecisions(props) {
-    const {token} = useContext(AuthContext);
+    const { token } = useContext(AuthContext);
 
     const [applications, setApplications] = useState([]);
     const [proposalOnRequest, setproposalOnRequest] = useState([]);
@@ -40,81 +40,86 @@ function BrowseDecisions(props) {
 
     return (
         <>
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                Your applications
-            </Card.Header>
-            {applications.length > 0 || proposalOnRequest.length > 0 ?
+            <Card style={{ "marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem" }}>
+                <Card.Header as="h1" style={{ "textAlign": "center" }} className="py-3">
+                    Your applications
+                </Card.Header>
+                {applications.length > 0 || proposalOnRequest.length > 0 ?
 
-                <Table>
-                    <tbody>
-                    {applications.map((application) => <TableRow key={application.id} application={application}/>)}
-                    </tbody>
-                </Table>
+                    <Table>
+                        <tbody>
+                            {applications.map((application) => <TableRow key={application.id} application={application} />)}
+                        </tbody>
+                    </Table>
 
-                :
-                <Card.Body style={{"textAlign": "center"}} className="mt-4">
-                    <strong>You have no applications yet</strong>
-                </Card.Body>
-            }
-
-
-        </Card>
+                    :
+                    <Card.Body style={{ "textAlign": "center" }} className="mt-4">
+                        <strong>You have no applications yet</strong>
+                    </Card.Body>
+                }
 
 
+            </Card>
 
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                Your proposals on request
-            </Card.Header>
 
-            {proposalOnRequest.length > 0 ?
+
+            <Card style={{ "marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem" }}>
+                <Card.Header as="h1" style={{ "textAlign": "center" }} className="py-3">
+                    Your proposals on request
+                </Card.Header>
+
+                {proposalOnRequest.length > 0 ?
 
 
                     <Table>
                         <tbody>
-                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application}/>)}
+                            {proposalOnRequest.map((application) => <TableRow key={application.id} application={application} />)}
                         </tbody>
                     </Table>
 
-                :
-                <Card.Body style={{"textAlign": "center"}} className="mt-4">
-                    <strong>You have no proposals on request yet</strong>
-                </Card.Body>
-            }
+                    :
+                    <Card.Body style={{ "textAlign": "center" }} className="mt-4">
+                        <strong>You have no proposals on request yet</strong>
+                    </Card.Body>
+                }
 
 
 
-        </Card>
+            </Card>
         </>);
 }
 
 
 function TableRow(props) {
-    const {application} = props;
+    const { application } = props;
 
     const statusBadge = () => {
         if (application.status === "PENDING" || application.status === "SECRETARY_ACCEPTED")
             return <Badge bg="primary"> ⦿ PENDING </Badge>
-        else if (application.status === "ACCEPTED" || application.status === "TEACHER_ACCEPTED" )
+        else if (application.status === "ACCEPTED" || application.status === "TEACHER_ACCEPTED")
             return <Badge bg="success"> ✓ ACCEPTED </Badge>
         else if (application.status === "REJECTED" || application.status === "TEACHER_REJECTED" || application.status === "SECRETARY_REJECTED")
             return <Badge bg="danger"> ✕ REJECTED </Badge>
+        else if (application.status === "TEACHER_REVIEW" || application.status === "TEACHER_REVIEW" || application.status === "TEACHER_REVIEW")
+            return <Badge bg="info"> ✎ TO CHANGE </Badge>
     }
 
 
     return (
         <tr>
             <td>
-                <Row className="my-3">
-                    <Col lg={5}>
+                <Row className="my-3 d-flex align-items-center">
+                    <Col lg={4}>
                         <strong> {application.proposalTitle || application.title} </strong>
                     </Col>
-                    <Col lg={5}>
+                    <Col lg={3}>
                         Supervised by: <em> {application.supervisorSurname || application.supervisor.surname} {application.supervisorName || application.supervisor.name} </em>
                     </Col>
                     <Col lg={1}>
                         {statusBadge()}
+                    </Col>
+                    <Col lg={4}>
+                        {application.requestedChange && <>Requested change: {application.requestedChange}</>}
                     </Col>
                 </Row>
             </td>

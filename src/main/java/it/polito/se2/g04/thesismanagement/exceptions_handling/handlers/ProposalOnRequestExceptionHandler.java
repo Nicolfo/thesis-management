@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.exceptions_handling.handlers;
 
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.EmptyRequestedChangeException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.MultipleProposalOnRequestPending;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.ProposalInvalidStateException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.ProposalRequestWithNoId;
@@ -24,6 +25,11 @@ public class ProposalOnRequestExceptionHandler {
     @ExceptionHandler(ProposalInvalidStateException.class)
     public ProblemDetail handleProposalInvalidStateException(ProposalInvalidStateException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(EmptyRequestedChangeException.class)
+    public ProblemDetail handleProposalInvalidStateException(EmptyRequestedChangeException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
 }

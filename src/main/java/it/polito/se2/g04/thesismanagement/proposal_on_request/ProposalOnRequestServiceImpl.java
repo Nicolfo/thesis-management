@@ -2,6 +2,7 @@ package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalOwnershipException;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.EmptyRequestedChangeException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.MultipleProposalOnRequestPending;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.ProposalInvalidStateException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.student.StudentNotFoundException;
@@ -35,6 +36,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     private final StudentRepository studentRepository;
     private final EmailService emailService;
     private static final String PROPOSAL_ON_REQUEST_IS_NOT_PENDING = "Proposal On Request is not pending";
+    private static final String REQUESTED_CHANGE_IS_EMPTY = "The requested change description is empty.";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -149,12 +151,16 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     }
 
     @Override
-    public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id) {
+    public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id, RequestChangeDTO requestChangeDTO) {
         ProposalOnRequest proposal = checkProposalId(id);
         if (proposal.getStatus() != ProposalOnRequest.Status.SECRETARY_ACCEPTED) {
             throw (new ProposalNotFoundException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
+        if (requestChangeDTO.getRequestedChange() == null || requestChangeDTO.getRequestedChange().isBlank()) {
+            throw new EmptyRequestedChangeException(REQUESTED_CHANGE_IS_EMPTY);
+        }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
+        proposal.setRequestedChange(requestChangeDTO.getRequestedChange());
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 

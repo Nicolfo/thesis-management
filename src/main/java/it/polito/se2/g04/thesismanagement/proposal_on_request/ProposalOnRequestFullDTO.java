@@ -23,4 +23,5 @@ public class ProposalOnRequestFullDTO {
     private List<TeacherDTO> coSupervisors;
     private Date approvalDate;
     private ProposalOnRequest.Status status;
+    private String requestedChange;
 }

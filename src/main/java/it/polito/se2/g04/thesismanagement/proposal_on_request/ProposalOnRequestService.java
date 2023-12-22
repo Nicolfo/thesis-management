@@ -12,7 +12,7 @@ public interface ProposalOnRequestService {
     public ProposalOnRequestDTO proposalOnRequestTeacherRejected(Long id);
     public ProposalOnRequestDTO createProposalRequest(ProposalOnRequestDTO proposalOnRequestDTO);
     public ProposalOnRequestDTO proposalOnRequestTeacherAccepted(Long id);
-    public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id);
+    public ProposalOnRequestDTO proposalOnRequestTeacherRequestChange(Long id, RequestChangeDTO requestChangeDTO);
     public ProposalOnRequestDTO proposalOnRequestTeacherChangeStatus(Long id, ProposalOnRequest.Status status);
     public List<ProposalOnRequestFullDTO> getPendingRequestsByTeacher(Long teacherId);
 
