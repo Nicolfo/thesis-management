@@ -42,7 +42,7 @@ import java.util.Date;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 
-public class BrowseDecisionsTests {
+class BrowseDecisionsTests {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -90,9 +90,33 @@ public class BrowseDecisionsTests {
         student = new Student("Ferrari","Alessia","Female","Italy","alessia.ferrari@example.com",null,2020);
         studentRepository.save(student);
 
-        proposal1 = new Proposal("Patch-based discriminative learning for Iris Presentation Attack Detection",teacher,null,"Iris, PAD, Recognition, Detection, Spoofing","Bachelor Thesis",null,"Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.", "Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI",null,new Date(2024, Calendar.DECEMBER,10),null,null);
-        proposal2 = new Proposal("Advanced driver assistance systems (ADASs) and autonomous vehicles rely on different types of sensors, such as camera, radar, ultrasonic, and LiDAR, to sense the surrounding environment.", teacher, null, "Radar, Radar Imaging, Radar Detection, Doppler Radar, Doppler Effect, Laser Radar, Radar Antennas", "Development", null, "Advanced driver assistance systems (ADASs) and autonomous vehicles rely on different types of sensors, such as camera, radar, ultrasonic, and LiDAR, to sense the surrounding environment.", "Sensor integration, Machine learning, Software development.", "notes", null, "Bachelor's", "Computer Engineering");
+        proposal1 = new Proposal();
+        proposal1.setTitle("Patch-based discriminative learning for Iris Presentation Attack Detection");
+        proposal1.setSupervisor(teacher);
+        proposal1.setCoSupervisors(null);
+        proposal1.setKeywords("Iris, PAD, Recognition, Detection, Spoofing");
+        proposal1.setType("Bachelor Thesis");
+        proposal1.setGroups(null);
+        proposal1.setDescription("Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.");
+        proposal1.setRequiredKnowledge("Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI");
+        proposal1.setNotes(null);
+        proposal1.setExpiration(new Date(2024, Calendar.DECEMBER, 10));
+        proposal1.setLevel(null);
+        proposal1.setCds(null);
 
+        proposal2 = new Proposal();
+        proposal2.setTitle("Advanced driver assistance systems (ADASs) and autonomous vehicles rely on different types of sensors, such as camera, radar, ultrasonic, and LiDAR, to sense the surrounding environment.");
+        proposal2.setSupervisor(teacher);
+        proposal2.setCoSupervisors(null);
+        proposal2.setKeywords("Radar, Radar Imaging, Radar Detection, Doppler Radar, Doppler Effect, Laser Radar, Radar Antennas");
+        proposal2.setType("Development");
+        proposal2.setGroups(null);
+        proposal2.setDescription("Advanced driver assistance systems (ADASs) and autonomous vehicles rely on different types of sensors, such as camera, radar, ultrasonic, and LiDAR, to sense the surrounding environment.");
+        proposal2.setRequiredKnowledge("Sensor integration, Machine learning, Software development.");
+        proposal2.setNotes("notes");
+        proposal2.setExpiration(null);
+        proposal2.setLevel("Bachelor's");
+        proposal2.setCds("Computer Engineering");
         proposal1 = proposalRepository.save(proposal1);
         proposal2 = proposalRepository.save(proposal2);
 
@@ -118,7 +142,7 @@ public class BrowseDecisionsTests {
     @Test
     @Rollback
     @WithMockUser(username = "alessia.ferrari@example.com", roles = {"STUDENT"})
-    public void getAllApplicationProf() throws Exception {
+     void getAllApplicationProf() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByStudent")
                         .contentType(MediaType.APPLICATION_JSON))

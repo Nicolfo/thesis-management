@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {Button, Col, Form, Nav, Row} from 'react-bootstrap';
+import {Button, Col, Form, Nav, OverlayTrigger, Row, Tooltip} from 'react-bootstrap';
 import {useState, useContext, useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {AuthContext} from 'react-oauth2-code-pkce';
@@ -17,6 +17,7 @@ function NavBar(props) {
     const [unreadNotifications, setUnreadNotifications] = useState(0);
 
     const getNotificationsIntervalMs = 30000;
+    const [proposalsOnRequest, setProposalsOnRequest] = useState([]);
 
     const path = useLocation().pathname;
     const navigate = useNavigate();
@@ -30,6 +31,16 @@ function NavBar(props) {
             logOut();
         }
     }
+
+    const checkProposalOnRequest = async () => {
+        if(token)
+            try {
+                const proposalsOnRequest = await API.getProposalOnRequestByStudent(token);
+                setProposalsOnRequest(proposalsOnRequest);
+            } catch (error) {
+                console.log(error);
+            }
+    };
 
     /**
      * Every 30 seconds, fetch the notification list
@@ -54,6 +65,8 @@ function NavBar(props) {
      * The user state is an object containing the user's email, name, surname, role and token.
      */
     useEffect(() => {
+        props.setSent(false);
+
         if (!props.user && tokenData) {
             let role;
             const roles = tokenData.realm_access.roles;
@@ -61,6 +74,7 @@ function NavBar(props) {
             switch (true) {
                 case roles.includes("STUDENT"):
                     role = "STUDENT";
+                    checkProposalOnRequest();
                     break;
                 case roles.includes("TEACHER"):
                     role = "TEACHER";
@@ -130,18 +144,25 @@ function NavBar(props) {
                                     >
                                         My applications decisions
                                     </Button>
-                                    <Button
-                                        variant={path === '/startRequest' ? "border-b no-border-lg margin-end-lg" : "primary border-b no-border-lg margin-end-lg"}
-                                        style={path === '/startRequest' ? {
-                                            backgroundColor: "#FEA65A",
-                                            color: "white"
-                                        } : {}}
-                                        onClick={() => {
-                                            navigate('/startRequest');
-                                        }}
-                                    >
-                                        Start thesis request
-                                    </Button>
+                                    <div style={{textAlign: "center"}} className="border-b no-border-lg margin-end-lg">
+                                        <OverlayTrigger overlay={(proposalsOnRequest.length > 0 || props.sent) ? <Tooltip id="tooltip-disabled">Unable to start a new thesis request because you already have a pending one!</Tooltip> : <></>} placement="bottom">
+                                            <span className="d-inline-block">
+                                                <Button
+                                                    disabled={(proposalsOnRequest.length > 0 || props.sent )}
+                                                    variant={path === '/startRequest' ? "no-border-sm no-border-lg margin-end-lg" : "primary no-border-sm no-border-lg margin-end-lg"}
+                                                    style={path === '/startRequest' ? {
+                                                        backgroundColor: "#FEA65A",
+                                                        color: "white"
+                                                    } : {}}
+                                                    onClick={() => {
+                                                        navigate('/startRequest');
+                                                    }}
+                                                >
+                                                    Start thesis request
+                                                </Button>
+                                            </span>
+                                        </OverlayTrigger>
+                                    </div>
                                 </>
                             )}
                             {userIsTeacher() && (

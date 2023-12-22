@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class DegreeTest {
+class DegreeTest {
     @Autowired
     private DegreeRepository degreeRepository;
     @Autowired
@@ -67,7 +67,7 @@ public class DegreeTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void getAllNameTest() throws Exception {
+    void getAllNameTest() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/Degree/getAllNames")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())

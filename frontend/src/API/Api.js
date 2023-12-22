@@ -292,7 +292,10 @@ async function insertApplication(cvId, proposalId, jwt) {
             } else {
                 reject(await response.json());
             }
-        })
+        }).catch(err => {
+                reject({error: "Cannot communicate"});
+            }
+        ) // connection error
     });
 };
 
@@ -342,14 +345,14 @@ const setVirtualClock=async(newOffset) =>{
 };
 
  const startRequest = async (request,jwt) => {
-    return fetch(SERVER_URL + 'proposalOnRequest/create/', {
+    return getJson(fetch(SERVER_URL + 'proposalOnRequest/create/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
         },
         body: JSON.stringify(Object.assign({}, request))
-    })
+    }))
 };
 
 const secretaryReject = async(jwt, id) => {

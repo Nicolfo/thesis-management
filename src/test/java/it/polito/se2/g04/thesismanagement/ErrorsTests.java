@@ -1,8 +1,7 @@
 package it.polito.se2.g04.thesismanagement;
 
-import it.polito.se2.g04.thesismanagement.application.Application;
-import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
-import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polito.se2.g04.thesismanagement.application.*;
 import it.polito.se2.g04.thesismanagement.department.Department;
 import it.polito.se2.g04.thesismanagement.department.DepartmentRepository;
 import it.polito.se2.g04.thesismanagement.group.Group;
@@ -39,7 +38,7 @@ import java.util.Date;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ErrorsTests {
+class ErrorsTests {
     @Autowired
     private ProposalRepository proposalRepository;
 
@@ -55,11 +54,14 @@ public class ErrorsTests {
     private GroupRepository groupRepository;
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private ApplicationService applicationService;
 
     private Teacher teacher;
     private Student student;
     private Proposal proposal1;
     private Application application1;
+    private Application application2;
     @BeforeAll
     public void setup() {
         Group saved=groupRepository.save(new Group("Group 1"));
@@ -71,13 +73,27 @@ public class ErrorsTests {
         student = new Student("Georgina","Ferrell","female","italian","georgina.ferrell@example.com",null,2020);
         student=studentRepository.save(student);
 
-        proposal1 = new Proposal("Patch-based discriminative learning for Iris Presentation Attack Detection",teacher,null,"Iris, PAD, Recognition, Detection, Spoofing","Bachelor Thesis",null,"Iris recognition is considered a prominent biometric authentication method. The accuracy, usability and touchless acquisition of iris recognition have led to their wide deployments.", "Good programming skills, atleast 2.0 in AuD, Basic Knowledge about AI",null,new Date(2024, Calendar.DECEMBER,10),null,null);
+        proposal1 = new Proposal();
+        proposal1.setTitle("Patch-based discriminative learning for Iris Presentation Attack Detection");
+        proposal1.setSupervisor(teacher);
+        proposal1.setCoSupervisors(null);
+        proposal1.setKeywords("Iris, PAD, Recognition, Detection, Spoofing");
+        proposal1.setType("Bachelor Thesis");
+        proposal1.setGroups(null);
+        proposal1.setDescription("Iris recognition is considered a prominent biometric authentication method. The accuracy, usability, and touchless acquisition of iris recognition have led to their wide deployments.");
+        proposal1.setRequiredKnowledge("Good programming skills, at least 2.0 in AuD, Basic Knowledge about AI");
+        proposal1.setNotes(null);
+        proposal1.setExpiration(new Date(2024, Calendar.DECEMBER, 10));
+        proposal1.setLevel(null);
+        proposal1.setCds(null);
 
         proposal1 = proposalRepository.save(proposal1);
 
         application1 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal1);
         application1.setStatus(ApplicationStatus.CANCELLED);
         application1 =applicationRepository.save(application1);
+        application2 = new Application(student,null,new Date(2023,Calendar.NOVEMBER,13),proposal1);
+
 
     }
 
@@ -94,9 +110,22 @@ public class ErrorsTests {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void ApplicationDeletedExceptionTest() throws Exception {
+    void ApplicationDeletedExceptionTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getApplicationById/{applicationId}",application1.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+    @Test
+    @Rollback
+    @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})
+    void DuplicateApplicationExceptionTest() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        application1.setStatus(ApplicationStatus.PENDING);
+        application1=applicationRepository.save(application1);
+        ApplicationDTO applicationDTO=applicationService.getApplicationDTO(application2);
+        mockMvc.perform(MockMvcRequestBuilders.post("/API/application/insert/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(applicationDTO)))
+                .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 }

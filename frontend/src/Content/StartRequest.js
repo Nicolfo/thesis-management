@@ -28,7 +28,6 @@ function StartRequest(props) {
     const [isValidDescription, setIsValidDescription] = useState(true);
     const [isValidSupervisor, setIsValidSupervisor] = useState(true);
     const [validated, setValidated] = useState(false);
-    const [sentFirst, setSentFirst] = useState(false);
 
 
     const getAllTeachers = async () => {
@@ -68,7 +67,7 @@ function StartRequest(props) {
         toast.promise(
             (async () => {
                 await API.startRequest(request, props.user.token);
-                setSentFirst(true);
+                props.setSent(true);
                 clearFields();
                 return "Thesis request successfully sent";
             })(),
@@ -111,7 +110,6 @@ function StartRequest(props) {
             }
 
             startRequest(request);
-            // console.log(request);
         }
 
         setValidated(true);
@@ -132,8 +130,9 @@ function StartRequest(props) {
                             <Form.Group>
                                 <Form.Floating>
                                     <Form.Control
-                                        style={{borderRadius: "25px"}}
+                                        disabled={props.sent}
                                         required
+                                        style={{borderRadius: "25px"}}
                                         type="text"
                                         placeholder="Title"
                                         value={title}
@@ -158,6 +157,7 @@ function StartRequest(props) {
                         <Row style={{"marginTop": "1rem"}} >
                             <Form.Floating>
                                 <Form.Control
+                                    disabled={props.sent}
                                     required
                                     as="textarea"
                                     type="text"
@@ -183,8 +183,9 @@ function StartRequest(props) {
                         {/* SUPERVISOR & CO-SUPERVISORS */}
                         <Row style={{"marginTop": "1rem"}} >
                             <Form.Group as={Col} >
-                                <Form.Label style={{marginLeft: "0.3rem"}}> Supervisor </Form.Label>
+                                <Form.Label style={props.sent ? {marginLeft: "0.3rem", color: "dimgray"} : {marginLeft: "0.3rem"}}> Supervisor </Form.Label>
                                 <Select
+                                    isDisabled={props.sent}
                                     options={optionsSupervisors}
                                     value={selectedSupervisor}
                                     onChange={ev => {setIsValidSupervisor(true); setSelectedSupervisor(ev)}}
@@ -204,8 +205,9 @@ function StartRequest(props) {
                                 <Form.Control.Feedback type="invalid"> Please select the supervisor </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} >
-                                <Form.Label style={{marginLeft: "0.3rem"}}> Co-supervisors <em style={{"color": "dimgray"}}> (optional) </em> </Form.Label>
+                                <Form.Label style={props.sent ? {marginLeft: "0.3rem", color: "dimgray"} : {marginLeft: "0.3rem"}}> Co-supervisors <em style={{"color": "dimgray"}}> (optional) </em> </Form.Label>
                                 <Select
+                                    isDisabled={props.sent}
                                     options={optionsSupervisors}
                                     value={selectedSupervisors}
                                     onChange={setSelectedSupervisors}
@@ -227,19 +229,14 @@ function StartRequest(props) {
                     </Card.Body>
 
                     <Card.Footer style={{"textAlign": "center"}}>
-                        { !sentFirst ?
+                        { !props.sent ?
                             <Button variant="outline-primary" type="submit">
                                 <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request
                             </Button>
                             :
-                            <>
-                                <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
-                                    <FontAwesomeIcon icon={"chevron-left"}/> Go back
-                                </Button>
-                                <Button style={{marginLeft: "1rem"}} variant="outline-primary" type="submit">
-                                    <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send another thesis request
-                                </Button>
-                            </>
+                            <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                <FontAwesomeIcon icon={"chevron-left"}/> Go back
+                            </Button>
                         }
                     </Card.Footer>
                 </Form>

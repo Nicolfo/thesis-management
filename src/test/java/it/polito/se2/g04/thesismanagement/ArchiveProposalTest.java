@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ArchiveProposalTest {
+class ArchiveProposalTest {
     @Autowired
     private ProposalRepository proposalRepository;
     @Autowired
@@ -52,13 +52,37 @@ public class ArchiveProposalTest {
     }
     @Test
     @Rollback
-    @WithMockUser(username = "test@example.it", roles = {"TEACHER"})
-    public void archiveProposal() throws Exception {
+    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
+    void archiveProposal() throws Exception {
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacherRepository.save(teacher);
-        Proposal proposal=new Proposal("test1",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
+        Proposal proposal = new Proposal();
+        proposal.setTitle("test1");
+        proposal.setSupervisor(teacher);
+        proposal.setCoSupervisors(null);
+        proposal.setKeywords("parola");
+        proposal.setType("type");
+        proposal.setGroups(null);
+        proposal.setDescription("descrizione");
+        proposal.setRequiredKnowledge("poca");
+        proposal.setNotes("notes");
+        proposal.setExpiration(null); // Assuming that the date is nullable
+        proposal.setLevel("level");
+        proposal.setCds("cds");
         proposalRepository.save(proposal);
-        Proposal proposal2=new Proposal("test2",teacher, null, "parola", "type", null, "descrizione", "poca", "notes",null,"level", "cds");
+        Proposal proposal2 = new Proposal();
+        proposal2.setTitle("test2");
+        proposal2.setSupervisor(teacher);
+        proposal2.setCoSupervisors(null);
+        proposal2.setKeywords("parola");
+        proposal2.setType("type");
+        proposal2.setGroups(null);
+        proposal2.setDescription("descrizione");
+        proposal2.setRequiredKnowledge("poca");
+        proposal2.setNotes("notes");
+        proposal2.setExpiration(null); // Assuming that the date is nullable
+        proposal2.setLevel("level");
+        proposal2.setCds("cds");
         proposalRepository.save(proposal2);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/{id}",proposal.getId())

@@ -1,5 +1,7 @@
 package it.polito.se2.g04.thesismanagement.exceptions_handling.handlers;
 
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.MultipleProposalOnRequestPending;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.ProposalInvalidStateException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.ProposalRequestWithNoId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -12,6 +14,16 @@ public class ProposalOnRequestExceptionHandler {
     @ExceptionHandler(ProposalRequestWithNoId.class)
     public ProblemDetail handleServiceNotFound(ProposalRequestWithNoId e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(MultipleProposalOnRequestPending.class)
+    public ProblemDetail handleMultipleProposalOnRequestPending(MultipleProposalOnRequestPending e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(ProposalInvalidStateException.class)
+    public ProblemDetail handleProposalInvalidStateException(ProposalInvalidStateException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
     }
 
 }

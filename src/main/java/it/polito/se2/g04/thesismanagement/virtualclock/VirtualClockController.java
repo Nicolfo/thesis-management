@@ -1,7 +1,6 @@
 package it.polito.se2.g04.thesismanagement.virtualclock;
 
 import it.polito.se2.g04.thesismanagement.proposal.ProposalService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

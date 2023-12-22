@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
-public class DeleteProposalTest {
+class DeleteProposalTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -80,7 +80,7 @@ public class DeleteProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void deleteProposal() throws Exception {
+    void deleteProposal() throws Exception {
         Teacher teacher = new Teacher("Massimo", "Potenza", "m.potenza@example.com", null, null);
         teacherRepository.save(teacher);
         Degree degree = new Degree("ingegneria informatica");
@@ -88,7 +88,19 @@ public class DeleteProposalTest {
         Student student1 = new Student("rossi", "marco", "male", "ita", "m.rossi@example.com", degree, 2020);
         Student student2 = new Student("viola", "marta", "female", "ita", "m.viola@example.com", degree, 2018);
         studentRepository.saveAll(List.of(student2, student1));
-        Proposal proposal = new Proposal("test1", teacher, null, "parola", "type", null, "descrizione", "poca", "notes", null, "level", "cds");
+        Proposal proposal = new Proposal();
+        proposal.setTitle("test1");
+        proposal.setSupervisor(teacher);
+        proposal.setCoSupervisors(null);
+        proposal.setKeywords("parola");
+        proposal.setType("type");
+        proposal.setGroups(null);
+        proposal.setDescription("descrizione");
+        proposal.setRequiredKnowledge("poca");
+        proposal.setNotes("notes");
+        proposal.setExpiration(null); // Assuming that the date is nullable
+        proposal.setLevel("level");
+        proposal.setCds("cds");
         proposal = proposalRepository.save(proposal);
         Application application1 = new Application(student1, null, null, proposal);
         applicationRepository.save(application1);
@@ -120,7 +132,7 @@ public class DeleteProposalTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/" + new Random().nextLong(2, 100))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/API/proposal/delete/" + new Random().nextLong(50, 100))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }

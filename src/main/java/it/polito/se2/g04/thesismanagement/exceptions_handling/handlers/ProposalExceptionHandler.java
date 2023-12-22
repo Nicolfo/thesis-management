@@ -15,7 +15,7 @@ public class ProposalExceptionHandler {
 
     @ExceptionHandler(ProposalOwnershipException.class)
     public ProblemDetail proposalOwnership(ProposalOwnershipException e){
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,e.getMessage());
     }
 
     @ExceptionHandler(CreateUpdateProposalWithNoPathVariable.class)

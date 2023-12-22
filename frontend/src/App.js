@@ -53,6 +53,7 @@ function App() {
     const [realDate, setRealDate] = useState(dayjs());
     const [offsetDate, setOffsetDate] = useState(0);
     const [applicationDate, setApplicationDate] = useState(dayjs());
+    const [sent, setSent] = useState(false);
 
     const updateApplicationDate = dateStr => {
         let date = dayjs(dateStr);
@@ -110,7 +111,7 @@ function App() {
                     <>
                         <div className={!user ? "container-fluid background-with-image" : ""} style={{height: '100vh', width:'100vw', padding: '0rem'}}>
                             <div className="row align-items-start">
-                                <NavBar user={user} setUser={setUser} realDate={realDate}
+                                <NavBar user={user} setUser={setUser} realDate={realDate} sent={sent} setSent={setSent}
                                         applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}
                                         searchForProposalClicked={searchForProposalClicked} setArchivedView={setArchivedView}/>
                                 <div className="ps-5 pe-5 pt-3">
@@ -145,7 +146,7 @@ function App() {
                     <Route path="/teacher/proposals/archived"
                            element={<BrowseArchivedProposals setArchivedView={setArchivedView} user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/startRequest"
-                           element={<StartRequest user={user}/>}/>
+                           element={<StartRequest user={user} sent={sent} setSent={setSent} />}/>
                     <Route path="/proposalOnRequest/browse"
                            element={<ProposalsOnRequestListContent user={user}/>}/>
                     <Route path="/teacher/proposalOnRequest/browse"

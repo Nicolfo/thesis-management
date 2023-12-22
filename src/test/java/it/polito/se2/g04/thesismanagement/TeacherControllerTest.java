@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class TeacherControllerTest {
+class TeacherControllerTest {
 
     private Teacher g1;
     private Teacher g2;
@@ -65,7 +65,7 @@ public class TeacherControllerTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void getAllTeachers() throws Exception {
+    void getAllTeachers() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getAll")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -106,7 +106,7 @@ public class TeacherControllerTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void getByEmailTest()  throws Exception {
+    void getByEmailTest()  throws Exception {
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacher= teacherRepository.save(teacher);
         MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getByEmail/"+ teacher.getEmail())
@@ -129,7 +129,7 @@ public class TeacherControllerTest {
     @Test
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
-    public void getByIdTest() throws Exception{
+    void getByIdTest() throws Exception{
         Teacher teacher=new Teacher("Massimo", "Potenza", "m.potenza@example.com",null,null);
         teacher= teacherRepository.save(teacher);
         MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/teacher/getById/"+ teacher.getId())

@@ -127,6 +127,40 @@ function ProposalsListContent({user, applicationDate}) {
 
     }
 
+    const doSearchReset = async () => {
+        const requestBody = {
+            title: null,
+            supervisorIdList: null,
+            coSupervisorIdList: null,
+            keywords: null,
+            type: null,
+            codGroupList: null,
+            description: null,
+            requiredKnowledge: null,
+            notes: null
+        };
+
+        // Remove properties with null values
+        Object.keys(requestBody).forEach((key) => requestBody[key] === null && delete requestBody[key]);
+
+        try {
+            const proposals = await API.searchProposals(user.token, requestBody);
+            const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
+                const application = await API.getApplicationsByProposalId(user.token, proposal.id);
+                const hasApplication = application.length > 0 ? 1 : 0;
+                return {
+                    ...proposal,
+                    hasApplication: hasApplication,
+                };
+            }));
+
+            setProposalsList(updatedProposalsList);
+        } catch (error) {
+            handleError(error);
+        }
+
+    }
+
     const handleError = error => {
         if (error.error)
             setError(error.error);
@@ -158,12 +192,14 @@ function ProposalsListContent({user, applicationDate}) {
             <Offcanvas show={showSearchBar} onHide={() => setShowSearchBar(false)} placement="end" scroll={true}>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>
-                        <Button variant="outline-primary" className="me-2" onClick={() => {
+                        <Button variant="outline-primary" onClick={() => {
                             doSearch();
                             setShowSearchBar(false);
                         }}> <FontAwesomeIcon icon={"magnifying-glass"}/> SEARCH BY </Button>
-                        <Button variant="outline-danger" onClick={clearFields}> <FontAwesomeIcon
-                            icon="fa-solid fa-arrow-rotate-left"/> Reset filters </Button>
+                        {" "}
+                        <Button variant="outline-danger" onClick={() => {clearFields(); doSearchReset();}}>
+                            <FontAwesomeIcon icon="fa-solid fa-arrow-rotate-left"/> Reset filters
+                        </Button>
                     </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>

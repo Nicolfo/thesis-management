@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ApplyForProposalTest {
+class ApplyForProposalTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -94,20 +94,19 @@ public class ApplyForProposalTest {
         Date expirationDate = new Date();
 
         // Create a Proposal object using the constructor
-         proposal = new Proposal(
-                "Proposal Title",
-                supervisor,
-                coSupervisors,
-                "Keywords",
-                "Proposal Type",
-                new ArrayList<>(),
-                "Description",
-                "Required Knowledge",
-                "Notes",
-                expirationDate,
-                "Proposal Level",
-                "CdS Value"
-        );
+        proposal = new Proposal();
+        proposal.setTitle("Proposal Title");
+        proposal.setSupervisor(supervisor);
+        proposal.setCoSupervisors(coSupervisors);
+        proposal.setKeywords("Keywords");
+        proposal.setType("Proposal Type");
+        proposal.setGroups(new ArrayList<>());
+        proposal.setDescription("Description");
+        proposal.setRequiredKnowledge("Required Knowledge");
+        proposal.setNotes("Notes");
+        proposal.setExpiration(expirationDate);
+        proposal.setLevel("Proposal Level");
+        proposal.setCds("CdS Value");
         proposal.getGroups().add(group);
         proposalRepository.save(proposal);
     }
@@ -126,7 +125,7 @@ public class ApplyForProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "email@example.com", roles = {"STUDENT"})
-    public void testApplyProposalAndUploadFile() throws Exception {
+    void testApplyProposalAndUploadFile() throws Exception {
         Path tempFile = Files.createTempFile("test-file", ".txt");
         Files.write(tempFile, "Test file content".getBytes());
         MockMultipartFile file = new MockMultipartFile("file", "test-file.txt", MediaType.TEXT_PLAIN_VALUE, Files.readAllBytes(tempFile));

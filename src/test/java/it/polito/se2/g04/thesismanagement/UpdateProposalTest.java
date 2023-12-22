@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UpdateProposalTest {
+class UpdateProposalTest {
 
     @Autowired
     private ProposalRepository proposalRepository;
@@ -76,13 +76,25 @@ public class UpdateProposalTest {
     @Test
     @Rollback
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
-    public void TestCreate() throws Exception {
+    void TestCreate() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Group g = new Group("TestGroup");
         g = groupRepository.save(g);
         Teacher teacher = new Teacher("Massimo", "Potenza", "m.potenza@example.com", g, null);
         teacher = teacherRepository.save(teacher);
-        Proposal proposal = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
+        Proposal proposal = new Proposal();
+        proposal.setTitle("test1");
+        proposal.setSupervisor(teacher);
+        proposal.setCoSupervisors(List.of(teacher));
+        proposal.setKeywords("parola");
+        proposal.setType("type");
+        proposal.setGroups(List.of(g));
+        proposal.setDescription("descrizione");
+        proposal.setRequiredKnowledge("poca");
+        proposal.setNotes("notes");
+        proposal.setExpiration(null); // Assuming that the date is nullable
+        proposal.setLevel("level");
+        proposal.setCds("cds");
         proposal = proposalRepository.save(proposal);
 
         proposal.setDescription("nuova descrizione");
@@ -125,15 +137,51 @@ public class UpdateProposalTest {
                         .content(mapper.writeValueAsString(ProposalDTO.fromProposal(proposal))))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
-        Proposal proposalEnumTestAccepted = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
+        Proposal proposalEnumTestAccepted = new Proposal();
+        proposalEnumTestAccepted.setTitle("test1");
+        proposalEnumTestAccepted.setSupervisor(teacher);
+        proposalEnumTestAccepted.setCoSupervisors(List.of(teacher));
+        proposalEnumTestAccepted.setKeywords("parola");
+        proposalEnumTestAccepted.setType("type");
+        proposalEnumTestAccepted.setGroups(List.of(g));
+        proposalEnumTestAccepted.setDescription("descrizione");
+        proposalEnumTestAccepted.setRequiredKnowledge("poca");
+        proposalEnumTestAccepted.setNotes("notes");
+        proposalEnumTestAccepted.setExpiration(null); // Assuming that the date is nullable
+        proposalEnumTestAccepted.setLevel("level");
+        proposalEnumTestAccepted.setCds("cds");
         proposalEnumTestAccepted.setStatus(Proposal.Status.ACCEPTED);
         proposalRepository.save(proposalEnumTestAccepted);
 
-        Proposal proposalEnumTestDelete = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
+        Proposal proposalEnumTestDelete = new Proposal();
+        proposalEnumTestDelete.setTitle("test1");
+        proposalEnumTestDelete.setSupervisor(teacher);
+        proposalEnumTestDelete.setCoSupervisors(List.of(teacher));
+        proposalEnumTestDelete.setKeywords("parola");
+        proposalEnumTestDelete.setType("type");
+        proposalEnumTestDelete.setGroups(List.of(g));
+        proposalEnumTestDelete.setDescription("descrizione");
+        proposalEnumTestDelete.setRequiredKnowledge("poca");
+        proposalEnumTestDelete.setNotes("notes");
+        proposalEnumTestDelete.setExpiration(null); // Assuming that the date is nullable
+        proposalEnumTestDelete.setLevel("level");
+        proposalEnumTestDelete.setCds("cds");
         proposalEnumTestDelete.setStatus(Proposal.Status.DELETED);
         proposalRepository.save(proposalEnumTestDelete);
 
-        Proposal proposalEnumTestArchived = new Proposal("test1", teacher, List.of(teacher), "parola", "type", List.of(g), "descrizione", "poca", "notes", null, "level", "cds");
+        Proposal proposalEnumTestArchived = new Proposal();
+        proposalEnumTestArchived.setTitle("test1");
+        proposalEnumTestArchived.setSupervisor(teacher);
+        proposalEnumTestArchived.setCoSupervisors(List.of(teacher));
+        proposalEnumTestArchived.setKeywords("parola");
+        proposalEnumTestArchived.setType("type");
+        proposalEnumTestArchived.setGroups(List.of(g));
+        proposalEnumTestArchived.setDescription("descrizione");
+        proposalEnumTestArchived.setRequiredKnowledge("poca");
+        proposalEnumTestArchived.setNotes("notes");
+        proposalEnumTestArchived.setExpiration(null); // Assuming that the date is nullable
+        proposalEnumTestArchived.setLevel("level");
+        proposalEnumTestArchived.setCds("cds");
         proposalEnumTestArchived.setStatus(Proposal.Status.ARCHIVED);
         proposalRepository.save(proposalEnumTestArchived);
 

@@ -13,6 +13,8 @@ RUN npm run build
 FROM nginx:alpine
 # Remove default Nginx static files
 RUN rm -rf /usr/share/nginx/html/*
+# Copy custom Nginx configuration file
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy the built React app from the previous stage
 COPY --from=builder /app/build /usr/share/nginx/html
 # Expose port

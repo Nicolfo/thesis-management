@@ -13,11 +13,6 @@ public class TeacherServiceImpl implements TeacherService {
         this.teacherRepository = teacherRepository;
     }
 
-    public List<TeacherDTO> getAllTeachers() {
-        return teacherRepository.findAll().stream().map(TeacherDTO::fromTeacher).toList();
-    }
-
-    //TODO: check if safe to delete; redundant code. getAll==getAllTeacher
     @Override
     public List<TeacherDTO> getAll() {
         return teacherRepository.findAll().stream().map(TeacherDTO::fromTeacher).toList();

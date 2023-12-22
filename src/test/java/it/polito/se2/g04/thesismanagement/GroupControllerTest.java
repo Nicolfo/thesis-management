@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class GroupControllerTest {
+class GroupControllerTest {
 
     private Group g1;
     private Group g2;
@@ -59,7 +59,7 @@ public class GroupControllerTest {
 
     @Test
     @Rollback
-    public void getAllGroups() throws Exception {
+    void getAllGroups() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/API/group/getAll")
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(MockMvcResultMatchers.status().isOk())

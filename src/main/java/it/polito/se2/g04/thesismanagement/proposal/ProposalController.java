@@ -4,6 +4,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ArchiveWithNoId;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.CreateUpdateProposalWithNoPathVariable;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.DeleteWithNoId;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.BadRequestException;
 import java.util.List;
 
 
@@ -32,6 +34,7 @@ public class ProposalController {
     }
 
     /**
+     * Retrieve all the non archived proposal from the DB
      * @return List<ProposalFullDTO> List of all not archived proposals
      */
     @GetMapping("/API/proposal/getAll")
@@ -43,10 +46,11 @@ public class ProposalController {
 
     /**
      * @return List<ProposalFullDTO> list of all not archived proposals, that have the currently logged in teacher as
-     * supervisor or co-supervisor. If there are no proposals for that teacher or the logged-in user is not a teacher,
+     * supervisor. If there are no proposals for that teacher or the logged-in user is not a teacher,
      * an empty List is returned
      */
     @GetMapping("/API/proposal/getByProf")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public List<ProposalFullDTO> getProposalsByProf() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -56,7 +60,10 @@ public class ProposalController {
 
 
 
-
+    /**
+     * @param proposalId The id of the proposal you want to get the title
+     * @return String containing the title of the proposal
+     */
     @GetMapping("/API/proposal/getTitleByProposalId/{proposalId}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     public String getTitleByProposalId(@PathVariable Long proposalId) {
@@ -64,7 +71,13 @@ public class ProposalController {
     }
 
 
-
+    /**
+     * Create a proposal based on the DTO value
+     * @throws TeacherNotFoundException if the logged user is not found on the DB or
+     * if the logged user is not matching the supervisor of the proposalDTO sent as parameter
+     * @param proposal proposalDTO used to create a proposal
+     *
+     */
     @PostMapping("/API/proposal/insert/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.CREATED)
@@ -79,7 +92,6 @@ public class ProposalController {
     @ResponseStatus(HttpStatus.OK)
     public void updateProposal(@PathVariable Long id, @RequestBody ProposalDTO proposal){
         proposalService.updateProposal(id, proposal);
-
     }
 
     @PutMapping("/API/proposal/update")
@@ -97,7 +109,7 @@ public class ProposalController {
         String username = auth.getName();
         String cds = studentService.getCdS(username);
         proposalSearchRequest.setCds(cds);
-        return proposalService.searchProposals(proposalSearchRequest);
+        return proposalService.searchProposals(proposalSearchRequest, Proposal.Status.ACTIVE);
     }
 
     @PostMapping("/API/proposal/searchArchived")
@@ -110,7 +122,7 @@ public class ProposalController {
         String username = auth.getName();
         Long supervisorId = teacherService.getByEmail(username).getId();
         proposalSearchRequest.setSupervisorIdList(List.of(supervisorId));
-        return proposalService.searchArchivedProposals(proposalSearchRequest);
+        return proposalService.searchProposals(proposalSearchRequest, List.of(Proposal.Status.ARCHIVED, Proposal.Status.ACCEPTED));
     }
 
     @GetMapping("/API/proposal/getArchived")
@@ -129,6 +141,7 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
     public void archiveProposal(@PathVariable Long id){
+
         proposalService.archiveProposal(id);
     }
 
@@ -154,17 +167,12 @@ public class ProposalController {
         throw new ArchiveWithNoId("can't archive a proposal without his id");
     }
 
-    @GetMapping("/API/proposal/getAllProposalByCoSupervisor/{email}")
+    @GetMapping("/API/proposal/getAllProposalByCoSupervisor/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProposalFullDTO> getAllProposalByCoSupervisor(@PathVariable String email){
-        return proposalService.getAllProposalByCoSupervisor(email);
+    public List<ProposalFullDTO> getAllProposalByCoSupervisor(){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        return proposalService.getAllProposalByCoSupervisor(auth.getName());
     }
 
-    @GetMapping("/API/proposal/getAllProposalByCoSupervisor")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.OK)
-    public void getAllProposalByCoSupervisorWithNoId(){
-        //TODO error handler
-    }
 }
