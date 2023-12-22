@@ -3,7 +3,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
-import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.UpdateAfterAcceptException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.InvalidTeacherException;
@@ -109,6 +109,7 @@ public class ProposalServiceImpl implements ProposalService {
         toAdd.setCds(proposalDTO.getCds());
 
         ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
+        emailService.notifyCoSupervisorsOfNewProposal(proposalDTO, null);
     }
 
     @Override
@@ -122,6 +123,8 @@ public class ProposalServiceImpl implements ProposalService {
         if (old.getStatus() == Proposal.Status.ACCEPTED || old.getStatus() == Proposal.Status.ARCHIVED) {
             throw (new UpdateAfterAcceptException("you can't update this proposal after an application to it is accepted or archived"));
         }
+
+        emailService.notifyCoSupervisorsOfNewProposal(proposalDTO, old.getCoSupervisors());
 
         old.setTitle(proposalDTO.getTitle());
         if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {

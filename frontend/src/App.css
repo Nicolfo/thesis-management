@@ -172,3 +172,11 @@ h2 {
 .card{
   --bs-card-spacer-y: 0.3rem !important;
 }
+
+.list-elem-title {
+  cursor: pointer;
+}
+
+.list-elem-title:hover {
+  text-decoration: underline;
+}

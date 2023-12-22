@@ -25,6 +25,7 @@ import BrowseArchivedProposals from "./Content/BrowseArchivedProposals";
 import StartRequest from "./Content/StartRequest";
 import ProposalsOnRequestListContent from "./Content/ProposalsOnRequestListContent";
 import TeacherApproveStartRequestContent from './Content/TeacherApproveStartRequest';
+import UserListNotificationContent from './Content/UserListNotificationContent';
 
 function App() {
 
@@ -150,6 +151,8 @@ function App() {
                            element={<ProposalsOnRequestListContent user={user}/>}/>
                     <Route path="/teacher/proposalOnRequest/browse"
                            element={<TeacherApproveStartRequestContent user={user}/>}/>
+                    <Route path="/notifications"
+                           element={<UserListNotificationContent user={user}/>}/>
                     <Route path="/notAuthorized"
                            element={<NotAuthorizedLayout user={user}/>}/>
                     <Route path="*"
