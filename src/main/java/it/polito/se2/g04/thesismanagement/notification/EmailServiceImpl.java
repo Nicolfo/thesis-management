@@ -209,8 +209,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
     @Async
-    protected void sendNotification(Notification notification) throws IOException {
-        System.out.println("tried async send of "+notification.getTitle()+ " attempt number "+ notification.getSendTriedCounter());
+    public void sendNotification(Notification notification) throws IOException {
         MimeMessage message = mailSender.createMimeMessage();
 
         Resource resource = resourceLoader.getResource("classpath:/email/template.html");
