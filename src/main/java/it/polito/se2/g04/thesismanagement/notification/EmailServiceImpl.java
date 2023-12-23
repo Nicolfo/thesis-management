@@ -12,6 +12,7 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -33,6 +34,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
+    private final ApplicationContext context;
 
     private final JavaMailSender mailSender;
 
@@ -42,7 +44,6 @@ public class EmailServiceImpl implements EmailService {
     private final NotificationRepository notificationRepository;
 
     @Override
-    @Async
     public void notifyStudentOfApplicationDecision(Application application) {
         Student student = application.getStudent();
 
@@ -78,7 +79,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async
     public void notifySupervisorOfNewApplication(Application application) {
         Teacher teacher = application.getProposal().getSupervisor();
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
@@ -91,7 +91,6 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
-    @Async
     public void notifySupervisorAndCoSupervisorsOfNewThesisRequest(ProposalOnRequest request) {
         notifySupervisorOfNewThesisRequest(request);
         notifyCoSupervisorsOfNewThesisRequest(request);
@@ -112,7 +111,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async
     public void notifyCoSupervisorsOfNewThesisRequest(ProposalOnRequest request) {
         String emailText = "<br>" +
                 "A new proposal on request has been received with the title \"" + request.getTitle() + "\" for which you are assigned as co-supervisor.<br>" +
@@ -124,7 +122,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async
     public void notifySupervisorOfNewThesisRequest(ProposalOnRequest request) {
         Teacher teacher = request.getSupervisor();
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
@@ -138,7 +135,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async
     public void notifySupervisorOfExpiration(Proposal proposal) {
         Teacher teacher = proposal.getSupervisor();
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", <br>" +
@@ -151,7 +147,6 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
-    @Async
     public void notifyCoSupervisorsOfNewApplication(Application application) {
         String emailText = "<br>" +
                 "A new application has been received for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as co-supervisor.<br>" +
@@ -164,14 +159,12 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
-    @Async
     public void notifySupervisorAndCoSupervisorsOfNewApplication(Application application) {
         notifySupervisorOfNewApplication(application);
         notifyCoSupervisorsOfNewApplication(application);
     }
 
     @Override
-    @Async
     public void notifyCoSupervisorsOfDecisionOnApplication(Application application) {
         String status = "";
         String icon="";
@@ -208,43 +201,48 @@ public class EmailServiceImpl implements EmailService {
     void createNewNotification(String recipient, String subject, String title, String text, String icon) {
         Notification newNotification = new Notification(recipient,subject,title,text,icon, new Date());
         try {
-            sendNotification(newNotification);
-            newNotification.setSent(true);
+            newNotification.setSendTriedCounter(0);
+            EmailServiceImpl self = context.getBean(EmailServiceImpl.class);
+            self.sendNotification(newNotification);
         }catch (Exception ignore){
-            newNotification.setSendTriedCounter(1);
-        }
-        notificationRepository.save(newNotification);
-    }
 
-    private void sendNotification(Notification notification) throws MessagingException, IOException {
+        }
+    }
+    @Async
+    protected void sendNotification(Notification notification) throws IOException {
+        System.out.println("tried async send of "+notification.getTitle()+ " attempt number "+ notification.getSendTriedCounter());
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
         Resource resource = resourceLoader.getResource("classpath:/email/template.html");
         InputStream inputStream = resource.getInputStream();
         String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         content = content.replace("%%varText1%%", notification.getTitle());
         content = content.replace("%%varText2%%", notification.getText());
-        helper.setTo(notification.getRecipient());
-        helper.setSubject(notification.getSubject());
-        helper.setText(content, true);
-        helper.addInline("logo", new ClassPathResource("/email/images/polito-logo.png"));
-        helper.addInline("icon1", new ClassPathResource("/email/images/" + notification.getIcon()));
-        mailSender.send(message);
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(notification.getRecipient());
+            helper.setSubject(notification.getSubject());
+            helper.setText(content, true);
+            helper.addInline("logo", new ClassPathResource("/email/images/polito-logo.png"));
+            helper.addInline("icon1", new ClassPathResource("/email/images/" + notification.getIcon()));
+            mailSender.send(message);
+            notification.setSent(true);
+        }catch (Exception messagingException){
+            notification.setSendTriedCounter(notification.getSendTriedCounter() + 1);
+        }
+        notificationRepository.save(notification);
     }
 
     @Scheduled(fixedRate = 15 * 10 * 1000)
     @Transactional
     public void sendQueuedEmails(){
         List<Notification> notSentEmailsList = notificationRepository.findBySentAndSendTriedCounterLessThan(false,5);
-
         for (Notification notification: notSentEmailsList){
             try {
-                sendNotification(notification);
-                notification.setSent(true);
-            } catch (Exception e) {
-                notification.setSendTriedCounter(notification.getSendTriedCounter() + 1);
+                EmailServiceImpl self = context.getBean(EmailServiceImpl.class);
+                self.sendNotification(notification);
+            } catch (Exception ignored) {
             }
-            notificationRepository.save(notification);
         }
     }
 }

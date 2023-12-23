@@ -123,17 +123,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
         proposal.setApprovalDate(new Date());
-            /* Proposal proposal1=new Proposal(proposal);
-            proposal1.setStatus(Proposal.Status.ACCEPTED);
-            Application application = new Application(
-                    proposal.getStudent(),
-                    null,
-                    proposal.getApprovalDate(),
-                    proposal1
-            );
-            application.setStatus(ApplicationStatus.ACCEPTED);
-            proposalRepository.save(proposal1);
-            applcationRepository.save(application);*/
+
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 

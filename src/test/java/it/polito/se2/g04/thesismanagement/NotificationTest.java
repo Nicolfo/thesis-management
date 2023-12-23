@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class NotificationTest {
+class NotificationTest {
     @Autowired
     private ProposalRepository proposalRepository;
     @Autowired
@@ -187,7 +187,7 @@ public class NotificationTest {
                 .andReturn();
         json = res.getResponse().getContentAsString();
 
-        assertEquals(json,"2");
+        assertEquals("2",json);
 
 
         Notification referenceNotification = notifications.get(0);

@@ -247,7 +247,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void archiveProposal(Long id) {
         if (!proposalRepository.existsById(id)) {
-            throw (new ProposalNotFoundException("Proposal with this id does not exist"));
+            throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
         }
         Proposal old = proposalRepository.getReferenceById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
