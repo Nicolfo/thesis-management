@@ -74,8 +74,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return dto;
         }).toList();
     }
-//TODO questa funzione e la prossima apparentemente fanno la stessa cosa, controllare se rindondanti
-    @Override
+   @Override
     public List<ApplicationDTO> getApplicationsByProposal(Long proposalId) {
         if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
