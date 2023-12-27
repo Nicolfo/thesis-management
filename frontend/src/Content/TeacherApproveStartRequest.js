@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
 import { useNavigate } from "react-router-dom";
 import API from "../API/Api";
-import { Card, Container, Row, Col, Button, Modal } from "react-bootstrap";
+import {Card, Container, Row, Col, Button, Modal, Form} from "react-bootstrap";
 import toast, {Toaster} from 'react-hot-toast';
+import {MultiSelect} from "react-multi-select-component";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function TeacherApproveStartRequestContent({ user }) {
@@ -18,6 +20,8 @@ function TeacherApproveStartRequestContent({ user }) {
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [operation, setOperation] = useState("");
     const [showModal, setShowModal] = useState(false);
+    const [optionsSupervisors, setOptionsSupervisors] = useState([]);
+    const [supervisors, setSupervisors] = useState(false);
 
 
     const onConfirm = async () => {
@@ -109,6 +113,13 @@ function TeacherApproveStartRequestContent({ user }) {
         const getResources = async () => {
             const list = await API.getAcceptedProposalOnRequestsByTeacher(token);
             setRequestList(list);
+            const teachers = await API.getAllTeachers(token);
+            let supervisors = [];
+            teachers.forEach((t) => {
+                let elem = {label: `${t.surname} ${t.name}`, value: t.id};
+                supervisors.push(elem);
+            });
+            setOptionsSupervisors(supervisors);
         };
         getResources();
     }, []);
@@ -121,7 +132,7 @@ function TeacherApproveStartRequestContent({ user }) {
                 </Card.Header>
                 { requestList.length > 0 ?
                 <Card.Body>
-                { requestList.map(r => <RequestEntry key={r.id} request={r} setSelectedRequest={setSelectedRequest} setOperation={setOperation} setShowModal={setShowModal} />) }
+                { requestList.map(r => <RequestEntry optionsSupervisors={optionsSupervisors} setSupervisors={setSupervisors} supervisors={supervisors} key={r.id} request={r} setSelectedRequest={setSelectedRequest} setOperation={setOperation} setShowModal={setShowModal} />) }
                 { selectedRequest && <OperationModal show={showModal} setShow={setShowModal} selectedRequest={selectedRequest} setSelectedRequest={setSelectedRequest} operation={operation} onConfirm={onConfirm} /> }
                 </Card.Body>
                 : <Card.Body style={{"textAlign": "center"}} className="mt-4">
@@ -138,7 +149,18 @@ function TeacherApproveStartRequestContent({ user }) {
     );
 }
 
-function RequestEntry({ request, setSelectedRequest, setOperation, setShowModal }) {
+function RequestEntry({ request, setSelectedRequest, setOperation, setShowModal, supervisors, setSupervisors,optionsSupervisors }) {
+
+    const [selectedSupervisors, setSelectedSupervisors] = useState(request.coSupervisors);
+
+    useEffect(() => {
+        let supervisors = [];
+        request.coSupervisors.forEach((t) => {
+            let elem = {label: `${t.surname} ${t.name}`, value: t.id};
+            supervisors.push(elem);
+        });
+        setSelectedSupervisors(supervisors);
+    }, []);
 
     const startAccept = () => {
         setSelectedRequest(request);
@@ -174,6 +196,44 @@ function RequestEntry({ request, setSelectedRequest, setOperation, setShowModal 
                         <Button variant="success me-2" onClick={startAccept}>Accept</Button>
                         <Button variant="info me-2" onClick={startRequestChange}>Request Change</Button>
                         <Button variant="danger" onClick={startReject}>Reject</Button>
+                        <Row>
+                            <Col>
+                                {!supervisors ?
+                                    <Button variant="warning me-2 mt-2" onClick={()=> {setSupervisors((supervisors) => !supervisors)}}>Add co-supervisors</Button>
+                                    :
+                                    <Form onSubmit={()=> console.log()}>
+
+                                        <Form.Group as={Col} >
+                                            <Form.Label style={{marginLeft: "0.3rem"}}> Co-supervisors <em style={{"color": "dimgray"}}> (optional) </em> </Form.Label>
+                                            <MultiSelect
+                                                options={optionsSupervisors}
+                                                value={selectedSupervisors}
+                                                onChange={setSelectedSupervisors}
+                                                labelledBy="Select Co-Supervisors"
+                                            />
+                                        </Form.Group>
+                                        <Row>
+                                            <Col>
+                                            <Button variant="outline-primary mt-2 me-2" type="submit">
+                                                <FontAwesomeIcon icon="fa-solid fa-check"/> Update
+                                            </Button>
+
+                                                <Button variant="outline-danger mt-2 me-2" onClick={()=> setSupervisors(false) }>
+                                                    <FontAwesomeIcon icon="fa-solid fa-xmark"/>Cancel
+                                                </Button>
+
+                                            </Col>
+                                        </Row>
+
+
+                                    </Form>
+
+
+                                    }
+
+                            </Col>
+                        </Row>
+
                     </Col>
                 </Row>
             </Container>
