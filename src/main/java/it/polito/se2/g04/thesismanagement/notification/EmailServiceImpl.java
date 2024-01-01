@@ -74,19 +74,18 @@ public class EmailServiceImpl implements EmailService {
         }
 
 
-
         createNewNotification(student.getEmail(), "One of your applications has been updated", title, emailText, icon);
     }
 
     @Override
     public void notifySupervisorOfNewApplication(Application application) {
         Teacher teacher = application.getProposal().getSupervisor();
-        String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", "+ EmailConstants.HTML_LINE_BREAK +
+        String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK +
                 EmailConstants.HTML_LINE_BREAK +
-                "A new application has been received for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as supervisor."+ EmailConstants.HTML_LINE_BREAK +
+                EmailConstants.NEW_APPLICATION_RECEIVED + " for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as supervisor." + EmailConstants.HTML_LINE_BREAK +
                 "Log in to the Thesis Management Portal to see further details and to accept or reject the application.";
 
-        createNewNotification(teacher.getEmail(), "A new application has been received", "A new application has been received", emailText, EmailConstants.HTML_ADD_ICON);
+        createNewNotification(teacher.getEmail(), EmailConstants.NEW_APPLICATION_RECEIVED, EmailConstants.NEW_APPLICATION_RECEIVED, emailText, EmailConstants.HTML_ADD_ICON);
     }
 
 
@@ -105,7 +104,7 @@ public class EmailServiceImpl implements EmailService {
         for (Long teacherId : proposalDTO.getCoSupervisors()) {
             if (oldSupervisors == null || oldSupervisors.stream().noneMatch(t -> t.getId().equals(teacherId))) {
                 Teacher teacher = teacherRepository.getReferenceById(teacherId);
-                createNewNotification(teacher.getEmail(), "You have been assigned to a proposal", "You have been assigned to a proposal", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText,  EmailConstants.HTML_ADD_ICON);
+                createNewNotification(teacher.getEmail(), "You have been assigned to a proposal", "You have been assigned to a proposal", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText, EmailConstants.HTML_ADD_ICON);
             }
         }
     }
@@ -113,25 +112,25 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void notifyCoSupervisorsOfNewThesisRequest(ProposalOnRequest request) {
         String emailText = EmailConstants.HTML_LINE_BREAK +
-                "A new proposal on request has been received with the title \"" + request.getTitle() + "\" for which you are assigned as co-supervisor." + EmailConstants.HTML_LINE_BREAK +
+                "A new proposal on request has been received with the title \"" + request.getTitle() + EmailConstants.CO_SUPERVISOR_ASSIGNED + EmailConstants.HTML_LINE_BREAK +
                 "Log in to the Thesis Management Portal to see further details and to accept or reject the proposal on request.";
 
         for (Teacher teacher : request.getCoSupervisors()) {
-            createNewNotification(teacher.getEmail(), "A new proposal on request has been received", "A new proposal on request has been received", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText,  EmailConstants.HTML_ADD_ICON);
+            createNewNotification(teacher.getEmail(), "A new proposal on request has been received", "A new proposal on request has been received", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText, EmailConstants.HTML_ADD_ICON);
         }
     }
 
     @Override
     public void notifySupervisorOfNewThesisRequest(ProposalOnRequest request) {
         Teacher teacher = request.getSupervisor();
-        String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", "+ EmailConstants.HTML_LINE_BREAK +
+        String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK +
                 EmailConstants.HTML_LINE_BREAK +
                 "The secretariat has approved a new thesis request with you as supervisor and the title \"" + request.getTitle() + "\"." + EmailConstants.HTML_LINE_BREAK +
                 "Description of the thesis request:" + EmailConstants.HTML_LINE_BREAK +
                 request.getDescription() + EmailConstants.HTML_LINE_BREAK + EmailConstants.HTML_LINE_BREAK +
                 "Please log in to the Thesis management system to accept or reject this thesis request.";
 
-        createNewNotification(teacher.getEmail(), "A new thesis request has been received", "A new thesis request has been received", emailText,  EmailConstants.HTML_ADD_ICON);
+        createNewNotification(teacher.getEmail(), "A new thesis request has been received", "A new thesis request has been received", emailText, EmailConstants.HTML_ADD_ICON);
     }
 
     @Override
@@ -149,11 +148,11 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void notifyCoSupervisorsOfNewApplication(Application application) {
         String emailText = EmailConstants.HTML_LINE_BREAK +
-                "A new application has been received for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as co-supervisor." + EmailConstants.HTML_LINE_BREAK +
+                EmailConstants.NEW_APPLICATION_RECEIVED + " for the thesis proposal \"" + application.getProposal().getTitle() + EmailConstants.CO_SUPERVISOR_ASSIGNED + EmailConstants.HTML_LINE_BREAK +
                 "Log in to the Thesis Management Portal to see further details and to accept or reject the application.";
 
         for (Teacher teacher : application.getProposal().getCoSupervisors()) {
-            createNewNotification(teacher.getEmail(), "A new application has been received", "A new application has been received", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText,  EmailConstants.HTML_ADD_ICON);
+            createNewNotification(teacher.getEmail(), EmailConstants.NEW_APPLICATION_RECEIVED, EmailConstants.NEW_APPLICATION_RECEIVED, EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText, EmailConstants.HTML_ADD_ICON);
         }
     }
 
@@ -167,7 +166,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void notifyCoSupervisorsOfDecisionOnApplication(Application application) {
         String status = "";
-        String icon="";
+        String icon = "";
         switch (application.getStatus()) {
             case ACCEPTED -> {
                 status = "accepted";
@@ -188,7 +187,7 @@ public class EmailServiceImpl implements EmailService {
         }
 
         String emailText = EmailConstants.HTML_LINE_BREAK +
-                "A new decision was made on an application for the thesis proposal \"" + application.getProposal().getTitle() + "\" for which you are assigned as co-supervisor." + EmailConstants.HTML_LINE_BREAK +
+                "A new decision was made on an application for the thesis proposal \"" + application.getProposal().getTitle() + EmailConstants.CO_SUPERVISOR_ASSIGNED + EmailConstants.HTML_LINE_BREAK +
                 "The application is submitted by " + application.getStudent().getSurname() + " " + application.getStudent().getName() + " and was " + status +
                 "Log in to the Thesis Management Portal to take further action.";
 
@@ -199,15 +198,16 @@ public class EmailServiceImpl implements EmailService {
 
 
     void createNewNotification(String recipient, String subject, String title, String text, String icon) {
-        Notification newNotification = new Notification(recipient,subject,title,text,icon, new Date());
+        Notification newNotification = new Notification(recipient, subject, title, text, icon, new Date());
         try {
             newNotification.setSendTriedCounter(0);
             EmailServiceImpl self = context.getBean(EmailServiceImpl.class);
             self.sendNotification(newNotification);
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
 
         }
     }
+
     @Async
     public void sendNotification(Notification notification) throws IOException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -226,7 +226,7 @@ public class EmailServiceImpl implements EmailService {
             helper.addInline("icon1", new ClassPathResource("/email/images/" + notification.getIcon()));
             mailSender.send(message);
             notification.setSent(true);
-        }catch (Exception messagingException){
+        } catch (Exception messagingException) {
             notification.setSendTriedCounter(notification.getSendTriedCounter() + 1);
         }
         notificationRepository.save(notification);
@@ -234,9 +234,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Scheduled(fixedRate = 15 * 10 * 1000)
     @Transactional
-    public void sendQueuedEmails(){
-        List<Notification> notSentEmailsList = notificationRepository.findBySentAndSendTriedCounterLessThan(false,5);
-        for (Notification notification: notSentEmailsList){
+    public void sendQueuedEmails() {
+        List<Notification> notSentEmailsList = notificationRepository.findBySentAndSendTriedCounterLessThan(false, 5);
+        for (Notification notification : notSentEmailsList) {
             try {
                 EmailServiceImpl self = context.getBean(EmailServiceImpl.class);
                 self.sendNotification(notification);
