@@ -3,6 +3,7 @@ import {Badge, Card, Col, Row, Table} from "react-bootstrap";
 import API from "../API/Api";
 import {useNavigate} from "react-router-dom";
 import {AuthContext} from "react-oauth2-code-pkce";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function BrowseDecisions(props) {
     const {token} = useContext(AuthContext);
@@ -100,6 +101,8 @@ function TableRow(props) {
             return <Badge bg="success"> ✓ ACCEPTED </Badge>
         else if (application.status === "REJECTED" || application.status === "TEACHER_REJECTED" || application.status === "SECRETARY_REJECTED")
             return <Badge bg="danger"> ✕ REJECTED </Badge>
+        else if (application.status === "CANCELLED" || application.status === "TEACHER_CANCELLED")
+            return <Badge bg="dark"> <FontAwesomeIcon icon="fa-solid fa-ban" /> CANCELLED </Badge>
     }
 
 

@@ -370,6 +370,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col lg={4}>
+                            <Row style={{"visibility": "hidden"}}> - </Row>
                             <Form.Group className="ms-2">
                                 <Form.Label> Thesis level </Form.Label>
                                 <Form.Check
@@ -482,18 +483,14 @@ function InsertUpdateProposal(props) {
                 </Card.Body>
 
                 <Card.Footer style={{"textAlign": "center"}}>
-                    <Button variant="outline-primary" type="submit">
+                    <Button variant="outline-primary" type="submit" style={{marginTop: "1rem", marginBottom: "1rem"}}>
                         {editProposalID ?
                             <><FontAwesomeIcon icon="fa-solid fa-check"/> Update thesis proposal</>
                             :
                             <><FontAwesomeIcon icon={"upload"}/> Publish thesis proposal</>
                         }
                     </Button>
-
-
-                    <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => {
-                        navigate('/teacher/proposals');
-                    }}>
+                    <Button variant="outline-danger" style={{marginLeft: "1rem", marginTop: "1rem", marginBottom: "1rem"}} onClick={() => {navigate('/teacher/proposals'); }}>
                         <FontAwesomeIcon icon="fa-solid fa-xmark"/> Cancel
                     </Button>
 

@@ -171,30 +171,66 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                 <Accordion.Collapse eventKey={proposal.id} flush>
                     <Card.Body>
                         <Row>
-                            <Col><strong>CdS</strong><br/>{proposal.cds}</Col>
-                            <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                            <Col><strong>Level</strong><br/>{proposal.level}</Col>
-                            <Col><strong>Type</strong><br/>{proposal.type}</Col>
+                            {proposal.level &&
+                                <Col md="2" style={{marginTop: "0.5rem"}}>
+                                    <strong>Level</strong><br/>{proposal.level}
+                                </Col>
+                            }
+                            <Col md="4" style={{marginTop: "0.5rem"}}>
+                                <strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
+                            </Col>
+                            {proposal.groups && proposal.groups.length > 0 &&
+                                <Col style={{marginTop: "0.5rem"}}>
+                                    <strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}
+                                </Col>
+                            }
                         </Row>
                         <Row>
-                            <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>
-                            {proposal.requiredKnowledge.length > 0 &&
-                                <Col><strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}</Col>
+                            {proposal.type &&
+                                <Col md="6" style={{marginTop: "0.5rem"}}>
+                                    <strong>Type</strong><br/>{proposal.type}
+                                </Col>
                             }
-                            <Col><strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
+                            {proposal.cds &&
+                                <Col style={{marginTop: "0.5rem"}}>
+                                    <strong>CdS</strong><br/>{proposal.cds}
+                                </Col>
+                            }
                         </Row>
-                        <Row className="pt-2">
-                            <Col md="3">
-                                <strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
-                            </Col>
-                            {proposal.coSupervisors && proposal.coSupervisors.length > 0 &&
-                                <Col
-                                    md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                        <Row>
+                            {proposal.keywords &&
+                                <Col md="6" style={{marginTop: "0.5rem"}}>
+                                    <strong>Keywords</strong><br/>{proposal.keywords}
+                                </Col>
+                            }
+                            {proposal.requiredKnowledge.length > 0 ?
+                                <Col style={{marginTop: "0.5rem"}}>
+                                    <strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}
+                                </Col>
+                                :
+                                proposal.notes &&
+                                <Col md="6" style={{marginTop: "0.5rem"}}>
+                                    <strong>Notes</strong><br/><i>{proposal.notes}</i>
+                                </Col>
+
+                            }
+                        </Row>
+                        <Row>
+                            {proposal.coSupervisors.length > 0 ?
+                                <Col md="6" style={{marginTop: "0.5rem"}}>
+                                    <strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                                </Col>
+                                :
+                                <Col md="6"></Col>
+                            }
+                            {proposal.notes && proposal.requiredKnowledge.length > 0 &&
+                                <Col md="6" style={{marginTop: "0.5rem"}}>
+                                    <strong>Notes</strong><br/><i>{proposal.notes}</i>
                                 </Col>
                             }
                         </Row>
                         <hr className="me-4"/>
-                        <Row>
+                        <Row style={{marginBottom: "0.5rem"}}>
                             <Col>
                                 {proposal.description}
                             </Col>

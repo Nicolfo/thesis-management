@@ -250,7 +250,7 @@ function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
                         </Offcanvas.Body>
                     </Offcanvas>
 
-                    <Card className="mt-3">
+                    <Card className="mt-3" style={{marginBottom: "1rem"}}>
                         <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
                         {proposalsList.length > 0 ? <Card.Body><ProposalsList setArchivedView={setArchivedView} deleteProp={deleteProp}
                                                   proposals={proposalsList} user={user}
@@ -304,9 +304,9 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
                     <Col className="d-flex justify-content-end">
                         <DropdownButton id="dropdown-item-button" title={
                             <div className="d-flex align-items-center">
-                                <FontAwesomeIcon icon="fa-solid fa-list-ul"/>
+                                <FontAwesomeIcon icon="fa-solid fa-list-ul" style={{height: 25}}/>
                                 <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-                                <span className="d-none d-md-table-cell"> Options </span>
+                                <span className="d-none d-md-table-cell" style={{height: 25}}> Options </span>
                             </div>
                         }
                         >
@@ -342,29 +342,66 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
             <Accordion.Collapse eventKey={proposal.id} flush>
                 <Card.Body>
                     <Row>
-                        {proposal.cds && <Col><strong>CdS</strong><br/>{proposal.cds}</Col>}
-                        {proposal.groups && proposal.groups.length > 0 && <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>}
-                        {proposal.level && <Col><strong>Level</strong><br/>{proposal.level}</Col>}
-                        {proposal.type && <Col><strong>Type</strong><br/>{proposal.type}</Col>}
-                    
-                        {proposal.keywords && <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>}
-                        {proposal.requiredKnowledge.length > 0 &&
-                            <Col><strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}</Col>
+                        {proposal.level &&
+                            <Col md="2" style={{marginTop: "0.5rem"}}>
+                                <strong>Level</strong><br/>{proposal.level}
+                            </Col>
                         }
-                        <Col><strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
-                    </Row>
-                    <Row className="pt-2">
-                        <Col
-                            md="3"><strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
+                        <Col md="4" style={{marginTop: "0.5rem"}}>
+                            <strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
                         </Col>
-                        {proposal.coSupervisors.length > 0 &&
-                            <Col
-                                md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                        {proposal.groups && proposal.groups.length > 0 &&
+                            <Col style={{marginTop: "0.5rem"}}>
+                                <strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}
+                            </Col>
+                        }
+                    </Row>
+                    <Row>
+                        {proposal.type &&
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Type</strong><br/>{proposal.type}
+                            </Col>
+                        }
+                        {proposal.cds &&
+                            <Col style={{marginTop: "0.5rem"}}>
+                                <strong>CdS</strong><br/>{proposal.cds}
+                            </Col>
+                        }
+                    </Row>
+                    <Row>
+                        {proposal.keywords &&
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Keywords</strong><br/>{proposal.keywords}
+                            </Col>
+                        }
+                        {proposal.requiredKnowledge.length > 0 ?
+                            <Col style={{marginTop: "0.5rem"}}>
+                                <strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}
+                            </Col>
+                            :
+                            proposal.notes &&
+                                <Col md="6" style={{marginTop: "0.5rem"}}>
+                                    <strong>Notes</strong><br/><i>{proposal.notes}</i>
+                                </Col>
+
+                        }
+                    </Row>
+                    <Row>
+                        {proposal.coSupervisors.length > 0 ?
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                            </Col>
+                            :
+                            <Col md="6"></Col>
+                        }
+                        {proposal.notes && proposal.requiredKnowledge.length > 0 &&
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Notes</strong><br/><i>{proposal.notes}</i>
                             </Col>
                         }
                     </Row>
                     <hr className="me-4"/>
-                    <Row>
+                    <Row style={{marginBottom: "0.5rem"}}>
                         <Col>
                             {proposal.description}
                         </Col>
