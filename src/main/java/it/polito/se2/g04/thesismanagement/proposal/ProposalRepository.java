@@ -11,6 +11,7 @@ public interface ProposalRepository extends JpaRepository<Proposal,Long> {
     List<Proposal> findAllByStatus(Proposal.Status status);
     List<Proposal> findAllByStatusNot(Proposal.Status status);
     List<Proposal> findAllByStatusNotIn(List<Proposal.Status> statusList);
-    List<Proposal> findProposalsByCoSupervisorsContaining(Teacher coSupervisors);
+    List<Proposal> findProposalsByCoSupervisorsContainingAndStatus(Teacher coSupervisors, Proposal.Status status);
+    boolean existsByCoSupervisorsContaining(Teacher coSupervisors);
 
 }
