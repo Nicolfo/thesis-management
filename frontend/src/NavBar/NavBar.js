@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {Button, Col, Form, Nav, OverlayTrigger, Row, Tooltip} from 'react-bootstrap';
+import {Button, Col, Form, Nav, OverlayTrigger, Row, Tooltip, Dropdown} from 'react-bootstrap';
 import {useState, useContext, useEffect} from 'react';
 import {useLocation, useNavigate} from "react-router-dom";
 import {AuthContext} from 'react-oauth2-code-pkce';
@@ -241,18 +241,21 @@ function NavBar(props) {
                                 </Button>
                                     </div>} */}
 
-                            <div className="d-flex justify-content-center border-b">
-                                {props.user && 
-                                <Button className="no-border-sm me-3"
-                                        onClick={() => navigate("/notifications")}>
-                                    <FontAwesomeIcon icon="fa-bell"/>
-                                    {path !== "/notifications" && unreadNotifications > 0 && <span className="badge text-bg-light text-danger ms-2 ">
+                            <div className="d-flex justify-content-center ps-3 border-b">
+                                {props.user &&
+                                    <Button className="no-border-sm me-3"
+                                            onClick={() => navigate("/notifications")}>
+                                        <FontAwesomeIcon icon="fa-bell"/>
+                                        {path !== "/notifications" && unreadNotifications > 0 && <span className="badge text-bg-light text-danger ms-2 ">
                                         {unreadNotifications}
                                     </span>}
-                                </Button>}
+                                    </Button>}
+                            </div>
+
                                 {showVirtualClock && (
-  
-                                    <Col xs="auto" className="me-lg-2">
+
+                                    <div className="d-flex justify-content-center">
+                                        <Col xs="auto" className="me-lg-2">
                                         <Row>
                                             <Col><Form.Control
                                                 className={props.user ? "dateForm no-border-sm" : "dateForm-start no-border-sm"}
@@ -264,22 +267,45 @@ function NavBar(props) {
                                             </Col>
                                             <Col>
                                                 <Button
-                                                        onClick={(event) => props.updateApplicationDate(date)}>Set</Button>
+                                                    onClick={(event) => props.updateApplicationDate(date)}>Set</Button>
                                             </Col></Row>
                                     </Col>
+                                    </div>
                                 )}
+                            <div className="d-flex justify-content-center border-b">
                                 <Button className={props.user ? "no-border-sm" : "no-border-sm btn-primary-start"}
                                         onClick={() => setShowVirtualClock((val) => !val)}>
                                     <FontAwesomeIcon icon={showVirtualClock ? 'fa-xmark' : 'fa-clock'}/>
                                 </Button>
                             </div>
 
-                            <Button
-                                className={props.user ? "ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b" : "btn-primary-start ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b"}
-                                onClick={handleClick}>
-                                {props.user !== null ? <><FontAwesomeIcon icon="fa-solid fa-user"/> Logout</> : <>
-                                    <FontAwesomeIcon icon="fa-solid fa-user"/> Login</>}
-                            </Button>
+                            <div className="d-flex justify-content-center">
+                            {props.user !== null ? <>
+                                    <Dropdown className="ms-lg-3 me-lg-3 ms-md-3 me-md-3">
+                                        <Dropdown.Toggle id="dropdown-basic">
+                                            <FontAwesomeIcon icon="fa-solid fa-user" className="me-1"/>
+                                            {props.user.name} {props.user.surname}
+                                            <FontAwesomeIcon icon="chevron-down" className="ms-2"/>
+                                        </Dropdown.Toggle>
+
+                                        <Dropdown.Menu className="bg-color-light border-dropdown p-0" style={{ width: '100%' }}>
+                                            <Dropdown.Item className="bg-color-light m-0 p-0">
+                                                <Button
+                                                    className={"border-0 w-100 btn-primary-dropdown"}
+                                                    onClick={handleClick}>
+                                                    <FontAwesomeIcon icon="fa-solid fa-right-from-bracket" /> Logout
+                                                </Button></Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+
+                                </>
+                                : <Button
+                                    className={"btn-primary-start ms-lg-3 me-lg-3 ms-md-3 me-md-3 border-b"}
+                                    onClick={handleClick}>
+                                    <FontAwesomeIcon icon="fa-solid fa-user"/> Login
+                                </Button>}
+                            </div>
+
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
