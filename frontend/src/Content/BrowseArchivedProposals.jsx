@@ -274,41 +274,29 @@ function ProposalsList({proposals, user, deleteProp, setArchivedView}) {
     )
 }
 
-function CustomToggle({eventKey, callback}) {
-    const {activeEventKey} = useContext(AccordionContext);
-
-    const decoratedOnClick = useAccordionButton(
-        eventKey,
-        () => callback && callback(eventKey),
-    );
-
-    const isCurrentEventKey = activeEventKey === eventKey;
-
-    return (
-        <Button
-            onClick={decoratedOnClick}
-        >
-            <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
-        </Button>
-    );
-}
-
 function ProposalEntry({proposal, deleteProp, setArchivedView}) {
     const navigate = useNavigate();
+
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+
+    function toggleAccordion() {
+        setIsAccordionOpen(!isAccordionOpen);
+    }
 
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
-                    <Col><strong>{proposal.title}</strong></Col>
-                    <Col className="d-flex justify-content-end">
-                        <DropdownButton id="dropdown-item-button" title={
-                            <div className="d-flex align-items-center">
-                                <FontAwesomeIcon icon="fa-solid fa-list-ul" style={{height: 25}}/>
-                                <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
-                                <span className="d-none d-md-table-cell" style={{height: 25}}> Options </span>
-                            </div>
-                        }
+                    <Col md={10} onClick={toggleAccordion}><strong>{proposal.title}</strong></Col>
+                    <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
+                        <DropdownButton id="dropdown-item-button"
+                                        title={
+                                            <div className="d-flex align-items-center">
+                                                <FontAwesomeIcon icon="fa-solid fa-list-ul" className="me-2"/>
+                                                <span className="d-none d-md-table-cell" style={{height: 25}}> Options </span>
+                                            </div>
+                                        }
+                                        className="me-2"
                         >
 
                             <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
@@ -316,8 +304,7 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
                                 navigate(`/copyProposal/${proposal.id}`)
                             }}>
                                 <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-solid fa-copy"/>
-                                    <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                                    <FontAwesomeIcon icon="fa-solid fa-copy" className="me-1"/>
                                     <span className="d-none d-md-table-cell"> Copy </span>
                                 </div>
                             </Dropdown.Item>
@@ -326,20 +313,23 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
                                 <span className="d-inline-block">
                                     <Dropdown.Item as="button" disabled={proposal.status === "ACCEPTED"} style={{color: proposal.status === "ACCEPTED" ? "#FBA65C" : "#FC7A08"}} onClick={() => {deleteProp(proposal.id);}}>
                                         <div className="d-flex align-items-center">
-                                            <FontAwesomeIcon icon="fa-solid fa-trash-can" />
-                                            <span className="d-none d-md-table-cell" style={{visibility: "hidden"}}> _ </span>
+                                            <FontAwesomeIcon icon="fa-solid fa-trash-can" className="me-1"/>
                                             <span className="d-none d-md-table-cell"> Delete </span>
                                         </div>
                                     </Dropdown.Item>
                                 </span>
                             </OverlayTrigger>
                         </DropdownButton>
-                        <CustomToggle eventKey={proposal.id}/>
+                        <Button onClick={toggleAccordion}>
+                            <div className="d-flex align-items-center">
+                                <FontAwesomeIcon icon={isAccordionOpen ? "chevron-up" : "chevron-down"}/>
+                            </div>
+                        </Button>
                     </Col>
                 </Row>
 
             </Card.Header>
-            <Accordion.Collapse eventKey={proposal.id} flush>
+            <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                 <Card.Body>
                     <Row>
                         {proposal.level &&

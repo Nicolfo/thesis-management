@@ -139,7 +139,7 @@ public class EmailServiceImpl implements EmailService {
         String emailText = EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK +
                 EmailConstants.HTML_LINE_BREAK +
                 "the proposal \"" + proposal.getTitle() + "\" for which you are assigned as supervisor will expire on " + (new SimpleDateFormat("dd-MM-yyyy")).format(proposal.getExpiration()) + "." + EmailConstants.HTML_LINE_BREAK +
-                "If you don't take any further action, the proposal will be automatically archived on that date.";
+                "If you do not take any further action, the proposal will be automatically archived on that date.";
 
         createNewNotification(teacher.getEmail(), "One of you proposals will expire soon", "One of you proposals will expire soon", emailText, "warning.png");
     }

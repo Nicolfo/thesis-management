@@ -292,46 +292,38 @@ function ProposalsList({proposals, user, applicationDate}) {
     )
 }
 
-function CustomToggle({eventKey, callback}) {
-    const {activeEventKey} = useContext(AccordionContext);
-
-    const decoratedOnClick = useAccordionButton(
-        eventKey,
-        () => callback && callback(eventKey),
-    );
-
-    const isCurrentEventKey = activeEventKey === eventKey;
-
-    return (
-        <Button
-            onClick={decoratedOnClick}
-        >
-            <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
-        </Button>
-    );
-}
-
 function ProposalEntry({proposal}) {
     const navigate = useNavigate();
+
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+
+    function toggleAccordion() {
+        setIsAccordionOpen(!isAccordionOpen);
+    }
 
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
-                    <Col><strong>{proposal.title}</strong></Col>
-                    <Col className="d-flex justify-content-end">
+                    <Col md={10} onClick={toggleAccordion}><strong>{proposal.title}</strong></Col>
+                    <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
                         {proposal.hasApplication ? <Button disabled={true}>
                             <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
                         </Button> : <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
                             <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
                         </Button>
                         }
-                        <CustomToggle eventKey={proposal.id}/>
+
+                        <Button onClick={toggleAccordion}>
+                            <div className="d-flex align-items-center">
+                                <FontAwesomeIcon icon={isAccordionOpen ? "chevron-up" : "chevron-down"}/>
+                            </div>
+                        </Button>
                     </Col>
                 </Row>
 
             </Card.Header>
-            <Accordion.Collapse eventKey={proposal.id} flush>
+            <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                 <Card.Body>
                     <Row>
                         <Col md="2" style={{marginTop: "0.5rem"}}>

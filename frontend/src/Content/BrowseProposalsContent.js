@@ -4,11 +4,9 @@ import API from "../API/Api";
 import {
     Accordion,
     Button,
-    useAccordionButton,
     Card,
     Row,
     Col,
-    AccordionContext,
     DropdownButton,
     Dropdown
 } from "react-bootstrap";
@@ -83,30 +81,16 @@ export default function BrowseProposalsContent(props) {
     );
 }
 
-function CustomToggle({eventKey, callback}) {
-    const {activeEventKey} = useContext(AccordionContext);
-
-    const decoratedOnClick = useAccordionButton(
-        eventKey,
-        () => callback && callback(eventKey),
-    );
-
-    const isCurrentEventKey = activeEventKey === eventKey;
-
-    return (
-        <Button onClick={decoratedOnClick}>
-            <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
-                <span className="d-none d-md-table-cell ms-2"> Info </span>
-            </div>
-        </Button>
-    );
-}
-
 function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchive}) {
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+
     const navigate = useNavigate();
 
-    function deleteProp(proposalId, archiving){
+    function toggleAccordion() {
+        setIsAccordionOpen(!isAccordionOpen);
+    }
+
+    function deleteProp(proposalId, archiving) {
         if (archiving) {
             setDeleting(true);
             setArchive(true);
@@ -123,52 +107,57 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
             <Card id={proposal.id} className="m-2">
                 <Card.Header>
                     <Row className="p-2 align-items-center">
-                        <Col><strong>{proposal.title}</strong></Col>
-                        <Col className="d-flex justify-content-end">
-
-                            <DropdownButton id="dropdown-item-button" title={
+                        <Col md={10} onClick={toggleAccordion}><strong>{proposal.title}</strong></Col>
+                        <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
+                                <DropdownButton id="dropdown-item-button"
+                                                title={
+                                                    <div className="d-flex align-items-center">
+                                                        <FontAwesomeIcon icon="fa-solid fa-list-ul"/>
+                                                        <span className="d-none d-md-table-cell ms-2"> Options </span>
+                                                    </div>
+                                                }
+                                                className="me-2"
+                                >
+                                    <Dropdown.Item as="button" style={{color: "#FC7A08"}}
+                                                   onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon="fa-pencil"/>
+                                            <span className="d-none d-md-table-cell ms-2"> Update </span>
+                                        </div>
+                                    </Dropdown.Item>
+                                    <Dropdown.Item as="button" style={{color: "#FC7A08"}}
+                                                   onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon="fa-solid fa-copy"/>
+                                            <span className="d-none d-md-table-cell ms-2"> Copy </span>
+                                        </div>
+                                    </Dropdown.Item>
+                                    <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
+                                        deleteProp(proposal.id, true);
+                                    }}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon="fa-solid fa-box-archive"/>
+                                            <span className="d-none d-md-table-cell ms-2"> Archive </span>
+                                        </div>
+                                    </Dropdown.Item>
+                                    <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
+                                        deleteProp(proposal.id, false);
+                                    }}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon="fa-solid fa-trash-can"/>
+                                            <span className="d-none d-md-table-cell ms-2"> Delete </span>
+                                        </div>
+                                    </Dropdown.Item>
+                                </DropdownButton>
+                            <Button onClick={toggleAccordion}>
                                 <div className="d-flex align-items-center">
-                                    <FontAwesomeIcon icon="fa-solid fa-list-ul"/>
-                                    <span className="d-none d-md-table-cell ms-2"> Options </span>
+                                    <FontAwesomeIcon icon={isAccordionOpen ? "chevron-up" : "chevron-down"}/>
                                 </div>
-                            }
-                            >
-                                <Dropdown.Item as="button" style={{color: "#FC7A08"}}
-                                               onClick={() => navigate(`/updateProposal/${proposal.id}`)}>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon="fa-pencil"/>
-                                        <span className="d-none d-md-table-cell ms-2"> Update </span>
-                                    </div>
-                                </Dropdown.Item>
-                                <Dropdown.Item as="button" style={{color: "#FC7A08"}}
-                                               onClick={() => navigate(`/copyProposal/${proposal.id}`)}>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon="fa-solid fa-copy"/>
-                                        <span className="d-none d-md-table-cell ms-2"> Copy </span>
-                                    </div>
-                                </Dropdown.Item>
-                                <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
-                                    deleteProp(proposal.id, true);
-                                }}>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon="fa-solid fa-box-archive"/>
-                                        <span className="d-none d-md-table-cell ms-2"> Archive </span>
-                                    </div>
-                                </Dropdown.Item>
-                                <Dropdown.Item as="button" style={{color: "#FC7A08"}} onClick={() => {
-                                    deleteProp(proposal.id, false);
-                                }}>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon="fa-solid fa-trash-can"/>
-                                        <span className="d-none d-md-table-cell ms-2"> Delete </span>
-                                    </div>
-                                </Dropdown.Item>
-                            </DropdownButton>
-                            <CustomToggle eventKey={proposal.id}/>
+                            </Button>
                         </Col>
                     </Row>
                 </Card.Header>
-                <Accordion.Collapse eventKey={proposal.id} flush>
+                <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                     <Card.Body>
                         <Row>
                             {proposal.level &&

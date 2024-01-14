@@ -99,6 +99,11 @@
   border-width: 2px !important;
 }
 
+.border-dropdown:hover {
+  border-color: aliceblue !important;
+  border-width: 2px !important;
+}
+
 @media (max-width: 767px) {
   .border-b {
     border-top: none !important;

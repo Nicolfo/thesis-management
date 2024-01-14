@@ -28,7 +28,6 @@ export default function ProposalsOnRequestListContent({user}) {
     const [reject, setReject] = useState(false);
     const [updateId, setUpdateId] = useState();
 
-
     const getProposals = async () => {
         if(user && user.token)
             try {
@@ -179,42 +178,31 @@ export default function ProposalsOnRequestListContent({user}) {
     );
 }
 
-function CustomToggle({eventKey, callback}) {
-    const {activeEventKey} = useContext(AccordionContext);
-
-    const decoratedOnClick = useAccordionButton(
-        eventKey,
-        () => callback && callback(eventKey),
-    );
-
-    const isCurrentEventKey = activeEventKey === eventKey;
-
-    return (
-        <Button style={{marginLeft: "1rem"}} onClick={decoratedOnClick}>
-            <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
-                <span className="d-none d-md-table-cell ms-2"> Info </span>
-            </div>
-        </Button>
-    );
-}
-
 function ProposalAccordion({proposal, setAccept, setReject, setShowWarning, setUpdateId}) {
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+
+    function toggleAccordion() {
+        setIsAccordionOpen(!isAccordionOpen);
+    }
 
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center ">
-                    <Col className="d-flex justify-content-start"><strong>{proposal.title}</strong></Col>
-                    <Col className="d-flex justify-content-end">
+                    <Col md={9} onClick={toggleAccordion} className="d-flex justify-content-start"><strong>{proposal.title}</strong></Col>
+                    <Col md={3} className="d-flex justify-content-end mt-md-0 mt-3">
                         <Button variant="success" onClick={() => {setAccept(true); setShowWarning(true); setUpdateId(proposal.id)}}><FontAwesomeIcon icon="fa-solid fa-check" /> Accept </Button>
                         <Button variant="danger" style={{marginLeft: "1rem"}} onClick={() => {setReject(true); setShowWarning(true); setUpdateId(proposal.id)}}><FontAwesomeIcon icon="fa-solid fa-xmark" /> Reject </Button>
-                        <CustomToggle eventKey={proposal.id}/>
+                        <Button style={{marginLeft: "1rem"}} onClick={toggleAccordion}>
+                            <div className="d-flex align-items-center">
+                                <FontAwesomeIcon icon={isAccordionOpen ? "chevron-up" : "chevron-down"}/>
+                            </div>
+                        </Button>
                     </Col>
                 </Row>
 
             </Card.Header>
-            <Accordion.Collapse eventKey={proposal.id} flush>
+            <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                 <Card.Body>
                     <Row>
                         <Col><strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
