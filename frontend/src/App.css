@@ -42,17 +42,29 @@
   border-color: aliceblue !important;
 }
 
+.btn-primary-dropdown {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
 .btn-primary-start {
   background-color: #002B49 !important;
   border-color: aliceblue !important;
 }
 
 .bg-color {
-  background-color: #FC7A08;
+  background-color: #FC7A08 !important;
 }
 
 .bg-color-start{
   background-color: #002B49;
+}
+
+.bg-color-light {
+  background-color: #FEA65A !important;
+}
+
+.bg-color-light:hover {
+  background-color: #FC7A08 !important;
 }
 
 .dateForm {
@@ -77,8 +89,20 @@
   background-color: #3b85b7 !important;
 }
 
+.btn-primary-dropdown:hover {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
 
 
+.border-dropdown {
+  border-color: #FC7A08 !important;
+  border-width: 2px !important;
+}
+
+.border-dropdown:hover {
+  border-color: aliceblue !important;
+  border-width: 2px !important;
+}
 
 @media (max-width: 767px) {
   .border-b {
@@ -171,4 +195,12 @@ h2 {
 
 .card{
   --bs-card-spacer-y: 0.3rem !important;
+}
+
+.list-elem-title {
+  cursor: pointer;
+}
+
+.list-elem-title:hover {
+  text-decoration: underline;
 }

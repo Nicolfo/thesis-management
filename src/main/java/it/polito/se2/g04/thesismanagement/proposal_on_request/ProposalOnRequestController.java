@@ -3,7 +3,6 @@ package it.polito.se2.g04.thesismanagement.proposal_on_request;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal_on_request.ProposalRequestWithNoId;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -31,7 +29,7 @@ public class ProposalOnRequestController {
     @PutMapping("/API/proposalOnRequest/updateStatus/secretaryAccepted/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('SECRETARY')")
     @ResponseStatus(HttpStatus.OK)
-    public ProposalOnRequestDTO updateProposalOnRequestSecretaryAccepted(@PathVariable Long id) throws MessagingException, IOException {
+    public ProposalOnRequestDTO updateProposalOnRequestSecretaryAccepted(@PathVariable Long id) {
         return proposalOnRequestService.proposalOnRequestSecretaryAccepted(id);
 
     }

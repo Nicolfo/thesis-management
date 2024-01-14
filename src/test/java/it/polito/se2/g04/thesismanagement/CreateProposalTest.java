@@ -30,6 +30,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -76,7 +78,7 @@ class CreateProposalTest {
         Proposal proposal = new Proposal();
         proposal.setTitle("test1");
         proposal.setSupervisor(teacher);
-        proposal.setCoSupervisors(null);
+        proposal.setCoSupervisors(List.of());
         proposal.setKeywords("parola");
         proposal.setType("type");
         proposal.setGroups(null);

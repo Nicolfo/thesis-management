@@ -2,7 +2,7 @@ import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import React, {useContext, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import API from "../API/Api";
 import {AuthContext} from "react-oauth2-code-pkce";
@@ -10,6 +10,7 @@ import toast, {Toaster} from 'react-hot-toast';
 
 
 function StartRequest(props) {
+    const { applicationId } = useParams();
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
     if( !token )
@@ -41,6 +42,20 @@ function StartRequest(props) {
                 supervisors.push(elem);
             } );
             setOptionsSupervisors(supervisors);
+
+            // If request started from an accepted application, then populate the fields
+            if (applicationId) {
+                const application = await API.getApplicationById(props.user.token, applicationId);
+                setTitle(application.proposal.title);
+                setDescription(application.proposal.description);
+                setSelectedSupervisor({label: `${application.proposal.supervisor.surname} ${application.proposal.supervisor.name}`, value: application.proposal.supervisor.id});
+                let supervisors = [];
+                application.proposal.coSupervisors.forEach((s) => {
+                    let elem = {label: `${s.surname} ${s.name}`, value: s.id};
+                    supervisors.push(elem);
+                });
+                setSelectedSupervisors(supervisors);
+            }
 
         } catch (err) {
             console.error("UseEffect error", err);
@@ -229,14 +244,25 @@ function StartRequest(props) {
                     </Card.Body>
 
                     <Card.Footer style={{"textAlign": "center"}}>
-                        { !props.sent ?
+                        { !props.sent && !applicationId ?
                             <Button variant="outline-primary" type="submit">
                                 <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request
                             </Button>
                             :
-                            <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
-                                <FontAwesomeIcon icon={"chevron-left"}/> Go back
-                            </Button>
+                            !props.sent && applicationId ?
+                                <>
+                                    <Button style={{marginBottom: "1rem", marginTop: "1rem"}} variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                        <FontAwesomeIcon icon={"chevron-left"}/> Go back
+                                    </Button>
+
+                                    <Button style={{marginLeft: "1rem", marginBottom: "1rem", marginTop: "1rem"}} variant="outline-primary" type="submit">
+                                        <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request
+                                    </Button>
+                                </>
+                                :
+                                <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                    <FontAwesomeIcon icon={"chevron-left"}/> Go back
+                                </Button>
                         }
                     </Card.Footer>
                 </Form>

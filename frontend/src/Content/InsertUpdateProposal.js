@@ -296,8 +296,7 @@ function InsertUpdateProposal(props) {
                     {/* TYPE & KEYWORDS & LEVEL */}
                     <Row style={{"marginTop": "1rem"}}>
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}>-</Row>
-                            <Form.Group className="ms-2">
+                            <Form.Group className="ms-2 mt-3">
                                 <Form.Label style={{marginLeft: "0.3rem"}}> Thesis types </Form.Label>
                                 {typeList.map( (singleType, index) => (
                                     <>
@@ -332,8 +331,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col lg={4}>
-                            <Row style={{"visibility": "hidden"}}> - </Row>
-                            <Form.Group className="ms-2">
+                            <Form.Group className="ms-2 mt-3">
                                 <Form.Label style={{marginLeft: "0.3rem"}}> Thesis keywords </Form.Label>
                                 {keywordsList.map( (singleKeyword, index) => (
                                     <>
@@ -370,7 +368,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col lg={4}>
-                            <Form.Group className="ms-2">
+                            <Form.Group className="ms-2 mt-3">
                                 <Form.Label> Thesis level </Form.Label>
                                 <Form.Check
                                     type="radio"
@@ -449,8 +447,7 @@ function InsertUpdateProposal(props) {
                     {/* EXPIRATION DATE & CDS */}
                     <Row style={{"marginTop": "1rem"}} >
                         <Col>
-                            <Row style={{"visibility": "hidden"}}>-</Row>
-                            <Form.Group>
+                            <Form.Group className="mt-3">
                                 <Form.Label style={{marginLeft: "0.3rem"}}> Expiration date </Form.Label>
                                     <Form.Control
                                         style={{borderRadius: "25px"}}
@@ -464,8 +461,7 @@ function InsertUpdateProposal(props) {
                             </Form.Group>
                         </Col>
                         <Col sm={7}>
-                            <Row style={{"visibility": "hidden"}}>-</Row>
-                            <Form.Group>
+                            <Form.Group className="mt-3">
                                 <Form.Label style={{marginLeft: "0.3rem"}}> CdS </Form.Label>
                                 <MultiSelect
                                     options={optionsCds}
@@ -482,18 +478,14 @@ function InsertUpdateProposal(props) {
                 </Card.Body>
 
                 <Card.Footer style={{"textAlign": "center"}}>
-                    <Button variant="outline-primary" type="submit">
+                    <Button variant="outline-primary" type="submit" style={{marginTop: "1rem", marginBottom: "1rem"}}>
                         {editProposalID ?
                             <><FontAwesomeIcon icon="fa-solid fa-check"/> Update thesis proposal</>
                             :
                             <><FontAwesomeIcon icon={"upload"}/> Publish thesis proposal</>
                         }
                     </Button>
-
-
-                    <Button variant="outline-danger" style={{marginLeft: "1rem"}} onClick={() => {
-                        navigate('/teacher/proposals');
-                    }}>
+                    <Button variant="outline-danger" style={{marginLeft: "1rem", marginTop: "1rem", marginBottom: "1rem"}} onClick={() => {navigate('/teacher/proposals'); }}>
                         <FontAwesomeIcon icon="fa-solid fa-xmark"/> Cancel
                     </Button>
 

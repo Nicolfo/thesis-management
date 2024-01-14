@@ -9,7 +9,17 @@ import {AuthContext} from "react-oauth2-code-pkce";
 
 function BrowseApplicationsContent(props) {
 
+    const [accordionStates, setAccordionStates] = useState({});
+
     const navigate = useNavigate();
+
+    function toggleAccordion(applicationId) {
+        setAccordionStates((prevStates) => ({
+            ...prevStates,
+            [applicationId]: !prevStates[applicationId],
+        }));
+    }
+
     const {token} = useContext(AuthContext);
     if (!token)
         navigate("/notAuthorized");
@@ -62,18 +72,23 @@ function BrowseApplicationsContent(props) {
                             <Card.Body key={e[0].id}>
                                 <Accordion defaultActiveKey="0">
                                     <Card className="mx-md-5">
-                                        <Card.Header>
+                                        <Card.Header onClick={() => toggleAccordion(e[0].id)}>
                                             <Row className="p-2 align-items-center ">
-                                                <Col
-                                                    className="d-flex justify-content-start"><strong>{e[0].proposalTitle}</strong></Col>
-                                                <Col className="d-flex justify-content-end"><CustomToggle
-                                                    eventKey={e[0].id}/></Col>
+                                                <Col className="d-flex justify-content-start">
+                                                    <strong>{e[0].proposalTitle}</strong>
+                                                </Col>
+                                                <Col className="d-flex justify-content-end">
+                                                    <Button>
+                                                        <div className="d-flex align-items-center">
+                                                            <FontAwesomeIcon icon={accordionStates[e[0].id] ? "chevron-up" : "chevron-down"}/>
+                                                        </div>
+                                                    </Button>
+                                                </Col>
                                             </Row>
                                         </Card.Header>
-                                        <Accordion.Collapse eventKey={e[0].id} flush>
+                                        <Accordion.Collapse eventKey={e[0].id} flush in={accordionStates[e[0].id]}>
                                             <Card.Body>
                                                 <ApplicationsTable applications={e}/>
-
                                             </Card.Body>
                                         </Accordion.Collapse>
                                     </Card>
@@ -84,25 +99,6 @@ function BrowseApplicationsContent(props) {
                 }
             </Card>
         </>
-    );
-}
-
-function CustomToggle({eventKey, callback}) {
-    const {activeEventKey} = useContext(AccordionContext);
-
-    const decoratedOnClick = useAccordionButton(
-        eventKey,
-        () => callback && callback(eventKey),
-    );
-
-    const isCurrentEventKey = activeEventKey === eventKey;
-
-    return (
-        <Button onClick={decoratedOnClick}>
-            <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
-            </div>
-        </Button>
     );
 }
 

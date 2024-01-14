@@ -1,20 +1,18 @@
 package it.polito.se2.g04.thesismanagement.application;
 
-import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
 public interface ApplicationService {
 
 
-    public List<ApplicationDTO> getApplicationsByProf(String profEmail);
-    public List<ApplicationDTO> getApplicationsByStudent(String studentEmail);
-    public List<ApplicationDTO> getApplicationsByProposal(Long proposalId);
-    public List<ApplicationDTO> getApplicationsByProposalId(Long proposalId);
-    public ApplicationDTO getApplicationById(Long applicationId);
+    List<ApplicationDTO> getApplicationsByProf(String profEmail);
+    List<ApplicationDTO> getApplicationsByStudent(String studentEmail);
+    List<ApplicationDTO> getApplicationsByProposal(Long proposalId);
+    List<ApplicationDTO> getApplicationsByProposalId(Long proposalId);
+    ApplicationDTO getApplicationById(Long applicationId);
   /**
      * This method changes the state of a given application to accepted, if the current state is pending.
      * Otherwise, an error is thrown. After changing the state, the student who handed in the application is
@@ -22,7 +20,7 @@ public interface ApplicationService {
      * @param applicationId id of the application to be accepted
      * @return true if accepting was successful, otherwise false
      */
-    public boolean acceptApplicationById(Long applicationId);
+    boolean acceptApplicationById(Long applicationId);
      
     /**
      * This method changes the state of a given application to rejected, if the current state is pending.
@@ -41,7 +39,7 @@ public interface ApplicationService {
      * @param exceptionApplicationId id of the application of which the status should not be updated (can be set to -1 to not exclude any application)
      * @return true if all pending applications could be changed to rejected. Otherwise, false is returned.
      */
-    boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) throws MessagingException, IOException;
+    boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId);
 
     /**
      * This method updates the status all pending Applications of the user with the passed Email-Adress to rejected.
@@ -50,7 +48,7 @@ public interface ApplicationService {
      * @param exceptionApplicationId id of the application of which the status should not be updated (can be set to -1 to not exclude any application)
      * @return true if all pending applications could be changed to rejected. Otherwise, false is returned.
      */
-    boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) throws MessagingException, IOException;
+    boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId);
    
     ApplicationDTO getApplicationDTO(Application toReturn);
 }

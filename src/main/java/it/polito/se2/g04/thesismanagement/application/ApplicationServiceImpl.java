@@ -2,9 +2,8 @@ package it.polito.se2.g04.thesismanagement.application;
 
 import it.polito.se2.g04.thesismanagement.attachment.Attachment;
 import it.polito.se2.g04.thesismanagement.attachment.AttachmentRepository;
-import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.application.*;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.email.EmailFailedSendException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalOwnershipException;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
@@ -14,7 +13,6 @@ import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentDTO;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -38,7 +35,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ProposalRepository proposalRepository;
     private final StudentService studentService;
     private final EmailService emailService;
-    private static final String MAIL_ERROR = "Error in sending mail";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -78,8 +74,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return dto;
         }).toList();
     }
-//TODO questa funzione e la prossima apparentemente fanno la stessa cosa, controllare se rindondanti
-    @Override
+   @Override
     public List<ApplicationDTO> getApplicationsByProposal(Long proposalId) {
         if (!proposalRepository.existsById(proposalId)) {
             throw new ProposalNotFoundException("Specified proposal id not found");
@@ -155,6 +150,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             application = applicationRepository.save(application);
             proposalRepository.save(proposal);
             emailService.notifyStudentOfApplicationDecision(application);
+            emailService.notifyCoSupervisorsOfDecisionOnApplication(application);
             return cancelApplicationsByProposal(application.getProposal().getId(), applicationId)
                     && cancelApplicationsByStudent(application.getStudent().getEmail(), applicationId);
         } catch (Exception e) {
@@ -190,11 +186,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         Attachment attachment = applicationDTO.getAttachmentId() != null ? attachmentRepository.getReferenceById(applicationDTO.getAttachmentId()) : null;
         Application toSave = new Application(loggedUser, attachment, applicationDTO.getApplyDate(), proposalRepository.getReferenceById(applicationDTO.getProposalId()));
         Application saved = applicationRepository.save(toSave);
-        try {
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
-        } catch (MessagingException | IOException e) {
-            throw new EmailFailedSendException(MAIL_ERROR);
-        }
+        emailService.notifySupervisorAndCoSupervisorsOfNewApplication(saved);
+
     }
 
 
@@ -205,7 +198,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return false;
             application.setStatus(ApplicationStatus.CANCELLED);
             application = applicationRepository.save(application);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
+            emailService.notifyCoSupervisorsOfDecisionOnApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -221,7 +214,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return false;
             application.setStatus(ApplicationStatus.REJECTED);
             application = applicationRepository.save(application);
-            emailService.notifySupervisorAndCoSupervisorsOfNewApplication(application);
+            emailService.notifyCoSupervisorsOfDecisionOnApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
@@ -230,7 +223,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) throws MessagingException, IOException {
+    public boolean cancelApplicationsByProposal(Long proposalId, Long exceptionApplicationId) {
         if(!applicationRepository.existsApplicationByProposalId(proposalId)){
             throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
         }
@@ -240,7 +233,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) throws MessagingException, IOException {
+    public boolean cancelApplicationsByStudent(String studentEmail, Long exceptionApplicationId) {
         if (!applicationRepository.existsApplicationByStudentEmail(studentEmail)){
             throw new ApplicationDoNotExistException("doesn't exist a application associated to the student email " + studentEmail);
         }
@@ -250,14 +243,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     //TODO: check if it works properly
-    private boolean cancelApplicationsHelper(Long exceptionApplicationId, boolean success, List<ApplicationDTO> applicationList) throws MessagingException, IOException {
+    private boolean cancelApplicationsHelper(Long exceptionApplicationId, boolean success, List<ApplicationDTO> applicationList) {
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId())) {
                 success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
                 if (success){
                     Optional<Application> applicationOptional =applicationRepository.findById(application.getId());
-                    if(applicationOptional.isPresent())
-                        emailService.notifySupervisorAndCoSupervisorsOfNewApplication(applicationOptional.get());
+                    applicationOptional.ifPresent(emailService::notifySupervisorAndCoSupervisorsOfNewApplication);
 
                 }
             }

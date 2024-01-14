@@ -10,14 +10,13 @@ import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
-import it.polito.se2.g04.thesismanagement.email.EmailService;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.student.Student;
 import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -60,14 +59,14 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     }
 
     @Override
-    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) throws MessagingException, IOException {
+    public ProposalOnRequestDTO proposalOnRequestSecretaryAccepted(Long id) {
         ProposalOnRequest proposal = checkProposalId(id);
 
         if (proposal.getStatus() != ProposalOnRequest.Status.PENDING) {
             throw (new ProposalInvalidStateException(PROPOSAL_ON_REQUEST_IS_NOT_PENDING));
         }
         proposal.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
-        emailService.notifySupervisorOfNewThesisRequest(proposal);
+        emailService.notifySupervisorAndCoSupervisorsOfNewThesisRequest(proposal);
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 
@@ -126,17 +125,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
         }
         proposal.setStatus(ProposalOnRequest.Status.TEACHER_ACCEPTED);
         proposal.setApprovalDate(new Date());
-            /* Proposal proposal1=new Proposal(proposal);
-            proposal1.setStatus(Proposal.Status.ACCEPTED);
-            Application application = new Application(
-                    proposal.getStudent(),
-                    null,
-                    proposal.getApprovalDate(),
-                    proposal1
-            );
-            application.setStatus(ApplicationStatus.ACCEPTED);
-            proposalRepository.save(proposal1);
-            applcationRepository.save(application);*/
+
         return proposalOnRequestRepository.save(proposal).toDTO();
     }
 

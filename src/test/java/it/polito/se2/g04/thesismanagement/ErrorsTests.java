@@ -115,6 +115,7 @@ class ErrorsTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
     @Test
     @Rollback
     @WithMockUser(username = "georgina.ferrell@example.com", roles = {"STUDENT"})

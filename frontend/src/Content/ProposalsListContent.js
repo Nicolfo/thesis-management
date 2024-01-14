@@ -292,72 +292,80 @@ function ProposalsList({proposals, user, applicationDate}) {
     )
 }
 
-function CustomToggle({eventKey, callback}) {
-    const {activeEventKey} = useContext(AccordionContext);
-
-    const decoratedOnClick = useAccordionButton(
-        eventKey,
-        () => callback && callback(eventKey),
-    );
-
-    const isCurrentEventKey = activeEventKey === eventKey;
-
-    return (
-        <Button
-            onClick={decoratedOnClick}
-        >
-            <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
-        </Button>
-    );
-}
-
 function ProposalEntry({proposal}) {
     const navigate = useNavigate();
+
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+
+    function toggleAccordion() {
+        setIsAccordionOpen(!isAccordionOpen);
+    }
 
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
-                    <Col><strong>{proposal.title}</strong></Col>
-                    <Col className="d-flex justify-content-end">
+                    <Col md={10} onClick={toggleAccordion}><strong>{proposal.title}</strong></Col>
+                    <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
                         {proposal.hasApplication ? <Button disabled={true}>
                             <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
                         </Button> : <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
                             <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
                         </Button>
                         }
-                        <CustomToggle eventKey={proposal.id}/>
+
+                        <Button onClick={toggleAccordion}>
+                            <div className="d-flex align-items-center">
+                                <FontAwesomeIcon icon={isAccordionOpen ? "chevron-up" : "chevron-down"}/>
+                            </div>
+                        </Button>
                     </Col>
                 </Row>
 
             </Card.Header>
-            <Accordion.Collapse eventKey={proposal.id} flush>
+            <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                 <Card.Body>
                     <Row>
-                        <Col><strong>CdS</strong><br/>{proposal.cds}</Col>
-                        <Col><strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}</Col>
-                        <Col><strong>Level</strong><br/>{proposal.level}</Col>
-                        <Col><strong>Type</strong><br/>{proposal.type}</Col>
+                        <Col md="2" style={{marginTop: "0.5rem"}}>
+                            <strong>Supervisor</strong><br/>{proposal.supervisor.surname} {proposal.supervisor.name}
+                        </Col>
+                        {proposal.coSupervisors.length > 0 ?
+                            <Col md="4" style={{marginTop: "0.5rem"}}>
+                                <strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                            </Col>
+                            :
+                            <Col md="4"></Col>
+                        }
+                        {proposal.groups && proposal.groups.length > 0 &&
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}
+                            </Col>
+                        }
                     </Row>
                     <Row>
-                        <Col><strong>Keywords</strong><br/>{proposal.keywords}</Col>
-                        {proposal.requiredKnowledge.length > 0 &&
-                            <Col><strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}</Col>
+                        {proposal.type &&
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Type</strong><br/>{proposal.type}
+                            </Col>
                         }
-                        <Col><strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}</Col>
-                    </Row>
-                    <Row className="pt-2">
-                        <Col
-                            md="3"><strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}
+                        <Col md="6" style={{marginTop: "0.5rem"}}>
+                            <strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
                         </Col>
-                        {proposal.coSupervisors.length > 0 &&
-                            <Col
-                                md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                    </Row>
+                    <Row>
+                        {proposal.keywords &&
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Keywords</strong><br/>{proposal.keywords}
+                            </Col>
+                        }
+                        {proposal.requiredKnowledge.length > 0 &&
+                            <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}
                             </Col>
                         }
                     </Row>
                     <hr className="me-4"/>
-                    <Row>
+                    <Row style={{marginBottom: "0.5rem"}}>
                         <Col>
                             {proposal.description}
                         </Col>

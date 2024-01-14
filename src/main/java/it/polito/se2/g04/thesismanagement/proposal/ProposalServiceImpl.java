@@ -3,16 +3,15 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.application.Application;
 import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
 import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
-import it.polito.se2.g04.thesismanagement.email.EmailService;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ProposalNotFoundException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.UpdateAfterAcceptException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.InvalidTeacherException;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.group.Group;
+import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import it.polito.se2.g04.thesismanagement.virtualclock.VirtualClockController;
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -27,8 +26,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -109,6 +110,7 @@ public class ProposalServiceImpl implements ProposalService {
         toAdd.setCds(proposalDTO.getCds());
 
         ProposalFullDTO.fromProposal(proposalRepository.save(toAdd));
+        emailService.notifyCoSupervisorsOfNewProposal(proposalDTO, null);
     }
 
     @Override
@@ -122,6 +124,8 @@ public class ProposalServiceImpl implements ProposalService {
         if (old.getStatus() == Proposal.Status.ACCEPTED || old.getStatus() == Proposal.Status.ARCHIVED) {
             throw (new UpdateAfterAcceptException("you can't update this proposal after an application to it is accepted or archived"));
         }
+
+        emailService.notifyCoSupervisorsOfNewProposal(proposalDTO, old.getCoSupervisors());
 
         old.setTitle(proposalDTO.getTitle());
         if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
@@ -244,7 +248,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void archiveProposal(Long id) {
         if (!proposalRepository.existsById(id)) {
-            throw (new ProposalNotFoundException("Proposal with this id does not exist"));
+            throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
         }
         Proposal old = proposalRepository.getReferenceById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -271,7 +275,7 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public void deleteProposal(Long id) {
         if (!proposalRepository.existsById(id))
-            throw (new ProposalNotFoundException("Proposal with this id does not exist"));
+            throw (new ProposalNotFoundException(PROPOSAL_ID_NOT_EXISTS));
         Proposal old = proposalRepository.getReferenceById(id);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth.getName().compareTo(old.getSupervisor().getEmail()) != 0)
@@ -326,6 +330,9 @@ public class ProposalServiceImpl implements ProposalService {
         if (!teacherRepository.existsTeacherByEmail(email)) {
             throw new TeacherNotFoundException("Logged teacher cannot be found on the DB");
         }
-        return proposalRepository.findProposalsByCoSupervisorsContaining(teacherRepository.findByEmail(email)).stream().map(ProposalFullDTO::fromProposal).toList();
+        if (!proposalRepository.existsByCoSupervisorsContaining(teacherRepository.findByEmail(email))) {
+            throw new ProposalNotFoundException("Logged teacher doesn't have a coSupervised proposal");
+        }
+        return proposalRepository.findProposalsByCoSupervisorsContainingAndStatus(teacherRepository.findByEmail(email), Proposal.Status.ACTIVE).stream().map(ProposalFullDTO::fromProposal).toList();
     }
 }
