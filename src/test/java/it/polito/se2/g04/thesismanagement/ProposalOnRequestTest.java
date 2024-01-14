@@ -214,8 +214,12 @@ class ProposalOnRequestTest {
     @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
     void teacherChangeTest() throws Exception {
         proposalOnRequestService.proposalOnRequestSecretaryAccepted(proposalOnRequests.get(2).getId());
+        RequestChangeDTO requestChangeDTO = new RequestChangeDTO("Change title");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String reqJson = objectMapper.writeValueAsString(requestChangeDTO);
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/{id}", proposalOnRequests.get(2).getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(reqJson))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         String json = res.getResponse().getContentAsString();
@@ -225,13 +229,24 @@ class ProposalOnRequestTest {
         assertEquals(ProposalOnRequest.Status.TEACHER_REVIEW,result.getStatus(),  "this proposal should be rejected");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/" + new Random().nextLong(4, 100))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(reqJson))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(reqJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/a")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(reqJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        proposalOnRequests.get(2).setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
+        proposalOnRequestRepository.save(proposalOnRequests.get(2));
+        RequestChangeDTO wrongDTO = new RequestChangeDTO("  ");
+        reqJson = objectMapper.writeValueAsString(wrongDTO);
+        mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/updateStatus/teacherRequestChange/" + proposalOnRequests.get(2).getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(reqJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -291,7 +306,7 @@ class ProposalOnRequestTest {
     @Rollback
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
     void createProposalOnRequest() throws Exception{
-        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(null, student1.getId(), "test","test", teacher.getId(), new ArrayList<>(),new Date(),null);
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(null, student1.getId(), "test","test", teacher.getId(), new ArrayList<>(),new Date(),null,null);
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.SECRETARY_REJECTED);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));
         MvcResult res=mockMvc.perform(MockMvcRequestBuilders.post("/API/proposalOnRequest/create/")
@@ -332,6 +347,7 @@ class ProposalOnRequestTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
     }
+    // TODO: this needs a cleanup. Why are we even testing an api we don't use?
     @Test
     @Rollback
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
@@ -340,7 +356,7 @@ class ProposalOnRequestTest {
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));
         //change the proposal on request
-        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null);
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null,null);
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(proposalOnRequestDTO)))
@@ -352,7 +368,7 @@ class ProposalOnRequestTest {
     @WithMockUser(username = "m.rossi@example.com", roles = {"STUDENT"})
     void changeProposalOnRequestInvalidStatus() throws Exception{
         //change the proposal on request
-        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null);
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null,null);
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(proposalOnRequestDTO)))
@@ -367,7 +383,7 @@ class ProposalOnRequestTest {
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));
         //change the proposal on request
-        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(1112332L),new Date(),null);
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(1112332L),new Date(),null,null);
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(proposalOnRequestDTO)))
@@ -382,7 +398,7 @@ class ProposalOnRequestTest {
         proposalOnRequests.get(0).setStatus(ProposalOnRequest.Status.TEACHER_REVIEW);
         proposalOnRequestRepository.save(proposalOnRequests.get(0));
         //change the proposal on request
-        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null);
+        ProposalOnRequestDTO proposalOnRequestDTO=new ProposalOnRequestDTO(proposalOnRequests.get(0).getId(), student1.getId(), "test2","test2", teacher.getId(), List.of(teacher.getId()),new Date(),null,null);
         mockMvc.perform(MockMvcRequestBuilders.put("/API/proposalOnRequest/makeChanges/{proposalId}",proposalOnRequestDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(proposalOnRequestDTO)))

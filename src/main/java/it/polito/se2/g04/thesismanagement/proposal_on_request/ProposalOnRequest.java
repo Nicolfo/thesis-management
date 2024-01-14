@@ -53,6 +53,8 @@ public class ProposalOnRequest {
     private Date approvalDate;
     @Enumerated(EnumType.STRING)
     private Status status;
+    @Column(columnDefinition = "varchar(1000)")
+    private String requestedChange;
 
     public ProposalOnRequestDTO toDTO() {
         return new ProposalOnRequestDTO(this.id,
@@ -62,7 +64,8 @@ public class ProposalOnRequest {
                 this.supervisor.getId(),
                 this.coSupervisors.stream().map(Teacher::getId).toList(),
                 this.approvalDate,
-                this.status);
+                this.status,
+                this.requestedChange);
     }
     public ProposalOnRequestFullDTO toFullDTO() {
         return new ProposalOnRequestFullDTO(this.id,
@@ -72,6 +75,7 @@ public class ProposalOnRequest {
                 TeacherDTO.fromTeacher(this.supervisor),
                 this.coSupervisors.stream().map(TeacherDTO::fromTeacher).toList(),
                 this.approvalDate,
-                this.status);
+                this.status,
+                this.requestedChange);
     }
 }

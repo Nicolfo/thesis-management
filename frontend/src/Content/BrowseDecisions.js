@@ -6,7 +6,7 @@ import {AuthContext} from "react-oauth2-code-pkce";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function BrowseDecisions(props) {
-    const {token} = useContext(AuthContext);
+    const { token } = useContext(AuthContext);
 
     const [applications, setApplications] = useState([]);
     const [proposalOnRequest, setproposalOnRequest] = useState([]);
@@ -59,17 +59,29 @@ function BrowseDecisions(props) {
                 </Card.Body>
             }
 
+                    <Table>
+                        <tbody>
+                            {applications.map((application) => <TableRow key={application.id} application={application} />)}
+                        </tbody>
+                    </Table>
 
-        </Card>
+                    :
+                    <Card.Body style={{ "textAlign": "center" }} className="mt-4">
+                        <strong>You have no applications yet</strong>
+                    </Card.Body>
+                }
+
+
+            </Card>
 
 
 
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                Your proposals on request
-            </Card.Header>
+            <Card style={{ "marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem" }}>
+                <Card.Header as="h1" style={{ "textAlign": "center" }} className="py-3">
+                    Your proposals on request
+                </Card.Header>
 
-            {proposalOnRequest.length > 0 ?
+                {proposalOnRequest.length > 0 ?
 
 
                     <Table>
@@ -78,15 +90,15 @@ function BrowseDecisions(props) {
                         </tbody>
                     </Table>
 
-                :
-                <Card.Body style={{"textAlign": "center"}} className="mt-4">
-                    <strong>You have no proposals on request yet</strong>
-                </Card.Body>
-            }
+                    :
+                    <Card.Body style={{ "textAlign": "center" }} className="mt-4">
+                        <strong>You have no proposals on request yet</strong>
+                    </Card.Body>
+                }
 
 
 
-        </Card>
+            </Card>
         </>);
 }
 
@@ -119,8 +131,8 @@ function TableRow(props) {
     return (
         <tr>
             <td>
-                <Row className="my-3">
-                    <Col lg={5}>
+                <Row className="my-3 d-flex align-items-center">
+                    <Col lg={4}>
                         <strong> {application.proposalTitle || application.title} </strong>
                     </Col>
                     <Col lg={4}>
@@ -128,6 +140,9 @@ function TableRow(props) {
                     </Col>
                     <Col lg={3}>
                         {statusBadge()}
+                    </Col>
+                    <Col lg={4}>
+                        {application.requestedChange && <>Requested change: {application.requestedChange}</>}
                     </Col>
                 </Row>
             </td>
