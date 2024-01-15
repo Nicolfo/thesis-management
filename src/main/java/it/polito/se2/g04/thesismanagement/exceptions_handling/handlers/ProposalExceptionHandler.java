@@ -34,7 +34,6 @@ public class ProposalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-
     @ExceptionHandler(ArchiveWithNoId.class)
     public ProblemDetail handleServiceNotFound(ArchiveWithNoId e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
