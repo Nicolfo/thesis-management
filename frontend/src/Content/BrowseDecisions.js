@@ -5,11 +5,10 @@ import {useNavigate} from "react-router-dom";
 import {AuthContext} from "react-oauth2-code-pkce";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-function BrowseDecisions(props) {
-    const { token } = useContext(AuthContext);
+export function BrowseDecisions(props) {
+    const {token} = useContext(AuthContext);
 
     const [applications, setApplications] = useState([]);
-    const [proposalOnRequest, setproposalOnRequest] = useState([]);
 
 
     const navigate = useNavigate();
@@ -25,9 +24,6 @@ function BrowseDecisions(props) {
 
             try {
                 let applications = await API.getApplicationsByStudent(props.user.token);
-                let applicationsOnReq = await API.getProposalOnRequestByStudent(props.user.token);
-                //applications = applications.concat(applicationsOnReq);
-                setproposalOnRequest(applicationsOnReq);
                 setApplications(applications);
 
             } catch (err) {
@@ -41,51 +37,36 @@ function BrowseDecisions(props) {
 
     return (
         <>
-            <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-                <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                    Your applications
-                </Card.Header>
+        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
+            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
+                Your applications
+            </Card.Header>
+            {applications.length > 0  ?
 
-                {applications.length > 0 ?
+                <Table>
+                    <tbody>
+                    {applications.map((application) => <TableRow key={application.id} application={application}/>)}
+                    </tbody>
+                </Table>
 
-                    <Table>
-                        <tbody>
-                        {applications.map((application) => <TableRow key={application.id} application={application} proposalOnRequest={proposalOnRequest} navigate={navigate}/>)}
-                        </tbody>
-                    </Table>
+                :
+                <Card.Body style={{"textAlign": "center"}} className="mt-4">
+                    <strong>You have no applications yet</strong>
+                </Card.Body>
+            }
 
-                    :
-                    <Card.Body style={{"textAlign": "center"}} className="mt-4">
-                        <strong>You have no applications yet</strong>
-                    </Card.Body>
-                }
-            </Card>
 
-            <Card style={{ "marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem" }}>
-                <Card.Header as="h1" style={{ "textAlign": "center" }} className="py-3">
-                    Your proposals on request
-                </Card.Header>
+        </Card>
 
-                {proposalOnRequest.length > 0 ?
 
-                    <Table>
-                        <tbody>
-                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application} proposalOnRequest={proposalOnRequest} navigate={navigate}/>)}
-                        </tbody>
-                    </Table>
 
-                    :
-                    <Card.Body style={{ "textAlign": "center" }} className="mt-4">
-                        <strong>You have no proposals on request yet</strong>
-                    </Card.Body>
-                }
-            </Card>
+
         </>);
 }
 
 
-function TableRow(props) {
-    const { application, proposalOnRequest, navigate } = props;
+export function TableRow(props) {
+    const {application} = props;
 
     const statusBadge = () => {
         if (application.status === "PENDING" || application.status === "SECRETARY_ACCEPTED")
@@ -139,4 +120,3 @@ function TableRow(props) {
 }
 
 
-export default BrowseDecisions;

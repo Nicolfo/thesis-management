@@ -88,7 +88,8 @@ function BrowseApplicationsContent(props) {
                                         </Card.Header>
                                         <Accordion.Collapse eventKey={e[0].id} flush in={accordionStates[e[0].id]}>
                                             <Card.Body>
-                                                <ApplicationsTable applications={e}/>
+                                                <ApplicationsTable setUpdateBeforeApplicationId={props.setUpdateBeforeApplicationId} applications={e}/>
+
                                             </Card.Body>
                                         </Accordion.Collapse>
                                     </Card>
@@ -102,7 +103,26 @@ function BrowseApplicationsContent(props) {
     );
 }
 
-function ApplicationsTable({applications, user}) {
+function CustomToggle({eventKey, callback}) {
+    const {activeEventKey} = useContext(AccordionContext);
+
+    const decoratedOnClick = useAccordionButton(
+        eventKey,
+        () => callback && callback(eventKey),
+    );
+
+    const isCurrentEventKey = activeEventKey === eventKey;
+
+    return (
+        <Button onClick={decoratedOnClick}>
+            <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={isCurrentEventKey ? "chevron-up" : "chevron-down"}/>
+            </div>
+        </Button>
+    );
+}
+
+function ApplicationsTable({applications, user, setUpdateBeforeApplicationId}) {
 
     return (
         <Table responsive striped hover className="mb-4">
@@ -125,7 +145,7 @@ function ApplicationsTable({applications, user}) {
             </thead>
             <tbody>
             {applications.map((application) => (
-                <ApplicationRow key={application.id} application={application} user={user}/>
+                <ApplicationRow key={application.id} application={application} user={user} setUpdateBeforeApplicationId={setUpdateBeforeApplicationId}/>
             ))}
             </tbody>
         </Table>
@@ -145,6 +165,7 @@ function ApplicationRow(props) {
     }
 
     const handleViewInfo = (id) => {
+        props.setUpdateBeforeApplicationId(props.application.id);
         navigate("/teacher/application/view?applicationId=" + props.application.id);
     };
 
