@@ -124,8 +124,11 @@ function InsertUpdateProposal(props) {
     useEffect(() => {
         if ((!editProposalID) || (!copyProposalID))
             clearFields();
+        if (!props.user || props.user.role !== "TEACHER")
+            return;
+
         getAllTeachersGroupsCds();
-    }, [editProposalID, copyProposalID])
+    }, [props.user, editProposalID, copyProposalID])
 
 
     const addType = () => {
@@ -246,7 +249,7 @@ function InsertUpdateProposal(props) {
 
                 <Card.Body>
                     {/* TITLE */}
-                    <Row>
+                    <Row style={{"marginTop": "1rem"}}>
                         <Form.Group>
                             <Form.Floating>
                                 <Form.Control
@@ -445,7 +448,7 @@ function InsertUpdateProposal(props) {
                         </Form.Floating>
                     </Row>
                     {/* EXPIRATION DATE & CDS */}
-                    <Row style={{"marginTop": "1rem"}} >
+                    <Row style={{"marginTop": "1rem", "marginBottom": "1rem"}} >
                         <Col>
                             <Form.Group className="mt-3">
                                 <Form.Label style={{marginLeft: "0.3rem"}}> Expiration date </Form.Label>

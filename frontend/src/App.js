@@ -149,6 +149,8 @@ function App() {
                            element={<StartRequest user={user} sent={sent} setSent={setSent} />}/>
                     <Route path="/startRequestFromApplication/:applicationId"
                            element={<StartRequest user={user} sent={sent} setSent={setSent} />}/>
+                    <Route path="/changeRequest/:proposalOnRequestId"
+                           element={<StartRequest user={user} sent={sent} setSent={setSent} />}/>
                     <Route path="/proposalOnRequest/browse"
                            element={<ProposalsOnRequestListContent user={user}/>}/>
                     <Route path="/teacher/proposalOnRequest/browse"

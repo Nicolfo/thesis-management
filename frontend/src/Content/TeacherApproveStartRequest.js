@@ -98,11 +98,10 @@ function TeacherApproveStartRequestContent({ user }) {
 
     // Not authorized if not teacher
     useEffect(() => {
-        if (!token || !user)
-            navigate("/notAuthorized");
-        if (user && user.role !== "TEACHER")
-            navigate("/notAuthorized");
-    }, []);
+        if (!user || user.role !== "TEACHER")
+            return;
+
+    }, [user]);
 
     // Get list of available requests
     // The thesis start requests that have been accepted by a secretary, for the given teacher

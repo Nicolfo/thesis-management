@@ -28,36 +28,39 @@ export default function BrowseProposalsContent(props) {
     const getProposalList = async () => {
         const list = await API.getProposalsByProf(props.user.token);
         setProposalList(list);
+        const coSupervisorList = await API.getProposalsByCoSupervisor(props.user.token);
+        setProposalCosupervisorList(coSupervisorList);
     }
 
     const [proposalList, setProposalList] = useState([]);
+    const [proposalCosupervisorList, setProposalCosupervisorList] = useState([]);
     const [deleting, setDeleting] = useState(false);
     const [archive, setArchive] = useState(false);
     const [deletingID, setDeletingID] = useState();
 
 
     useEffect(() => {
-        if (props.user && !deleting) {
-
+        if (props.user && !deleting)
             getProposalList();
-        }
     }, [props.user, deleting, archive]);
+
 
     return (
         <>
-            {deleting ? <Row>
+            {deleting ?
+                <Row>
                     <Col>
                         <Warn archivedProposal={false} setArchive={setArchive} archive={archive} user={props.user}
                               setDeleting={setDeleting} deletingID={deletingID} getProposalList={getProposalList}><h1>My
                             thesis proposals</h1></Warn>
                     </Col>
-                </Row> :
+                </Row>
+                :
                 <>
                     <Card>
                         <Card.Header>
-                            <h1 style={{"textAlign": "center", marginTop: "0.5rem", marginBottom: "0.5rem"}}>My thesis
-                                proposals</h1>
-                            <h2 style={{"textAlign": "center"}}>Active proposals</h2>
+                            <h1 style={{"textAlign": "center", marginTop: "0.5rem", marginBottom: "0.5rem"}}>Active proposals</h1>
+                            <h2 style={{"textAlign": "center"}}>as <b>Supervisor</b></h2>
                         </Card.Header>
                         {proposalList.length > 0 ?
                             <Card.Body>
@@ -66,12 +69,37 @@ export default function BrowseProposalsContent(props) {
                                         return <ProposalAccordion setArchive={setArchive} user={props.user}
                                                                   key={proposal.id}
                                                                   proposal={proposal} setDeleting={setDeleting}
-                                                                  setDeletingID={setDeletingID}/>
+                                                                  setDeletingID={setDeletingID}
+                                                                  coSupervisor={false}/>
                                     })}
                                 </Accordion>
-                            </Card.Body> :
+                            </Card.Body>
+                            :
                             <Card.Body style={{"textAlign": "center"}} className="mt-4">
                                 <strong>You have no proposals yet</strong>
+                            </Card.Body>
+                        }
+                    </Card>
+
+                    <Card style={{marginTop: "4rem", marginBottom: "2rem"}}>
+                        <Card.Header>
+                            <h1 style={{"textAlign": "center", marginTop: "0.5rem", marginBottom: "0.5rem"}}>Active proposals</h1>
+                            <h2 style={{"textAlign": "center"}}>as <i>Co-Supervisor</i></h2>
+                        </Card.Header>
+                        {proposalCosupervisorList.length > 0 ?
+                            <Card.Body>
+                                <Accordion defaultActiveKey="0">
+                                    {proposalCosupervisorList.filter(proposal => dayjs(proposal.expiration).isAfter(props.applicationDate)).map(proposal => {
+                                        return <ProposalAccordion user={props.user}
+                                                                  key={proposal.id}
+                                                                  proposal={proposal}
+                                                                  coSupervisor={true}/>
+                                    })}
+                                </Accordion>
+                            </Card.Body>
+                            :
+                            <Card.Body style={{"textAlign": "center", marginBottom: "1rem"}} className="mt-4">
+                                <strong>You are not a co-supervisor of any proposal yet</strong>
                             </Card.Body>
                         }
                     </Card>
@@ -81,7 +109,7 @@ export default function BrowseProposalsContent(props) {
     );
 }
 
-function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchive}) {
+function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchive, coSupervisor}) {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
     const navigate = useNavigate();
@@ -109,6 +137,7 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                     <Row className="p-2 align-items-center">
                         <Col md={10} onClick={toggleAccordion}><strong>{proposal.title}</strong></Col>
                         <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
+                            { !coSupervisor &&
                                 <DropdownButton id="dropdown-item-button"
                                                 title={
                                                     <div className="d-flex align-items-center">
@@ -149,6 +178,7 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                                         </div>
                                     </Dropdown.Item>
                                 </DropdownButton>
+                            }
                             <Button onClick={toggleAccordion}>
                                 <div className="d-flex align-items-center">
                                     <FontAwesomeIcon icon={isAccordionOpen ? "chevron-up" : "chevron-down"}/>
@@ -197,7 +227,7 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                                     <strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}
                                 </Col>
                                 :
-                                proposal.notes &&
+                                proposal.notes && !coSupervisor &&
                                 <Col md="6" style={{marginTop: "0.5rem"}}>
                                     <strong>Notes</strong><br/><i>{proposal.notes}</i>
                                 </Col>
@@ -205,14 +235,19 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                             }
                         </Row>
                         <Row>
+                            {coSupervisor &&
+                                <Col md="2" style={{marginTop: "0.5rem"}}>
+                                    <strong>Supervisor</strong><br/>{proposal.supervisor.surname} {proposal.supervisor.name}
+                                </Col>
+                            }
                             {proposal.coSupervisors.length > 0 ?
-                                <Col md="6" style={{marginTop: "0.5rem"}}>
+                                <Col md={coSupervisor ? "4" : "6"} style={{marginTop: "0.5rem"}}>
                                     <strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
                                 </Col>
                                 :
-                                <Col md="6"></Col>
+                                <Col md={coSupervisor ? "4" : "6"}></Col>
                             }
-                            {proposal.notes && proposal.requiredKnowledge.length > 0 &&
+                            {proposal.notes && proposal.requiredKnowledge.length > 0  && !coSupervisor &&
                                 <Col md="6" style={{marginTop: "0.5rem"}}>
                                     <strong>Notes</strong><br/><i>{proposal.notes}</i>
                                 </Col>

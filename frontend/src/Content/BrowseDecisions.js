@@ -41,40 +41,25 @@ function BrowseDecisions(props) {
 
     return (
         <>
-        <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
-            <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                Your applications
-            </Card.Header>
-            {applications.length > 0 ?
+            <Card style={{"marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem"}}>
+                <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
+                    Your applications
+                </Card.Header>
 
-                <Table>
-                    <tbody>
-                    {applications.map((application) => <TableRow key={application.id} application={application} proposalOnRequest={proposalOnRequest} navigate={navigate}/>)}
-                    </tbody>
-                </Table>
-
-                :
-                <Card.Body style={{"textAlign": "center"}} className="mt-4">
-                    <strong>You have no applications yet</strong>
-                </Card.Body>
-            }
+                {applications.length > 0 ?
 
                     <Table>
                         <tbody>
-                            {applications.map((application) => <TableRow key={application.id} application={application} />)}
+                        {applications.map((application) => <TableRow key={application.id} application={application} proposalOnRequest={proposalOnRequest} navigate={navigate}/>)}
                         </tbody>
                     </Table>
 
                     :
-                    <Card.Body style={{ "textAlign": "center" }} className="mt-4">
+                    <Card.Body style={{"textAlign": "center"}} className="mt-4">
                         <strong>You have no applications yet</strong>
                     </Card.Body>
                 }
-
-
             </Card>
-
-
 
             <Card style={{ "marginTop": "1rem", "marginBottom": "2rem", "marginRight": "1rem" }}>
                 <Card.Header as="h1" style={{ "textAlign": "center" }} className="py-3">
@@ -83,10 +68,9 @@ function BrowseDecisions(props) {
 
                 {proposalOnRequest.length > 0 ?
 
-
                     <Table>
                         <tbody>
-                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application} proposalOnRequest={proposalOnRequest}/>)}
+                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application} proposalOnRequest={proposalOnRequest} navigate={navigate}/>)}
                         </tbody>
                     </Table>
 
@@ -95,9 +79,6 @@ function BrowseDecisions(props) {
                         <strong>You have no proposals on request yet</strong>
                     </Card.Body>
                 }
-
-
-
             </Card>
         </>);
 }
@@ -125,6 +106,16 @@ function TableRow(props) {
             return <Badge bg="danger"> ✕ REJECTED </Badge>
         else if (application.status === "CANCELLED" || application.status === "TEACHER_CANCELLED")
             return <Badge bg="dark"> <FontAwesomeIcon icon="fa-solid fa-ban" /> CANCELLED </Badge>
+        else if (application.status === "TEACHER_REVIEW") {
+            return (
+                <>
+                    <Badge bg="warning"> ✎ TO CHANGE </Badge>
+                    <Button size="sm" style={{marginLeft: "2rem", borderRadius: 10}} onClick={() => navigate(`/changeRequest/${application.id}`)}>
+                        <FontAwesomeIcon icon="fa-solid fa-chevron-right" /> Change request
+                    </Button>
+                </>
+            )
+        }
     }
 
 
@@ -132,7 +123,7 @@ function TableRow(props) {
         <tr>
             <td>
                 <Row className="my-3 d-flex align-items-center">
-                    <Col lg={4}>
+                    <Col lg={5}>
                         <strong> {application.proposalTitle || application.title} </strong>
                     </Col>
                     <Col lg={4}>
@@ -140,9 +131,6 @@ function TableRow(props) {
                     </Col>
                     <Col lg={3}>
                         {statusBadge()}
-                    </Col>
-                    <Col lg={4}>
-                        {application.requestedChange && <>Requested change: {application.requestedChange}</>}
                     </Col>
                 </Row>
             </td>

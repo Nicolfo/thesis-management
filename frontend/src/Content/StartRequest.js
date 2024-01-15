@@ -1,4 +1,4 @@
-import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
+import {Alert, Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import React, {useContext, useEffect, useState} from "react";
@@ -10,7 +10,7 @@ import toast, {Toaster} from 'react-hot-toast';
 
 
 function StartRequest(props) {
-    const { applicationId } = useParams();
+    const { applicationId, proposalOnRequestId } = useParams();
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
     if( !token )
@@ -19,6 +19,7 @@ function StartRequest(props) {
         navigate("/notAuthorized");
 
     const animatedComponents = makeAnimated();
+    const [requestedChange, setRequestedChange] = useState("");
     const [title, setTitle] =  useState("");
     const [description, setDescription] = useState("");
     const [teacherList, setTeacherList] = useState([]);
@@ -56,7 +57,21 @@ function StartRequest(props) {
                 });
                 setSelectedSupervisors(supervisors);
             }
-
+            // If student needs to change a request
+            if (proposalOnRequestId) {
+                const proposalsOnRequest = await API.getProposalOnRequestByStudent(props.user.token);
+                const proposalOnRequest = proposalsOnRequest[0];
+                setTitle(proposalOnRequest.title);
+                setDescription(proposalOnRequest.description);
+                setSelectedSupervisor({label: `${proposalOnRequest.supervisor.surname} ${proposalOnRequest.supervisor.name}`, value: proposalOnRequest.supervisor.id});
+                let supervisors = [];
+                proposalOnRequest.coSupervisors.forEach((s) => {
+                    let elem = {label: `${s.surname} ${s.name}`, value: s.id};
+                    supervisors.push(elem);
+                });
+                setSelectedSupervisors(supervisors);
+                setRequestedChange(proposalOnRequest.requestedChange);
+            }
         } catch (err) {
             console.error("UseEffect error", err);
         }
@@ -73,15 +88,21 @@ function StartRequest(props) {
 
 
     useEffect(() => {
+        if (!props.user || props.user.role !== "STUDENT")
+            return;
+
         getAllTeachers();
-    }, [])
+    }, [props.user])
 
 
 
     const startRequest = (request) => {
         toast.promise(
             (async () => {
-                await API.startRequest(request, props.user.token);
+                if (proposalOnRequestId)
+                    await API.updateRequest(request, props.user.token);
+                else
+                    await API.startRequest(request, props.user.token);
                 props.setSent(true);
                 clearFields();
                 return "Thesis request successfully sent";
@@ -123,6 +144,8 @@ function StartRequest(props) {
                 coSupervisors: teacherList.filter( (t) => selectedSupervisors.some( (s) => s.value === t.id) ).map((t) => t.id),
                 description: description
             }
+            if (proposalOnRequestId)
+                request.id = proposalOnRequestId;
 
             startRequest(request);
         }
@@ -136,12 +159,25 @@ function StartRequest(props) {
             <Card style={{"marginTop": "0.5", "marginBottom": "2rem"}}>
                 <Form validated={validated} onSubmit={handleSubmit} noValidate>
                     <Card.Header as="h1" style={{"textAlign": "center"}} className="py-3">
-                        Insert thesis request fields
+                        { proposalOnRequestId ?
+                            "Update thesis request fields"
+                            :
+                            "Insert thesis request fields"
+                        }
                     </Card.Header>
 
                     <Card.Body>
+                        {/* REQUESTED CHANGE */}
+                        { proposalOnRequestId &&
+                            <Row style={{marginTop: "1rem", marginLeft: "0.5rem", marginRight: "0.5rem"}}>
+                                <Alert variant="warning">
+                                    <Alert.Heading as="h2">The supervisor {selectedSupervisor.label} requested the following change:</Alert.Heading>
+                                    <p>{requestedChange}</p>
+                                </Alert>
+                            </Row>
+                        }
                         {/* TITLE */}
-                        <Row>
+                        <Row style={{"marginTop": "2rem"}}>
                             <Form.Group>
                                 <Form.Floating>
                                     <Form.Control
@@ -196,11 +232,11 @@ function StartRequest(props) {
                             </Form.Floating>
                         </Row>
                         {/* SUPERVISOR & CO-SUPERVISORS */}
-                        <Row style={{"marginTop": "1rem"}} >
+                        <Row style={{"marginTop": "1rem", "marginBottom": "1rem"}} >
                             <Form.Group as={Col} >
                                 <Form.Label style={props.sent ? {marginLeft: "0.3rem", color: "dimgray"} : {marginLeft: "0.3rem"}}> Supervisor </Form.Label>
                                 <Select
-                                    isDisabled={props.sent}
+                                    isDisabled={props.sent || proposalOnRequestId}
                                     options={optionsSupervisors}
                                     value={selectedSupervisor}
                                     onChange={ev => {setIsValidSupervisor(true); setSelectedSupervisor(ev)}}
@@ -244,25 +280,36 @@ function StartRequest(props) {
                     </Card.Body>
 
                     <Card.Footer style={{"textAlign": "center"}}>
-                        { !props.sent && !applicationId ?
+                        { !props.sent && !applicationId && !proposalOnRequestId ?
                             <Button variant="outline-primary" type="submit">
                                 <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request
                             </Button>
                             :
-                            !props.sent && applicationId ?
+                            !props.sent && proposalOnRequestId ?
                                 <>
                                     <Button style={{marginBottom: "1rem", marginTop: "1rem"}} variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
                                         <FontAwesomeIcon icon={"chevron-left"}/> Go back
                                     </Button>
 
                                     <Button style={{marginLeft: "1rem", marginBottom: "1rem", marginTop: "1rem"}} variant="outline-primary" type="submit">
-                                        <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request
+                                        <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send updated thesis request
                                     </Button>
                                 </>
                                 :
-                                <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
-                                    <FontAwesomeIcon icon={"chevron-left"}/> Go back
-                                </Button>
+                                !props.sent && applicationId ?
+                                    <>
+                                        <Button style={{marginBottom: "1rem", marginTop: "1rem"}} variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                            <FontAwesomeIcon icon={"chevron-left"}/> Go back
+                                        </Button>
+
+                                        <Button style={{marginLeft: "1rem", marginBottom: "1rem", marginTop: "1rem"}} variant="outline-primary" type="submit">
+                                            <FontAwesomeIcon icon="fa-solid fa-share-from-square" /> Send thesis request
+                                        </Button>
+                                    </>
+                                    :
+                                    <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                        <FontAwesomeIcon icon={"chevron-left"}/> Go back
+                                    </Button>
                         }
                     </Card.Footer>
                 </Form>

@@ -83,7 +83,7 @@ const insertProposal = async (proposal, jwt) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
         },
-        body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
+        body: JSON.stringify(Object.assign({}, proposal))
     })
 };
 
@@ -94,7 +94,7 @@ const updateProposal = async (proposal, jwt) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
         },
-        body: JSON.stringify(Object.assign({}, proposal)) //Aggiungere JSON.stringify per cosupervisors e groups se non funziona
+        body: JSON.stringify(Object.assign({}, proposal))
     })
 };
 
@@ -457,6 +457,27 @@ const getApplicationById = async (jwt, id) => {
     }))
 };
 
-const API = { markNotificationAsRead, getUnreadNotificationsCount, getAllNotificationsOfCurrentUser, getSingleNotification, getProposalOnRequestByStudent, getAcceptedProposalOnRequestsByTeacher, teacherReject, teacherRequestChange, teacherAccept, insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock, getApplicationById};
+const updateRequest = async (request, jwt) => {
+    return fetch(`${SERVER_URL}proposalOnRequest/makeChanges/${request.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
+        },
+        body: JSON.stringify(Object.assign({}, request))
+    })
+};
+
+const getProposalsByCoSupervisor = async (jwt) => {
+    return getJson(fetch(SERVER_URL + 'proposal/getAllProposalByCoSupervisor/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+        }
+    }));
+};
+
+const API = { markNotificationAsRead, getUnreadNotificationsCount, getAllNotificationsOfCurrentUser, getSingleNotification, getProposalOnRequestByStudent, getAcceptedProposalOnRequestsByTeacher, teacherReject, teacherRequestChange, teacherAccept, insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock, getApplicationById, updateRequest, getProposalsByCoSupervisor};
 
 export default API;
