@@ -66,8 +66,8 @@ public class ProposalController {
     }
     @GetMapping("/API/proposal/getProposalById/")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
-    @ResponseStatus(HttpStatus.OK)
-    public ProposalFullDTO getProposalById() {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProposalFullDTO getProposalWithNoID() {
         throw new getProposalWithNoId("you need to specify an ID");
     }
 
@@ -95,8 +95,6 @@ public class ProposalController {
     public void createProposal(@RequestBody ProposalDTO proposal){
         proposalService.createProposal(proposal);
     }
-
-
 
     @PutMapping("/API/proposal/update/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
