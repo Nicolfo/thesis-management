@@ -1,4 +1,4 @@
-import {Alert, Button, Card, Col, Form, Row} from "react-bootstrap";
+import {Button, Card, Col, Form, Row} from "react-bootstrap";
 import {MultiSelect} from "react-multi-select-component";
 import {useContext, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
@@ -6,7 +6,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import API from "../API/Api";
 import {AuthContext} from "react-oauth2-code-pkce";
-
 
 function InsertUpdateProposal(props) {
     const {editProposalID, copyProposalID} = useParams();
@@ -32,14 +31,12 @@ function InsertUpdateProposal(props) {
     const [selectedCds, setSelectedCds] = useState([]);
     const [optionsSupervisors, setOptionsSupervisors] = useState([]);
     const [selectedSupervisors, setSelectedSupervisors] = useState([]);
-    const [alert, setAlert] = useState(false);
     const [isValidTitle, setIsValidTitle] = useState(true);
     const [isValidDescription, setIsValidDescription] = useState(true);
     const [isValidType, setIsValidType] = useState(true);
     const [isValidKeyword, setIsValidKeyword] = useState(true);
     const [isValidCds, setIsValidCds] = useState(true);
     const [validated, setValidated] = useState(false);
-    const [cancel, setCancel] = useState(false);
 
     const getAllTeachersGroupsCds = async () => {
         try {
@@ -227,10 +224,6 @@ function InsertUpdateProposal(props) {
         }
 
         setValidated(true);
-    }
-
-    function cancelButt() {
-        setCancel(true);
     }
 
     return (

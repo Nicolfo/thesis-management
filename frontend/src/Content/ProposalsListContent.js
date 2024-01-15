@@ -5,9 +5,7 @@ import {
     Row,
     Col,
     Accordion,
-    AccordionContext,
     Offcanvas,
-    useAccordionButton,
     Alert
 } from "react-bootstrap";
 import API from "../API/Api";
@@ -17,7 +15,6 @@ import {MultiSelect} from "react-multi-select-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
-import {forEach} from "react-bootstrap/ElementChildren";
 
 function ProposalsListContent({user, applicationDate}) {
 

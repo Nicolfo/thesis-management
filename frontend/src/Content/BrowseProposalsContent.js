@@ -35,10 +35,8 @@ export default function BrowseProposalsContent(props) {
     const [archive, setArchive] = useState(false);
     const [deletingID, setDeletingID] = useState();
 
-
     useEffect(() => {
         if (props.user && !deleting) {
-
             getProposalList();
         }
     }, [props.user, deleting, archive]);
@@ -81,7 +79,7 @@ export default function BrowseProposalsContent(props) {
     );
 }
 
-function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchive}) {
+function ProposalAccordion({proposal, setDeleting, setDeletingID, setArchive}) {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
     const navigate = useNavigate();
@@ -224,6 +222,11 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                                 {proposal.description}
                             </Col>
                         </Row>
+                        <div className="d-flex align-items-end">
+                            <Button className="ms-auto my-2" onClick={() => navigate(`/teacher/proposal/view/${proposal.id}`)}>
+                                Detailed Info <FontAwesomeIcon className="ms-1 pt-1" icon={"chevron-right"}/>
+                            </Button>
+                        </div>
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>

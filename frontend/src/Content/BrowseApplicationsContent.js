@@ -1,7 +1,7 @@
 import {useContext, useState} from "react";
 import {useEffect} from "react";
 import API from "../API/Api";
-import {Row, Col, Badge, Button, Table, Card, Accordion, AccordionContext, useAccordionButton} from "react-bootstrap";
+import {Row, Col, Badge, Button, Table, Card, Accordion} from "react-bootstrap";
 import dayjs from 'dayjs';
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -144,7 +144,7 @@ function ApplicationRow(props) {
             return <Badge bg="danger" className="mt-2"> ✕ REJECTED </Badge>
     }
 
-    const handleViewInfo = (id) => {
+    const handleViewInfo = () => {
         navigate("/teacher/application/view?applicationId=" + props.application.id);
     };
 

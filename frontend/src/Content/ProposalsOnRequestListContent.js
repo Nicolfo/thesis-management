@@ -4,14 +4,11 @@ import {useNavigate} from "react-router-dom";
 import {AuthContext} from "react-oauth2-code-pkce";
 import {
     Accordion,
-    AccordionContext,
     Alert, Button,
     Card,
     Col,
-    Dropdown,
-    DropdownButton, Modal,
-    Row,
-    useAccordionButton
+    Modal,
+    Row
 } from "react-bootstrap";
 import dayjs from "dayjs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

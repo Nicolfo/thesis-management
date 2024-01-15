@@ -26,6 +26,7 @@ import StartRequest from "./Content/StartRequest";
 import ProposalsOnRequestListContent from "./Content/ProposalsOnRequestListContent";
 import TeacherApproveStartRequestContent from './Content/TeacherApproveStartRequest';
 import UserListNotificationContent from './Content/UserListNotificationContent';
+import ProposalViewLayout from "./Content/ProposalViewLayout";
 
 function App() {
 
@@ -131,18 +132,24 @@ function App() {
                            element={<BrowseDecisions user={user}/>}/>
                     <Route path="/proposal/apply/:proposalId"
                            element={<RenderProposal user={user}/>}/>
+
                     <Route path="/teacher/application/browse"
                            element={<BrowseApplicationsContent user={user}/>}/>
                     <Route path="/teacher/application/view"
                            element={<ApplicationViewLayout user={user} realDate={realDate} applicationDate={applicationDate} updateApplicationDate={updateApplicationDate}/>}/>
+
                     <Route path="/insertProposal"
                            element={<InsertUpdateProposal user={user}/>}/>
                     <Route path="/updateProposal/:editProposalID"
                            element={<InsertUpdateProposal user={user}/>}/>
                     <Route path="/copyProposal/:copyProposalID"
                            element={<InsertUpdateProposal user={user} archivedView={archivedView}/>}/>
+
                     <Route path="/teacher/proposals"
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
+                    <Route path="/teacher/proposal/view/:id"
+                           element={<ProposalViewLayout user={user}/>}/>
+
                     <Route path="/teacher/proposals/archived"
                            element={<BrowseArchivedProposals setArchivedView={setArchivedView} user={user} applicationDate={applicationDate}/>}/>
                     <Route path="/startRequest"

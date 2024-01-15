@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.BadRequestException;
 import java.util.List;
 
 
@@ -58,7 +57,12 @@ public class ProposalController {
         return proposalService.getProposalsByProf(username);
     }
 
-
+    @GetMapping("/API/proposal/getProposalById/{proposalId}")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public ProposalFullDTO getProposalById(@PathVariable Long proposalId) {
+        return proposalService.getProposalById(proposalId);
+    }
 
     /**
      * @param proposalId The id of the proposal you want to get the title
