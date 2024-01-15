@@ -345,6 +345,54 @@ class BrowseProposalTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+    @Test
+    @Rollback
+    @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
+    void getProposalByIdTest() throws Exception {
+        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        proposalRepository.save(proposal1);
+        proposalRepository.save(proposal2);
+
+        // This should throw an exception
+        MvcResult res=mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getProposalById/" + proposal1.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String json = res.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ProposalFullDTO proposal= mapper.readValue(json, ProposalFullDTO.class);
+
+        assertEquals("Proposal 1", proposal.getTitle(), "the title should be Proposal 1");
+        assertEquals("Description 1", proposal.getDescription(), "the description should be Description 1");
+
+        // This should throw an exception
+        res=mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getProposalById/" + proposal2.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        json = res.getResponse().getContentAsString();
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        proposal = mapper.readValue(json, ProposalFullDTO.class);
+
+        assertEquals("Proposal 2", proposal.getTitle(), "the title should be Proposal 2");
+        assertEquals("Description 2", proposal.getDescription(), "the description should be Description 2");
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getProposalById/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getProposalById/a")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposal/getProposalById/"+ 100L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    }
 }
 
 
