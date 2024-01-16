@@ -142,12 +142,22 @@ class BrowseDecisionsTests {
     @Test
     @Rollback
     @WithMockUser(username = "alessia.ferrari@example.com", roles = {"STUDENT"})
-     void getAllApplicationProf() throws Exception {
+     void getAllApplicationStudent() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByStudent")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value(ApplicationStatus.PENDING.toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].status").value(ApplicationStatus.REJECTED.toString()));
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "alessia.ferrari222@example.com", roles = {"STUDENT"})
+    void getAllApplicationStudentNotExists() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/application/getByStudent")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 }
