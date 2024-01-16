@@ -103,7 +103,7 @@ function BrowseApplicationsContent(props) {
     );
 }
 
-function ApplicationsTable({applications, user}) {
+function ApplicationsTable({applications, user, setUpdateBeforeApplicationId}) {
 
     return (
         <Table responsive striped hover className="mb-4">
