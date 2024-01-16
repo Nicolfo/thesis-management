@@ -1,9 +1,16 @@
 package it.polito.se2.g04.thesismanagement;
 
+import it.polito.se2.g04.thesismanagement.application.Application;
+import it.polito.se2.g04.thesismanagement.application.ApplicationRepository;
+import it.polito.se2.g04.thesismanagement.application.ApplicationStatus;
+import it.polito.se2.g04.thesismanagement.degree.Degree;
+import it.polito.se2.g04.thesismanagement.degree.DegreeRepository;
 import it.polito.se2.g04.thesismanagement.proposal.Proposal;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalFullDTO;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalRepository;
 import it.polito.se2.g04.thesismanagement.proposal.ProposalService;
+import it.polito.se2.g04.thesismanagement.student.Student;
+import it.polito.se2.g04.thesismanagement.student.StudentRepository;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -41,9 +48,14 @@ class ArchiveProposalTest {
     private TeacherRepository teacherRepository;
     @Autowired
     private ProposalService proposalService;
-
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private DegreeRepository degreeRepository;
+    @Autowired
+    private ApplicationRepository applicationRepository;
 
     @AfterAll
     public void CleanUp(){
@@ -84,6 +96,15 @@ class ArchiveProposalTest {
         proposal2.setLevel("level");
         proposal2.setCds("cds");
         proposalRepository.save(proposal2);
+        Degree degree = new Degree("ingegneria informatica");
+        degreeRepository.save(degree);
+        Student student1 = new Student("rossi", "marco", "male", "ita", "m.rossi@example.com", degree, 2020);
+        Student student2 = new Student("viola", "marta", "female", "ita", "m.viola@example.com", degree, 2018);
+        studentRepository.saveAll(List.of(student2, student1));
+        Application application1 = new Application(student1, null, null, proposal);
+        applicationRepository.save(application1);
+        Application application2 = new Application(student2, null, null, proposal);
+        applicationRepository.save(application2);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/{id}",proposal.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -92,6 +113,10 @@ class ArchiveProposalTest {
         List<ProposalFullDTO> proposalOutput=proposalService.getAllNotArchivedProposals();
         assertEquals(1, proposalOutput.size(), "proposalOutput should be 1 long");
         assertEquals(Proposal.Status.ARCHIVED, proposalRepository.getReferenceById(proposal.getId()).getStatus(), "proposalOutput should be tagged to archive");
+
+        List<Application> applicationOutput = applicationRepository.findAll();
+        assertEquals(ApplicationStatus.CANCELLED, applicationOutput.get(0).getStatus(), "applicationOutput should be tagged to deletion");
+        assertEquals(ApplicationStatus.CANCELLED, applicationOutput.get(1).getStatus(), "applicationOutput should be tagged to deletion");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/API/proposal/archive/{id}",proposal2.getId())
                         .contentType(MediaType.APPLICATION_JSON))
