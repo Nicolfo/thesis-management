@@ -47,7 +47,7 @@ function BrowseDecisionsOnRequest(props) {
 
                     <Table>
                         <tbody>
-                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application}/>)}
+                        {proposalOnRequest.map((application) => <TableRow key={application.id} application={application} proposalOnRequest={proposalOnRequest} navigate={navigate}/>)}
                         </tbody>
                     </Table>
 
