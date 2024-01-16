@@ -111,7 +111,7 @@ public class EmailServiceImpl implements EmailService {
     public void notifyCoSupervisorsOfNewThesisRequest(ProposalOnRequest request) {
         String emailText = EmailConstants.HTML_LINE_BREAK +
                 "A new proposal on request has been received with the title \"" + request.getTitle() + EmailConstants.CO_SUPERVISOR_ASSIGNED + EmailConstants.HTML_LINE_BREAK +
-                "Log in to the Thesis Management Portal to see further details and to accept or reject the proposal on request.";
+                "Log in to the Thesis Management Portal to see further details.";
 
         for (Teacher teacher : request.getCoSupervisors()) {
             createNewNotification(teacher.getEmail(), "A new proposal on request has been received", "A new proposal on request has been received", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText, EmailConstants.HTML_ADD_ICON);
