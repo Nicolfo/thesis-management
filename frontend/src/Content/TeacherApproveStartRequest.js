@@ -15,6 +15,8 @@ function TeacherApproveStartRequestContent({ user }) {
         navigate("/notAuthorized");
 
     const [requestList, setRequestList] = useState([]);
+    const [notPendingRequestList, setNotPendingRequestList] = useState([]);
+    const [coSupervisedRequestList, setCoSupervisedRequestList] = useState([]);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [operation, setOperation] = useState("");
     const [showModal, setShowModal] = useState(false);
@@ -30,6 +32,8 @@ function TeacherApproveStartRequestContent({ user }) {
                         // Refresh list
                         const list = await API.getAcceptedProposalOnRequestsByTeacher(token);
                         setRequestList(list);
+                        const notPendingList = await API.getNotPendingProposalOnRequestsByTeacher(token);
+                        setNotPendingRequestList(notPendingList);
                         return "Thesis request successfully accepted.";
                     })(),
                     {
@@ -53,6 +57,8 @@ function TeacherApproveStartRequestContent({ user }) {
                         // Refresh list
                         const list = await API.getAcceptedProposalOnRequestsByTeacher(token);
                         setRequestList(list);
+                        const notPendingList = await API.getNotPendingProposalOnRequestsByTeacher(token);
+                        setNotPendingRequestList(notPendingList);
                         return "Thesis request successfully rejected.";
                     })(),
                     {
@@ -76,6 +82,8 @@ function TeacherApproveStartRequestContent({ user }) {
                         // Refresh list
                         const list = await API.getAcceptedProposalOnRequestsByTeacher(token);
                         setRequestList(list);
+                        const notPendingList = await API.getNotPendingProposalOnRequestsByTeacher(token);
+                        setNotPendingRequestList(notPendingList);
                         return "Thesis change successfully requested.";
                     })(),
                     {
@@ -109,15 +117,19 @@ function TeacherApproveStartRequestContent({ user }) {
         const getResources = async () => {
             const list = await API.getAcceptedProposalOnRequestsByTeacher(token);
             setRequestList(list);
+            const notPendingList = await API.getNotPendingProposalOnRequestsByTeacher(token);
+            setNotPendingRequestList(notPendingList);
+            const coSupervisedList = await API.getProposalOnRequestsByCoSupervisor(token);
+            setCoSupervisedRequestList(coSupervisedList);
         };
         getResources();
     }, []);
 
     return (
         <>
-            <Card>
+            <Card className="mb-2">
                 <Card.Header>
-                    <h1 className="my-3" style={{ "textAlign": "center" }}>Student thesis requests</h1>
+                    <h1 className="my-3" style={{ "textAlign": "center" }}>Pending supervised thesis start requests</h1>
                 </Card.Header>
                 {requestList.length > 0 ?
                     <Card.Body>
@@ -125,7 +137,33 @@ function TeacherApproveStartRequestContent({ user }) {
                         {selectedRequest && <OperationModal show={showModal} setShow={setShowModal} selectedRequest={selectedRequest} setSelectedRequest={setSelectedRequest} operation={operation} onConfirm={onConfirm} changeDescription={changeDescription} setChangeDescription={setChangeDescription} />}
                     </Card.Body>
                     : <Card.Body style={{ "textAlign": "center" }} className="mt-4">
-                        <strong>You have no student thesis requests yet</strong>
+                        <strong className="mb-1">You have no pending thesis start requests.</strong>
+                    </Card.Body>}
+            </Card>
+
+            <Card className="mb-2">
+                <Card.Header>
+                    <h1 className="my-3" style={{ "textAlign": "center" }}>Co-supervised thesis start requests</h1>
+                </Card.Header>
+                {coSupervisedRequestList.length > 0 ?
+                    <Card.Body>
+                        {coSupervisedRequestList.map(r => <NoActionRequestEntry key={r.id} request={r} />)}
+                    </Card.Body>
+                    : <Card.Body style={{ "textAlign": "center" }} className="mt-4">
+                        <strong className="mb-1">You have no co-supervised thesis start requests.</strong>
+                    </Card.Body>}
+            </Card>
+
+            <Card>
+                <Card.Header>
+                    <h1 className="my-3" style={{ "textAlign": "center" }}>Past supervised thesis start requests</h1>
+                </Card.Header>
+                {notPendingRequestList.length > 0 ?
+                    <Card.Body>
+                        {notPendingRequestList.map(r => <NoActionRequestEntry key={r.id} request={r} />)}
+                    </Card.Body>
+                    : <Card.Body style={{ "textAlign": "center" }} className="mt-4">
+                        <strong className="mb-1">You have no past thesis start requests.</strong>
                     </Card.Body>}
             </Card>
 
@@ -175,6 +213,28 @@ function RequestEntry({ request, setSelectedRequest, setOperation, setShowModal 
                         <Button variant="info me-2" onClick={startRequestChange}>Request Change</Button>
                         <Button variant="danger" onClick={startReject}>Reject</Button>
                     </Col>
+                </Row>
+            </Container>
+        </Card>
+    );
+}
+
+function NoActionRequestEntry({ request }) {
+    return (
+        <Card className="mb-3">
+            <Card.Header className="text-start pe-3">{request.title}</Card.Header>
+            <Container className="p-3">
+                <Row>
+                    <Col xs={4}><strong>Student </strong><br />{request.student.name} {request.student.surname}</Col>
+                    <Col xs={8}><strong>Co-Supervisors </strong><br />{request.coSupervisors.length > 0 ? request.coSupervisors.map(t => `${t.name} ${t.surname}`).join(", ") : "None"}</Col>
+                </Row>
+                <Row>
+                    <Col><strong>Description</strong><br />{request.description}</Col>
+                </Row>
+                <Row className="mt-2">
+                    <Col>{ request.status === "TEACHER_ACCEPTED" && <strong>Status: ACCEPTED</strong> }
+                    { request.status === "TEACHER_REJECTED" && <strong>Status: REJECTED</strong> }
+                    { request.status === "TEACHER_REVIEW" && <strong>Status: TO CHANGE</strong> }</Col>
                 </Row>
             </Container>
         </Card>

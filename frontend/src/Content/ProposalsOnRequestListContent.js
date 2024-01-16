@@ -182,6 +182,12 @@ function ProposalAccordion({proposal, setAccept, setReject, setShowWarning, setU
         setIsAccordionOpen(!isAccordionOpen);
     }
 
+    const [truncated, setTruncated] = useState(true);
+
+    const showFullText = () => {
+        setTruncated(false);
+    };
+
     return (
         <Card id={proposal.id} className="m-2">
             <Card.Header>
@@ -201,23 +207,34 @@ function ProposalAccordion({proposal, setAccept, setReject, setShowWarning, setU
             </Card.Header>
             <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                 <Card.Body>
-                    <Row>
-                        <Col><strong>Supervisor</strong><br/>{proposal.supervisor.surname + " " + proposal.supervisor.name}</Col>
+                    <Row className="mb-4">
+                        <Col md={4}>
+                            <FontAwesomeIcon icon="fa-solid fa-user" className="me-2"/>
+                            <em>Supervisor: </em>{proposal.supervisor.surname} {proposal.supervisor.name}
+                        </Col>
                         {proposal.coSupervisors && proposal.coSupervisors.length > 0 &&
-                            <Col
-                                md="9"><strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
+                            <Col md={4}>
+                                <FontAwesomeIcon icon="fa-solid fa-users" className="me-2"/>
+                                <em>Co-supervisors:</em> {proposal.coSupervisors.length > 0 && <>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</>}
                             </Col>
                         }
-                    </Row>
-                    <Row>
-                        <Col><strong>Student</strong><br/>{proposal.student.surname + " " + proposal.student.name}</Col>
-                        {proposal.approvalDate && <Col><strong>Approval date</strong><br/>{dayjs(proposal.approvalDate).format("DD/MM/YYYY")}</Col>}
-                    </Row>
-                    <hr className="me-4"/>
-                    <Row>
-                        <Col>
-                            {proposal.description}
+                        <Col md={4}>
+                            <FontAwesomeIcon icon="fa-solid fa-user" className="me-2"/>
+                            <em>Student: </em> {proposal.student.surname + " " + proposal.student.name}
                         </Col>
+                    </Row>
+                    <Row>
+                            <Col>
+                                {truncated ? (
+                                    <>
+                                        {proposal.description.length > 200 ? <Card.Text onClick={showFullText}>{proposal.description.slice(0, 200)}...<span style={{ color: '#FC7A08', cursor: 'pointer' }}>See more</span></Card.Text> : proposal.description}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Card.Text onClick={() => setTruncated(true)}>{proposal.description} <span style={{ color: '#FC7A08', cursor: 'pointer' }}>See less</span></Card.Text>
+                                    </>
+                                )}
+                            </Col>
                     </Row>
                 </Card.Body>
             </Accordion.Collapse>
