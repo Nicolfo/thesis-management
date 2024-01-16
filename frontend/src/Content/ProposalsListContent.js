@@ -369,7 +369,7 @@ function ProposalEntry({proposal, disableButtons}) {
                                 </>
                             ) : (
                                 <>
-                                    <Card.Text onClick={() => setTruncated(true)}>{proposal.description} <span style={{ color: '#FC7A08', cursor: 'pointer' }}>See less</span></Card.Text>
+                                    <Card.Text onClick={() => setTruncated(true)} className="cursor-pointer">{proposal.description} <span style={{ color: '#FC7A08' }}>See less</span></Card.Text>
                                 </>
                             )}
                         </Col>
