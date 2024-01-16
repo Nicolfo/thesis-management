@@ -34,6 +34,8 @@ function ProposalsListContent({user, applicationDate}) {
     const [notes, setNotes] = useState("");
     const [proposalsList, setProposalsList] = useState([]);
     const [error, setError] = useState("");
+    const [disableButtons, setDisableButtons] = useState(false);
+
 
 
     const clearFields = () => {
@@ -74,6 +76,9 @@ function ProposalsListContent({user, applicationDate}) {
                 const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                     const application = await API.getApplicationsByProposalId(user.token, proposal.id);
                     const hasApplication = application.length > 0 ? 1 : 0;
+                    if(hasApplication) {
+                        setDisableButtons(true);
+                    }
                     return {
                         ...proposal,
                         hasApplication: hasApplication,
@@ -87,6 +92,7 @@ function ProposalsListContent({user, applicationDate}) {
         };
 
         getResources();
+        setDisableButtons(false);
     }, [user]);
 
 
@@ -111,6 +117,9 @@ function ProposalsListContent({user, applicationDate}) {
             const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                 const application = await API.getApplicationsByProposalId(user.token, proposal.id);
                 const hasApplication = application.length > 0 ? 1 : 0;
+                if(hasApplication) {
+                    setDisableButtons(true);
+                }
                 return {
                     ...proposal,
                     hasApplication: hasApplication,
@@ -145,6 +154,9 @@ function ProposalsListContent({user, applicationDate}) {
             const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                 const application = await API.getApplicationsByProposalId(user.token, proposal.id);
                 const hasApplication = application.length > 0 ? 1 : 0;
+                if(hasApplication) {
+                    setDisableButtons(true);
+                }
                 return {
                     ...proposal,
                     hasApplication: hasApplication,
@@ -271,7 +283,7 @@ function ProposalsListContent({user, applicationDate}) {
             <Card className="mt-3">
                 <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
                 { proposalsList.length > 0 ? <Card.Body><ProposalsList proposals={proposalsList} user={user}
-                                          applicationDate={applicationDate}/></Card.Body>
+                                          applicationDate={applicationDate} disableButtons={disableButtons}/></Card.Body>
                     : <Card.Body style={{"textAlign": "center"}} className="mt-4">
                         <strong>You have no proposals yet</strong>
                     </Card.Body>}
@@ -280,16 +292,16 @@ function ProposalsListContent({user, applicationDate}) {
     );
 }
 
-function ProposalsList({proposals, user, applicationDate}) {
+function ProposalsList({proposals, user, applicationDate, disableButtons}) {
     return (
         <Accordion defaultActiveKey="0">
             {proposals.filter(proposal => dayjs(proposal.expiration).isAfter(applicationDate)).map(proposal =>
-                <ProposalEntry key={proposal.id} proposal={proposal} user={user}/>)}
+                <ProposalEntry key={proposal.id} proposal={proposal} user={user} disableButtons={disableButtons}/>)}
         </Accordion>
     )
 }
 
-function ProposalEntry({proposal}) {
+function ProposalEntry({proposal, disableButtons}) {
     const navigate = useNavigate();
 
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
@@ -312,7 +324,7 @@ function ProposalEntry({proposal}) {
                     <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
                         {proposal.hasApplication ? <Button disabled={true}>
                             <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
-                        </Button> : <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
+                        </Button> : <Button disabled={disableButtons} onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
                             <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
                         </Button>
                         }
