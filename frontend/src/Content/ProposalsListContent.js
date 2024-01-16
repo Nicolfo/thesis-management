@@ -344,14 +344,15 @@ function ProposalEntry({proposal, disableButtons}) {
                             <FontAwesomeIcon icon="fa-solid fa-calendar-days"/> <em>Expiration date: </em>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
                         </Col>
                         <Col md={4}>
-                            <FontAwesomeIcon icon="fa-solid fa-users"/> <em>Supervisor: </em>{proposal.supervisor.surname} {proposal.supervisor.name}
+                            <FontAwesomeIcon icon="fa-solid fa-user"/> <em>Supervisor: </em>{proposal.supervisor.surname} {proposal.supervisor.name}
                         </Col>
                         <Col md={4}>
                             {proposal.type &&
                                 <Col md={6}>
                                     <em>Type: </em>{proposal.type}
                                 </Col>
-                            }                        </Col>
+                            }
+                        </Col>
                     </Row>
                     <Row className="mt-4 mb-2">
                         <Col>
