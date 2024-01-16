@@ -405,5 +405,18 @@ class ProposalOnRequestTest {
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
+    void getNonPendingRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getByTeacherNotPending")).andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @Rollback
+    @WithMockUser(username = "m.potenza@example.com", roles = {"TEACHER"})
+    void getCoSupervisorProposalOnRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/API/proposalOnRequest/getByCoSupervisor")).andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
 }
