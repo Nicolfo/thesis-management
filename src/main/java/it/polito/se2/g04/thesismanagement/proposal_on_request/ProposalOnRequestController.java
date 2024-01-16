@@ -120,6 +120,16 @@ public class ProposalOnRequestController {
         return proposalOnRequestService.getPendingRequestsByTeacher(t.getId());
     }
 
+    @GetMapping("/API/proposalOnRequest/getByTeacherNotPending")
+    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProposalOnRequestFullDTO> getNotPendingRequestsByTeacher() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        TeacherDTO t = teacherService.getByEmail(username);
+        return proposalOnRequestService.getNotPendingRequestsByTeacher(t.getId());
+    }
+
     @GetMapping("/API/proposalOnRequest/getByStudent")
     @PreAuthorize("isAuthenticated() && hasRole('STUDENT')")
     public List<ProposalOnRequestFullDTO> getAllByStudent() {

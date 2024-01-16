@@ -10,6 +10,8 @@ public interface ProposalOnRequestRepository extends JpaRepository<ProposalOnReq
     public boolean existsProposalOnRequestByStudentIdAndStatusNotIn(Long studentId, Collection<ProposalOnRequest.Status> status);
     public List<ProposalOnRequest> getProposalOnRequestsBySupervisorIdAndStatus(Long id,ProposalOnRequest.Status status);
 
+    List<ProposalOnRequest> getProposalOnRequestsBySupervisorIdAndStatusIn(Long id, List<ProposalOnRequest.Status> statuses);
+
     public List<ProposalOnRequest> getProposalOnRequestsByStudentEmail(String email);
 
 }
