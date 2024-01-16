@@ -41,7 +41,6 @@ function BrowseArchivedProposals({user, applicationDate, setArchivedView}) {
     const [deletingID, setDeletingID] = useState();
 
     function deleteProp(proposalId) {
-
         setDeleting(true);
         setDeletingID(proposalId)
     }
@@ -280,6 +279,13 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
     function toggleAccordion() {
         setIsAccordionOpen(!isAccordionOpen);
     }
+    const [truncated, setTruncated] = useState(true);
+
+    const showFullText = () => {
+        setTruncated(false);
+    };
+
+
 
     return (
         <Card id={proposal.id} className="m-2">
@@ -290,8 +296,8 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
                         <DropdownButton id="dropdown-item-button"
                                         title={
                                             <div className="d-flex align-items-center">
-                                                <FontAwesomeIcon icon="fa-solid fa-list-ul" className="me-2"/>
-                                                <span className="d-none d-md-table-cell" style={{height: 25}}> Options </span>
+                                                <FontAwesomeIcon icon="fa-solid fa-list-ul"/>
+                                                <span className="d-none d-md-table-cell ms-2"> Options </span>
                                             </div>
                                         }
                                         className="me-2"
@@ -329,71 +335,28 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
             </Card.Header>
             <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                 <Card.Body>
-                    <Row>
-                        {proposal.level &&
-                            <Col md="2" style={{marginTop: "0.5rem"}}>
-                                <strong>Level</strong><br/>{proposal.level}
-                            </Col>
-                        }
-                        <Col md="4" style={{marginTop: "0.5rem"}}>
-                            <strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
-                        </Col>
-                        {proposal.groups && proposal.groups.length > 0 &&
-                            <Col style={{marginTop: "0.5rem"}}>
-                                <strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}
-                            </Col>
-                        }
-                    </Row>
-                    <Row>
-                        {proposal.type &&
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Type</strong><br/>{proposal.type}
-                            </Col>
-                        }
-                        {proposal.cds &&
-                            <Col style={{marginTop: "0.5rem"}}>
-                                <strong>CdS</strong><br/>{proposal.cds}
-                            </Col>
-                        }
-                    </Row>
-                    <Row>
-                        {proposal.keywords &&
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Keywords</strong><br/>{proposal.keywords}
-                            </Col>
-                        }
-                        {proposal.requiredKnowledge.length > 0 ?
-                            <Col style={{marginTop: "0.5rem"}}>
-                                <strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}
-                            </Col>
-                            :
-                            proposal.notes &&
-                                <Col md="6" style={{marginTop: "0.5rem"}}>
-                                    <strong>Notes</strong><br/><i>{proposal.notes}</i>
-                                </Col>
-
-                        }
-                    </Row>
-                    <Row>
-                        {proposal.coSupervisors.length > 0 ?
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
-                            </Col>
-                            :
-                            <Col md="6"></Col>
-                        }
-                        {proposal.notes && proposal.requiredKnowledge.length > 0 &&
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Notes</strong><br/><i>{proposal.notes}</i>
-                            </Col>
-                        }
-                    </Row>
-                    <hr className="me-4"/>
-                    <Row style={{marginBottom: "0.5rem"}}>
                         <Col>
-                            {proposal.description}
+                            <FontAwesomeIcon icon="fa-solid fa-calendar-days"/> <em>Expiration date: </em>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
+                        </Col>
+
+                    <Row className="mt-4 mb-2">
+                        <Col>
+                            {truncated ? (
+                                <>
+                                    {proposal.description.length > 200 ? <Card.Text onClick={showFullText}>{proposal.description.slice(0, 200)}...<span style={{ color: '#FC7A08', cursor: 'pointer' }}>See more</span></Card.Text> : proposal.description}
+                                </>
+                            ) : (
+                                <>
+                                    <Card.Text onClick={() => setTruncated(true)}>{proposal.description} <span style={{ color: '#FC7A08', cursor: 'pointer' }}>See less</span></Card.Text>
+                                </>
+                            )}
                         </Col>
                     </Row>
+                    <div className="d-flex align-items-end">
+                        <Button className="ms-auto my-2" onClick={() => navigate(`/proposal/view/${proposal.id}`)}>
+                            Detailed Info <FontAwesomeIcon className="ms-1 pt-1" icon={"chevron-right"}/>
+                        </Button>
+                    </div>
                 </Card.Body>
             </Accordion.Collapse>
         </Card>

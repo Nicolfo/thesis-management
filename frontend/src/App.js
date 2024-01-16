@@ -147,7 +147,7 @@ function App() {
 
                     <Route path="/teacher/proposals"
                            element={<BrowseProposalsContent user={user} applicationDate={applicationDate}/>}/>
-                    <Route path="/teacher/proposal/view/:id"
+                    <Route path="/proposal/view/:proposalId"
                            element={<ProposalViewLayout user={user}/>}/>
 
                     <Route path="/teacher/proposals/archived"

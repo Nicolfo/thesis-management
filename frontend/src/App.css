@@ -197,6 +197,12 @@ h2 {
   --bs-card-spacer-y: 0.3rem !important;
 }
 
+.inner-card {
+  transform: scale(1.03);
+  transition: transform 0.3s ease;
+}
+
+
 .list-elem-title {
   cursor: pointer;
 }

@@ -59,13 +59,13 @@ public class ProposalController {
     }
 
     @GetMapping("/API/proposal/getProposalById/{proposalId}")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @PreAuthorize("isAuthenticated() && (hasRole('TEACHER') || hasRole('STUDENT'))")
     @ResponseStatus(HttpStatus.OK)
     public ProposalFullDTO getProposalById(@PathVariable Long proposalId) {
         return proposalService.getProposalById(proposalId);
     }
     @GetMapping("/API/proposal/getProposalById/")
-    @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")
+    @PreAuthorize("isAuthenticated() && (hasRole('TEACHER') || hasRole('STUDENT'))")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalFullDTO getProposalWithNoID() {
         throw new getProposalWithNoId("you need to specify an ID");
