@@ -16,7 +16,7 @@ function NavBar(props) {
     const [date,setDate]=useState(props.applicationDate.format('YYYY-MM-DD'));
     const [unreadNotifications, setUnreadNotifications] = useState(0);
 
-    const getNotificationsIntervalMs = 30000;
+    const getNotificationsIntervalMs = 5000;
     const [proposalsOnRequest, setProposalsOnRequest] = useState([]);
 
     const path = useLocation().pathname;
@@ -49,7 +49,8 @@ function NavBar(props) {
     useEffect(() => {
         const getNotifications = async () => {
             try {
-                const unread = await API.getUnreadNotificationsCount(props.user.token);
+
+                const unread = await API.getUnreadNotificationsCount(token);
                 setUnreadNotifications(unread);
             } catch (e) {
                 console.log(e);

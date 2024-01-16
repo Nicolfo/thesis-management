@@ -200,6 +200,7 @@ h2 {
 .card .card:hover {
   transform: scale(1.02);
   transition: transform 0.3s ease;
+  z-index: 1;
 }
 
 .list-elem-title {
