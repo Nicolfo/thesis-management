@@ -6,7 +6,7 @@ import {
     Col,
     Accordion,
     Offcanvas,
-    Alert
+    Alert, Tooltip, OverlayTrigger
 } from "react-bootstrap";
 import API from "../API/Api";
 import {useState, useEffect, useContext} from "react";
@@ -321,11 +321,18 @@ function ProposalEntry({proposal, disableButtons}) {
                 <Row className="p-2 align-items-center">
                     <Col md={10} onClick={toggleAccordion}><strong>{proposal.title}</strong></Col>
                     <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
-                        {proposal.hasApplication ? <Button disabled={true}>
-                            <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
-                        </Button> : <Button disabled={disableButtons} onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
-                            <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
-                        </Button>
+                        {proposal.hasApplication ?
+                            <Button disabled={true}>
+                                <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
+                            </Button>
+                            :
+                            <OverlayTrigger overlay={disableButtons ? <Tooltip id="tooltip-disabled">Unable to apply because you have already applied to another proposal!</Tooltip> : <></>} placement="left">
+                                <span className="d-inline-block">
+                                    <Button disabled={disableButtons} onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
+                                        <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
+                                    </Button>
+                                </span>
+                            </OverlayTrigger>
                         }
 
                         <Button onClick={toggleAccordion}>
