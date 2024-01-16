@@ -289,7 +289,7 @@ function StartRequest(props) {
                             :
                             !props.sent && proposalOnRequestId ?
                                 <>
-                                    <Button style={{marginBottom: "1rem", marginTop: "1rem"}} variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                    <Button style={{marginBottom: "1rem", marginTop: "1rem"}} variant="outline-dark" onClick={() => navigate('/browseDecisionsOnRequest')}>
                                         <FontAwesomeIcon icon={"chevron-left"}/> Go back
                                     </Button>
 
@@ -300,7 +300,7 @@ function StartRequest(props) {
                                 :
                                 !props.sent && applicationId ?
                                     <>
-                                        <Button style={{marginBottom: "1rem", marginTop: "1rem"}} variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                        <Button style={{marginBottom: "1rem", marginTop: "1rem"}} variant="outline-dark" onClick={() => navigate('/browseDecisionsOnRequest')}>
                                             <FontAwesomeIcon icon={"chevron-left"}/> Go back
                                         </Button>
 
@@ -309,7 +309,7 @@ function StartRequest(props) {
                                         </Button>
                                     </>
                                     :
-                                    <Button variant="outline-dark" onClick={() => navigate('/browseDecisions')}>
+                                    <Button variant="outline-dark" onClick={() => navigate('/browseDecisionsOnRequest')}>
                                         <FontAwesomeIcon icon={"chevron-left"}/> Go back
                                     </Button>
                         }

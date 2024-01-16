@@ -141,7 +141,7 @@ function TeacherApproveStartRequestContent({ user }) {
                     </Card.Body>}
             </Card>
 
-            <Card className="mb-2">
+            <Card className="mb-2" style={{marginTop: "5rem", marginBottom: "2rem"}}>
                 <Card.Header>
                     <h1 className="my-3" style={{ "textAlign": "center" }}>Co-supervised thesis start requests</h1>
                 </Card.Header>
@@ -154,7 +154,7 @@ function TeacherApproveStartRequestContent({ user }) {
                     </Card.Body>}
             </Card>
 
-            <Card>
+            <Card style={{marginTop: "5rem", marginBottom: "2rem"}}>
                 <Card.Header>
                     <h1 className="my-3" style={{ "textAlign": "center" }}>Past supervised thesis start requests</h1>
                 </Card.Header>
