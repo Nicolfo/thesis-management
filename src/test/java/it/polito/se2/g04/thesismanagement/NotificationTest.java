@@ -126,6 +126,7 @@ class NotificationTest {
         applicationRepository.save(application1);
         applicationRepository.save(application2);
         applicationRepository.save(application3);
+        notificationRepository.deleteAll();
     }
 
     @AfterAll
@@ -136,7 +137,7 @@ class NotificationTest {
         studentRepository.deleteAll();
         groupRepository.deleteAll();
         departmentRepository.deleteAll();
-
+        notificationRepository.deleteAll();
     }
 
 
