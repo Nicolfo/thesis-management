@@ -45,7 +45,7 @@ export function BrowseDecisions(props) {
 
                 <Table>
                     <tbody>
-                    {applications.map((application) => <TableRow key={application.id} application={application}/>)}
+                    {applications.map((application) => <TableRow key={application.id} application={application} navigate={navigate}/>)}
                     </tbody>
                 </Table>
 
@@ -74,7 +74,7 @@ export function TableRow(props) {
             return (
                 <>
                     <Badge bg="success"> ✓ ACCEPTED </Badge>
-                    { proposalOnRequest.length === 0 &&
+                    {!proposalOnRequest &&
                         <Button size="sm" style={{marginLeft: "2rem", borderRadius: 10}} onClick={() => navigate(`/startRequestFromApplication/${application.id}`)}>
                             <FontAwesomeIcon icon="fa-solid fa-chevron-right" /> Start request
                         </Button>
