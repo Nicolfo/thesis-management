@@ -232,7 +232,9 @@ function NoActionRequestEntry({ request }) {
                     <Col><strong>Description</strong><br />{request.description}</Col>
                 </Row>
                 <Row className="mt-2">
-                    <Col>{ request.status === "TEACHER_ACCEPTED" && <strong>Status: ACCEPTED</strong> }
+                    <Col>
+                    { request.status === "SECRETARY_ACCEPTED" && <strong>Status: PENDING</strong> }
+                    { request.status === "TEACHER_ACCEPTED" && <strong>Status: ACCEPTED</strong> }
                     { request.status === "TEACHER_REJECTED" && <strong>Status: REJECTED</strong> }
                     { request.status === "TEACHER_REVIEW" && <strong>Status: TO CHANGE</strong> }</Col>
                 </Row>

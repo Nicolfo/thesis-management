@@ -12,7 +12,7 @@ public interface ProposalOnRequestRepository extends JpaRepository<ProposalOnReq
     public List<ProposalOnRequest> getProposalOnRequestsBySupervisorIdAndStatus(Long id,ProposalOnRequest.Status status);
 
     List<ProposalOnRequest> getProposalOnRequestsBySupervisorIdAndStatusIn(Long id, List<ProposalOnRequest.Status> statuses);
-    List<ProposalOnRequest> getProposalOnRequestByCoSupervisorsId(Long coSupervisorId);
+    List<ProposalOnRequest> getProposalOnRequestByCoSupervisorsIdAndStatusIn(Long coSupervisorId, List<ProposalOnRequest.Status> statuses);
     public List<ProposalOnRequest> getProposalOnRequestsByStudentEmail(String email);
 
 }
