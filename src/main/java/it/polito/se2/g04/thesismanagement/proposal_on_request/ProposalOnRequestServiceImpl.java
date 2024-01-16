@@ -176,6 +176,11 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
     }
 
     @Override
+    public List<ProposalOnRequestFullDTO> getRequestsByCoSupervisor(Long coSupervisorId) {
+        return proposalOnRequestRepository.getProposalOnRequestByCoSupervisorsId(coSupervisorId).stream().map(ProposalOnRequest::toFullDTO).toList();
+    }
+
+    @Override
     public List<ProposalOnRequestFullDTO> getProposalOnRequestByStudent(String studentMail) {
         return proposalOnRequestRepository.getProposalOnRequestsByStudentEmail(studentMail).stream().map(ProposalOnRequest::toFullDTO).toList();
     }
