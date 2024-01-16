@@ -1,5 +1,6 @@
 package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
+import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
@@ -11,7 +12,7 @@ public interface ProposalOnRequestRepository extends JpaRepository<ProposalOnReq
     public List<ProposalOnRequest> getProposalOnRequestsBySupervisorIdAndStatus(Long id,ProposalOnRequest.Status status);
 
     List<ProposalOnRequest> getProposalOnRequestsBySupervisorIdAndStatusIn(Long id, List<ProposalOnRequest.Status> statuses);
-
+    List<ProposalOnRequest> getProposalOnRequestByCoSupervisorsIdAndStatusIn(Long coSupervisorId, List<ProposalOnRequest.Status> statuses);
     public List<ProposalOnRequest> getProposalOnRequestsByStudentEmail(String email);
 
 }

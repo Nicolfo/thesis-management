@@ -30,6 +30,7 @@ function StartRequest(props) {
     const [isValidDescription, setIsValidDescription] = useState(true);
     const [isValidSupervisor, setIsValidSupervisor] = useState(true);
     const [validated, setValidated] = useState(false);
+    const [showAlert, setShowAlert] = useState(true);
 
 
     const getAllTeachers = async () => {
@@ -104,6 +105,7 @@ function StartRequest(props) {
                 else
                     await API.startRequest(request, props.user.token);
                 props.setSent(true);
+                setShowAlert(false);
                 clearFields();
                 return "Thesis request successfully sent";
             })(),
@@ -168,7 +170,7 @@ function StartRequest(props) {
 
                     <Card.Body>
                         {/* REQUESTED CHANGE */}
-                        { proposalOnRequestId &&
+                        { proposalOnRequestId && showAlert &&
                             <Row style={{marginTop: "1rem", marginLeft: "0.5rem", marginRight: "0.5rem"}}>
                                 <Alert variant="warning">
                                     <Alert.Heading as="h2">The supervisor {selectedSupervisor.label} requested the following change:</Alert.Heading>
