@@ -72,7 +72,7 @@ function BrowseApplicationsContent(props) {
                             <Card.Body key={e[0].id}>
                                 <Accordion defaultActiveKey="0">
                                     <Card className="mx-md-5">
-                                        <Card.Header onClick={() => toggleAccordion(e[0].id)}>
+                                        <Card.Header onClick={() => toggleAccordion(e[0].id)} className="cursor-pointer">
                                             <Row className="p-2 align-items-center ">
                                                 <Col className="d-flex justify-content-start">
                                                     <strong>{e[0].proposalTitle}</strong>

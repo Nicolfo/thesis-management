@@ -291,7 +291,7 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
         <Card id={proposal.id} className="m-2">
             <Card.Header>
                 <Row className="p-2 align-items-center">
-                    <Col md={10} onClick={toggleAccordion}><strong>{proposal.title}</strong></Col>
+                    <Col md={10} onClick={toggleAccordion} className="cursor-pointer"><strong>{proposal.title}</strong></Col>
                     <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
                         <DropdownButton id="dropdown-item-button"
                                         title={
@@ -343,7 +343,7 @@ function ProposalEntry({proposal, deleteProp, setArchivedView}) {
                         <Col>
                             {truncated ? (
                                 <>
-                                    {proposal.description.length > 200 ? <Card.Text onClick={showFullText}>{proposal.description.slice(0, 200)}...<span style={{ color: '#FC7A08', cursor: 'pointer' }}>See more</span></Card.Text> : proposal.description}
+                                    {proposal.description.length > 200 ? <Card.Text onClick={showFullText} className="cursor-pointer">{proposal.description.slice(0, 200)}...<span style={{ color: '#FC7A08', cursor: 'pointer' }}>See more</span></Card.Text> : proposal.description}
                                 </>
                             ) : (
                                 <>

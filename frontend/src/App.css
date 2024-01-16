@@ -67,6 +67,10 @@
   background-color: #FC7A08 !important;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .dateForm {
   background-color: #FC7A08  !important;
   color: aliceblue !important;
