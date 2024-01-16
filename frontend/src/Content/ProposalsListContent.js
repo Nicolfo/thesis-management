@@ -5,9 +5,7 @@ import {
     Row,
     Col,
     Accordion,
-    AccordionContext,
     Offcanvas,
-    useAccordionButton,
     Alert
 } from "react-bootstrap";
 import API from "../API/Api";
@@ -17,7 +15,6 @@ import {MultiSelect} from "react-multi-select-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import {AuthContext} from "react-oauth2-code-pkce";
-import {forEach} from "react-bootstrap/ElementChildren";
 
 function ProposalsListContent({user, applicationDate}) {
 
@@ -37,6 +34,8 @@ function ProposalsListContent({user, applicationDate}) {
     const [notes, setNotes] = useState("");
     const [proposalsList, setProposalsList] = useState([]);
     const [error, setError] = useState("");
+    const [disableButtons, setDisableButtons] = useState(false);
+
 
 
     const clearFields = () => {
@@ -77,6 +76,9 @@ function ProposalsListContent({user, applicationDate}) {
                 const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                     const application = await API.getApplicationsByProposalId(user.token, proposal.id);
                     const hasApplication = application.length > 0 ? 1 : 0;
+                    if(hasApplication) {
+                        setDisableButtons(true);
+                    }
                     return {
                         ...proposal,
                         hasApplication: hasApplication,
@@ -114,6 +116,9 @@ function ProposalsListContent({user, applicationDate}) {
             const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                 const application = await API.getApplicationsByProposalId(user.token, proposal.id);
                 const hasApplication = application.length > 0 ? 1 : 0;
+                if(hasApplication) {
+                    setDisableButtons(true);
+                }
                 return {
                     ...proposal,
                     hasApplication: hasApplication,
@@ -148,6 +153,9 @@ function ProposalsListContent({user, applicationDate}) {
             const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                 const application = await API.getApplicationsByProposalId(user.token, proposal.id);
                 const hasApplication = application.length > 0 ? 1 : 0;
+                if(hasApplication) {
+                    setDisableButtons(true);
+                }
                 return {
                     ...proposal,
                     hasApplication: hasApplication,
@@ -274,7 +282,7 @@ function ProposalsListContent({user, applicationDate}) {
             <Card className="mt-3">
                 <Card.Header><h1 className="my-3" style={{"textAlign": "center"}}>Results</h1></Card.Header>
                 { proposalsList.length > 0 ? <Card.Body><ProposalsList proposals={proposalsList} user={user}
-                                          applicationDate={applicationDate}/></Card.Body>
+                                          applicationDate={applicationDate} disableButtons={disableButtons}/></Card.Body>
                     : <Card.Body style={{"textAlign": "center"}} className="mt-4">
                         <strong>You have no proposals yet</strong>
                     </Card.Body>}
@@ -283,16 +291,16 @@ function ProposalsListContent({user, applicationDate}) {
     );
 }
 
-function ProposalsList({proposals, user, applicationDate}) {
+function ProposalsList({proposals, user, applicationDate, disableButtons}) {
     return (
         <Accordion defaultActiveKey="0">
             {proposals.filter(proposal => dayjs(proposal.expiration).isAfter(applicationDate)).map(proposal =>
-                <ProposalEntry key={proposal.id} proposal={proposal} user={user}/>)}
+                <ProposalEntry key={proposal.id} proposal={proposal} user={user} disableButtons={disableButtons}/>)}
         </Accordion>
     )
 }
 
-function ProposalEntry({proposal}) {
+function ProposalEntry({proposal, disableButtons}) {
     const navigate = useNavigate();
 
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
@@ -300,6 +308,12 @@ function ProposalEntry({proposal}) {
     function toggleAccordion() {
         setIsAccordionOpen(!isAccordionOpen);
     }
+
+    const [truncated, setTruncated] = useState(true);
+
+    const showFullText = () => {
+        setTruncated(false);
+    };
 
     return (
         <Card id={proposal.id} className="m-2">
@@ -309,7 +323,7 @@ function ProposalEntry({proposal}) {
                     <Col md={2} className="d-flex justify-content-end mt-md-0 mt-3">
                         {proposal.hasApplication ? <Button disabled={true}>
                             <><FontAwesomeIcon icon="fa-solid fa-check" className="me-2"/>Applied</>
-                        </Button> : <Button onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
+                        </Button> : <Button disabled={disableButtons} onClick={() => navigate(`/proposal/apply/${proposal.id}`)}>
                             <><FontAwesomeIcon icon="fa-file" className="me-2"/>Apply</>
                         </Button>
                         }
@@ -326,50 +340,37 @@ function ProposalEntry({proposal}) {
             <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                 <Card.Body>
                     <Row>
-                        <Col md="2" style={{marginTop: "0.5rem"}}>
-                            <strong>Supervisor</strong><br/>{proposal.supervisor.surname} {proposal.supervisor.name}
+                        <Col md={4}>
+                            <FontAwesomeIcon icon="fa-solid fa-calendar-days"/> <em>Expiration date: </em>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
                         </Col>
-                        {proposal.coSupervisors.length > 0 ?
-                            <Col md="4" style={{marginTop: "0.5rem"}}>
-                                <strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
-                            </Col>
-                            :
-                            <Col md="4"></Col>
-                        }
-                        {proposal.groups && proposal.groups.length > 0 &&
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}
-                            </Col>
-                        }
-                    </Row>
-                    <Row>
-                        {proposal.type &&
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Type</strong><br/>{proposal.type}
-                            </Col>
-                        }
-                        <Col md="6" style={{marginTop: "0.5rem"}}>
-                            <strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
+                        <Col md={4}>
+                            <FontAwesomeIcon icon="fa-solid fa-users"/> <em>Supervisor: </em>{proposal.supervisor.surname} {proposal.supervisor.name}
                         </Col>
+                        <Col md={4}>
+                            {proposal.type &&
+                                <Col md={6}>
+                                    <em>Type: </em>{proposal.type}
+                                </Col>
+                            }                        </Col>
                     </Row>
-                    <Row>
-                        {proposal.keywords &&
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Keywords</strong><br/>{proposal.keywords}
-                            </Col>
-                        }
-                        {proposal.requiredKnowledge.length > 0 &&
-                            <Col md="6" style={{marginTop: "0.5rem"}}>
-                                <strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}
-                            </Col>
-                        }
-                    </Row>
-                    <hr className="me-4"/>
-                    <Row style={{marginBottom: "0.5rem"}}>
+                    <Row className="mt-4 mb-2">
                         <Col>
-                            {proposal.description}
+                            {truncated ? (
+                                <>
+                                    {proposal.description.length > 200 ? <Card.Text onClick={showFullText}>{proposal.description.slice(0, 200)}...<span style={{ color: '#FC7A08', cursor: 'pointer' }}>See more</span></Card.Text> : proposal.description}
+                                </>
+                            ) : (
+                                <>
+                                    <Card.Text onClick={() => setTruncated(true)}>{proposal.description} <span style={{ color: '#FC7A08', cursor: 'pointer' }}>See less</span></Card.Text>
+                                </>
+                            )}
                         </Col>
                     </Row>
+                    <div className="d-flex align-items-end">
+                        <Button className="ms-auto my-2" onClick={() => navigate(`/proposal/view/${proposal.id}`)}>
+                            Detailed Info <FontAwesomeIcon className="ms-1 pt-1" icon={"chevron-right"}/>
+                        </Button>
+                    </div>
                 </Card.Body>
             </Accordion.Collapse>
         </Card>

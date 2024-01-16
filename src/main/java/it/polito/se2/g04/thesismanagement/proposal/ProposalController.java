@@ -4,6 +4,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ArchiveWithNoId;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.CreateUpdateProposalWithNoPathVariable;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.DeleteWithNoId;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.getProposalWithNoId;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
@@ -13,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.BadRequestException;
 import java.util.List;
 
 
@@ -58,7 +58,18 @@ public class ProposalController {
         return proposalService.getProposalsByProf(username);
     }
 
-
+    @GetMapping("/API/proposal/getProposalById/{proposalId}")
+    @PreAuthorize("isAuthenticated() && (hasRole('TEACHER') || hasRole('STUDENT'))")
+    @ResponseStatus(HttpStatus.OK)
+    public ProposalFullDTO getProposalById(@PathVariable Long proposalId) {
+        return proposalService.getProposalById(proposalId);
+    }
+    @GetMapping("/API/proposal/getProposalById/")
+    @PreAuthorize("isAuthenticated() && (hasRole('TEACHER') || hasRole('STUDENT'))")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ProposalFullDTO getProposalWithNoID() {
+        throw new getProposalWithNoId("you need to specify an ID");
+    }
 
     /**
      * @param proposalId The id of the proposal you want to get the title
@@ -84,8 +95,6 @@ public class ProposalController {
     public void createProposal(@RequestBody ProposalDTO proposal){
         proposalService.createProposal(proposal);
     }
-
-
 
     @PutMapping("/API/proposal/update/{id}")
     @PreAuthorize("isAuthenticated() && hasRole('TEACHER')")

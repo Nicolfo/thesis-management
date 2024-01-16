@@ -10,6 +10,7 @@ import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher
 import it.polito.se2.g04.thesismanagement.group.Group;
 import it.polito.se2.g04.thesismanagement.notification.EmailService;
 import it.polito.se2.g04.thesismanagement.teacher.Teacher;
+import it.polito.se2.g04.thesismanagement.teacher.TeacherDTO;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherRepository;
 import it.polito.se2.g04.thesismanagement.virtualclock.VirtualClockController;
 import jakarta.persistence.EntityManager;
@@ -67,6 +68,13 @@ public class ProposalServiceImpl implements ProposalService {
 
     }
 
+    @Override
+    public ProposalFullDTO getProposalById(Long proposalId) {
+        if(!proposalRepository.existsById(proposalId)){
+            throw new ProposalNotFoundException("doesn't exist a proposal associated to the id " + proposalId);
+        }
+        return ProposalFullDTO.fromProposal(proposalRepository.findById(proposalId).orElseThrow(()-> new RuntimeException("id not found")));
+    }
 
     @Override
     public List<ProposalFullDTO> getArchivedProposals(String userName) {

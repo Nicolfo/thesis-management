@@ -38,12 +38,12 @@ export default function BrowseProposalsContent(props) {
     const [archive, setArchive] = useState(false);
     const [deletingID, setDeletingID] = useState();
 
-
     useEffect(() => {
         if (props.user && !deleting)
+        if (props.user && !deleting) {
             getProposalList();
+        }
     }, [props.user, deleting, archive]);
-
 
     return (
         <>
@@ -129,6 +129,11 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
         }
     }
 
+    const [truncated, setTruncated] = useState(true);
+
+    const showFullText = () => {
+        setTruncated(false);
+    };
 
     return (
         <>
@@ -189,76 +194,28 @@ function ProposalAccordion({proposal, setDeleting, setDeletingID, user, setArchi
                 </Card.Header>
                 <Accordion.Collapse eventKey={proposal.id} flush in={isAccordionOpen}>
                     <Card.Body>
-                        <Row>
-                            {proposal.level &&
-                                <Col md="2" style={{marginTop: "0.5rem"}}>
-                                    <strong>Level</strong><br/>{proposal.level}
-                                </Col>
-                            }
-                            <Col md="4" style={{marginTop: "0.5rem"}}>
-                                <strong>Expiration</strong><br/>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
-                            </Col>
-                            {proposal.groups && proposal.groups.length > 0 &&
-                                <Col style={{marginTop: "0.5rem"}}>
-                                    <strong>Groups</strong><br/>{proposal.groups.map(g => g.name).join(", ")}
-                                </Col>
-                            }
-                        </Row>
-                        <Row>
-                            {proposal.type &&
-                                <Col md="6" style={{marginTop: "0.5rem"}}>
-                                    <strong>Type</strong><br/>{proposal.type}
-                                </Col>
-                            }
-                            {proposal.cds &&
-                                <Col style={{marginTop: "0.5rem"}}>
-                                    <strong>CdS</strong><br/>{proposal.cds}
-                                </Col>
-                            }
-                        </Row>
-                        <Row>
-                            {proposal.keywords &&
-                                <Col md="6" style={{marginTop: "0.5rem"}}>
-                                    <strong>Keywords</strong><br/>{proposal.keywords}
-                                </Col>
-                            }
-                            {proposal.requiredKnowledge.length > 0 ?
-                                <Col style={{marginTop: "0.5rem"}}>
-                                    <strong>Required Knowledge</strong><br/>{proposal.requiredKnowledge}
-                                </Col>
-                                :
-                                proposal.notes && !coSupervisor &&
-                                <Col md="6" style={{marginTop: "0.5rem"}}>
-                                    <strong>Notes</strong><br/><i>{proposal.notes}</i>
-                                </Col>
+                        <Col>
+                            <FontAwesomeIcon icon="fa-solid fa-calendar-days"/> <em>Expiration date: </em>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
+                        </Col>
 
-                            }
-                        </Row>
-                        <Row>
-                            {coSupervisor &&
-                                <Col md="2" style={{marginTop: "0.5rem"}}>
-                                    <strong>Supervisor</strong><br/>{proposal.supervisor.surname} {proposal.supervisor.name}
-                                </Col>
-                            }
-                            {proposal.coSupervisors.length > 0 ?
-                                <Col md={coSupervisor ? "4" : "6"} style={{marginTop: "0.5rem"}}>
-                                    <strong>Co-Supervisors</strong><br/>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}
-                                </Col>
-                                :
-                                <Col md={coSupervisor ? "4" : "6"}></Col>
-                            }
-                            {proposal.notes && proposal.requiredKnowledge.length > 0  && !coSupervisor &&
-                                <Col md="6" style={{marginTop: "0.5rem"}}>
-                                    <strong>Notes</strong><br/><i>{proposal.notes}</i>
-                                </Col>
-                            }
-                        </Row>
-                        <hr className="me-4"/>
-                        <Row style={{marginBottom: "0.5rem"}}>
+                        <Row className="mt-4 mb-2">
                             <Col>
-                                {proposal.description}
+                                {truncated ? (
+                                    <>
+                                    {proposal.description.length > 200 ? <Card.Text onClick={showFullText}>{proposal.description.slice(0, 200)}...<span style={{ color: '#FC7A08', cursor: 'pointer' }}>See more</span></Card.Text> : proposal.description}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Card.Text onClick={() => setTruncated(true)}>{proposal.description} <span style={{ color: '#FC7A08', cursor: 'pointer' }}>See less</span></Card.Text>
+                                    </>
+                                )}
                             </Col>
                         </Row>
+                        <div className="d-flex align-items-end">
+                            <Button className="ms-auto my-2" onClick={() => navigate(`/proposal/view/${proposal.id}`)}>
+                                Detailed Info <FontAwesomeIcon className="ms-1 pt-1" icon={"chevron-right"}/>
+                            </Button>
+                        </div>
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>

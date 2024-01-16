@@ -56,6 +56,17 @@ const getProposalsByProf = async (jwt) => {
     }));
 }
 
+const getProposalById = async (jwt, id) => {
+    return getJson(fetch(SERVER_URL + `proposal/getProposalById/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
+        }
+    }))
+};
+
+
 const getAllCds = async (jwt) => {
     return getJson(fetch(SERVER_URL + 'Degree/getAllNames', {
         method: 'GET',
@@ -478,6 +489,6 @@ const getProposalsByCoSupervisor = async (jwt) => {
     }));
 };
 
-const API = { markNotificationAsRead, getUnreadNotificationsCount, getAllNotificationsOfCurrentUser, getSingleNotification, getProposalOnRequestByStudent, getAcceptedProposalOnRequestsByTeacher, teacherReject, teacherRequestChange, teacherAccept, insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock, getApplicationById, updateRequest, getProposalsByCoSupervisor};
+const API = { markNotificationAsRead, getUnreadNotificationsCount, getAllNotificationsOfCurrentUser, getSingleNotification, getProposalOnRequestByStudent, getAcceptedProposalOnRequestsByTeacher, teacherReject, teacherRequestChange, teacherAccept, insertApplication, uploadFile, getAllSupervisors, deleteProposal, archiveProposal, searchProposals, getAllGroups, getApplicationsByStudent,getApplicationsByProf, getApplicationsByProposalId, login, getAllProposals, getAllProposalsOnRequest, getAllTeachers, getAllCds, getByEmail, getProposalsByProf, insertProposal, updateProposal, getArchivedProposalsByProf, searchArchivedProposals, secretaryAccept, secretaryReject, startRequest , setVirtualClock, getApplicationById, updateRequest, getProposalsByCoSupervisor, getProposalById};
 
 export default API;
