@@ -221,7 +221,7 @@ function OperationModal({ show, setShow, selectedRequest, setSelectedRequest, op
             </Modal.Body>
             <Modal.Footer>
                 <Button className="btn-dark" onClick={onSend}>Confirm</Button>
-                <Button className="btn-danger" onClick={() => { setSelectedRequest(null); setShow(false); }}>Cancel</Button>
+                <Button className="btn-danger" onClick={() => {  setChangeDescription(""); setSelectedRequest(null); setShow(false); }}>Cancel</Button>
             </Modal.Footer>
         </Modal>
     );

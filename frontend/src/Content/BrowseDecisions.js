@@ -66,8 +66,7 @@ export function BrowseDecisions(props) {
 
 
 export function TableRow(props) {
-    const {application} = props;
-
+    const {application,proposalOnRequest,navigate} = props;
     const statusBadge = () => {
         if (application.status === "PENDING" || application.status === "SECRETARY_ACCEPTED")
             return <Badge bg="primary"> ⦿ PENDING </Badge>

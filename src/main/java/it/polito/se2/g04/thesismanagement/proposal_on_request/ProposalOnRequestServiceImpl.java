@@ -202,7 +202,7 @@ public class ProposalOnRequestServiceImpl implements ProposalOnRequestService {
                 throw new TeacherNotFoundException("Cant find a teacher with the specified id");
             old.getCoSupervisors().add(optionalTeacher.get());
         });
-        old.setStatus(ProposalOnRequest.Status.STUDENT_REVIEWED);
+        old.setStatus(ProposalOnRequest.Status.SECRETARY_ACCEPTED);
         return proposalOnRequestRepository.save(old).toDTO();
     }
 
