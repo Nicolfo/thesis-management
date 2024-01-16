@@ -92,7 +92,6 @@ function ProposalsListContent({user, applicationDate}) {
         };
 
         getResources();
-        setDisableButtons(false);
     }, [user]);
 
 
