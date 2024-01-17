@@ -197,7 +197,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return false;
             application.setStatus(ApplicationStatus.CANCELLED);
             application = applicationRepository.save(application);
-            emailService.notifyCoSupervisorsOfDecisionOnApplication(application);
             emailService.notifyStudentOfApplicationDecision(application);
             return true;
         } catch (Exception e) {
