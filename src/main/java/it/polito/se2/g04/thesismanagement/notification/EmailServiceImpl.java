@@ -187,7 +187,7 @@ public class EmailServiceImpl implements EmailService {
         String emailText = EmailConstants.HTML_LINE_BREAK +
                 "A new decision was made on an application for the thesis proposal \"" + application.getProposal().getTitle() + EmailConstants.CO_SUPERVISOR_ASSIGNED + EmailConstants.HTML_LINE_BREAK +
                 "The application is submitted by " + application.getStudent().getSurname() + " " + application.getStudent().getName() + " and was " + status +
-                "Log in to the Thesis Management Portal to take further action.";
+                " Log in to the Thesis Management Portal to take further action.";
 
         for (Teacher teacher : application.getProposal().getCoSupervisors()) {
             createNewNotification(teacher.getEmail(), "A decision on an application was taken", "A decision on an application was taken", EmailConstants.GREETING_FORMULA + " " + teacher.getName() + " " + teacher.getSurname() + ", " + EmailConstants.HTML_LINE_BREAK + emailText, icon);

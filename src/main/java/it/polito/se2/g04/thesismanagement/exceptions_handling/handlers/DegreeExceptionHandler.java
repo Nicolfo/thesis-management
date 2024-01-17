@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class DegreeExceptionHandler {
-    
+
     @ExceptionHandler(DegreeNotFoundException.class)
     public ProblemDetail handleDegreeNotFound(DegreeNotFoundException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());
