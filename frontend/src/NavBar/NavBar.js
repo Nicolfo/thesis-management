@@ -48,8 +48,8 @@ function NavBar(props) {
      */
     useEffect(() => {
         const getNotifications = async () => {
+            if(token)
             try {
-
                 const unread = await API.getUnreadNotificationsCount(token);
                 setUnreadNotifications(unread);
             } catch (e) {
@@ -58,7 +58,7 @@ function NavBar(props) {
             setTimeout(getNotifications, getNotificationsIntervalMs);
         }
         getNotifications();
-    }, []);
+    }, [token]);
 
     /**
      * Every time tokenData (the decoded token for the logged-in user on the browser) changes, we update the
@@ -255,7 +255,7 @@ function NavBar(props) {
                                 </Button>
                                     </div>} */}
 
-                            <div className="d-flex justify-content-center ps-3 border-b">
+                            {true && <div className="d-flex justify-content-center ps-3 border-b">
                                 {props.user &&
                                     <Button className="no-border-sm me-3"
                                             onClick={() => navigate("/notifications")}>
@@ -264,27 +264,27 @@ function NavBar(props) {
                                         {unreadNotifications}
                                     </span>}
                                     </Button>}
-                            </div>
+                            </div> }
 
                                 {showVirtualClock && (
 
-                                    <div className="d-flex justify-content-center">
-                                        <Col xs="auto" className="me-lg-2">
-                                        <Row>
-                                            <Col><Form.Control
-                                                className={props.user ? "dateForm no-border-sm" : "dateForm-start no-border-sm"}
+                                    <Row className=" d-flex justify-content-center">
+                                        <Col xs={"auto"} className={"d-flex me-1"}>
+
+                                            <Form.Control
+                                                className={props.user ? "dateForm me-1 no-border-sm " : "dateForm-start me-1 no-border-sm "}
                                                 type="date"
                                                 value={date}
                                                 min={props.realDate.format('YYYY-MM-DD')}
                                                 onChange={(event) => setDate(event.target.value)}
                                             />
-                                            </Col>
-                                            <Col>
+
+
                                                 <Button
-                                                    onClick={(event) => props.updateApplicationDate(date)}>Set</Button>
-                                            </Col></Row>
-                                    </Col>
-                                    </div>
+                                                    onClick={(event) => props.updateApplicationDate(date)}><FontAwesomeIcon icon="fa-solid fa-check" /></Button>
+
+                                        </Col>
+                                    </Row>
                                 )}
                             <div className="d-flex justify-content-center border-b">
                                 <Button className={props.user ? "no-border-sm" : "no-border-sm btn-primary-start"}
@@ -293,11 +293,13 @@ function NavBar(props) {
                                 </Button>
                             </div>
 
-                            <div className="d-flex justify-content-center">
+                            <div className="d-flex justify-content-center align-items-end">
                             {props.user !== null ? <>
                                     <Dropdown className="ms-lg-3 me-lg-3 ms-md-3 me-md-3">
                                         <Dropdown.Toggle id="dropdown-basic">
-                                            <FontAwesomeIcon icon="fa-solid fa-user" className="me-1"/>
+                                            {userIsStudent() && <FontAwesomeIcon icon="fa-solid fa-graduation-cap" className="me-1 pe-1"/>}
+                                            {userIsTeacher() && <FontAwesomeIcon icon="fa-solid fa-chalkboard-user" className="me-1 pe-1"/>}
+                                            {props.user.role === "SECRETARY" && <FontAwesomeIcon icon="fa-solid fa-user" className="me-1 pe-1"/>}
                                             {props.user.name} {props.user.surname}
                                             <FontAwesomeIcon icon="chevron-down" className="ms-2"/>
                                         </Dropdown.Toggle>

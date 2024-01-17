@@ -127,7 +127,7 @@ INSERT INTO public.proposal_groups (groups_cod_group, proposal_id) VALUES (3, 10
 INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2022-04-15 09:30:22.548215', null, 1003, 1003, 300003, 'PENDING');
 INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2022-02-20 15:45:40.654321', null, 1001, 1002, 300010, 'REJECTED');
 INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2022-02-20 15:45:40.654321', null, 1011, 1002, 300008, 'PENDING');
-INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2022-04-15 09:30:22.548215', null, 1004, 1003, 300001, 'REJECTED');N
+INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2022-04-15 09:30:22.548215', null, 1004, 1003, 300001, 'REJECTED');
 INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2022-02-20 15:45:40.654321', null , 1005, 1002, 300002, 'PENDING');
 INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2022-04-15 09:30:22.548215', null, 1010, 1003, 300007, 'PENDING');
 INSERT INTO public.application (apply_date, attachment_attachment_id, id, proposal_id, student_id, status) VALUES ('2023-09-07 11:20:10.000000', null, 1012, 1004, 300009, 'PENDING');

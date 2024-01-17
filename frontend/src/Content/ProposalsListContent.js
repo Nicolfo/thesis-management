@@ -116,7 +116,7 @@ function ProposalsListContent({user, applicationDate}) {
             const proposals = await API.searchProposals(user.token, requestBody);
             const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                 const application = await API.getApplicationsByProposalId(user.token, proposal.id);
-                const hasApplication = application.length > 0 ? 1 : 0;
+                const hasApplication = application.filter(i=>i.status!=="REJECTED").length > 0 ? 1 : 0;
                 if(hasApplication) {
                     setDisableButtons(true);
                 }
@@ -153,7 +153,7 @@ function ProposalsListContent({user, applicationDate}) {
             const proposals = await API.searchProposals(user.token, requestBody);
             const updatedProposalsList = await Promise.all(proposals.map(async (proposal) => {
                 const application = await API.getApplicationsByProposalId(user.token, proposal.id);
-                const hasApplication = application.length > 0 ? 1 : 0;
+                const hasApplication = application.filter(i=>i.status!=="REJECTED").length > 0 ? 1 : 0;
                 if(hasApplication) {
                     setDisableButtons(true);
                 }

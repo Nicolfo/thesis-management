@@ -247,11 +247,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId())) {
                 success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
-                if (success){
+                /*if (success){
                     Optional<Application> applicationOptional =applicationRepository.findById(application.getId());
                     applicationOptional.ifPresent(emailService::notifySupervisorAndCoSupervisorsOfNewApplication);
 
-                }
+                }*/
             }
         return success;
     }
