@@ -1,6 +1,5 @@
 package it.polito.se2.g04.thesismanagement.proposal_on_request;
 
-import it.polito.se2.g04.thesismanagement.teacher.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;

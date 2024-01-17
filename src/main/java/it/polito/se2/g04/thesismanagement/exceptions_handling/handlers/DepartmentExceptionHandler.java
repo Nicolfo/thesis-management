@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class DepartmentExceptionHandler {
 
-    //TODO check if is used somewhere
     @ExceptionHandler(DepartmentNotFoundException.class)
     public ProblemDetail handleDepartmentNotFound(DegreeNotFoundException e){
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());

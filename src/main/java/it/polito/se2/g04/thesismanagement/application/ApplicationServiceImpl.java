@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -227,9 +226,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         if(!applicationRepository.existsApplicationByProposalId(proposalId)){
             throw new ApplicationDoNotExistException("doesn't exist a application associated to the proposal id " + proposalId);
         }
-        boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByProposal(proposalId);
-        return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);
+        return cancelApplicationsHelper(exceptionApplicationId, applicationList);
     }
 
     @Override
@@ -237,21 +235,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!applicationRepository.existsApplicationByStudentEmail(studentEmail)){
             throw new ApplicationDoNotExistException("doesn't exist a application associated to the student email " + studentEmail);
         }
-        boolean success = true;
         List<ApplicationDTO> applicationList = getApplicationsByStudent(studentEmail);
-        return cancelApplicationsHelper(exceptionApplicationId, success, applicationList);
+        return cancelApplicationsHelper(exceptionApplicationId, applicationList);
     }
 
-    //TODO: check if it works properly
-    private boolean cancelApplicationsHelper(Long exceptionApplicationId, boolean success, List<ApplicationDTO> applicationList) {
+    private boolean cancelApplicationsHelper(Long exceptionApplicationId, List<ApplicationDTO> applicationList) {
+        boolean success = true;
         for (ApplicationDTO application : applicationList)
             if (!Objects.equals(exceptionApplicationId, application.getId())) {
                 success = success && (this.cancelApplicationById(application.getId()) || application.getStatus() != ApplicationStatus.PENDING);
-                /*if (success){
-                    Optional<Application> applicationOptional =applicationRepository.findById(application.getId());
-                    applicationOptional.ifPresent(emailService::notifySupervisorAndCoSupervisorsOfNewApplication);
-
-                }*/
             }
         return success;
     }

@@ -43,8 +43,8 @@ public class ProposalExceptionHandler {
     public ProblemDetail updateAfterAccepted(UpdateAfterAcceptException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
-    @ExceptionHandler(getProposalWithNoId.class)
-    public ProblemDetail getProposalWithNoId(getProposalWithNoId e) {
+    @ExceptionHandler(GetProposalWithNoId.class)
+    public ProblemDetail getProposalWithNoId(GetProposalWithNoId e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }

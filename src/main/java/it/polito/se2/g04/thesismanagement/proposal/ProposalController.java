@@ -4,7 +4,7 @@ package it.polito.se2.g04.thesismanagement.proposal;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.ArchiveWithNoId;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.CreateUpdateProposalWithNoPathVariable;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.DeleteWithNoId;
-import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.getProposalWithNoId;
+import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.proposal.GetProposalWithNoId;
 import it.polito.se2.g04.thesismanagement.exceptions_handling.exceptions.teacher.TeacherNotFoundException;
 import it.polito.se2.g04.thesismanagement.student.StudentService;
 import it.polito.se2.g04.thesismanagement.teacher.TeacherService;
@@ -68,7 +68,7 @@ public class ProposalController {
     @PreAuthorize("isAuthenticated() && (hasRole('TEACHER') || hasRole('STUDENT'))")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProposalFullDTO getProposalWithNoID() {
-        throw new getProposalWithNoId("you need to specify an ID");
+        throw new GetProposalWithNoId("you need to specify an ID");
     }
 
     /**
