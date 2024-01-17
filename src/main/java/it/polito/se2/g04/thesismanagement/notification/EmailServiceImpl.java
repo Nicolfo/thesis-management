@@ -67,7 +67,7 @@ public class EmailServiceImpl implements EmailService {
             }
             case CANCELLED -> {
                 title += "set to cancelled, because another application has been accepted for this proposal";
-                icon = "cancelled.png";
+                icon = "cancel.png";
             }
         }
 
