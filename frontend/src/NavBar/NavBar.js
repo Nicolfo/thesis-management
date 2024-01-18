@@ -260,7 +260,7 @@ function NavBar(props) {
                                     <Button className="no-border-sm me-3"
                                             onClick={() => navigate("/notifications")}>
                                         <FontAwesomeIcon icon="fa-bell"/>
-                                        {path !== "/notifications" && unreadNotifications > 0 && <span className="badge text-bg-light text-danger ms-2 ">
+                                        {path !== "/notifications" && unreadNotifications > 0 && <span className="badge text-bg-light text-danger ms-1 ">
                                         {unreadNotifications}
                                     </span>}
                                     </Button>}
