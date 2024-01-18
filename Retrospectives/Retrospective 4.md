@@ -28,11 +28,11 @@ RETROSPECTIVE SPRINT 4 (Team 04)
 | TM-30  | 3       | 5      | 4h         | 4h           |
 | TM-53  | 5       | 5      | 9h         | 8h 45m       |
 | TM-19  | 5       | 5      | 8h         | 8h 15m       |
-| TM-20* | -       | 2      | -          | -            |
+| TM-20* | 2       | 2      | 0          | 0            |
 | TM-31  | 5       | 5      | 8h 45m     | 8h 30m       |
 | TM-21  | 1       | 2      | 1h         | 1h           |
 | TM-32  | 1       | 2      | 1h         | 1h           |
-| TM-33* | 3       | 3      | -          | -            |
+| TM-33* | 3       | 3      | 0          | 0            |
    
 *These stories were already completed on the last sprint but were not reported because we didn't notice that we had done it.
 
