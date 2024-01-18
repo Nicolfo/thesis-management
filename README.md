@@ -20,4 +20,6 @@
   - Email: `linda.johnson@example.com`
   - Password: `Test.secretary`
 
+## License
 
+This software is licensed under [CC BY-SA 4.0](LICENSE). 
