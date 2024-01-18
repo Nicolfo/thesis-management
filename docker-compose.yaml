@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   frontend:
-    image: nicolfo/thesis-management-frontend:sprint2.1
+    image: nicolfo/thesis-management-frontend:final-sprint-1.0
     depends_on:
       - backend
     ports:
@@ -9,7 +9,7 @@ services:
     restart: always
 
   backend:
-    image: 'nicolfo/thesis-management:sprint2.1.1'
+    image: 'nicolfo/thesis-management:final-sprint-1.0'
     ports:
       - "8081:8081"
     expose:
