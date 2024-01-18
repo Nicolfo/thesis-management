@@ -75,18 +75,21 @@ sections:
 
 ## ASSESSMENT
 
-- What caused your errors in estimation (if any)? Our estimation was really accurate, on average every task took as long as we expected
+- What caused your errors in estimation (if any)?
+  - Our estimation was really accurate, on average every task took as long as we expected.
 
-- What lessons did you learn (both positive and negative) in this sprint? 
+- What lessons did you learn (both positive and negative) in this sprint?
+  - We had the opportunity to reflect on the entire course and the project, and we understood the importance of teamwork and the power of efficient scrum organization. We also learned about the importance of carefully planning the product presentation to make the final product more attractive to stakeholders.
 
 - Which improvement goals set in the previous retrospective were you able to achieve? 
   - Read the FAQ document made by the product owner more frequently in order to adapt to the changes.
   - Improve in the way we manage technical debt.
   
-- Which ones you were not able to achieve? Why? None
+- Which ones you were not able to achieve? Why?
+  - None: we achieved all of them.
 
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
- - 
+ - Better database cleanup before demo presentation.
 
 - One thing you are proud of as a Team!!
-  - We are proud to have achieved all our goals and demonstrated effective collaboration.
+  - We are proud to have achieved all our goals and demonstrated effective collaboration: despite being all in different locations during the Christmas holdidays, we were able to keep in touch and be productive. This sprint felt easier because we used our experiences in the previous iterations and were able to complete our tasks more efficiently.
