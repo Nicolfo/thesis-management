@@ -1,8 +1,5 @@
-RETROSPECTIVE SPRINT 4(Team 04)
+RETROSPECTIVE SPRINT 4 (Team 04)
 =====================================
-
-The retrospective should include _at least_ the following
-sections:
 
 - [process measures](#process-measures)
 - [quality measures](#quality-measures)
@@ -37,7 +34,7 @@ sections:
 | TM-32  | 1       | 2      | 1h         | 1h           |
 | TM-33* | 3       | 3      | -          | -            |
    
-*this story was already completed on the last sprint but it wasn't reported because we didn't notice that we had done it
+*These stories were already completed on the last sprint but were not reported because we didn't notice that we had done it.
 
 - Estimated average hours per task: **2h 13m**
 - Actual average hours per task: **2h 14m**
@@ -71,8 +68,6 @@ sections:
      - MAINTAINABILITY: A
      - SECURITY: A
   
-
-
 ## ASSESSMENT
 
 - What caused your errors in estimation (if any)?
@@ -93,3 +88,4 @@ sections:
 
 - One thing you are proud of as a Team!!
   - We are proud to have achieved all our goals and demonstrated effective collaboration: despite being all in different locations during the Christmas holdidays, we were able to keep in touch and be productive. This sprint felt easier because we used our experiences in the previous iterations and were able to complete our tasks more efficiently.
+
