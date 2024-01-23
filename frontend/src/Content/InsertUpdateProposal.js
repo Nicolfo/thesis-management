@@ -27,6 +27,7 @@ function InsertUpdateProposal(props) {
     const [keywordsList, setKeywordsList] = useState([""]);
     const [teacherList, setTeacherList] = useState([]);
     const [cdsList, setCdsList] = useState([]);
+    const [cdsViewList, setCdsViewList] = useState([]);
     const [optionsCds, setOptionsCds] = useState([]);
     const [selectedCds, setSelectedCds] = useState([]);
     const [optionsSupervisors, setOptionsSupervisors] = useState([]);
@@ -60,6 +61,7 @@ function InsertUpdateProposal(props) {
 
             });
             setOptionsCds(CDS);
+            setCdsViewList(CDS.filter(it=>it.label.includes("Bachelor's")));
 
             const supervisor = await API.getByEmail(props.user.email, props.user.token);
             setSupervisor(supervisor);
@@ -126,6 +128,7 @@ function InsertUpdateProposal(props) {
 
         getAllTeachersGroupsCds();
     }, [props.user, editProposalID, copyProposalID])
+
 
 
     const addType = () => {
@@ -378,7 +381,13 @@ function InsertUpdateProposal(props) {
                                     label="Bachelor's"
                                     value="Bachelor's"
                                     checked={level === "Bachelor's"}
-                                    onChange={ev => setLevel(ev.target.value)}
+                                    onChange={ev => {
+                                        setLevel(ev.target.value);
+                                        setCdsViewList(optionsCds.filter(it=> {
+                                            console.log(it);
+                                            return it.label.includes(ev.target.value);
+                                        }))
+                                    }}
                                 />
                                 <Form.Check
                                     type="radio"
@@ -386,7 +395,13 @@ function InsertUpdateProposal(props) {
                                     label="Master's"
                                     value="Master's"
                                     checked={level === "Master's"}
-                                    onChange={ev => setLevel(ev.target.value)}
+                                    onChange={ev => {
+                                        setLevel(ev.target.value);
+                                        setCdsViewList(optionsCds.filter(it=> {
+                                            console.log(it);
+                                            return it.label.includes(ev.target.value);
+                                        }))
+                                    }}
                                 />
                             </Form.Group>
                         </Col>
@@ -466,7 +481,7 @@ function InsertUpdateProposal(props) {
                             <Form.Group className="mt-3">
                                 <Form.Label style={{marginLeft: "0.3rem"}}> CdS </Form.Label>
                                 <MultiSelect
-                                    options={optionsCds}
+                                    options={cdsViewList}
                                     value={selectedCds}
                                     onChange={ev => {setIsValidCds(true); setSelectedCds(ev)}}
                                     labelledBy="Select CdS"

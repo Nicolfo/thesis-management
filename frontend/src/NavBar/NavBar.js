@@ -300,7 +300,7 @@ function NavBar(props) {
                                             {userIsStudent() && <FontAwesomeIcon icon="fa-solid fa-graduation-cap" className="me-1 pe-1"/>}
                                             {userIsTeacher() && <FontAwesomeIcon icon="fa-solid fa-chalkboard-user" className="me-1 pe-1"/>}
                                             {props.user.role === "SECRETARY" && <FontAwesomeIcon icon="fa-solid fa-user" className="me-1 pe-1"/>}
-                                            {props.user.name} {props.user.surname}
+                                            {props.user.name.split(" ").map(it=>it[0]+".").join(" ")} {props.user.surname}
                                             <FontAwesomeIcon icon="chevron-down" className="ms-2"/>
                                         </Dropdown.Toggle>
 
