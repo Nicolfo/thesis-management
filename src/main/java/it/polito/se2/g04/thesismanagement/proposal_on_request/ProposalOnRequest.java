@@ -42,6 +42,7 @@ public class ProposalOnRequest {
     @GeneratedValue
     private Long id;
     private String title;
+    @Column(columnDefinition = "varchar(5000)")
     private String description;
     @ManyToOne
     private Teacher supervisor;

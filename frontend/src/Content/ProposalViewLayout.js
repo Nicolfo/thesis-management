@@ -78,15 +78,16 @@ function ProposalViewLayout(props) {
                                             <Col md={3}>
                                                 <FontAwesomeIcon icon="fa-solid fa-calendar-days"/> <em>Expiration date: </em>{dayjs(proposal.expiration).format("DD/MM/YYYY")}
                                             </Col>
-                                            {userIsStudent() &&
+                                            {userIsStudent() || (props.user.name !== proposal.supervisor.name && props.user.surname !== proposal.supervisor.surname )  &&
                                                 <Col md={3}>
                                                     <FontAwesomeIcon icon="fa-solid fa-user" className="me-2"/>
                                                     <em>Supervisor: </em>{proposal.supervisor.surname} {proposal.supervisor.name}
                                                 </Col>
                                             }
-                                            <Col md={(userIsStudent() && 6) || (userIsTeacher() && 9)}>
+                                            <Col md={(userIsStudent() || (props.user.name !== proposal.supervisor.name && props.user.surname !== proposal.supervisor.surname )  && 6) || (userIsTeacher() && 9)}>
                                                 <FontAwesomeIcon icon="fa-solid fa-users" className="me-2"/>
                                                 <em>Co-supervisors:</em> {proposal.coSupervisors.length > 0 && <>{proposal.coSupervisors.map(coSupervisor => coSupervisor.surname + " " + coSupervisor.name).join(", ")}</>}
+                                                {proposal.coSupervisors.length ===0  && <>None</>}
                                             </Col>
 
                                         </Row>
