@@ -139,6 +139,9 @@ public class ProposalServiceImpl implements ProposalService {
         if (proposalDTO.getCoSupervisors() != null && !proposalDTO.getCoSupervisors().isEmpty()) {
             old.setCoSupervisors(proposalDTO.getCoSupervisors().stream().map(teacherRepository::getReferenceById).collect(Collectors.toList()));
         }
+        else {
+            old.getCoSupervisors().clear();
+        }
         old.setType(proposalDTO.getType());
         old.setGroups(Stream.concat(Stream.of(teacherRepository.getReferenceById(proposalDTO.getSupervisorId()).getGroup()), proposalDTO.getCoSupervisors() != null ? proposalDTO.getCoSupervisors().stream().map(it -> teacherRepository.getReferenceById(it).getGroup()) : Stream.of()).distinct().collect(Collectors.toList()));
         old.setDescription(proposalDTO.getDescription());
