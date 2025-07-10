@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
  
-const SERVER_URL = "http://localhost:8081/API/";
+const SERVER_URL = "/API/";
 
 /**
+ *
  * A utility function for parsing the HTTP response.
  */
 function getJson(httpResponsePromise) {

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: {{.Values.backend.image.name}}:{{.Values.backend.image.tag}}
+          ports:
+            - containerPort: 8081
+          env:
+            - name: DB-HOST
+              valueFrom:
+                secretKeyRef:
+                  name: thesis-management-cluster-app
+                  key: host
+            - name: DB-NAME
+              valueFrom:
+                secretKeyRef:
+                  name: thesis-management-cluster-app
+                  key: dbname
+            - name: DB-USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: thesis-management-cluster-app
+                  key: username
+            - name: DB-PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: thesis-management-cluster-app
+                  key: password
+
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: validate
+
+            - name: SPRING_SQL_INIT_MODE
+              value: never
