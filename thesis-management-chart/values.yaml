@@ -1,18 +1,18 @@
 frontend:
   image:
-    name: registry.nicolfo.ovh/thesis-management/frontend
-    tag: "1.1.2"
+    name: registry.nicolfo.it/thesis-management/frontend
+    tag: "1.1.3"
 
 
 backend:
   image:
-    name: registry.nicolfo.ovh/thesis-management/backend
+    name: registry.nicolfo.it/thesis-management/backend
     tag: "1.0"
 
 
 ingress:
-  ingressClassName: nginx
-  host: thesis-management.nicolfo.ovh
+  ingressClassName: traefik
+  host: thesis-management.nicolfo.it
 
 cluster:
   type: postgresql
