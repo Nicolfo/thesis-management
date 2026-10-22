@@ -1,13 +1,13 @@
 frontend:
   image:
     name: registry.nicolfo.it/thesis-management/frontend
-    tag: "1.1.3"
+    tag: "1.1.4"
 
 
 backend:
   image:
     name: registry.nicolfo.it/thesis-management/backend
-    tag: "1.0"
+    tag: "1.0.1"
 
 
 ingress:

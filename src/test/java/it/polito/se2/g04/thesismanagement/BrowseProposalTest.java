@@ -139,8 +139,8 @@ class BrowseProposalTest {
         assertTrue(proposalTitles.containsAll(expectedTitles), "getAll does not return the correct values");
 
         //add one archived and one not archived proposal
-        Proposal proposal3 = new Proposal(3L, "Proposal 3", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
-        Proposal proposal4 = new Proposal(4L, "Proposal 4", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal3 = new Proposal(null, "Proposal 3", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal4 = new Proposal(null, "Proposal 4", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         proposalRepository.save(proposal3);
         proposalRepository.save(proposal4);
 
@@ -171,8 +171,8 @@ class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
     void testGetProposalsByProf() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal1 = new Proposal(null, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal2 = new Proposal(null, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -198,8 +198,8 @@ class BrowseProposalTest {
 
         Teacher otherTeacher = new Teacher("Kemp", "Denise","Kemp@example.com",null,null);
         teacherRepository.save(otherTeacher);
-        Proposal proposal3 = new Proposal(3L, "Proposal 3", otherTeacher, null, "keywords", "type", null, "Description 3", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
-        Proposal proposal4 = new Proposal(4L, "Proposal 4", teacher, List.of(teacher), "keywords", "type", null, "Description 4", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal3 = new Proposal(null, "Proposal 3", otherTeacher, null, "keywords", "type", null, "Description 3", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal4 = new Proposal(null, "Proposal 4", teacher, List.of(teacher), "keywords", "type", null, "Description 4", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         proposalRepository.save(proposal3);
         proposalRepository.save(proposal4);
 
@@ -225,8 +225,8 @@ class BrowseProposalTest {
 
 
         proposalRepository.deleteAll();
-        proposal1 = new Proposal(1L, "Proposal 1", otherTeacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
-        proposal2 = new Proposal(2L, "Proposal 2", otherTeacher, List.of(otherTeacher), "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        proposal1 = new Proposal(null, "Proposal 1", otherTeacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        proposal2 = new Proposal(null, "Proposal 2", otherTeacher, List.of(otherTeacher), "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -261,8 +261,8 @@ class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
     void getProposalsByProfWithoutTeacher() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal1 = new Proposal(null, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
+        Proposal proposal2 = new Proposal(null, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACTIVE,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -276,8 +276,8 @@ class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "test@example.com", roles = {"TEACHER"})
     void testGetArchived() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        Proposal proposal1 = new Proposal(null, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(null, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -300,8 +300,8 @@ class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
     void testGetArchivedWithoutTeacher() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        Proposal proposal1 = new Proposal(null, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(null, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -315,8 +315,8 @@ class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
     void testGetTitleByProposalId() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        Proposal proposal1 = new Proposal(null, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(null, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -335,8 +335,8 @@ class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
     void testGetTitleByProposalIdWithoutProposal() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        Proposal proposal1 = new Proposal(null, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(null, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 
@@ -349,8 +349,8 @@ class BrowseProposalTest {
     @Rollback
     @WithMockUser(username = "notExisting@example.com", roles = {"TEACHER"})
     void getProposalByIdTest() throws Exception {
-        Proposal proposal1 = new Proposal(1L, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
-        Proposal proposal2 = new Proposal(2L, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
+        Proposal proposal1 = new Proposal(null, "Proposal 1", teacher, null, "keywords", "type", null, "Description 1", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ARCHIVED,false);
+        Proposal proposal2 = new Proposal(null, "Proposal 2", teacher, null, "keywords", "type", null, "Description 2", "requiredKnowledge", "notes", null, "level", "CdS", Proposal.Status.ACCEPTED,false);
         proposalRepository.save(proposal1);
         proposalRepository.save(proposal2);
 

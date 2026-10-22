@@ -10,7 +10,7 @@ COPY . .
 # Build the React app
 RUN npm run build
 # Stage 2: Create Nginx Container
-FROM nginx:alpine
+FROM nginx:1.30-alpine
 # Remove default Nginx static files
 RUN rm -rf /usr/share/nginx/html/*
 # Copy custom Nginx configuration file
