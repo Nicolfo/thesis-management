@@ -21,6 +21,7 @@ cluster:
   version:
     postgresql: "17"
   cluster:
+    imageName: ghcr.io/cloudnative-pg/postgresql:17.11-standard-trixie
     enableSuperuserAccess: true
     initdb:
       database: thesis-management
