@@ -11,6 +11,8 @@ COPY . .
 RUN npm run build
 # Stage 2: Create Nginx Container
 FROM nginx:1.30-alpine
+# Pull Alpine security fixes newer than the base image (curl/libcurl 8.23.0: CVE-2026-92392, brotli 1.2.1: CVE-2026-111497)
+RUN apk upgrade --no-cache
 # Remove default Nginx static files
 RUN rm -rf /usr/share/nginx/html/*
 # Copy custom Nginx configuration file

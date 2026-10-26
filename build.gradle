@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.16'
+	id 'org.springframework.boot' version '4.0.9'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'com.google.cloud.tools.jib' version '3.4.0'
 	id "org.sonarqube" version "4.4.1.3373"
@@ -25,12 +25,11 @@ repositories {
 }
 
 // Security overrides on top of the Spring Boot BOM
-// tomcat-embed-core >= 10.1.58: CVE-2025-24813, CVE-2026-41293, CVE-2026-43512, CVE-2026-43515, CVE-2026-65182, CVE-2026-65905, CVE-2026-68525
-ext['tomcat.version'] = '10.1.61'
-// jackson >= 2.21.7: CVE-2026-68497, CVE-2026-89425, CVE-2026-91776, CVE-2026-91777
-ext['jackson-bom.version'] = '2.21.8'
-// postgresql JDBC >= 42.7.12: CVE-2024-1597, CVE-2026-42198, CVE-2026-54291
-ext['postgresql.version'] = '42.7.14'
+// Jackson 2 is still pulled in by keycloak-admin-client and jjwt-jackson (Boot 4 itself uses Jackson 3);
+// jackson 2 >= 2.21.8: CVE-2026-54512, CVE-2026-54513, CVE-2026-68494
+ext['jackson-2-bom.version'] = '2.21.8'
+// keycloak-admin-client runs on RESTEasy 6.2 (Jakarta REST 3.1); keep the API it was built for instead of Boot 4's 4.0
+ext['jakarta-ws-rs.version'] = '3.1.0'
 
 dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -39,19 +38,20 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	implementation 'com.nimbusds:nimbus-jose-jwt'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	testImplementation 'com.h2database:h2:2.1.214'
+	implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-client'
+	testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
